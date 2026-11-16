@@ -14,9 +14,8 @@ L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe un
 
 ## Publier une nouvelle version
 
-1. Augmenter `version` dans `package.json` (ex. `0.3.0`).
-2. Créer et pousser le tag correspondant : `git tag v0.3.0 && git push origin v0.3.0`.
-3. GitHub Actions construit l'installeur Windows et le publie dans les Releases.
+1. Augmenter `version` dans `package.json` (ex. `0.3.0`) et pousser sur `main`.
+2. GitHub Actions construit l'installeur Windows, crée la version `v0.3.0` et la publie dans les Releases.
 
 ## Développement
 

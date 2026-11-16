@@ -1,11 +1,13 @@
 # Construit l'installeur Windows et le publie dans les Releases GitHub
-# à chaque nouvelle version (tag v0.2.0, v0.3.0, ...).
+# dès que le numéro de version change dans package.json (ou à la demande).
 # L'application installée détecte la nouvelle Release et se met à jour toute seule.
 name: Publier une version
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+    paths: ['package.json']
+  workflow_dispatch:
 
 permissions:
   contents: write
