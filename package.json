@@ -1,0 +1,36 @@
+{
+  "name": "telemetrie-entreprise",
+  "version": "0.2.0",
+  "description": "Télémétrie Entreprise - application de suivi pour Euro Truck Simulator 2",
+  "author": "charlesantoine972-bit",
+  "main": "main.js",
+  "repository": "https://github.com/charlesantoine972-bit/telemetrie-entreprise",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --x64",
+    "release": "electron-builder --win nsis --x64 --publish always"
+  },
+  "build": {
+    "appId": "fr.telemetrie.entreprise",
+    "productName": "Telemetrie Entreprise",
+    "files": ["main.js", "app/**/*"],
+    "win": { "target": "nsis" },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Télémétrie Entreprise",
+      "artifactName": "Telemetrie-Entreprise-Setup-${version}.exe"
+    },
+    "publish": [{ "provider": "github", "owner": "charlesantoine972-bit", "repo": "telemetrie-entreprise", "releaseType": "release" }],
+    "directories": { "output": "dist" }
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

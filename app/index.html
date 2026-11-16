@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<title>Télémétrie Entreprise</title>
+<style>
+  :root{
+    --bg:#0F1720; --panel:#18222D; --line:#26323F; --nav:#131C26;
+    --text:#E8EDF2; --soft:#C3CDD6; --muted:#9AA7B4;
+    --loaded:#F2A93B; --empty:#5BA4E6; --ok:#6FD39A;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:"Segoe UI",Inter,system-ui,sans-serif;}
+  button{font-family:inherit;cursor:pointer}
+  .app{display:flex;height:100vh}
+  .side{width:240px;flex:none;background:var(--nav);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;padding:20px 14px;gap:6px}
+  .brand{font-weight:700;font-size:18px;padding:4px 10px 2px}
+  .brand-sub{font-size:12px;color:var(--muted);padding:0 10px 18px}
+  .navbtn{display:flex;align-items:center;gap:12px;height:46px;padding:0 12px;border-radius:12px;
+    border:none;background:transparent;color:var(--muted);font-size:14px;text-align:left}
+  .navbtn:hover{background:#1A2531;color:var(--text)}
+  .navbtn.on{background:#1F2B38;color:var(--loaded);font-weight:600}
+  .navbtn svg{flex:none}
+  .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
+    border:1px dashed var(--line);border-radius:12px}
+  .main{flex:1;overflow:auto;padding:28px 32px}
+  .demo{display:inline-block;font-size:11px;color:#0F1720;background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
+  h1{margin:0 0 18px;font-size:30px}
+  h2{margin:0 0 12px;font-size:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .row{display:flex;gap:10px;align-items:center}
+  .pill{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:13px}
+  .pill.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
+  .tab{flex:1;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-weight:600;font-size:13px}
+  .tab.on{background:var(--loaded);border-color:var(--loaded);color:var(--bg)}
+  .bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line)}
+  .bar .l{background:var(--loaded)} .bar .e{background:var(--empty);flex:1}
+  .bar.thin{height:6px}
+  .big{font-size:34px;font-weight:700}
+  .legend span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+  .grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
+  .list{display:flex;flex-direction:column;gap:8px}
+  .item{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;color:var(--text);text-align:left;width:100%}
+  .item:hover{border-color:#3A4A5B}
+  .rank{width:28px;text-align:center;font-weight:700;font-size:18px}
+  .av{width:40px;height:40px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;position:relative;flex:none}
+  .av .dot{position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid var(--panel)}
+  .grow{flex:1;min-width:0}
+  .between{display:flex;justify-content:space-between;gap:8px}
+  .muted{color:var(--muted)} .soft{color:var(--soft)}
+  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px}
+  .stat b{font-size:19px}
+  .lbl{font-size:12px;font-weight:700;letter-spacing:.03em}
+  .map{position:relative;height:520px;background:#121D28;border-radius:16px;border:1px solid var(--line);overflow:hidden}
+  .city{position:absolute;font-size:12px;color:#7F8E9C;transform:translate(-50%,8px)}
+  .citydot{position:absolute;width:6px;height:6px;border-radius:50%;background:#3A4A5B;transform:translate(-50%,-50%)}
+  .truck{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px;transition:left 1s linear,top 1s linear;pointer-events:none}
+  .truck .tag{font-size:11px;font-weight:700;color:var(--bg);padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .truck .pt{width:16px;height:16px;border-radius:50%;border:3px solid var(--bg)}
+  .tablet{width:100%;max-width:1024px;aspect-ratio:1024/640;background:#05080B;border-radius:36px;padding:22px}
+  .screen{width:100%;height:100%;background:var(--bg);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
+  .tgrid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-height:0}
+  .k{display:flex;flex-direction:column;gap:2px} .k span:first-child{font-size:12px;color:var(--muted)} .k span:last-child{font-size:22px;font-weight:700}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand" id="companyName">[NOM DE L'ENTREPRISE]</div>
+    <div class="brand-sub" id="appVersion">Télémétrie · version démo</div>
+    <button class="navbtn on" data-view="classement">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+      Classement</button>
+    <button class="navbtn" data-view="carte">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
+      Carte en direct</button>
+    <button class="navbtn" data-view="profil">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      Fiche chauffeur</button>
+    <button class="navbtn" data-view="tablette">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/></svg>
+      Tablette in-game</button>
+    <div class="side-foot">Version de démonstration : toutes les données sont des exemples. Le jeu n'est pas encore connecté.</div>
+  </aside>
+
+  <main class="main">
+    <!-- CLASSEMENT -->
+    <section id="v-classement">
+      <h1>Classement <span class="demo">Données d'exemple</span></h1>
+      <div class="row" style="margin-bottom:18px" id="periods"></div>
+      <div class="grid2">
+        <div>
+          <div class="row" style="margin-bottom:12px" id="tabs"></div>
+          <div class="list" id="ranking"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+            <div class="between"><span class="muted">Total entreprise</span><span style="color:var(--ok);font-size:13px" id="onlineCount"></span></div>
+            <div class="big" id="cTotal"></div>
+            <div class="bar"><div class="l" id="cBar"></div><div class="e"></div></div>
+            <div class="row legend" style="gap:18px;font-size:13px">
+              <span><span class="sw" style="background:var(--loaded)"></span>Chargé <b id="cLoaded"></b></span>
+              <span><span class="sw" style="background:var(--empty)"></span>À vide <b id="cEmpty"></b></span>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Comment on compte</h2>
+            <div class="soft" style="font-size:14px;line-height:1.6">
+              <b style="color:var(--loaded)">Chargé</b> : mission en cours et remorque attelée.<br>
+              <b style="color:var(--empty)">À vide</b> : pas de mission, ou en route pour aller chercher la remorque.<br>
+              Ferry et train : non comptés.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARTE -->
+    <section id="v-carte" class="hidden">
+      <h1>Carte en direct <span class="demo">Simulation</span></h1>
+      <div class="grid2">
+        <div class="map" id="map">
+          <svg width="100%" height="100%" viewBox="0 0 600 520" preserveAspectRatio="none" style="position:absolute;inset:0" id="roads"></svg>
+          <div style="position:absolute;left:14px;bottom:12px;font-size:12px;color:var(--soft);background:rgba(15,23,32,.9);padding:6px 10px;border-radius:8px">
+            <span style="color:var(--loaded)">●</span> chargé &nbsp; <span style="color:var(--empty)">●</span> à vide &nbsp; · carte stylisée
+          </div>
+        </div>
+        <div>
+          <h2>En route maintenant</h2>
+          <div class="list" id="liveList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFIL -->
+    <section id="v-profil" class="hidden"></section>
+
+    <!-- TABLETTE -->
+    <section id="v-tablette" class="hidden">
+      <h1>Tablette in-game <span class="demo">Aperçu</span></h1>
+      <p class="muted" style="margin:-6px 0 18px">Ce que tu verras par-dessus le jeu pendant que tu conduis.</p>
+      <div class="tablet"><div class="screen">
+        <div class="between" style="align-items:center">
+          <b style="font-size:18px" id="tabCompany">[NOM DE L'ENTREPRISE]</b>
+          <span class="soft" style="font-size:14px"><span style="color:var(--ok)">●</span> Connecté · <span id="tabClock"></span></span>
+        </div>
+        <div class="tgrid">
+          <div class="panel" style="grid-column:span 2;display:flex;flex-direction:column;gap:12px">
+            <div class="between"><span class="muted">Mission en cours</span><span class="lbl" style="color:var(--loaded)">CHARGÉ</span></div>
+            <div style="font-size:32px;font-weight:700">Paris → Lyon</div>
+            <div class="soft">Électronique · 18 t · livraison avant mer. 08:00</div>
+            <div class="bar"><div class="l" id="tabProg" style="width:54%"></div></div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+              <div class="k"><span>Reste</span><span id="tabLeft">214 km</span></div>
+              <div class="k"><span>Arrivée</span><span>~2 h 40</span></div>
+              <div class="k"><span>Dégâts</span><span>0,4 %</span></div>
+              <div class="k"><span>Carburant</span><span>62 %</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:28px">
+              <div class="k"><span class="lbl" style="color:var(--loaded)">CHARGÉ</span><span id="tabLoaded">251 km</span></div>
+              <div class="k"><span class="lbl" style="color:var(--empty)">À VIDE</span><span>37 km</span></div>
+              <div class="k"><span class="lbl">CLASSEMENT</span><span>#1</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+            <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+              <span class="muted">Collègues en ligne</span>
+              <div class="between" style="font-size:14px"><b>Sophie M.</b><span class="soft">412 km · chargé</span></div>
+              <div class="between" style="font-size:14px"><b>Nico972</b><span class="soft">388 km · pause</span></div>
+            </div>
+            <div class="panel" style="flex:1;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.4">
+              <span class="muted">Messages entreprise</span>
+              <div><b>Admin :</b> Convoi ce soir 21 h au départ de Calais.</div>
+              <div><b>Sophie M. :</b> Bouchon sur l'A31, évitez Metz.</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </section>
+  </main>
+</div>
+
+<script>
+const fmt = n => n.toLocaleString('fr-FR');
+const DRIVERS = [
+  { id:'lucas',  name:'Lucas_R',    ini:'LR', truck:'Scania S 650',      loaded:6840, empty:1210, deliveries:21, money:184300, fuel:2410, damage:1.2, hours:112, online:true },
+  { id:'karim',  name:'Karim.T',    ini:'KT', truck:'Volvo FH16',        loaded:5920, empty:1890, deliveries:18, money:151900, fuel:2380, damage:2.1, hours:109, online:false },
+  { id:'sophie', name:'Sophie M.',  ini:'SM', truck:'DAF XG+',           loaded:5310, empty:740,  deliveries:19, money:162400, fuel:1840, damage:0.6, hours:88,  online:true },
+  { id:'nico',   name:'Nico972',    ini:'N9', truck:'Renault T High',    loaded:4180, empty:1650, deliveries:12, money:103700, fuel:1910, damage:3.4, hours:84,  online:true },
+  { id:'antoine',name:'Antoine B.', ini:'AB', truck:'Mercedes Actros',   loaded:3990, empty:980,  deliveries:14, money:118200, fuel:1520, damage:1.0, hours:71,  online:false },
+  { id:'jade',   name:'Jade_L',     ini:'JL', truck:'MAN TGX',           loaded:2750, empty:1320, deliveries:9,  money:74600,  fuel:1290, damage:1.8, hours:60,  online:false },
+];
+const PERIOD_FACTOR = { semaine:0.24, mois:1, total:7.3 };
+let state = { view:'classement', metric:'total', period:'mois', profile:'lucas' };
+
+/* ---------- navigation ---------- */
+document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
+function go(view){
+  state.view = view;
+  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+  ['classement','carte','profil','tablette'].forEach(v =>
+    document.getElementById('v-'+v).classList.toggle('hidden', v !== view));
+  if (view === 'profil') renderProfile();
+}
+
+/* ---------- classement ---------- */
+function scaled(d){ const f = PERIOD_FACTOR[state.period];
+  return { ...d, loaded:Math.round(d.loaded*f), empty:Math.round(d.empty*f), deliveries:Math.round(d.deliveries*f) }; }
+function val(d){ return state.metric==='loaded'?d.loaded : state.metric==='empty'?d.empty : state.metric==='deliveries'?d.deliveries : d.loaded+d.empty; }
+
+function renderRanking(){
+  const periods = [['semaine','Cette semaine'],['mois','Ce mois'],['total','Depuis le début']];
+  document.getElementById('periods').innerHTML = periods.map(([k,l]) =>
+    `<button class="pill ${state.period===k?'on':''}" data-p="${k}">${l}</button>`).join('');
+  document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { state.period=b.dataset.p; renderRanking(); });
+
+  const tabs = [['total','Km total'],['loaded','Chargés'],['empty','À vide'],['deliveries','Livraisons']];
+  document.getElementById('tabs').innerHTML = tabs.map(([k,l]) =>
+    `<button class="tab ${state.metric===k?'on':''}" data-m="${k}">${l}</button>`).join('');
+  document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { state.metric=b.dataset.m; renderRanking(); });
+
+  const medal = ['#F2C14E','#C9D2DB','#D9925B'];
+  const rows = DRIVERS.map(scaled).sort((a,b) => val(b)-val(a));
+  document.getElementById('ranking').innerHTML = rows.map((d,i) => {
+    const v = val(d), pct = Math.round(d.loaded/(d.loaded+d.empty)*100);
+    return `<button class="item" data-d="${d.id}">
+      <div class="rank" style="color:${medal[i]||'#9AA7B4'}">${i+1}</div>
+      <div class="av">${d.ini}${d.online?'<span class="dot"></span>':''}</div>
+      <div class="grow" style="display:flex;flex-direction:column;gap:6px">
+        <div class="between"><b>${d.name}</b><b>${state.metric==='deliveries'? v+' livr.' : fmt(v)+' km'}</b></div>
+        <div class="bar thin"><div class="l" style="width:${pct}%"></div><div class="e"></div></div>
+      </div></button>`;
+  }).join('');
+  document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { state.profile=b.dataset.d; go('profil'); });
+
+  let L=0,E=0; rows.forEach(d => { L+=d.loaded; E+=d.empty; });
+  document.getElementById('cTotal').textContent = fmt(L+E)+' km';
+  document.getElementById('cLoaded').textContent = fmt(L)+' km';
+  document.getElementById('cEmpty').textContent = fmt(E)+' km';
+  document.getElementById('cBar').style.width = Math.round(L/(L+E)*100)+'%';
+  document.getElementById('onlineCount').textContent = '● '+DRIVERS.filter(d=>d.online).length+' en route';
+}
+
+/* ---------- fiche chauffeur ---------- */
+function renderProfile(){
+  const d = DRIVERS.find(x => x.id===state.profile);
+  const tot = d.loaded+d.empty, pct = Math.round(d.loaded/tot*100);
+  const opts = DRIVERS.map(x => `<button class="pill ${x.id===d.id?'on':''}" data-pf="${x.id}">${x.name}</button>`).join('');
+  document.getElementById('v-profil').innerHTML = `
+    <div class="row" style="margin-bottom:18px;flex-wrap:wrap">${opts}</div>
+    <div class="row" style="gap:16px;margin-bottom:20px">
+      <div class="av" style="width:68px;height:68px;font-size:22px">${d.ini}</div>
+      <div><h1 style="margin:0 0 4px">${d.name} <span class="demo">Données d'exemple</span></h1>
+        <div class="soft" style="font-size:14px">${d.online?'<span style="color:var(--ok)">● En route</span>':'<span class="muted">Hors ligne</span>'} · ${d.truck}</div></div>
+    </div>
+    <div class="grid2">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+          <span class="muted">Kilomètres ce mois</span>
+          <div class="row" style="gap:30px">
+            <div class="k"><span class="lbl" style="color:var(--loaded)">CHARGÉ</span><span style="font-size:28px">${fmt(d.loaded)}</span></div>
+            <div class="k"><span class="lbl" style="color:var(--empty)">À VIDE</span><span style="font-size:28px">${fmt(d.empty)}</span></div>
+            <div class="k"><span class="lbl">TOTAL</span><span style="font-size:28px">${fmt(tot)}</span></div>
+          </div>
+          <div class="bar"><div class="l" style="width:${pct}%"></div><div class="e"></div></div>
+          <span class="soft" style="font-size:13px">${pct} % de la distance avec marchandise</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="muted">Livraisons</span><b>${d.deliveries}</b></div>
+          <div class="stat"><span class="muted">Revenus jeu</span><b>${fmt(d.money)} €</b></div>
+          <div class="stat"><span class="muted">Carburant</span><b>${fmt(d.fuel)} L</b></div>
+          <div class="stat"><span class="muted">Conso moy.</span><b>${(d.fuel/tot*100).toFixed(1).replace('.',',')} L/100</b></div>
+          <div class="stat"><span class="muted">Dégâts moy.</span><b>${String(d.damage).replace('.',',')} %</b></div>
+          <div class="stat"><span class="muted">Heures de conduite</span><b>${d.hours} h</b></div>
+        </div>
+      </div>
+      <div>
+        <h2>Derniers trajets</h2>
+        <div class="list">
+          ${[['Calais → Paris','Lait, 16 t',289,41,''],['Bruxelles → Calais','Pièces auto, 12 t',212,18,' · ferry exclu'],['Lyon → Strasbourg','Acier, 24 t',494,63,'']].map(t => `
+          <div class="panel" style="padding:12px 14px">
+            <div class="between"><b>${t[0]}</b><span style="color:var(--ok)">Livré</span></div>
+            <div class="soft" style="font-size:13px;margin-top:4px">${t[1]} · <span style="color:var(--loaded)">${t[2]} km chargé</span> · <span style="color:var(--empty)">${t[3]} km à vide</span>${t[4]}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  document.querySelectorAll('[data-pf]').forEach(b => b.onclick = () => { state.profile=b.dataset.pf; renderProfile(); });
+}
+
+/* ---------- carte (simulation) ---------- */
+const CITIES = { Calais:[140,60], Bruxelles:[360,70], Paris:[210,210], Strasbourg:[500,190], Lyon:[260,380], Nantes:[60,300], Marseille:[320,470], Francfort:[540,80] };
+const ROADS = [['Calais','Paris'],['Calais','Bruxelles'],['Bruxelles','Paris'],['Bruxelles','Francfort'],['Francfort','Strasbourg'],['Paris','Strasbourg'],['Paris','Lyon'],['Paris','Nantes'],['Lyon','Strasbourg'],['Lyon','Marseille'],['Nantes','Lyon']];
+const LIVE = [
+  { name:'Lucas_R',   from:'Paris',     to:'Lyon',       t:0.45, speed:82, cargo:'Électronique, 18 t', loaded:true },
+  { name:'Sophie M.', from:'Bruxelles', to:'Francfort',  t:0.30, speed:74, cargo:'Bois, 22 t',         loaded:true },
+  { name:'Nico972',   from:'Nantes',    to:'Paris',      t:0.20, speed:61, cargo:'Va chercher sa remorque', loaded:false },
+];
+(function drawMap(){
+  const svg = document.getElementById('roads');
+  svg.innerHTML = ROADS.map(([a,b]) => { const [x1,y1]=CITIES[a],[x2,y2]=CITIES[b];
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2A3A4A" stroke-width="3" stroke-linecap="round"/>`; }).join('');
+  const map = document.getElementById('map');
+  Object.entries(CITIES).forEach(([n,[x,y]]) => {
+    map.insertAdjacentHTML('beforeend', `<div class="citydot" style="left:${x/6}%;top:${y/5.2}%"></div><div class="city" style="left:${x/6}%;top:${y/5.2}%">${n}</div>`);
+  });
+  LIVE.forEach((d,i) => {
+    const c = d.loaded ? 'var(--loaded)' : 'var(--empty)';
+    map.insertAdjacentHTML('beforeend', `<div class="truck" id="tr${i}"><div class="tag" style="background:${c}">${d.name} · <span id="sp${i}">${d.speed}</span></div><div class="pt" style="background:${c}"></div></div>`);
+  });
+})();
+function tickMap(){
+  LIVE.forEach((d,i) => {
+    d.t += 0.004 + Math.random()*0.002;
+    if (d.t >= 1){ const prev=d.from; d.from=d.to; const nexts = ROADS.filter(r=>r.includes(d.from)).map(r=>r[0]===d.from?r[1]:r[0]).filter(c=>c!==prev); d.to = nexts[Math.floor(Math.random()*nexts.length)] || prev; d.t=0; }
+    d.speed = Math.max(55, Math.min(90, d.speed + Math.round((Math.random()-0.5)*6)));
+    const [x1,y1]=CITIES[d.from],[x2,y2]=CITIES[d.to];
+    const el = document.getElementById('tr'+i);
+    el.style.left = ((x1+(x2-x1)*d.t)/6)+'%'; el.style.top = ((y1+(y2-y1)*d.t)/5.2)+'%';
+    document.getElementById('sp'+i).textContent = d.speed;
+  });
+  document.getElementById('liveList').innerHTML = LIVE.map(d => {
+    const [x1,y1]=CITIES[d.from],[x2,y2]=CITIES[d.to];
+    const left = Math.round(Math.hypot(x2-x1,y2-y1)*1.4*(1-d.t));
+    return `<div class="panel" style="padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+      <div class="between"><b>${d.name}</b><span class="lbl" style="color:${d.loaded?'var(--loaded)':'var(--empty)'}">${d.loaded?'CHARGÉ':'À VIDE'}</span></div>
+      <div class="soft" style="font-size:13px">${d.from} → ${d.to} · ${d.cargo}</div>
+      <div class="muted" style="font-size:12px">${d.speed} km/h · reste ${left} km</div></div>`;
+  }).join('');
+}
+
+/* ---------- tablette ---------- */
+let tabKm = 251, tabLeft = 214;
+function tickTablet(){
+  const now = new Date();
+  document.getElementById('tabClock').textContent = now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  if (tabLeft > 0){ tabKm++; tabLeft--; }
+  document.getElementById('tabLoaded').textContent = tabKm+' km';
+  document.getElementById('tabLeft').textContent = tabLeft+' km';
+  document.getElementById('tabProg').style.width = Math.round((1-tabLeft/465)*100)+'%';
+}
+
+const v = new URLSearchParams(location.search).get('v');
+if (v) document.getElementById('appVersion').textContent = 'Télémétrie · v' + v + ' (démo)';
+renderRanking(); tickMap(); tickTablet();
+setInterval(tickMap, 1000);
+setInterval(tickTablet, 3000);
+</script>
+</body>
+</html>
