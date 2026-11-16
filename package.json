@@ -1,6 +1,6 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Télémétrie Entreprise - application de suivi pour Euro Truck Simulator 2",
   "author": "charlesantoine972-bit",
   "main": "main.js",

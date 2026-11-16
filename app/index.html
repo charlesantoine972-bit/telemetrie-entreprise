@@ -15,11 +15,48 @@
     font-family:"Segoe UI",Inter,system-ui,sans-serif;}
   button{font-family:inherit;cursor:pointer}
   .app{display:flex;height:100vh}
-  .side{width:240px;flex:none;background:var(--nav);border-right:1px solid var(--line);
-    display:flex;flex-direction:column;padding:20px 14px;gap:6px}
+  .side{width:248px;flex:none;background:var(--nav);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;padding:18px 12px 12px;gap:4px}
+  .navscroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -4px;padding:0 4px}
+  .navrow{display:flex;align-items:center;gap:6px}
+  .navrow .navbtn{flex:1;min-width:0}
+  .switch{position:relative;width:38px;height:22px;flex:none;margin-right:8px}
+  .switch input{opacity:0;width:0;height:0;position:absolute}
+  .switch span{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:.2s;cursor:pointer}
+  .switch span::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:.2s}
+  .switch input:checked + span{background:var(--ok)}
+  .switch input:checked + span::after{left:19px;background:#fff}
+  .switch input:disabled + span{opacity:.45;cursor:not-allowed}
+  .sideconn{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);padding:0 10px 12px}
+  .sideconn .d{width:8px;height:8px;border-radius:50%;background:#7F8E9C}
+  .sidefoot{border-top:1px solid var(--line);padding:10px 10px 2px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  .sidefoot b{color:var(--soft)}
+  .hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+    background:radial-gradient(1200px 500px at 50% -10%, #1C3348 0%, rgba(15,23,32,0) 60%), linear-gradient(180deg,#132131 0%,#0F1720 100%);}
+  .hero::before{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+    background:repeating-linear-gradient(115deg, transparent 0 46px, rgba(242,169,59,.06) 46px 48px, transparent 48px 120px);}
+  .hero-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:42px 32px 30px;text-align:center}
+  .hero-title{font-size:40px;font-weight:800;letter-spacing:.01em}
+  .hero-sub{font-size:15px;color:var(--soft);margin-top:-10px}
+  .statusrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .launch{width:min(520px,100%);height:58px;border:none;border-radius:14px;font-size:17px;font-weight:800;letter-spacing:.04em;color:#0F1720;
+    background:linear-gradient(90deg,#F2A93B,#FFC56B);box-shadow:0 8px 30px rgba(242,169,59,.25)}
+  .launch:hover{filter:brightness(1.06)}
+  .hint{font-size:13px;color:var(--muted);margin-top:-8px}
+  .hint a{color:var(--loaded);font-weight:600}
+  .shortcuts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .shortcut{display:flex;align-items:center;gap:10px;height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:rgba(24,34,45,.85);color:var(--text);font-size:14px;font-weight:600}
+  .shortcut:hover{border-color:#3A4A5B}
+  details.acc{width:min(620px,100%);background:rgba(24,34,45,.85);border:1px solid var(--line);border-radius:14px;text-align:left}
+  details.acc summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;color:var(--loaded);display:flex;justify-content:space-between}
+  details.acc summary::after{content:"▾";color:var(--muted)}
+  details.acc[open] summary::after{content:"▴"}
+  details.acc .acc-in{padding:0 18px 16px;color:var(--soft);font-size:14px;line-height:1.7}
+  .soonbox{max-width:640px;display:flex;flex-direction:column;gap:14px}
+  .soonicon{width:64px;height:64px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--loaded)}
   .brand{font-weight:700;font-size:18px;padding:4px 10px 2px}
   .brand-sub{font-size:12px;color:var(--muted);padding:0 10px 18px}
-  .navbtn{display:flex;align-items:center;gap:12px;height:46px;padding:0 12px;border-radius:12px;
+  .navbtn{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:12px;
     border:none;background:transparent;color:var(--muted);font-size:14px;text-align:left}
   .navbtn:hover{background:#1A2531;color:var(--text)}
   .navbtn.on{background:#1F2B38;color:var(--loaded);font-weight:600}
@@ -67,8 +104,9 @@
   .tgrid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-height:0}
   .k{display:flex;flex-direction:column;gap:2px} .k span:first-child{font-size:12px;color:var(--muted)} .k span:last-child{font-size:22px;font-weight:700}
   .hidden{display:none !important}
-  .navsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7F8E9C;padding:14px 12px 4px}
-  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--bg);background:#7F8E9C;padding:2px 7px;border-radius:999px}
+  .navsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7F8E9C;padding:12px 12px 4px}
+  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--bg);background:#7F8E9C;padding:2px 7px;border-radius:999px;flex:none}
+  .soon.prev{background:#5BA4E6}
   .chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);vertical-align:middle;margin-left:10px}
   .chip .d{width:9px;height:9px;border-radius:50%}
   .speed{font-size:84px;font-weight:700;line-height:1;letter-spacing:-.02em}
@@ -92,35 +130,79 @@
 <div class="app">
   <aside class="side">
     <div class="brand" id="companyName">Télémétrie Entreprise</div>
-    <div class="brand-sub" id="appVersion">Télémétrie · version démo</div>
-    <button class="navbtn on" data-view="telemetrie">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg>
-      Télémétrie</button>
-    <button class="navbtn" data-view="trajets">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-      Mes trajets</button>
-    <button class="navbtn" data-view="reglages">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-      Réglages</button>
-    <div class="navsec">Aperçu</div>
-    <button class="navbtn" data-view="classement">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
-      Classement<span class="soon">Bientôt</span></button>
-    <button class="navbtn" data-view="carte">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
-      Carte en direct<span class="soon">Bientôt</span></button>
-    <button class="navbtn" data-view="profil">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-      Fiche chauffeur<span class="soon">Bientôt</span></button>
-    <button class="navbtn" data-view="tablette">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/></svg>
-      Tablette in-game<span class="soon">Bientôt</span></button>
-    <div class="side-foot">Les pages « Aperçu » utilisent des données d'exemple. Elles seront branchées dans les prochaines versions.</div>
+    <div class="brand-sub" id="appVersion" style="padding-bottom:8px">Version</div>
+    <div class="sideconn" id="sideConn"><span class="d"></span><span>En attente du jeu</span></div>
+    <div class="navscroll">
+      <div class="navsec" style="padding-top:4px">Général</div>
+      <button class="navbtn on" data-view="accueil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Accueil</span></button>
+      <button class="navbtn" data-view="telemetrie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Télémétrie</span></button>
+      <button class="navbtn" data-view="trajets"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
+      <button class="navbtn" data-view="cartePerso"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span><span class="soon">Bientôt</span></button>
+      <div class="navsec">Entreprise</div>
+      <button class="navbtn" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Tableau de bord</span><span class="soon">Bientôt</span></button>
+      <button class="navbtn" data-view="classement"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Classement</span><span class="soon prev">Aperçu</span></button>
+      <button class="navbtn" data-view="carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 20a7 7 0 0 0-3-5.7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chauffeurs live</span><span class="soon prev">Aperçu</span></button>
+      <button class="navbtn" data-view="convois"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Convois</span><span class="soon">Bientôt</span></button>
+      <button class="navbtn" data-view="defis"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h11l-2 4 2 4H5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Défis & duels</span><span class="soon">Bientôt</span></button>
+      <button class="navbtn" data-view="missions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Missions</span><span class="soon">Bientôt</span></button>
+      <button class="navbtn" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
+      <div class="navsec">En jeu</div>
+      <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span>Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
+      <div class="navrow"><button class="navbtn" data-view="gps"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Mini-GPS</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="gps" disabled><span></span></label></div>
+      <div class="navrow"><button class="navbtn" data-view="tablette"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/></svg><span>Tablette</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="tablette" disabled><span></span></label></div>
+      <div class="navsec">Options</div>
+      <button class="navbtn" data-view="reglages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
+    </div>
+    <div class="sidefoot"><div>Chauffeur : <b id="sidePseudo">non défini</b></div><div>Entreprise : <b>aucune</b> <span style="opacity:.8">(bientôt)</span></div></div>
   </aside>
 
   <main class="main">
+    <!-- ACCUEIL -->
+    <section id="v-accueil">
+      <div class="hero"><div class="hero-in">
+        <div class="hero-title">Télémétrie Entreprise</div>
+        <div class="hero-sub">Ton compagnon de route pour Euro Truck Simulator 2 et American Truck Simulator</div>
+        <div class="statusrow">
+          <span class="chip" id="hGame" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Jeu : en attente</span>
+          <span class="chip" id="hPlugin" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Plugin : vérification…</span>
+          <span class="chip" id="hUpdate" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Mises à jour : vérification…</span>
+          <span class="chip" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Serveur entreprise : bientôt</span>
+        </div>
+        <button class="launch" id="btnLaunch">LANCER EURO TRUCK SIMULATOR 2</button>
+        <div class="hint" id="launchHint">Le plugin est vérifié, puis le jeu se lance via Steam. <a href="#" id="lnkAts">Lancer American Truck Simulator</a></div>
+        <div class="shortcuts">
+          <button class="shortcut" data-link="truckersmp">TruckersMP</button>
+          <button class="shortcut" data-link="trucky">Trucky</button>
+          <button class="shortcut" data-link="trucksbook">TrucksBook</button>
+          <button class="shortcut" data-link="mods">Dossier des mods</button>
+        </div>
+        <div class="statusrow" id="hToday" style="color:var(--soft);font-size:14px"></div>
+        <details class="acc"><summary>Guide de démarrage rapide</summary><div class="acc-in">
+          1. Ouvre l'appli : elle installe toute seule le plugin dans le jeu (vérifie dans <b>Options</b>).<br>
+          2. Clique sur <b>Lancer le jeu</b>. Au premier lancement, le jeu affiche un message sur les « fonctions SDK avancées » : clique sur <b>OK</b>.<br>
+          3. Roule : la page <b>Télémétrie</b> se remplit en direct, et tes missions s'enregistrent dans <b>Ma carrière</b>.<br>
+          4. Règle tes préférences (seuil réel / course, type de véhicule) dans <b>Options</b>.
+        </div></details>
+        <details class="acc"><summary>Prochains événements</summary><div class="acc-in">
+          Le calendrier des convois et événements de ton entreprise arrive avec la partie <b>Entreprise</b>.
+        </div></details>
+      </div></div>
+    </section>
+
+    <!-- PAGES À VENIR -->
+    <section id="v-soon" class="hidden">
+      <div class="soonbox">
+        <div class="soonicon" id="soonIcon"></div>
+        <h1 style="margin:0" id="soonTitle"></h1>
+        <span class="demo" style="margin:0;align-self:flex-start">Bientôt</span>
+        <p class="soft" style="font-size:15px;line-height:1.7;margin:0" id="soonText"></p>
+        <div class="panel"><h2 style="margin-bottom:8px">Ce qui est prévu</h2><ul class="soft" id="soonList" style="margin:0;padding-left:20px;line-height:1.9"></ul></div>
+        <div class="muted" style="font-size:13px" id="soonWhen"></div>
+      </div>
+    </section>
+
     <!-- TÉLÉMÉTRIE (réelle) -->
-    <section id="v-telemetrie">
+    <section id="v-telemetrie" class="hidden">
       <h1>Télémétrie <span class="chip" id="connChip"><span class="d" style="background:#7F8E9C"></span>En attente du jeu</span></h1>
       <div id="waitPanel" class="panel" style="margin-bottom:18px">
         <h2>En attente du jeu</h2>
@@ -201,7 +283,7 @@
 
     <!-- RÉGLAGES -->
     <section id="v-reglages" class="hidden">
-      <h1>Réglages</h1>
+      <h1>Options</h1>
       <div class="grid2">
         <div class="panel" style="display:flex;flex-direction:column;gap:14px">
           <h2 style="margin:0">Plugin du jeu</h2>
@@ -213,7 +295,9 @@
           <div class="muted" style="font-size:13px" id="pluginMsg"></div>
         </div>
         <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-          <h2 style="margin:0">Règle km réels / course</h2>
+          <h2 style="margin:0">Profil et règle km réels / course</h2>
+          <label class="field">Ton pseudo de chauffeur
+            <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
           <label class="field">Type de véhicule
             <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
           <div class="row" style="gap:14px">
@@ -334,17 +418,36 @@ const DRIVERS = [
   { id:'jade',   name:'Jade_L',     ini:'JL', truck:'MAN TGX',           loaded:2750, empty:1320, deliveries:9,  money:74600,  fuel:1290, damage:1.8, hours:60,  online:false },
 ];
 const PERIOD_FACTOR = { semaine:0.24, mois:1, total:7.3 };
-let state = { view:'telemetrie', metric:'total', period:'mois', profile:'lucas' };
+let state = { view:'accueil', metric:'total', period:'mois', profile:'lucas' };
 
 /* ---------- navigation ---------- */
+const SOON = {
+  cartePerso: { t: 'Carte', d: "La vraie carte d'Euro Truck Simulator 2, avec ton camion en direct.", l: ['Ta position en direct sur la carte du jeu', 'Destination, distance et temps restants', 'Tracé de tes trajets terminés'], w: 'Prévu à l\'étape 1.3.' },
+  vtc: { t: 'Tableau de bord VTC', d: 'La vue d\'ensemble de ton entreprise.', l: ['Kilomètres et livraisons de toute l\'entreprise', 'Chauffeurs en ligne', 'Objectif collectif du mois', 'Événement du jour'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  convois: { t: 'Convois & événements', d: 'Le calendrier des convois de ton entreprise, avec les inscriptions.', l: ['Calendrier du mois', 'Détail d\'un convoi : rendez-vous, départ, trajet', 'Inscription / désinscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  defis: { t: 'Défis & duels', d: 'Lance des défis à tes collègues et fixe-toi des objectifs.', l: ['Objectifs personnels (semaine / mois)', 'Duels entre chauffeurs (distance, gains, livraisons)', 'Défis entreprise contre entreprise', 'Célébrations des paliers atteints'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  missions: { t: 'Missions partagées', d: 'Envoie des missions et des feuilles de route à tes collègues.', l: ['Envoyer une mission à un chauffeur', 'Boucles et circuits en plusieurs étapes', 'Feuille de route en PDF'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  infos: { t: 'Infos VTC', d: 'La présentation de ton entreprise.', l: ['Histoire et règles de l\'entreprise', 'Conseils et FAQ', 'Liste des membres'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  hud: { t: 'Bandeau / HUD', d: 'Un petit affichage discret par-dessus le jeu : vitesse, limitation, mode réel / course, distance restante.', l: ['Activable / désactivable ici avec l\'interrupteur', 'Logo : celui de l\'appli, de ton entreprise ou aucun', 'Choix des infos affichées, position, taille, transparence', 'Alerte en cas d\'excès de vitesse'], w: 'Prévu à l\'étape 1.2. Le jeu doit être en « plein écran fenêtré ».' },
+  gps: { t: 'Mini-GPS', d: 'Un petit GPS discret en jeu, style TomTom.', l: ['Activable / désactivable ici', 'Destination, distance et temps restants', 'Limitation de vitesse'], w: 'Prévu à l\'étape 1.4.' }
+};
+const SOON_ICONS = {"cartePerso": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "vtc": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1\"/><path d=\"M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4\"/>", "convois": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "defis": "<path d=\"M5 21V4h11l-2 4 2 4H5\"/>", "missions": "<path d=\"M3 7l9-4 9 4-9 4-9-4z\"/><path d=\"M3 7v10l9 4 9-4V7\"/><path d=\"M12 11v10\"/>", "infos": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v6M12 7.5h.01\"/>", "hud": "<rect x=\"3\" y=\"14\" width=\"18\" height=\"6\" rx=\"2\"/><path d=\"M3 5h18M3 9h10\"/>", "gps": "<path d=\"M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z\"/><circle cx=\"12\" cy=\"9\" r=\"2.5\"/>"};
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
 function go(view){
   state.view = view;
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('on', b.dataset.view === view));
-  ['telemetrie','trajets','reglages','classement','carte','profil','tablette'].forEach(v =>
-    document.getElementById('v-'+v).classList.toggle('hidden', v !== view));
+  const soon = SOON[view];
+  document.querySelectorAll('main > section').forEach(sec => sec.classList.toggle('hidden', sec.id !== 'v-' + (soon ? 'soon' : view)));
+  if (soon){
+    document.getElementById('soonTitle').textContent = soon.t;
+    document.getElementById('soonText').textContent = soon.d;
+    document.getElementById('soonWhen').textContent = soon.w;
+    document.getElementById('soonList').innerHTML = soon.l.map(x => '<li>' + x + '</li>').join('');
+    document.getElementById('soonIcon').innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + SOON_ICONS[view] + '</svg>';
+  }
   if (view === 'profil') renderProfile();
   if (view === 'reglages') loadSettingsUI();
+  document.querySelector('main').scrollTop = 0;
 }
 
 /* ---------- classement ---------- */
@@ -499,6 +602,14 @@ function renderLive(sn){
     : L.paused ? '<span class="d" style="background:#F2C14E"></span>' + game + ' · en pause'
     : '<span class="d" style="background:var(--ok)"></span>' + game + ' · connecté';
   document.getElementById('waitPanel').classList.toggle('hidden', sn.connected);
+  const dotCol = !sn.connected ? '#7F8E9C' : L.paused ? '#F2C14E' : 'var(--ok)';
+  const txt = !sn.connected ? 'En attente du jeu' : (L.paused ? 'Jeu en pause' : 'Jeu connecté');
+  document.getElementById('sideConn').innerHTML = `<span class="d" style="background:${dotCol}"></span><span>${txt}</span>`;
+  document.getElementById('hGame').innerHTML = `<span class="d" style="background:${dotCol}"></span>Jeu : ${!sn.connected ? 'en attente' : (L.paused ? 'en pause' : 'connecté')}`;
+  const t = sn.today, nb = sn.jobs.filter(j => new Date(j.ended).toDateString() === new Date().toDateString() && j.status === 'livrée').length;
+  document.getElementById('hToday').innerHTML = (t.loaded + t.empty) > 0
+    ? `Aujourd'hui : <b style="color:var(--loaded);margin:0 4px">${km(t.loaded)}</b> chargés · <b style="color:var(--empty);margin:0 4px">${km(t.empty)}</b> à vide · <b style="margin:0 4px">${nb}</b> livraison${nb > 1 ? 's' : ''}`
+    : 'Aucun kilomètre aujourd\'hui pour l\'instant. Bonne route !';
 
   const th = sn.thresholds;
   setText('lRule', `Seuil ${th.limit} km/h · ${th.pct} % max`);
@@ -579,6 +690,9 @@ function renderPlugin(list, msg){
       <div class="grow"><b>${g.name}</b><div class="muted" style="font-size:12px;overflow:hidden;text-overflow:ellipsis">${g.bin}</div></div>
       <span class="soft" style="font-size:13px;text-align:right">${g.message}</span></div>`).join('')
     : '<div class="soft">Aucun jeu trouvé automatiquement. Clique sur « Choisir le dossier du jeu… » et sélectionne le dossier d\'Euro Truck Simulator 2.</div>';
+  const okCount = list.filter(g => g.status === 'ok').length;
+  const pc = !HAS_APP ? ['#7F8E9C', 'disponible dans l\'appli'] : okCount ? ['var(--ok)', 'installé'] : list.length ? ['#FF8A5B', 'à vérifier'] : ['#FF8A5B', 'jeu introuvable'];
+  document.getElementById('hPlugin').innerHTML = `<span class="d" style="background:${pc[0]}"></span>Plugin : ${pc[1]}`;
   const w = document.getElementById('waitPlugin');
   const ok = list.filter(g => g.status === 'ok').map(g => g.name);
   w.textContent = ok.length ? 'Plugin installé pour : ' + ok.join(', ') + '.' : 'Plugin pas encore installé : va dans Réglages.';
@@ -588,6 +702,7 @@ function renderPlugin(list, msg){
 async function loadSettingsUI(){
   if (!HAS_APP) return;
   const st = await window.tel.getSettings();
+  document.getElementById('sPseudo').value = st.pseudo || '';
   document.getElementById('sType').value = st.vehicleType;
   document.getElementById('sTruck').value = st.limitTruck;
   document.getElementById('sCar').value = st.limitCar;
@@ -595,14 +710,45 @@ async function loadSettingsUI(){
   renderPlugin(await window.tel.pluginStatus());
 }
 
+async function refreshPseudo(){
+  if (!HAS_APP) return;
+  const st = await window.tel.getSettings();
+  setText('sidePseudo', st.pseudo || 'non défini');
+}
+async function refreshUpdate(){
+  if (!HAS_APP) return;
+  const u = await window.tel.updateStatus();
+  const M = { dev: ['#7F8E9C', 'mode test'], idle: ['#7F8E9C', 'vérification…'], checking: ['#7F8E9C', 'vérification…'], none: ['var(--ok)', 'à jour (v' + u.current + ')'],
+    downloading: ['#F2C14E', 'téléchargement de la v' + u.version + '…'], ready: ['var(--loaded)', 'v' + u.version + ' prête, redémarre'], error: ['#7F8E9C', 'hors ligne'] };
+  const m = M[u.state] || M.idle;
+  document.getElementById('hUpdate').innerHTML = `<span class="d" style="background:${m[0]}"></span>Mises à jour : ${m[1]}`;
+}
+async function launch(game){
+  const hint = document.getElementById('launchHint');
+  const r = await window.tel.launchGame(game);
+  renderPlugin(r.status || []);
+  hint.textContent = r.ok ? 'Lancement demandé à Steam… Bonne route !' : r.error;
+  setTimeout(() => { hint.innerHTML = 'Le plugin est vérifié, puis le jeu se lance via Steam. <a href="#" id="lnkAts">Lancer American Truck Simulator</a>'; bindAts(); }, 6000);
+}
+function bindAts(){ const a = document.getElementById('lnkAts'); if (a) a.onclick = (e) => { e.preventDefault(); launch('ats'); }; }
+
 if (HAS_APP){
+  document.getElementById('btnLaunch').onclick = () => launch('ets2');
+  bindAts();
+  document.querySelectorAll('[data-link]').forEach(b => b.onclick = async () => {
+    const ok = await window.tel.openLink(b.dataset.link);
+    if (!ok && b.dataset.link === 'mods') setText('launchHint', 'Dossier des mods introuvable (Documents\\Euro Truck Simulator 2\\mod).');
+  });
+  refreshPseudo(); refreshUpdate(); setInterval(refreshUpdate, 5000);
   document.getElementById('btnSave').onclick = async () => {
     await window.tel.setSettings({
+      pseudo: document.getElementById('sPseudo').value.trim(),
       vehicleType: document.getElementById('sType').value,
       limitTruck: Number(document.getElementById('sTruck').value) || 100,
       limitCar: Number(document.getElementById('sCar').value) || 110,
       racePct: Math.max(0, Number(document.getElementById('sPct').value) || 0)
     });
+    refreshPseudo();
     setText('saveMsg', 'Enregistré ✓'); setTimeout(() => setText('saveMsg', ''), 2000);
   };
   document.getElementById('btnInstall').onclick = async () => renderPlugin(await window.tel.installPlugin(), 'Vérification terminée.');
@@ -616,6 +762,7 @@ if (HAS_APP){
   document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {
   renderPlugin([]);
+  document.getElementById('hUpdate').innerHTML = '<span class="d" style="background:#7F8E9C"></span>Mises à jour : dans l\'appli';
 }
 
 const v = new URLSearchParams(location.search).get('v');

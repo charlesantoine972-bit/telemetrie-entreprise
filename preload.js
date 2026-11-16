@@ -6,5 +6,8 @@ contextBridge.exposeInMainWorld('tel', {
   installPlugin: () => ipcRenderer.invoke('plugin:install'),
   chooseGameFolder: () => ipcRenderer.invoke('plugin:choose'),
   getSettings: () => ipcRenderer.invoke('settings:get'),
-  setSettings: (patch) => ipcRenderer.invoke('settings:set', patch)
+  setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
+  updateStatus: () => ipcRenderer.invoke('update:status'),
+  launchGame: (game) => ipcRenderer.invoke('game:launch', game),
+  openLink: (key) => ipcRenderer.invoke('link:open', key)
 });

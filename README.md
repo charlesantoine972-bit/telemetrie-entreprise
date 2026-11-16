@@ -2,8 +2,8 @@
 
 Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2** : classement des chauffeurs (km chargés / à vide), carte en direct, fiche chauffeur et tablette in-game.
 
-> Version actuelle : **0.3** — la télémétrie est branchée sur le jeu (page Télémétrie, Mes trajets, Réglages).
-> Les pages « Aperçu » (classement, carte, fiche chauffeur, tablette) utilisent encore des données d'exemple.
+> Version actuelle : **0.4** — menu par catégories (Général / Entreprise / En jeu / Options), page Accueil avec lancement du jeu, télémétrie branchée sur le jeu.
+> Les pages « Aperçu » utilisent des données d'exemple ; les pages « Bientôt » décrivent les fonctions à venir.
 
 ## Comment ça marche
 
