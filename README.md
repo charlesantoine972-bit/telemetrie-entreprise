@@ -2,7 +2,18 @@
 
 Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2** : classement des chauffeurs (km chargés / à vide), carte en direct, fiche chauffeur et tablette in-game.
 
-> Version actuelle : **démo**. Toutes les données affichées sont des exemples ; le jeu n'est pas encore connecté.
+> Version actuelle : **0.3** — la télémétrie est branchée sur le jeu (page Télémétrie, Mes trajets, Réglages).
+> Les pages « Aperçu » (classement, carte, fiche chauffeur, tablette) utilisent encore des données d'exemple.
+
+## Comment ça marche
+
+- `plugin/` : petit plugin du jeu (DLL, SDK officiel SCS). Il envoie les infos du camion à l'application en local (UDP 127.0.0.1:47311), environ 10 fois par seconde. Il n'affiche rien et ne modifie rien dans le jeu.
+- L'application installe le plugin automatiquement dans Euro Truck Simulator 2 et American Truck Simulator (toutes les bibliothèques Steam), et le remet si une mise à jour du jeu l'a supprimé.
+- Comptage : **chargé** = mission en cours + remorque attelée ; **à vide** = le reste. Les sauts (ferry, train, changement de camion) ne sont pas comptés.
+- **Réel / course** : une mission passe en course si plus de 5 % de sa distance est faite au-dessus du seuil (100 km/h camion, 110 km/h car). Modifiable dans Réglages.
+- Les données sont enregistrées sur le PC (`%APPDATA%\telemetrie-entreprise\donnees.json`).
+
+Recompiler le plugin (Linux + mingw-w64) : `npm run build-plugin`. Tester sans le jeu : `npm start` puis `npm run simulateur`.
 
 ## Installer
 
