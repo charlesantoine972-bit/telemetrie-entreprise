@@ -90,7 +90,7 @@ class Telemetry extends EventEmitter {
 
   thresholds() {
     const s = this.getSettings();
-    return { limit: s.vehicleType === 'car' ? s.limitCar : s.limitTruck, pct: s.racePct };
+    return { limit: (this.live && this.live.busJob) || s.vehicleType === 'car' ? s.limitCar : s.limitTruck, pct: s.racePct };
   }
 
   // ---------------------------------------------------------------- état reçu
@@ -157,15 +157,16 @@ class Telemetry extends EventEmitter {
 
   // Tracé pour la carte (position monde x / z, en mètres)
   recordTrail(s) {
-    if (s.paused || (!s.x && !s.z)) return;
+    const x = s.x, z = s.z;
+    if (s.paused || !Number.isFinite(x) || !Number.isFinite(z)) return;
     const g = gameKey(s.game);
     if (this.trailGame !== g) { this.trail = []; this.trailGame = g; }
     const loaded = s.job && s.trailerConnected ? 1 : 0;
     const add = (list, step) => {
-      const p = [Math.round(s.x), Math.round(s.z), loaded];
+      const p = [Math.round(x), Math.round(z), loaded];
       const tail = list[list.length - 1];
       if (!tail) { list.push(p); return; }          // liste vide (ou juste après une coupure)
-      const d = Math.hypot(s.x - tail[0], s.z - tail[1]);
+      const d = Math.hypot(x - tail[0], z - tail[1]);
       if (d > TRAIL_JUMP) list.push(null, p);       // saut : on coupe le trait
       else if (d >= step || tail[2] !== loaded) list.push(p);
     };
@@ -232,7 +233,7 @@ class Telemetry extends EventEmitter {
     }
     return {
       connected, socketError: this.socketError || null,
-      live: s, job, thresholds: th,
+      live: s, job, thresholds: th, vehicleType: s && s.busJob ? 'car' : this.getSettings().vehicleType,
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },

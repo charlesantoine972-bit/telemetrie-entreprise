@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('tel', {
   openLink: (key) => ipcRenderer.invoke('link:open', key),
   testHud: () => ipcRenderer.invoke('hud:test'),
   onHud: (cb) => ipcRenderer.on('hud', (_e, d) => cb(d)),
+  gameContent: () => ipcRenderer.invoke('game:content'),
+  telemetryCapabilities: () => ipcRenderer.invoke('telemetry:capabilities'),
   map: {
     info: () => ipcRenderer.invoke('map:info'),
     history: () => ipcRenderer.invoke('map:history'),

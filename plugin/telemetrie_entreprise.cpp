@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <map>
 
 #include "scssdk_telemetry.h"
 #include "eurotrucks2/scssdk_eut2.h"
@@ -24,7 +25,7 @@
 #include "common/scssdk_telemetry_trailer_common_channels.h"
 #include "common/scssdk_telemetry_job_common_channels.h"
 
-#define PLUGIN_VERSION "1.1.0"
+#define PLUGIN_VERSION "1.2.0"
 static const unsigned short APP_PORT = 47311;
 
 // ---------------------------------------------------------------- état
@@ -34,6 +35,7 @@ struct Telemetry {
     double x = 0, y = 0, z = 0; // position monde (m)
     float heading = 0;          // 0..1
     float navDistance = 0;      // m
+    float localScale = 0;     // 0 = canal non disponible
     float navTime = 0;          // s
     float speedLimit = 0;       // m/s
     float fuel = 0;             // L
@@ -52,6 +54,7 @@ static unsigned gameVersion = 0;
 static std::string truckJson = "null";
 static std::string trailerJson = "null";
 static std::string jobJson = "null";
+static std::string busJobJson = "null";
 static scs_log_t gameLog = nullptr;
 
 static SOCKET sock = INVALID_SOCKET;
@@ -126,10 +129,36 @@ static void sendState() {
         t.cargoDamage, t.gameTime, t.restStop,
         t.trailerConnected ? "true" : "false", t.engine ? "true" : "false", t.parkingBrake ? "true" : "false");
     std::string msg = b;
+    char scale[80]; snprintf(scale, sizeof scale, "\"localScale\":%.4f,", t.localScale);
+    msg += scale;
+    msg += "\"busJob\":" + busJobJson + ",";
     msg += "\"truck\":" + truckJson + ",\"trailer\":" + trailerJson + ",\"job\":" + jobJson + "}";
     sendRaw(msg);
 }
 
+// Configuration bus : attributs indexés conservés dans des objets à clés numériques.
+static std::string indexedAttrsJson(const scs_named_value_t *a) {
+    std::map<std::string, std::string> scalar;
+    std::map<std::string, std::map<unsigned, std::string>> indexed;
+    for (; a && a->name; ++a) {
+        if (a->index == SCS_U32_NIL) scalar[a->name] = valueJson(a->value);
+        else indexed[a->name][a->index] = valueJson(a->value);
+    }
+    for (const auto &field : indexed) {
+        std::string values = "{";
+        for (const auto &item : field.second) {
+            if (values.size() > 1) values += ",";
+            values += esc(std::to_string(item.first).c_str()) + ":" + item.second;
+        }
+        scalar[field.first] = values + "}";
+    }
+    std::string out = "{";
+    for (const auto &field : scalar) {
+        if (out.size() > 1) out += ",";
+        out += esc(field.first.c_str()) + ":" + field.second;
+    }
+    return out + "}";
+}
 // ---------------------------------------------------------------- callbacks
 SCSAPI_VOID on_frame_end(const scs_event_t, const void *const, const scs_context_t) {
     ULONGLONG now = GetTickCount64();
@@ -147,6 +176,7 @@ SCSAPI_VOID on_configuration(const scs_event_t, const void *const event_info, co
     std::string id = info->id;
     bool empty = !info->attributes || !info->attributes->name;
     std::string attrs = empty ? "null" : attrsJson(info->attributes);
+    if (id == "bus_job") { busJobJson = empty ? "null" : indexedAttrsJson(info->attributes); sendState(); return; }
     if (id == SCS_TELEMETRY_CONFIG_truck) truckJson = attrs;
     else if (id == SCS_TELEMETRY_CONFIG_job) jobJson = attrs;
     else if (id == "trailer.0" || id == SCS_TELEMETRY_CONFIG_trailer) trailerJson = attrs;
@@ -216,6 +246,7 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
 
     auto ch = p->register_for_channel;
     const scs_u32_t N = SCS_U32_NIL, F = SCS_TELEMETRY_CHANNEL_FLAG_none;
+    ch(SCS_TELEMETRY_CHANNEL_local_scale, N, SCS_VALUE_TYPE_float, F, store_float, &t.localScale);
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_speed, N, SCS_VALUE_TYPE_float, F, store_float, &t.speed);
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_odometer, N, SCS_VALUE_TYPE_float, F, store_float, &t.odometer);
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_world_placement, N, SCS_VALUE_TYPE_dplacement, F, store_placement, nullptr);
