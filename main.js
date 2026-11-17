@@ -45,7 +45,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { style: 'navigation', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -152,10 +152,14 @@ function createWindow() {
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
 const HUD_W = 980, HUD_H = 440;
+function activeHudOptions(live = telemetry && telemetry.live) {
+  const profile = live && live.busJob ? 'bus' : 'truck';
+  return settings.hud && settings.hud[profile] || DEFAULTS.hud[profile];
+}
 function hudBounds() {
   const wa = screen.getPrimaryDisplay().bounds;
   const width = Math.min(HUD_W, wa.width), height = Math.min(HUD_H, wa.height);
-  const bas = settings.hud && settings.hud.position === 'bas';
+  const bas = activeHudOptions().position === 'bas';
   return { x: Math.round(wa.x + (wa.width - width) / 2), y: bas ? wa.y + Math.max(0, wa.height - height - 24) : wa.y + 4, width, height };
 }
 function hudData() {
@@ -171,7 +175,7 @@ function hudData() {
   const L = sn.live || {};
   const fresh = Date.now() - telemetry.lastPacket < 700;
   const playing = sn.connected && fresh && !L.paused && L.focused !== false;
-  return { ...sn, jobs: undefined, options: settings.hud, show: playing || test };
+  return { ...sn, jobs: undefined, options: activeHudOptions(sn.live), show: playing || test };
 }
 function syncHud() {
   const on = !!(settings.modules && settings.modules.hud) || Date.now() < hudTestUntil;

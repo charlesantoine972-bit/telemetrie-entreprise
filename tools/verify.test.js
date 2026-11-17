@@ -53,10 +53,41 @@ test('Plugin du jeu et Profil chauffeur sont regroupés dans une sous-catégorie
   assert.doesNotMatch(group.match(/^<details[^>]*>/)[0], /\bopen\b/);
 });
 
-test('les valeurs HUD sauvegardées sont conservées et les nouveaux réglages utilisent Navigation', () => {
-  const defaults = { look: { theme: 'base' }, hud: { style: 'navigation', position: 'haut' } };
-  assert.equal(mergeSavedSettings(defaults, { hud: { style: 'bandeau' } }).hud.style, 'bandeau');
-  assert.equal(mergeSavedSettings(defaults, {}).hud.style, 'navigation');
+test('les profils HUD camion et bus restent indépendants et migrent les anciens réglages', () => {
+  const defaults = {
+    look: { theme: 'base' },
+    hud: {
+      truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 },
+      bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }
+    }
+  };
+  const migrated = mergeSavedSettings(defaults, { hud: { style: 'bandeau', opacity: 60 } });
+  assert.equal(migrated.hud.truck.style, 'bandeau');
+  assert.equal(migrated.hud.bus.style, 'bandeau');
+  assert.equal(migrated.hud.truck.opacity, 60);
+  const separate = mergeSavedSettings(defaults, { hud: { truck: { style: 'minimal' }, bus: { style: 'compact' } } });
+  assert.equal(separate.hud.truck.style, 'minimal');
+  assert.equal(separate.hud.bus.style, 'compact');
+  assert.equal(separate.hud.truck.position, 'haut');
+});
+
+test('la taille de chaque aperçu HUD applique son échelle sans changer la position', () => {
+  const keys = ['logo', 'speed', 'sp', 'lim', 'mode', 'kLeft', 'left', 'kKm', 'km', 'today'];
+  const nodes = new Map(keys.map(key => [key, { textContent: '', className: '', classList: { toggle() {} } }]));
+  const root = {
+    className: '',
+    classList: { toggle() {} },
+    style: { setProperty() {} },
+    querySelector(selector) {
+      const match = /^\[data-h="(.+)"\]$/.exec(selector);
+      return match && nodes.get(match[1]);
+    }
+  };
+  const context = { HUD_STYLES: { bandeau: 'Bandeau', navigation: 'Navigation' }, hudMission() {}, hudCoach() {} };
+  vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud-render.js'), 'utf8'), context);
+  context.hudRender(root, { options: { style: 'navigation', scale: 80, position: 'bas' }, live: {}, today: {} });
+  assert.equal(root.style.transform, 'scale(0.8)');
+  assert.equal(root.style.transformOrigin, 'bottom center');
 });
 
 test('les seuils kilométriques sont bornés et entiers', () => {

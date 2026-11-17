@@ -49,7 +49,7 @@ class Telemetry extends EventEmitter {
   }
 
   load() {
-    const empty = { totals: { loaded: 0, empty: 0, real: 0, race: 0, deliveries: 0, cancelled: 0, revenue: 0, fuelUsed: 0, fines: 0, finesAmount: 0 }, days: {}, jobs: [] };
+    const empty = { totals: { loaded: 0, empty: 0, real: 0, race: 0, deliveries: 0, cancelled: 0, revenue: 0, fuelUsed: 0, fuelAdded: 0, fines: 0, finesAmount: 0 }, days: {}, jobs: [] };
     try {
       const d = JSON.parse(fs.readFileSync(this.file, 'utf8'));
       return { ...empty, ...d, totals: { ...empty.totals, ...(d.totals || {}) } };
@@ -74,7 +74,7 @@ class Telemetry extends EventEmitter {
       this.lastPacket = Date.now();
       if (msg.type === 'state') this.onState(msg);
       else if (msg.type === 'gameplay') this.onGameplay(msg);
-      else if (msg.type === 'shutdown') { this.live = null; this.lastOdo = null; }
+      else if (msg.type === 'shutdown') { this.live = null; this.lastOdo = null; this.lastFuel = null; this.lastTruck = null; this.lastFuelGame = null; }
     });
     this.sock.on('error', (e) => { this.socketError = e.message; });
     this.sock.bind(PORT, '127.0.0.1');
@@ -110,6 +110,7 @@ class Telemetry extends EventEmitter {
         cargo: s.job['cargo'], mass: s.job['cargo.mass'] || 0, income: s.job['income'] || 0,
         planned: s.job['planned_distance.km'] || 0,
         loaded: 0, empty: 0, over: 0, maxSpeed: 0,
+        fuelUsed: 0, fuelAdded: 0, fuelStops: [], expenses: 0, expenseItems: [],
         truck: s.truck ? `${s.truck.brand || ''} ${s.truck.name || ''}`.trim() : '',
         game: gameKey(s.game),
         fromId: s.job['source.city.id'] || null, toId: s.job['destination.city.id'] || null,
@@ -148,11 +149,33 @@ class Telemetry extends EventEmitter {
 
     this.recordTrail(s);
 
-    // Carburant consommé (les pleins sont ignorés)
-    if (this.lastFuel !== null && s.fuel < this.lastFuel && this.lastFuel - s.fuel < 5) {
-      this.data.totals.fuelUsed += this.lastFuel - s.fuel;
+    // Les niveaux reçus du jeu donnent le volume, mais pas le prix du plein.
+    const fuel = Number.isFinite(s.fuel) && s.fuel >= 0 ? s.fuel : null;
+    const truckName = s.truck ? `${s.truck.brand || ''} ${s.truck.name || ''}`.trim() : '';
+    const fuelGame = gameKey(s.game);
+    if (fuel !== null && this.lastFuel !== null && truckName === this.lastTruck && fuelGame === this.lastFuelGame) {
+      const delta = fuel - this.lastFuel;
+      if (delta < 0 && -delta < 5) {
+        this.data.totals.fuelUsed += -delta;
+        if (this.current) this.current.fuelUsed += -delta;
+        this.dirty = true;
+      } else if (delta > 0.05) {
+        this.data.totals.fuelAdded += delta;
+        if (this.current) {
+          this.current.fuelAdded += delta;
+          const now = Date.now();
+          const stop = this.current.fuelStops[this.current.fuelStops.length - 1];
+          if (stop && now - stop.at < 120000) {
+            stop.liters += delta;
+            stop.at = now;
+          } else this.current.fuelStops.push({ at: now, liters: delta });
+        }
+        this.dirty = true;
+      }
     }
-    this.lastFuel = s.fuel;
+    this.lastFuel = fuel;
+    this.lastTruck = truckName;
+    this.lastFuelGame = fuelGame;
   }
 
   // Tracé pour la carte (position monde x / z, en mètres)
@@ -190,9 +213,27 @@ class Telemetry extends EventEmitter {
     this.lastEvent = { id: e.id, at: Date.now(), data: e.data };
     const t = this.data.totals;
     if (e.id === 'job.delivered') this.finishJob('livrée', e.data);
-    else if (e.id === 'job.cancelled') this.finishJob('annulée', e.data);
-    else if (e.id === 'player.fined') { t.fines++; t.finesAmount += e.data['fine.amount'] || 0; this.dirty = true; }
+    else if (e.id === 'job.cancelled') {
+      this.recordExpense('annulation', e.data && e.data['cancel.penalty']);
+      this.finishJob('annulée', e.data);
+    } else if (e.id === 'player.fined') {
+      const amount = e.data && e.data['fine.amount'];
+      t.fines++; t.finesAmount += Number.isFinite(amount) ? amount : 0;
+      this.recordExpense('amende', amount);
+      this.dirty = true;
+    } else if (e.id === 'player.tollgate.paid') this.recordExpense('péage', e.data && e.data['pay.amount']);
+    else if (e.id === 'player.use.ferry') this.recordExpense('ferry', e.data && e.data['pay.amount']);
+    else if (e.id === 'player.use.train') this.recordExpense('train', e.data && e.data['pay.amount']);
     this.emit('event', this.lastEvent);
+  }
+
+  recordExpense(type, amount) {
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    if (this.current) {
+      this.current.expenses += amount;
+      this.current.expenseItems.push({ type, amount, at: Date.now() });
+      this.dirty = true;
+    }
   }
 
   finishJob(status, info, silent) {
@@ -211,7 +252,9 @@ class Telemetry extends EventEmitter {
       ...j, key: undefined, path: downsample(j.path || [], JOB_PATH_MAX), status, ended: Date.now(), distance: dist, overPct, mode: race ? 'course' : 'réel',
       revenue: info && info.revenue != null ? info.revenue : (status === 'livrée' ? j.income : 0),
       damage: info && info['cargo.damage'] != null ? info['cargo.damage'] : (this.live ? this.live.cargoDamage : 0),
-      gameDistance: info && info['distance.km'] != null ? info['distance.km'] : null
+      gameDistance: info && info['distance.km'] != null ? info['distance.km'] : null,
+      fuelUsed: j.fuelUsed, fuelAdded: j.fuelAdded, fuelStops: j.fuelStops,
+      expenses: j.expenses, expenseItems: j.expenseItems
     };
     this.data.jobs.unshift(entry);
     this.data.jobs = this.data.jobs.slice(0, 300);

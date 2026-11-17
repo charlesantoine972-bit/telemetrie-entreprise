@@ -5,6 +5,9 @@ function hudRender(root, d){
   const o = d.options || {};
   root.className = 'hud s-' + (HUD_STYLES[o.style] ? o.style : 'bandeau');
   root.style.setProperty('--op', (o.opacity || 82) / 100);
+  const scale = [80, 100, 120].includes(Number(o.scale)) ? Number(o.scale) : 100;
+  root.style.transform = `scale(${scale / 100})`;
+  root.style.transformOrigin = o.position === 'bas' ? 'bottom center' : 'top center';
   q('logo').classList.toggle('off', o.logo === false);
   const L = d.live || {}, th = d.thresholds || { limit: 100, pct: 5 };
   const kmh = Math.round((L.speed || 0) * 3.6);
