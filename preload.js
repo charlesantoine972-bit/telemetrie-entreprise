@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld('tel', {
   chooseGameFolder: () => ipcRenderer.invoke('plugin:choose'),
   getSettings: () => ipcRenderer.invoke('settings:get'),
   setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
+  systemAccent: () => ipcRenderer.invoke('system:accent'),
+  onSystemAccent: (cb) => ipcRenderer.on('system:accent', (_e, c) => cb(c)),
   updateStatus: () => ipcRenderer.invoke('update:status'),
   checkUpdate: () => ipcRenderer.invoke('update:check'),
   downloadUpdate: () => ipcRenderer.invoke('update:download'),

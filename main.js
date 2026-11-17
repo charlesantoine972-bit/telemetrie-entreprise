@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
@@ -39,12 +39,13 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
   const pick = (v, list, d) => list.includes(String(v)) ? String(v) : d;
-  return { theme: pick(l.theme, ['base', 'sombre', 'clair', 'systeme'], 'base'), vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
+  const accent = /^#[0-9a-f]{6}$/i.test(String(l.accent)) ? String(l.accent).toUpperCase() : pick(l.accent, ['defaut', 'windows'], 'defaut');
+  return { theme: pick(l.theme, ['base', 'sombre', 'clair', 'systeme'], 'base'), accent, vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
     zoom: pick(l.zoom, ['100', '115', '130'], '100'), contrast: !!l.contrast, motion: !!l.motion };
 }
 function windowBackground(st) {
@@ -60,6 +61,14 @@ function loadSettings() {
 function saveSettings() {
   fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
   fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2));
+}
+
+function systemAccent() {
+  try {
+    if (!systemPreferences.getAccentColor) return null;
+    const c = systemPreferences.getAccentColor();
+    return /^[0-9a-f]{6}/i.test(c || '') ? '#' + c.slice(0, 6).toUpperCase() : null;
+  } catch { return null; }
 }
 
 /* ---------- Plugin ---------- */
@@ -157,6 +166,8 @@ function setupIpc() {
     return { ok: true, status: installPlugin() };
   });
   ipcMain.handle('settings:get', () => settings);
+  // Couleur d'accent choisie dans Windows (Paramètres → Personnalisation → Couleurs), au format #RRGGBB
+  ipcMain.handle('system:accent', () => systemAccent());
   // ----- Carte
   const mapCache = () => path.join(app.getPath('userData'), 'Carte (cache)');
   ipcMain.handle('map:info', () => carte.MAPS);
@@ -266,6 +277,7 @@ if (!app.requestSingleInstanceLock()) {
     installPlugin();
     setupIpc();
     createWindow();
+    if (process.platform === 'win32') systemPreferences.on('accent-color-changed', () => { if (win) win.webContents.send('system:accent', systemAccent()); });
     setupUpdates();
     syncHud();
   });

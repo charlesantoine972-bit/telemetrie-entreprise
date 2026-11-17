@@ -8,33 +8,33 @@
 <script src="data/villes.js"></script>
 <title>Truck &amp; Coach Hub</title>
 <style>
-  /* ===== Thème de base (bleu nuit) : couleurs douces, distinguables par les daltoniens ===== */
+  /* ===== Thème de base (bleu nuit, accent orange ambre) : couleurs douces, distinguables par les daltoniens ===== */
   :root{
     --bg:#0F1720; --panel:#18222D; --line:#2A3746; --nav:#131C26;
     --text:#E8EDF2; --soft:#C3CDD6; --muted:#9AA7B4;
     --loaded:#E7B655; --empty:#6A9CD0; --ok:#6FD8C4; --race:#D86464; --warn:#E8D27A;
     --hover:#1A2531; --active:#1F2B38; --map:#121D28; --on-accent:#0F1720;
-    --c-hub:#E7B655; --c-market:#4FD1A5; --c-atelier:#A78BFA;
+    --c-hub:#FF8A3D; --c-market:#4FD1A5; --c-atelier:#A78BFA;
     --ctl:#66778A; --accent-strong:var(--accent);
     --accent:var(--c-hub); --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
   }
   /* Une seule couleur d'action (boutons, sélection, interrupteurs) dans tout le logiciel.
      Les couleurs d'espace (Marketplace vert, Atelier violet) ne servent plus qu'aux icônes de l'écran d'accueil. */
-  /* ===== Sombre, comme Windows : tout noir, texte blanc ===== */
+  /* ===== Sombre : tout noir, texte blanc, accent orange ambre ===== */
   [data-theme="sombre"]{
     --bg:#202020; --panel:#2B2B2B; --line:#3D3D3D; --nav:#1C1C1C;
     --text:#FFFFFF; --soft:#E0E0E0; --muted:#ABABAB;
     --loaded:#E7B655; --empty:#6A9CD0; --ok:#6FD8C4; --race:#DC6E6E; --warn:#E8D27A;
     --hover:#2D2D2D; --active:#343434; --map:#191919; --on-accent:#000000;
-    --c-hub:#60CDFF; --c-market:#60CDFF; --c-atelier:#60CDFF; --ctl:#8A8A8A;
+    --c-hub:#FF8A3D; --c-market:#FF8A3D; --c-atelier:#FF8A3D; --ctl:#8A8A8A;
   }
-  /* ===== Clair, comme Windows : tout blanc, texte noir ===== */
+  /* ===== Clair : tout blanc, texte noir, accent orange foncé (contraste ≥ 4,5:1) ===== */
   [data-theme="clair"]{
     --bg:#F3F3F3; --panel:#FFFFFF; --line:#DCDCDC; --nav:#EBEBEB;
     --text:#000000; --soft:#1F1F1F; --muted:#5C5C5C;
     --loaded:#9B6B3B; --empty:#2A5A8A; --ok:#2E7D70; --race:#8A2E2E; --warn:#6E5A00;
     --hover:#E5E5E5; --active:#DDDDDD; --map:#E8E8E8; --on-accent:#FFFFFF;
-    --c-hub:#005FB8; --c-market:#005FB8; --c-atelier:#005FB8; --ctl:#858585; --accent-strong:#003E7A;
+    --c-hub:#B34700; --c-market:#B34700; --c-atelier:#B34700; --ctl:#858585; --accent-strong:#8A3600;
   }
 
   /* ===== Vision des couleurs (s'ajoute à n'importe quel thème) ===== */
@@ -172,7 +172,7 @@
   #launcher{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;overflow:auto}
   #launcher.hidden{display:none}
   .lhead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--line)}
-  .logo{width:38px;height:38px;border-radius:11px;background:var(--c-hub);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
+  .logo{width:38px;height:38px;border-radius:11px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
   .lmain{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px 32px}
   .lgrid{width:100%;max-width:1080px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
   .lcard{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:16px;padding:28px;border-radius:22px;background:var(--panel);border:1px solid var(--line);color:var(--text);transition:transform .15s,border-color .15s}
@@ -203,6 +203,16 @@
   .seg{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);flex-wrap:wrap}
   .seg button{height:38px;padding:0 16px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:14px}
   .seg button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
+  .swatches{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .swatch{position:relative;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--sw);padding:0;flex:none;cursor:pointer}
+  .swatch.on{outline:3px solid var(--text);outline-offset:2px;border-color:var(--bg)}
+  .swatch.on::after{content:"";position:absolute;inset:0;margin:auto;width:9px;height:9px;border-radius:50%;background:var(--bg)}
+  .swatch.wheel{background:conic-gradient(#FF4D4D,#FFB13D,#F5E663,#57D98A,#3CC8D8,#5B8CFF,#B07CFF,#F472B6,#FF4D4D)}
+  .swatch.wheel input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0}
+  .swatch.wheel:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+  .swatch.win{width:auto;border-radius:999px;padding:0 12px 0 6px;display:inline-flex;align-items:center;gap:8px;background:var(--panel);color:var(--soft);font-weight:600;font-size:13px}
+  .swatch.win i{width:22px;height:22px;border-radius:50%;background:var(--sw);flex:none}
+  .swatch.win.on::after{display:none}
   .mkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .mkbar input{height:42px;width:280px;max-width:100%;padding:0 14px;border-radius:12px;border:1px solid var(--ctl);background:var(--panel);color:var(--text);font:14px inherit;font-family:inherit}
   .mkfeat{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;padding:22px;border-radius:18px;background:var(--accent-soft);border:1px solid var(--accent)}
@@ -744,8 +754,21 @@
       <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0">Apparence et accessibilité</h2>
           <div class="muted" style="font-size:13px">S'applique à tout le logiciel : Hub, Marketplace, Atelier et Options.</div></div>
-        <div class="optrow"><div><b>Thème</b><div class="muted">« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc, comme Windows.</div></div>
+        <div class="optrow"><div><b>Thème</b><div class="muted">« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc. « Comme Windows » : suit le mode clair/sombre et la couleur d'accent de Windows.</div></div>
           <div class="seg" id="themeSeg"><button data-theme-btn="base">De base</button><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div></div>
+        <div class="optrow"><div><b>Couleur d'accent</b><div class="muted">Boutons, sélection et interrupteurs, dans tous les thèmes. La teinte est ajustée toute seule si elle manque de contraste avec le fond.</div></div>
+          <div class="swatches" id="accentSeg">
+            <button class="swatch" data-accent-btn="defaut" style="--sw:#FF8A3D" aria-label="Orange ambre (par défaut)" title="Orange ambre (par défaut)"></button>
+            <button class="swatch" data-accent-btn="#4FD1A5" style="--sw:#4FD1A5" aria-label="Vert menthe" title="Vert menthe"></button>
+            <button class="swatch" data-accent-btn="#3CC8D8" style="--sw:#3CC8D8" aria-label="Turquoise" title="Turquoise"></button>
+            <button class="swatch" data-accent-btn="#5B8CFF" style="--sw:#5B8CFF" aria-label="Bleu" title="Bleu"></button>
+            <button class="swatch" data-accent-btn="#A78BFA" style="--sw:#A78BFA" aria-label="Violet lavande" title="Violet lavande"></button>
+            <button class="swatch" data-accent-btn="#F472B6" style="--sw:#F472B6" aria-label="Rose" title="Rose"></button>
+            <button class="swatch" data-accent-btn="#FF6B5B" style="--sw:#FF6B5B" aria-label="Rouge corail" title="Rouge corail"></button>
+            <button class="swatch" data-accent-btn="#E7B655" style="--sw:#E7B655" aria-label="Jaune" title="Jaune"></button>
+            <label class="swatch wheel" id="accentWheel" title="Couleur personnalisée"><input type="color" id="accentPick" aria-label="Couleur personnalisée"></label>
+            <button class="swatch win hidden" data-accent-btn="windows" id="accentWin" aria-label="Couleur de Windows" title="Couleur d'accent de Windows"><i></i>Windows</button>
+          </div></div>
         <div class="optrow"><div><b>Vision des couleurs</b><div class="muted">Couleurs adaptées si tu distingues mal certaines couleurs (daltonisme). Les graphiques et les indicateurs changent de teintes.</div></div>
           <div class="seg" id="visionSeg"><button data-vision-btn="normale">Standard</button><button data-vision-btn="rg">Rouge-vert</button><button data-vision-btn="by">Bleu-jaune</button></div></div>
         <div class="optrow"><div><b>Taille du texte</b><div class="muted">Agrandit tout le logiciel.</div></div>
@@ -1388,11 +1411,12 @@ function renderMkItem(id){
 document.getElementById('mkBack').onclick = () => go(mkFrom);
 const MK_FEATURED = ['tablette', 'gps'];
 const MK_NEWS = [
+  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Apparence, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },
   { d: '17/11/2026', t: 'Accessibilité revue (WCAG 2.1 AA)', x: 'Navigation complète au clavier, lien « Aller au contenu », lecteurs d\'écran (NVDA, Narrateur), contrastes vérifiés dans tous les thèmes, mode Contraste élevé de Windows, une seule couleur d\'action.' },
   { d: '17/11/2026', t: 'Bandeau / HUD en jeu', x: 'Le bandeau par-dessus le jeu est disponible : vitesse, limitation, mode réel / course, distance restante. À activer dans Hub → Entreprise.' },
   { d: '17/11/2026', t: 'Renommer son profil', x: 'Dans l\'Atelier, change le nom de ton profil et de ton entreprise en jeu.' },
-  { d: '17/11/2026', t: 'Thèmes et accessibilité', x: 'Thèmes De base, Sombre et Clair (comme Windows), couleurs adaptées au daltonisme, texte agrandi, contraste renforcé.' },
+  { d: '17/11/2026', t: 'Thèmes et accessibilité', x: 'Thèmes De base, Sombre et Clair, couleurs adaptées au daltonisme, texte agrandi, contraste renforcé.' },
   { d: '17/11/2026', t: 'Atelier : carrière car (DLC Coaches)', x: 'XP et compétences car, arrêts de bus, réparation, plein et carte, directement sur tes sauvegardes solo.' },
   { d: '12/11/2026', t: 'Sortie du DLC Coaches', x: 'Les kilomètres en car sont comptés comme ceux en camion, avec leur propre seuil « course » (110 km/h par défaut).' }
 ];
@@ -1424,14 +1448,51 @@ bindMkPreview(document.getElementById('v-mk-discover'));
 document.querySelectorAll('#mkGame [data-g]').forEach(b => b.onclick = () => { mkGame = b.dataset.g; document.querySelectorAll('#mkGame [data-g]').forEach(x => x.classList.toggle('on', x === b)); renderMk(); });
 
 /* ---------- Apparence : thème, vision des couleurs, taille du texte ---------- */
-const DEF_LOOK = { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false };
+const DEF_LOOK = { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false };
 let look = Object.assign({}, DEF_LOOK, store.get('look', {}));
 const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+let winAccent = null; // couleur d'accent de Windows (#RRGGBB), si disponible
+const ACC_PRESETS = ['#4FD1A5', '#3CC8D8', '#5B8CFF', '#A78BFA', '#F472B6', '#FF6B5B', '#E7B655'];
+// Contraste WCAG entre deux couleurs #RRGGBB
+const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const rgbHex = c => '#' + c.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('').toUpperCase();
+const lum = h => { const c = hexRgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+const mixHex = (a, b, t) => { const x = hexRgb(a), y = hexRgb(b); return rgbHex(x.map((v, i) => v + (y[i] - v) * t)); };
+// Éclaircit (fond sombre) ou fonce (fond clair) la couleur jusqu'à un contraste suffisant
+function fitAccent(hex, bg, min){
+  const dark = lum(bg) < .2, to = dark ? '#FFFFFF' : '#000000';
+  let c = hex; for (let t = .05; ratio(c, bg) < min && t <= 1; t += .05) c = mixHex(hex, to, t);
+  return c;
+}
+function cssHex(v){ v = (v || '').trim(); if (/^#[0-9a-f]{6}$/i.test(v)) return v.toUpperCase(); const m = v.match(/\d+/g); return m && m.length >= 3 ? rgbHex(m.slice(0, 3).map(Number)) : '#0F1720'; }
+function applyAccent(){
+  const de = document.documentElement;
+  ['--accent', '--accent-strong', '--on-accent', '--accent-soft'].forEach(p => de.style.removeProperty(p));
+  let want = null;
+  if (/^#[0-9a-f]{6}$/i.test(look.accent)) want = look.accent;
+  else if (look.accent === 'windows' || (look.accent === 'defaut' && look.theme === 'systeme')) want = winAccent;
+  if (want){
+    const cs = getComputedStyle(de), bg = cssHex(cs.getPropertyValue('--bg')), panel = cssHex(cs.getPropertyValue('--panel'));
+    const acc = fitAccent(fitAccent(want, bg, 4.5), panel, 4.5);
+    const onAcc = ratio('#000000', acc) >= ratio('#FFFFFF', acc) ? '#000000' : '#FFFFFF';
+    de.style.setProperty('--accent', acc);
+    de.style.setProperty('--accent-soft', `color-mix(in srgb, ${acc} 14%, transparent)`);
+    de.style.setProperty('--accent-strong', fitAccent(acc, mixHex(bg, acc, .14), 4.5));
+    de.style.setProperty('--on-accent', onAcc);
+  }
+  const custom = /^#/.test(look.accent) && !ACC_PRESETS.includes(look.accent);
+  document.querySelectorAll('[data-accent-btn]').forEach(x => { const on = x.dataset.accentBtn === look.accent; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+  const wh = document.getElementById('accentWheel'); if (wh){ wh.classList.toggle('on', custom); if (custom) wh.style.background = look.accent; else wh.style.background = ''; }
+  const pk = document.getElementById('accentPick'); if (pk) pk.value = /^#/.test(look.accent) ? look.accent.toLowerCase() : '#ff8a3d';
+  const wb = document.getElementById('accentWin'); if (wb){ wb.classList.toggle('hidden', !winAccent); if (winAccent) wb.style.setProperty('--sw', winAccent); }
+}
 function applyLook(patch, save){
   Object.assign(look, patch || {}); store.set('look', look);
   const de = document.documentElement;
   de.dataset.theme = look.theme === 'systeme' ? (mq && mq.matches ? 'clair' : 'sombre') : look.theme;
   if (look.vision === 'normale') delete de.dataset.vision; else de.dataset.vision = look.vision;
+  applyAccent();
   if (look.contrast) de.dataset.contrast = 'fort'; else delete de.dataset.contrast;
   if (look.motion) de.dataset.motion = 'reduit'; else delete de.dataset.motion;
   de.style.zoom = (Number(look.zoom) || 100) / 100;
@@ -1445,6 +1506,14 @@ function applyLook(patch, save){
 if (mq && mq.addEventListener) mq.addEventListener('change', () => { if (look.theme === 'systeme') applyLook(); });
 document.querySelectorAll('[data-theme-btn]').forEach(x => x.onclick = () => applyLook({ theme: x.dataset.themeBtn }, true));
 document.querySelectorAll('[data-vision-btn]').forEach(x => x.onclick = () => applyLook({ vision: x.dataset.visionBtn }, true));
+document.querySelectorAll('[data-accent-btn]').forEach(x => x.onclick = () => applyLook({ accent: x.dataset.accentBtn }, true));
+const accentPick = document.getElementById('accentPick');
+accentPick.oninput = (e) => applyLook({ accent: e.target.value.toUpperCase() }, false);
+accentPick.onchange = (e) => applyLook({ accent: e.target.value.toUpperCase() }, true);
+if (window.tel && window.tel.systemAccent){
+  window.tel.systemAccent().then(c => { winAccent = c || null; applyAccent(); });
+  window.tel.onSystemAccent(c => { winAccent = c || null; applyAccent(); });
+}
 document.querySelectorAll('[data-zoom-btn]').forEach(x => x.onclick = () => applyLook({ zoom: x.dataset.zoomBtn }, true));
 document.getElementById('contrastSwitch').onchange = (e) => applyLook({ contrast: e.target.checked }, true);
 document.getElementById('motionSwitch').onchange = (e) => applyLook({ motion: e.target.checked }, true);
