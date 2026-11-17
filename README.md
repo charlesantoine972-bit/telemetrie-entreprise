@@ -1,8 +1,12 @@
+## Version 0.12.9 — HUD autocar et mise à jour automatique
+
+Le HUD autocar regroupe les données reçues du jeu : heure, vitesse, limitation, distance et durée GPS, compteur, carburant, autonomie et temps avant pause obligatoire. L’application redémarre automatiquement après l’installation d’une mise à jour.
+
+Les numéros de ligne, arrêts, horaires et satisfaction restent à « — » tant que le jeu ne les transmet pas. Aucun renseignement n’est simulé.
+
 ## Version 0.12.8 — bandeau car dédié
 
-Le HUD car reprend la référence visuelle fournie : bandeau sombre, numéro de ligne rouge, repères bleus et deux rangées compactes. Il utilise les données disponibles du jeu pour la vitesse, la limitation, l’heure, le GPS, le compteur véhicule et le carburant. Le temps réel et l’arrivée sont estimés à partir du facteur temporel du jeu.
-
-La ligne, les arrêts et l’avance/retard restent indisponibles en jeu tant que l’adaptateur Coaches n’est pas validé. Les exemples apparaissent uniquement dans **Bandeau / HUD → Car / Coaches**, avec la mention **DONNÉES FICTIVES**. La détection en jeu repose sur la mission car ; le HUD camion et les autres fonctionnalités de la 0.12.7 sont conservés.
+Le HUD car reprend la référence visuelle fournie, avec vitesse, limitation, heure, GPS, compteur, carburant et estimation du temps réel.
 
 # Truck & Coach Hub
 
@@ -13,8 +17,6 @@ La version **0.12.7** ajoute un bandeau de navigation compact pour les services 
 - Le bandeau affiche le statut du service, l'heure du jeu, la vitesse et la limitation.
 - Une seconde ligne présente la distance et l'estimation GPS jusqu'au prochain arrêt, le compteur du véhicule et son autonomie lorsqu'elle est disponible.
 - L'aperçu hors connexion propose aussi un exemple car. Les noms d'arrêts, températures et pourcentages de carburant non transmis par le jeu ne sont pas inventés.
-- Après l'installation d'une mise à jour, l'application se ferme et reste fermée ; elle ne se relance pas automatiquement.
-
 `npm test` vérifie les calculs et l'affichage du HUD.
 
 ## Mise à jour 0.12.6 : cartes DLC, HUD Coaches et réglages (17 novembre 2026)
@@ -72,7 +74,7 @@ Télécharge le dernier `Telemetrie-Entreprise-Setup-x.y.z.exe` dans la page **R
 
 ## Mises à jour automatiques
 
-L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe une nouvelle version dans les Releases GitHub. Le bouton « Mettre à jour » la télécharge (barre de progression dans l'appli), l'installe sans assistant Windows puis ferme l'application. Elle ne redémarre pas automatiquement : relance-la manuellement quand tu veux.
+L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe une nouvelle version dans les Releases GitHub. Le bouton « Mettre à jour » la télécharge (barre de progression dans l'appli), l'installe sans assistant Windows puis redémarre automatiquement l'application.
 
 ## Publier une nouvelle version
 
