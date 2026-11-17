@@ -2,6 +2,11 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.4', date: '2026-11-17', titre: 'Truck Tools et Coach Tools', notes: [
+    ['ameliore', 'L’ancien Atelier est renommé Truck Tools et Coach Tools, avec une présentation dédiée.'],
+    ['nouveau', 'Diagnostic des fichiers de jeu et des capacités de télémétrie disponibles.'],
+    ['corrige', 'La trace GPS conserve correctement les coordonnées du point d’origine (0, 0).'],
+  ]},
   { version: '0.12.3', date: '2026-11-17', titre: 'Notes de version', notes: [
     ['nouveau', 'Les notes de toutes les versions s\'affichent en bas de l\'écran d\'accueil (lien « Notes de version ↓ » sous les cartes).'],
   ]},
@@ -9,9 +14,9 @@ window.NOTES_VERSION = [
     ['ameliore', 'Le jaune et le bleu laissent place à un orange ambre, dans tous les thèmes.'],
     ['nouveau', 'Options → Apparence : choisis ta couleur d\'accent (pastilles, roue de couleurs ou couleur de Windows).'],
     ['ameliore', '« Comme Windows » suit aussi la couleur d\'accent de Windows.'],
-    ['nouveau', 'Atelier → Sauvegardes : « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues, sans rien modifier.'],
-    ['nouveau', 'Atelier → Sauvegardes : « Dupliquer » crée une copie de ton profil pour faire des tests sans risque.'],
-    ['nouveau', 'Atelier → Profil : bilan du profil (compte en banque, prêts, flotte, usure) avec les problèmes à corriger.'],
+    ['nouveau', 'Truck Tools → Sauvegardes : « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues, sans rien modifier.'],
+    ['nouveau', 'Truck Tools → Sauvegardes : « Dupliquer » crée une copie de ton profil pour faire des tests sans risque.'],
+    ['nouveau', 'Truck Tools → Profil : bilan du profil (compte en banque, prêts, flotte, usure) avec les problèmes à corriger.'],
     ['ameliore', 'Fenêtres de confirmation : la touche Tab passe par tous les champs.'],
   ]},
   { version: '0.12.1', date: '2026-11-17', titre: 'HUD seulement en jeu', notes: [
@@ -44,7 +49,7 @@ window.NOTES_VERSION = [
     ['nouveau', 'Marketplace : nouvelle catégorie Camions.'],
   ]},
   { version: '0.8.2', date: '2026-11-17', titre: 'Renommer son profil', notes: [
-    ['nouveau', 'Atelier : renommer ton profil et ton entreprise.'],
+    ['nouveau', 'Truck Tools : renommer ton profil et ton entreprise.'],
   ]},
   { version: '0.8.1', date: '2026-11-17', titre: 'Atteindre un niveau', notes: [
     ['nouveau', 'Atelier : boutons « atteindre le niveau » pour le camion et le car.'],
@@ -53,15 +58,15 @@ window.NOTES_VERSION = [
     ['nouveau', 'Thèmes De base, Sombre, Clair et Comme Windows.'],
     ['nouveau', 'Couleurs adaptées au daltonisme, taille du texte réglable et contraste renforcé.'],
   ]},
-  { version: '0.7.0', date: '2026-11-17', titre: 'Atelier complet', notes: [
-    ['nouveau', 'Atelier : modification du profil, du coach, de la carte, du carburant et réparation.'],
+  { version: '0.7.0', date: '2026-11-17', titre: 'Truck Tools et Coach Tools', notes: [
+    ['nouveau', 'Truck Tools et Coach Tools : modification du profil, du car, de la carte, du carburant et réparation.'],
     ['ameliore', 'Explications plus claires pour la console de développement.'],
   ]},
   { version: '0.6.1', date: '2026-11-17', titre: 'Fiches produit', notes: [
     ['ameliore', 'Marketplace : « Voir l\'aperçu » ouvre une vraie fiche du mod (aperçu, description, infos) avec un bouton Retour.'],
   ]},
-  { version: '0.6.0', date: '2026-11-17', titre: 'Arrivée de l\'Atelier', notes: [
-    ['nouveau', 'Atelier (expérimental, à activer dans Options) : sauvegarder et restaurer tes profils ETS2 / ATS.'],
+  { version: '0.6.0', date: '2026-11-17', titre: 'Arrivée des Truck Tools', notes: [
+    ['nouveau', 'Truck Tools (expérimental, à activer dans Options) : sauvegarder et restaurer tes profils ETS2 / ATS.'],
     ['nouveau', 'Activation de la console de développement du jeu, avec copie de secours.'],
     ['nouveau', 'Marketplace : page Créer une livrée.'],
   ]},

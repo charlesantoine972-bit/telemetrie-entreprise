@@ -32,7 +32,7 @@ class Atelier {
     const allowed = ['profileName', 'companyName', 'money', 'xp', 'busXp', 'skills', 'coachSkills', 'visitAllCities', 'discoverBusStops', 'repairAll', 'refuelAll'];
     const clean = {}; for (const k of allowed) if (edits && edits[k] != null) clean[k] = edits[k];
     if (!Object.keys(clean).length) throw new Error('Aucune modification demandée.');
-    const backupName = this.backup(id, 'Avant modification (Atelier)');
+    const backupName = this.backup(id, 'Avant modification (Truck Tools)');
     const report = this.editor.apply(r.dir, slot, clean);
     return { report, backupName };
   }

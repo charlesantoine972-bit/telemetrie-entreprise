@@ -6,6 +6,8 @@ const { Telemetry } = require('./src/telemetry');
 const installer = require('./src/plugin-installer');
 const { Atelier } = require('./src/atelier');
 const carte = require('./src/map');
+const gameContent = require('./src/game-content');
+let contentPending = null;
 let atelier;
 carte.registerScheme();
 
@@ -110,18 +112,19 @@ function createWindow() {
    Visible seulement quand le jeu envoie des données (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
-const HUD_W = 820, HUD_H = 240;
+const HUD_W = 980, HUD_H = 440;
 function hudBounds() {
   const wa = screen.getPrimaryDisplay().bounds;
+  const width = Math.min(HUD_W, wa.width), height = Math.min(HUD_H, wa.height);
   const bas = settings.hud && settings.hud.position === 'bas';
-  return { x: Math.round(wa.x + (wa.width - HUD_W) / 2), y: bas ? wa.y + wa.height - HUD_H - 100 : wa.y + 4, width: HUD_W, height: HUD_H };
+  return { x: Math.round(wa.x + (wa.width - width) / 2), y: bas ? wa.y + Math.max(0, wa.height - height - 24) : wa.y + 4, width, height };
 }
 function hudData() {
   const sn = telemetry.snapshot();
   const test = Date.now() < hudTestUntil;
   if (test && !sn.connected) {
     const t = Date.now() / 1000;
-    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 };
+    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19 };
     sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
   }
   // Affiché seulement quand on joue vraiment : jeu au premier plan (pas d'Alt+Tab, pas le bureau),
@@ -154,6 +157,14 @@ function syncHud() {
 
 /* ---------- Échanges avec l'interface ---------- */
 function setupIpc() {
+  ipcMain.handle('game:content', () => {
+    if (!contentPending) contentPending = gameContent.scan(app.getPath('documents'), settings.customGamePaths).finally(() => { contentPending = null; });
+    return contentPending;
+  });
+  ipcMain.handle('telemetry:capabilities', () => {
+    const sn = telemetry.snapshot(), l = sn.live;
+    return { connected: sn.connected, plugin: l && l.plugin, localScale: !!(l && l.localScale > 0), busJob: !!(l && l.busJob), busFields: l && l.busJob ? Object.keys(l.busJob) : [], busFieldsDocumented: false };
+  });
   ipcMain.handle('snapshot', () => telemetry.snapshot());
   ipcMain.handle('hud:test', () => { hudTestUntil = Date.now() + 10000; syncHud(); return true; });
   ipcMain.handle('plugin:status', () => pluginStatus);

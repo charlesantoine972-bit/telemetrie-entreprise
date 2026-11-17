@@ -43,7 +43,7 @@ setInterval(() => {
   send({
     type: 'state', plugin: 'sim', game: 'eut2', gameVersion: 0x10012, paused: false,
     speed: kmh / 3.6, odometer: odo, x: p.x, y: 0, z: p.z, heading: p.heading,
-    navDistance: navLeft, navTime: navLeft / 22, speedLimit: 90 / 3.6, fuel, fuelRange: fuel / 0.3,
+    navDistance: navLeft, navTime: navLeft / 22, localScale: 19, speedLimit: 90 / 3.6, fuel, fuelRange: fuel / 0.3,
     cargoDamage: 0.004, gameTime: Math.floor(gameTime), restStop: 412, trailerConnected: phase === 'livraison',
     engine: true, parkingBrake: false, truck, trailer: null, job
   });

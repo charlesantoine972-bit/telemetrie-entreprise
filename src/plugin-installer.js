@@ -17,7 +17,7 @@ function sha(file) {
 
 function steamRoot() {
   try {
-    const out = execFileSync('reg', ['query', 'HKCU\\Software\\Valve\\Steam', '/v', 'SteamPath'], { encoding: 'utf8', windowsHide: true });
+    const out = execFileSync('reg', ['query', 'HKCU\\Software\\Valve\\Steam', '/v', 'SteamPath'], { encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
     const m = out.match(/SteamPath\s+REG_SZ\s+(.+)/);
     if (m) return path.normalize(m[1].trim());
   } catch {}
