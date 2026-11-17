@@ -424,7 +424,7 @@
     <section id="v-at-profil" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Profil</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
-      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Modifie l'argent, l'expérience et les compétences de ta carrière <b>camion</b>.</p>
+      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Consulte le bilan de ton profil (finances, flotte, problèmes éventuels), puis modifie si besoin l'argent, l'expérience et les compétences de ta carrière <b>camion</b>.</p>
       <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
       <div class="atbody" data-page="at-profil"></div>
     </section>
@@ -1063,11 +1063,13 @@ function ask(title, html, yes = 'Confirmer'){
     m.classList.remove('hidden'); app.inert = true;
     const no = document.getElementById('modalNo'), yesB = document.getElementById('modalYes');
     const key = e => { if (e.key === 'Escape') { e.preventDefault(); done(false); }
-      else if (e.key === 'Tab') { e.preventDefault(); (document.activeElement === no ? yesB : no).focus(); } };
+      else if (e.key === 'Tab') { e.preventDefault(); const f = [...m.querySelectorAll('input,select,textarea,button')].filter(x => !x.disabled);
+        const i = f.indexOf(document.activeElement); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); }
+      else if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); done(true); } };
     const done = v => { m.classList.add('hidden'); app.inert = wasInert; document.removeEventListener('keydown', key, true); setTimeout(() => { if (back && back.focus) back.focus(); }, 0); res(v); };
     document.addEventListener('keydown', key, true);
     yesB.onclick = () => done(true); no.onclick = () => done(false);
-    no.focus();
+    const first = m.querySelector('#modalBody input'); if (first) { first.focus(); first.select(); } else no.focus();
   });
 }
 
@@ -1131,14 +1133,26 @@ async function renderSaves(msg){
   if (!r.ok) { box.innerHTML = `<div class="empty">${escM(r.error)}</div>`; return; }
   setText('lAtProfiles', String(r.data.length));
   box.innerHTML = r.data.length ? r.data.map(p => `<div class="panel prof">
-      <div class="between" style="align-items:flex-start"><div><b style="font-size:16px">${escM(p.name)}</b><div class="muted" style="font-size:12px;margin-top:2px">${p.game === 'ets2' ? 'ETS2' : 'ATS'}${p.cloud ? ' · Steam Cloud' : ''} · modifié le ${fmtDate(p.modified)}</div></div>
-        <div class="row" style="gap:8px;flex-wrap:nowrap"><button class="btn" style="height:36px" data-an="${escM(p.id)}"${atAnalyzing.has(p.id) ? ' disabled' : ''} title="Vérifie si les sauvegardes de ce profil sont corrompues (ne modifie rien)">Analyser</button><button class="btn primary" style="height:36px" data-bk="${escM(p.id)}">Sauvegarder</button></div></div>
+      <div class="between" style="align-items:flex-start;flex-wrap:wrap"><div style="min-width:160px;flex:1"><b style="font-size:16px">${escM(p.name)}</b><div class="muted" style="font-size:12px;margin-top:2px">${p.game === 'ets2' ? 'ETS2' : 'ATS'}${p.cloud ? ' · Steam Cloud' : ''} · modifié le ${fmtDate(p.modified)}</div></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" style="height:36px" data-an="${escM(p.id)}"${atAnalyzing.has(p.id) ? ' disabled' : ''} title="Vérifie si les sauvegardes de ce profil sont corrompues (ne modifie rien)">Analyser</button><button class="btn" style="height:36px" data-dup="${escM(p.id)}" data-pn="${escM(p.name)}" title="Crée un second profil identique pour faire des tests sans toucher à l'original">Dupliquer</button><button class="btn primary" style="height:36px" data-bk="${escM(p.id)}">Sauvegarder</button></div></div>
       ${analysisHtml(p.id)}
       ${p.backups.length ? p.backups.slice(0, 3).map(b => `<div class="bk"><span class="grow">${bkLabel(b.name)}${b.label ? ' · <span class="muted">' + escM(b.label) + '</span>' : ''}</span><button class="btn" style="height:30px;font-size:12px" data-rs="${escM(p.id)}" data-rn="${escM(b.name)}" data-pn="${escM(p.name)}">Restaurer</button></div>`).join('') + (p.backups.length > 3 ? `<span class="muted" style="font-size:12px">+ ${p.backups.length - 3} plus ancienne(s)</span>` : '')
         : '<span class="muted" style="font-size:13px">Aucune sauvegarde pour l\'instant.</span>'}
     </div>`).join('')
     : '<div class="empty" style="grid-column:1/-1">Aucun profil trouvé dans Documents\\Euro Truck Simulator 2 ou American Truck Simulator.<br>Lance le jeu une fois et crée un profil, puis clique sur « Actualiser ».</div>';
   box.querySelectorAll('[data-an]').forEach(b => b.onclick = () => analyzeProfile(b.dataset.an));
+  box.querySelectorAll('[data-dup]').forEach(b => b.onclick = async () => {
+    const def = (b.dataset.pn + ' (copie)').slice(0, 30);
+    const ok = await ask('Dupliquer ce profil ?', `Crée un second profil, identique à <b>${escM(b.dataset.pn)}</b> (sauvegardes, argent, camions…), que tu pourras choisir dans le jeu pour faire des tests. L'original n'est pas modifié.
+      <label class="field" style="margin-top:12px">Nom de la copie<input id="dupName" maxlength="30" value="${escM(def)}"></label>
+      <div class="muted" style="font-size:12px;margin-top:6px">La copie est rangée dans tes profils locaux (pas dans le Steam Cloud). Tu pourras la supprimer depuis le jeu, dans le choix du profil.</div>`, 'Dupliquer');
+    if (!ok) return;
+    const name = (document.getElementById('dupName').value || '').trim();
+    b.disabled = true;
+    const x = await window.tel.atelier.duplicate(b.dataset.dup, name);
+    if (x.ok) announce('Profil dupliqué : ' + x.data.name);
+    renderSaves(x.ok ? `Copie « ${x.data.name} » créée ✓ Choisis-la dans le jeu pour faire tes tests.` : x.error);
+  });
   box.querySelectorAll('[data-bk]').forEach(b => b.onclick = async () => { b.disabled = true; const x = await window.tel.atelier.backup(b.dataset.bk); renderSaves(x.ok ? 'Sauvegarde faite ✓' : x.error); });
   box.querySelectorAll('[data-rs]').forEach(b => b.onclick = async () => {
     const ok = await ask('Restaurer cette sauvegarde ?', `Le profil <b>${b.dataset.pn}</b> va revenir à son état du <b>${bkLabel(b.dataset.rn)}</b>.<br>Une copie de l'état actuel est faite juste avant, au cas où.`, 'Restaurer');
@@ -1290,6 +1304,21 @@ function skillSel(id, skill, val){
 const TRUCK_TIERS = [[0,0],[5,3400],[10,11900],[15,25400],[20,44200],[25,70200],[30,103700],[40,176700],[50,249700],[100,575700]];
 function lvlTruck(xp){ let t = TRUCK_TIERS[0]; for (const x of TRUCK_TIERS) if (xp >= x[1]) t = x; return t[0] >= 100 ? '100 ou plus' : t[0] + ' ou plus'; }
 function lvlCoach(xp){ return xp < 3300 ? 'entre 0 et 4' : xp < 11100 ? 'entre 5 et 9' : xp < 75000 ? '10 ou plus' : '25 ou plus'; }
+const BIL = { ok: ['✓', 'var(--ok)'], warn: ['!', 'var(--warn)'], bad: ['✕', 'var(--race)'], info: ['i', 'var(--empty)'] };
+const AT_PAGE_NAMES = { 'at-repar': 'Réparation', 'at-camion': 'Camion & remorque', 'at-profil': 'Profil' };
+function bilanHtml(b){
+  if (!b) return '';
+  const ico = (l, sz = 22) => `<span aria-hidden="true" style="width:${sz}px;height:${sz}px;border-radius:50%;background:${BIL[l][1]};color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:${sz > 20 ? 13 : 11}px;flex:none">${BIL[l][0]}</span>`;
+  const verdict = b.level === 'bad' ? 'À corriger : cette sauvegarde a un problème' : b.level === 'warn' ? 'Quelques points à surveiller' : 'Rien à toucher : tout est en ordre';
+  const loans = (b.loans || []).map(l => `<li>${nf(l.amount)} € restants${l.original ? ' sur ' + nf(l.original) + ' €' : ''}${l.months != null ? ' · ' + l.months + ' mois restant(s)' : ''}${l.rate != null ? ' · taux ' + (l.rate * 100).toFixed(1).replace('.', ',') + ' %' : ''}</li>`).join('');
+  return `<div class="panel" style="display:flex;flex-direction:column;gap:14px;margin-bottom:16px" role="region" aria-label="Bilan du profil">
+    <div class="between" style="align-items:center;gap:12px;flex-wrap:wrap"><h2 style="margin:0">Bilan du profil</h2><span class="muted" style="font-size:12px">Lecture seule · rien n'est modifié</span></div>
+    <div style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px">${ico(b.level)}${verdict}</div>
+    ${b.money != null ? `<div class="stats" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">${statBox('Compte en banque', nf(b.money) + ' €')}${statBox('Reste des prêts', nf(b.debt) + ' €')}${statBox('Garages', b.garages)}${statBox('Camions', b.trucks)}${statBox('Remorques', b.trailers)}${statBox('Chauffeurs', b.drivers)}${statBox('Usure max.', Math.round((b.worstWear || 0) * 100) + ' %')}${statBox('Jours en jeu', nf(b.gameDays))}</div>` : ''}
+    ${loans ? `<details><summary class="soft" style="cursor:pointer;font-weight:600">Détail des prêts (${b.loans.length})</summary><ul class="soft" style="margin:8px 0 0;font-size:13px;line-height:1.8">${loans}</ul></details>` : ''}
+    ${b.alerts.length ? `<ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">${b.alerts.map(a => `<li style="display:flex;gap:10px;align-items:center;font-size:14px">${ico(a.level, 18)}<span class="grow">${escM(a.text)}</span>${a.page ? `<button class="btn" style="height:30px;font-size:12px" data-gopage="${a.page}">Ouvrir ${AT_PAGE_NAMES[a.page]}</button>` : ''}</li>`).join('')}</ul>` : ''}
+  </div>`;
+}
 function statBox(l, v){ return `<div class="stat"><span class="muted">${l}</span><b>${v}</b></div>`; }
 function renderAtPage(view){
   if (!AT_PAGES.includes(view)) return;
@@ -1307,7 +1336,7 @@ function renderAtPage(view){
   const apply = '<div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn primary" id="atApply" style="height:46px;padding:0 22px">Appliquer à la sauvegarde</button><span class="muted" id="atApplyMsg" style="font-size:13px">' + escM(atSel.msg || '') + '</span></div>';
   let html = '';
   if (view === 'at-profil') {
-    html = `<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">${statBox('Argent', nf(S.money) + ' €')}${statBox('XP camion', nf(S.xp))}${statBox('Ville du QG', escM(S.hqCity || '–'))}${statBox('Véhicules', S.vehicles + ' · ' + S.trailers + ' remorque(s)')}</div>
+    html = bilanHtml(S.bilan) + `<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">${statBox('Argent', nf(S.money) + ' €')}${statBox('XP camion', nf(S.xp))}${statBox('Ville du QG', escM(S.hqCity || '–'))}${statBox('Véhicules', S.vehicles + ' · ' + S.trailers + ' remorque(s)')}</div>
       <div class="panel" style="display:flex;flex-direction:column;gap:14px">
         <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end">
           <label class="field" style="flex:1;min-width:220px">Nom du profil<input id="eProfName" maxlength="30" value="${escM(S.profileName)}"></label>
@@ -1358,6 +1387,7 @@ function renderAtPage(view){
       </div>` + apply;
   }
   body.innerHTML = html;
+  body.querySelectorAll('[data-gopage]').forEach(b => b.onclick = () => go(b.dataset.gopage));
   body.querySelectorAll('[data-lvl]').forEach(b => b.onclick = () => { const i = document.getElementById(b.dataset.lvl); i.value = Math.max(Number(i.value) || 0, Number(b.dataset.v)); });
   body.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { const i = document.getElementById(b.dataset.add); i.value = (Number(i.value) || 0) + Number(b.dataset.v); });
   const mx = (pfx, list) => list.forEach(k => { const el = document.getElementById(pfx + k.key); if (el) el.value = el.options[el.options.length - 1].value; });
@@ -1438,6 +1468,7 @@ function renderMkItem(id){
 document.getElementById('mkBack').onclick = () => go(mkFrom);
 const MK_FEATURED = ['tablette', 'gps'];
 const MK_NEWS = [
+  { d: '17/11/2026', t: 'Atelier : dupliquer un profil et bilan du profil', x: 'Dans Atelier → Sauvegardes, « Dupliquer » crée une copie de ton profil pour faire des tests sans risque. Dans Atelier → Profil, un bilan en lecture seule montre tes finances, ta flotte et les problèmes à corriger.' },
   { d: '17/11/2026', t: 'Atelier : analyse des sauvegardes', x: 'Dans Atelier → Sauvegardes, le bouton « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues (fichier vide, tronqué, illisible…) sans rien modifier.' },
   { d: '17/11/2026', t: 'HUD : seulement quand tu joues', x: 'Le bandeau se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit. Plugin du jeu mis à jour (1.1.0) : relance le jeu une fois.' },
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },

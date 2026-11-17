@@ -209,6 +209,68 @@ class SaveEditor {
     return [...set].sort();
   }
 
+  // ----------- bilan du profil (lecture seule) : finances, flotte, état, cohérence, avec alertes
+  static bilan(text) {
+    const B = SaveEditor;
+    const blockOf = (re) => { const b = B.block(text, re); return b ? b.body : ''; };
+    const eco = blockOf(/^economy : /m), bank = blockOf(/^bank : /m), player = blockOf(/^player : /m);
+    // Tous les identifiants de blocs, pour repérer les références cassées
+    const ids = new Map(); { const re = /^([a-z0-9_]+) : ([^\s{]+) \{$/gm; let m; while ((m = re.exec(text))) ids.set(m[2], m[1]); }
+    const unitBody = (id) => { const i = text.indexOf(` : ${id} {\n`); if (i < 0) return null; const s = text.lastIndexOf('\n', i) + 1; return text.slice(s, text.indexOf('\n}', s)); };
+    const isNull = v => !v || v === 'null' || v === '""';
+    const refs = (body, key) => B.getArray(body, key).filter(v => !isNull(v));
+    const alerts = [];
+    const add = (level, text, page) => alerts.push({ level, text, page: page || null });
+
+    // Finances
+    const money = Number(B.get(bank, 'money_account')) || 0;
+    const overdraft = B.get(bank, 'overdraft') === 'true';
+    const loans = refs(bank, 'loans').map(id => {
+      const b = unitBody(id); if (!b) return { id, missing: true };
+      const num = k => { const v = B.get(b, k); return v == null ? null : (v.startsWith('&') ? B.float(v) : Number(v)); };
+      return { amount: num('amount'), original: num('original_amount'), months: num('duration'), rate: num('interest_rate') };
+    });
+    const debt = loans.reduce((a, l) => a + (l.amount || 0), 0);
+    if (money < 0 || overdraft) add('bad', `Compte à découvert (${money.toLocaleString('fr-FR')} €). Tu peux corriger l'argent juste en dessous.`);
+    if (loans.length) add('info', `${loans.length} prêt(s) en cours, ${debt.toLocaleString('fr-FR')} € restant à rembourser.`);
+
+    // Flotte
+    const trucks = refs(player, 'trucks'), trailers = refs(player, 'trailers'), drivers = refs(player, 'drivers');
+    const garages = B.unitBlocks(text, 'garage').map(b => text.slice(b.start, b.end)).filter(g => Number(B.get(g, 'status')) > 0).length;
+    const myTruck = B.get(player, 'my_truck') || B.get(player, 'assigned_truck');
+
+    // État des véhicules du joueur
+    const worn = []; let worst = 0;
+    for (const id of trucks) {
+      const b = unitBody(id); if (!b) continue;
+      const w = Math.max(0, ...['engine_wear', 'transmission_wear', 'cabin_wear', 'chassis_wear'].map(k => B.float(B.get(b, k))));
+      worst = Math.max(worst, w); if (w >= 0.5) worn.push(id);
+    }
+    if (worn.length) add('warn', `${worn.length} camion(s) très usé(s) (jusqu'à ${Math.round(worst * 100)} %).`, 'at-repar');
+    let fuel = null;
+    if (!isNull(myTruck)) { const b = unitBody(myTruck); if (b) fuel = B.float(B.get(b, 'fuel_relative')); }
+    if (fuel != null && fuel < 0.1) add('warn', `Ton camion est presque à sec (${Math.round(fuel * 100)} % de carburant).`, 'at-camion');
+    const cargo = B.unitBlocks(text, 'trailer').map(b => B.float(B.get(text.slice(b.start, b.end), 'cargo_damage'))).filter(v => v > 0.2).length;
+    if (cargo) add('warn', `${cargo} remorque(s) avec une cargaison abîmée à plus de 20 %.`, 'at-repar');
+
+    // Cohérence : références vers des blocs qui n'existent pas (signe de sauvegarde abîmée)
+    const broken = [...trucks, ...trailers, ...drivers, ...loans.filter(l => l.missing).map(l => l.id)].filter(id => !ids.has(id)).length
+      + (!isNull(myTruck) && !ids.has(myTruck) ? 1 : 0);
+    if (broken) add('bad', `${broken} référence(s) vers des éléments introuvables (camion, remorque, chauffeur ou prêt) : sauvegarde probablement abîmée.`);
+    const integ = B.checkText(text, ['economy', 'bank', 'player']).issues;
+    if (integ.length) add('bad', 'Structure du fichier : ' + integ.join(' '));
+    if (isNull(myTruck) && trucks.length) add('info', 'Aucun camion attribué à ton chauffeur.');
+
+    const level = alerts.some(a => a.level === 'bad') ? 'bad' : alerts.some(a => a.level === 'warn') ? 'warn' : 'ok';
+    return {
+      level, alerts,
+      money, overdraft, loans: loans.filter(l => !l.missing), debt,
+      trucks: trucks.length, trailers: trailers.length, drivers: drivers.length, garages,
+      worstWear: worst, fuel,
+      gameDays: Math.floor((Number(B.get(eco, 'game_time')) || 0) / 1440)
+    };
+  }
+
   // ----------- lecture (résumé pour l'interface)
   summary(slotDir) {
     const text = this.read(path.join(slotDir, 'game.sii'));
@@ -226,8 +288,9 @@ class SaveEditor {
     const fuel = vehicles.map(v => SaveEditor.float(SaveEditor.get(v, 'fuel_relative')));
     let names = { profileName: '', companyName: '' };
     try { names = this.profileNames(path.join(slotDir, '..', '..')); } catch {}
+    let bilan = null; try { bilan = SaveEditor.bilan(text); } catch (e) { bilan = { level: 'bad', alerts: [{ level: 'bad', text: 'Bilan impossible : ' + e.message }] }; }
     return {
-      ...names,
+      ...names, bilan,
       money: Number(SaveEditor.get(bank, 'money_account')) || 0,
       xp: Number(SaveEditor.get(eco, 'experience_points')) || 0,
       busXp: SaveEditor.get(eco, 'bus_experience_points') == null ? null : Number(SaveEditor.get(eco, 'bus_experience_points')),
