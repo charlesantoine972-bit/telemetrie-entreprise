@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('tel', {
   atelier: {
     status: () => ipcRenderer.invoke('atelier:status'),
     profiles: () => ipcRenderer.invoke('atelier:profiles'),
+    analyze: (id) => ipcRenderer.invoke('atelier:analyze', id),
     backup: (id) => ipcRenderer.invoke('atelier:backup', id),
     restore: (id, name) => ipcRenderer.invoke('atelier:restore', id, name),
     openBackups: () => ipcRenderer.invoke('atelier:openBackups'),

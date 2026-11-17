@@ -172,6 +172,7 @@ function setupIpc() {
   const safe = (fn) => async (_e, ...a) => { try { return { ok: true, data: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
   ipcMain.handle('atelier:status', safe(() => atelier.status()));
   ipcMain.handle('atelier:profiles', safe(() => atelier.profiles()));
+  ipcMain.handle('atelier:analyze', safe((id) => atelier.analyze(id)));
   ipcMain.handle('atelier:backup', safe((id) => atelier.backup(id)));
   ipcMain.handle('atelier:restore', safe((id, name) => atelier.restore(id, name)));
   ipcMain.handle('atelier:openBackups', safe(async () => { fs.mkdirSync(atelier.backups, { recursive: true }); await shell.openPath(atelier.backups); return true; }));

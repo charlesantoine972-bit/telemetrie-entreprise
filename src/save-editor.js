@@ -4,7 +4,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { execFileSync, execFile } = require('child_process');
 
 const TRUCK_SKILLS = [
   { key: 'adr', label: 'ADR (matières dangereuses)', max: 63, adr: true },
@@ -41,6 +41,95 @@ class SaveEditor {
       if (!txt.startsWith('SiiNunit')) throw new Error('Déchiffrement impossible.');
       return txt;
     } finally { fs.rmSync(tmp, { force: true }); }
+  }
+
+  // Version asynchrone de read() : ne bloque pas l'appli pendant le déchiffrement (analyse de nombreux fichiers)
+  readAsync(file) {
+    return new Promise((resolve, reject) => {
+      const head = Buffer.alloc(8); const fd = fs.openSync(file, 'r'); fs.readSync(fd, head, 0, 8, 0); fs.closeSync(fd);
+      if (head.toString('latin1', 0, 8) === 'SiiNunit') return resolve(fs.readFileSync(file, 'utf8'));
+      if (!this.available()) return reject(new Error('Outil de déchiffrement introuvable.'));
+      const tmp = path.join(os.tmpdir(), `tch-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}.sii`);
+      execFile(this.exe, [file, tmp], { windowsHide: true, timeout: 60000 }, (err) => {
+        try {
+          if (err) throw new Error('Déchiffrement impossible.');
+          const txt = fs.readFileSync(tmp, 'utf8');
+          if (!txt.startsWith('SiiNunit')) throw new Error('Déchiffrement impossible.');
+          resolve(txt);
+        } catch (e) { reject(e); } finally { fs.rmSync(tmp, { force: true }); }
+      });
+    });
+  }
+
+  // ----------- analyse : la sauvegarde est-elle corrompue ?
+  // Format d'après les premiers octets : texte clair, chiffré (ScsC) ou binaire (BSII)
+  static format(head) {
+    const s = head.toString('latin1', 0, 8);
+    if (s === 'SiiNunit') return 'texte';
+    if (s.startsWith('ScsC')) return 'chiffré';
+    if (s.startsWith('BSII')) return 'binaire';
+    return null;
+  }
+  // Vérifie la structure d'un texte SII : blocs bien ouverts et fermés, lignes lisibles, unités obligatoires présentes
+  static checkText(text, required = []) {
+    const issues = [];
+    if (text.includes('\u0000')) issues.push('Le fichier contient des octets nuls (écriture interrompue).');
+    const lines = text.replace(/\r/g, '').split('\n');
+    let i = 0; while (i < lines.length && !lines[i].trim()) i++;
+    if ((lines[i] || '').trim() !== 'SiiNunit') return { issues: ['En-tête « SiiNunit » absent.'], units: 0 };
+    i++; while (i < lines.length && !lines[i].trim()) i++;
+    if ((lines[i] || '').trim() !== '{') return { issues: ['Accolade d\'ouverture absente après l\'en-tête.'], units: 0 };
+    let unit = null, closed = false, units = 0, bad = 0, firstBad = '';
+    const ids = new Set(), types = new Set(); let dup = 0;
+    for (i = i + 1; i < lines.length; i++) {
+      const l = lines[i].trimEnd();
+      if (!l.trim()) continue;
+      if (closed) { issues.push('Du contenu se trouve après la fin du fichier.'); break; }
+      if (l.trim() === '}') { if (unit) unit = null; else closed = true; continue; }
+      const h = l.match(/^([a-z0-9_]+)\s*:\s*([^\s{]+)\s*\{$/i);
+      if (h) {
+        if (unit) { issues.push(`Bloc « ${unit} » jamais refermé.`); }
+        unit = h[1]; units++; types.add(h[1]);
+        if (ids.has(h[2])) dup++; else ids.add(h[2]);
+        continue;
+      }
+      if (unit && /^\s+[A-Za-z0-9_]+(\[\d*\])?\s*:/.test(l)) continue;
+      bad++; if (!firstBad) firstBad = `ligne ${i + 1}`;
+    }
+    if (unit) issues.push(`Le fichier s'arrête au milieu du bloc « ${unit} » (fichier tronqué).`);
+    else if (!closed) issues.push('Accolade de fin absente (fichier tronqué).');
+    if (bad) issues.push(`${bad} ligne(s) illisible(s) (première : ${firstBad}).`);
+    if (dup) issues.push(`${dup} identifiant(s) de bloc en double.`);
+    for (const r of required) if (!types.has(r)) issues.push(`Bloc obligatoire « ${r} » absent.`);
+    return { issues, units };
+  }
+  // Analyse un fichier .sii : { status: 'ok' | 'warn' | 'bad', format, size, issues, notes }
+  async checkFile(file, required = [], optional = false) {
+    const res = { file: path.basename(file), status: 'ok', format: null, size: 0, issues: [], notes: [] };
+    let st; try { st = fs.statSync(file); } catch {
+      res.status = optional ? 'warn' : 'bad'; res.issues.push('Fichier absent.'); return res;
+    }
+    res.size = st.size;
+    if (!st.size) { res.status = 'bad'; res.issues.push('Fichier vide (0 octet).'); return res; }
+    const n = Math.min(st.size, 4096), head = Buffer.alloc(n);
+    const fd = fs.openSync(file, 'r'); fs.readSync(fd, head, 0, n, 0); fs.closeSync(fd);
+    if (head.every(b => b === 0)) { res.status = 'bad'; res.issues.push('Fichier rempli de zéros (coupure pendant l\'enregistrement).'); return res; }
+    res.format = SaveEditor.format(head);
+    if (!res.format) { res.status = 'bad'; res.issues.push('Format inconnu : ce n\'est pas un fichier de sauvegarde lisible.'); return res; }
+    if (res.format !== 'texte' && !this.available()) { res.status = 'warn'; res.notes.push('Contenu non vérifié : outil de déchiffrement absent.'); return res; }
+    let text; try { text = await this.readAsync(file); } catch (e) { res.status = 'bad'; res.issues.push('Impossible de lire le contenu : ' + e.message); return res; }
+    const c = SaveEditor.checkText(text, required);
+    res.units = c.units; res.issues.push(...c.issues);
+    if (c.issues.length) res.status = 'bad';
+    return res;
+  }
+  // Analyse un créneau de sauvegarde (game.sii + info.sii)
+  async analyzeSlot(slotDir) {
+    const game = await this.checkFile(path.join(slotDir, 'game.sii'), ['economy', 'bank', 'player']);
+    const info = await this.checkFile(path.join(slotDir, 'info.sii'), [], true);
+    if (info.status === 'bad') info.status = 'warn'; // le jeu reconstruit info.sii ; seul game.sii est vital
+    const status = game.status === 'bad' ? 'bad' : (game.status === 'warn' || info.status === 'warn') ? 'warn' : 'ok';
+    return { status, files: [game, info] };
   }
 
   // ----------- outils sur le texte SII
