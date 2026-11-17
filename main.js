@@ -320,8 +320,8 @@ function setupIpc() {
   ipcMain.handle('update:install', () => {
     if (updateState.state !== 'ready') return false;
     if (telemetry) telemetry.stop();
-    // isSilent = true : pas d'assistant Windows ; isForceRunAfter = true : l'appli se relance toute seule
-    setTimeout(() => autoUpdater.quitAndInstall(true, true), 1200);
+    // Installation silencieuse puis fermeture : ne pas relancer l'application.
+    setTimeout(() => autoUpdater.quitAndInstall(true, false), 1200);
     return true;
   });
   ipcMain.handle('game:launch', async (_e, game) => {
@@ -358,11 +358,11 @@ function setupIpc() {
 
 /* ---------- Mises à jour (GitHub Releases), entièrement dans l'appli ---------- */
 // Vérification automatique ; le téléchargement se lance avec le bouton « Mettre à jour » ;
-// l'installation est silencieuse (pas d'assistant Windows) et l'appli redémarre toute seule.
+// l'installation est silencieuse (pas d'assistant Windows) et l'appli reste fermée ensuite.
 function setupUpdates() {
   if (!app.isPackaged) return;
   autoUpdater.autoDownload = false;
-  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.autoInstallOnAppQuit = false;
   autoUpdater.on('checking-for-update', () => { if (!['downloading', 'ready'].includes(updateState.state)) updateState = { state: 'checking', version: null }; });
   autoUpdater.on('update-not-available', () => { updateState = { state: 'none', version: null }; });
   autoUpdater.on('update-available', (info) => { if (updateState.state !== 'downloading' && updateState.state !== 'ready') updateState = { state: 'available', version: info.version, notes: info.releaseName || '' }; });

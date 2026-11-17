@@ -7,6 +7,7 @@ La version **0.12.7** ajoute un bandeau de navigation compact pour les services 
 - Le bandeau affiche le statut du service, l'heure du jeu, la vitesse et la limitation.
 - Une seconde ligne présente la distance et l'estimation GPS jusqu'au prochain arrêt, le compteur du véhicule et son autonomie lorsqu'elle est disponible.
 - L'aperçu hors connexion propose aussi un exemple car. Les noms d'arrêts, températures et pourcentages de carburant non transmis par le jeu ne sont pas inventés.
+- Après l'installation d'une mise à jour, l'application se ferme et reste fermée ; elle ne se relance pas automatiquement.
 
 `npm test` vérifie les calculs et l'affichage du HUD.
 
@@ -65,7 +66,7 @@ Télécharge le dernier `Telemetrie-Entreprise-Setup-x.y.z.exe` dans la page **R
 
 ## Mises à jour automatiques
 
-L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe une nouvelle version dans les Releases GitHub. Le bouton « Mettre à jour » la télécharge (barre de progression dans l'appli), l'installe sans assistant Windows et relance l'appli.
+L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe une nouvelle version dans les Releases GitHub. Le bouton « Mettre à jour » la télécharge (barre de progression dans l'appli), l'installe sans assistant Windows puis ferme l'application. Elle ne redémarre pas automatiquement : relance-la manuellement quand tu veux.
 
 ## Publier une nouvelle version
 

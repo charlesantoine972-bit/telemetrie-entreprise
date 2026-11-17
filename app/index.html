@@ -402,7 +402,7 @@
 </div></div>
 <div id="installing" class="hidden" role="alertdialog" aria-modal="true" aria-labelledby="installingTitle"><div style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
   <div class="spinner"></div><b style="font-size:18px" id="installingTitle">Installation de la mise à jour…</b>
-  <span class="soft">L'appli va redémarrer toute seule dans un instant.</span></div></div>
+  <span class="soft">L'appli va se fermer pendant l'installation et restera fermée ensuite.</span></div></div>
 <div id="srLive" class="sr-only" aria-live="polite"></div>
 <div class="app">
   <a class="skip" href="#mainContent">Aller au contenu</a>
@@ -2150,7 +2150,7 @@ async function refreshUpdate(){
     setText('updBannerText', u.state === 'downloading' ? `Téléchargement de la v${u.version}… ${u.progress || 0} %` : u.state === 'ready' ? `La v${u.version} est prête.` : u.state === 'failed' ? 'Téléchargement interrompu.' : `Mise à jour v${u.version} disponible.`);
     const bb = document.getElementById('updBannerBar'); bb.classList.toggle('hidden', u.state !== 'downloading'); bb.firstElementChild.style.width = (u.progress || 0) + '%';
     const btn = document.getElementById('updBannerBtn'); btn.classList.toggle('hidden', u.state === 'downloading');
-    btn.textContent = u.state === 'ready' ? 'Installer maintenant' : u.state === 'failed' ? 'Réessayer' : 'Mettre à jour';
+    btn.textContent = u.state === 'ready' ? 'Installer et fermer' : u.state === 'failed' ? 'Réessayer' : 'Mettre à jour';
   }
   if (u.state === 'ready' && autoInstall && !installing) doInstall(u.version);
 }
@@ -2173,11 +2173,11 @@ function renderUpdatePanel(u, extra){
   setText('updCurrent', 'v' + u.current);
   const btn = document.getElementById('btnUpdate');
   const MSG = { dev: 'Mode test : les mises à jour ne sont actives que dans l\'appli installée.', checking: 'Recherche en cours…', none: 'Tu as la dernière version.',
-    available: 'La version v' + u.version + ' est disponible. Elle s\'installe ici, sans assistant Windows, puis l\'appli redémarre toute seule.',
+    available: 'La version v' + u.version + ' est disponible. Elle s\'installe sans assistant Windows, puis l\'appli se ferme sans redémarrer.',
     downloading: 'Téléchargement de la v' + u.version + ' : ' + (u.progress || 0) + ' %', ready: 'La version v' + u.version + ' est prête à être installée.',
     error: 'Impossible de vérifier (pas de connexion ?).', failed: 'Le téléchargement s\'est interrompu. Réessaie.', idle: 'L\'appli vérifie toute seule au démarrage puis toutes les 30 minutes.' };
   setText('updMsg', extra || MSG[u.state] || MSG.idle);
-  btn.textContent = u.state === 'ready' ? 'Installer et redémarrer' : u.state === 'available' ? 'Mettre à jour vers v' + u.version : u.state === 'failed' ? 'Réessayer'
+  btn.textContent = u.state === 'ready' ? 'Installer et fermer' : u.state === 'available' ? 'Mettre à jour vers v' + u.version : u.state === 'failed' ? 'Réessayer'
     : u.state === 'downloading' ? 'Téléchargement… ' + (u.progress || 0) + ' %' : u.state === 'checking' ? 'Recherche…' : 'Rechercher une mise à jour';
   btn.disabled = u.state === 'checking' || u.state === 'downloading';
   btn.style.opacity = btn.disabled ? .6 : 1;
