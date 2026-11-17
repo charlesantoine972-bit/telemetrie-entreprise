@@ -88,9 +88,14 @@ class Telemetry extends EventEmitter {
     try { this.sock.close(); } catch {}
   }
 
-  thresholds() {
+  vehicleType(live = this.live, connected = Date.now() - this.lastPacket < 3000) {
+    if (!connected || !live) return this.getSettings().vehicleType;
+    return live.busJob ? 'car' : 'camion';
+  }
+
+  thresholds(live = this.live, connected = Date.now() - this.lastPacket < 3000) {
     const s = this.getSettings();
-    return { limit: (this.live && this.live.busJob) || s.vehicleType === 'car' ? s.limitCar : s.limitTruck, pct: s.racePct };
+    return { limit: this.vehicleType(live, connected) === 'car' ? s.limitCar : s.limitTruck, pct: s.racePct };
   }
 
   // ---------------------------------------------------------------- état reçu
@@ -267,7 +272,8 @@ class Telemetry extends EventEmitter {
   snapshot() {
     const connected = Date.now() - this.lastPacket < 3000;
     const s = connected ? this.live : null;
-    const th = this.thresholds();
+    const vehicleType = this.vehicleType(s, connected);
+    const th = this.thresholds(s, connected);
     let job = null;
     if (this.current) {
       const dist = this.current.loaded + this.current.empty;
@@ -276,7 +282,7 @@ class Telemetry extends EventEmitter {
     }
     return {
       connected, socketError: this.socketError || null,
-      live: s, job, thresholds: th, vehicleType: s && s.busJob ? 'car' : this.getSettings().vehicleType,
+      live: s, job, thresholds: th, vehicleType,
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },

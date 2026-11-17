@@ -679,7 +679,7 @@
           1. Ouvre l'appli : elle installe toute seule le plugin dans le jeu (vérifie dans <b>Options</b>).<br>
           2. Clique sur <b>Lancer le jeu</b>. Au premier lancement, le jeu affiche un message sur les « fonctions SDK avancées » : clique sur <b>OK</b>.<br>
           3. Roule : la page <b>Télémétrie</b> se remplit en direct, et tes missions s'enregistrent dans <b>Ma carrière</b>.<br>
-          4. Règle tes préférences (seuil réel / course, type de véhicule) dans <b>Options</b>.
+          4. Règle tes préférences (seuil réel / course et véhicule pour l’aperçu hors jeu) dans <b>Options</b>.
         </div></details>
         <details class="acc"><summary>Prochains événements</summary><div class="acc-in">
           Le calendrier des convois et événements de ton entreprise arrive avec la partie <b>Entreprise</b>.
@@ -833,8 +833,9 @@
               <h2 style="margin:0">Profil chauffeur</h2>
               <label class="field">Ton pseudo de chauffeur
                 <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
-              <label class="field">Type de véhicule
+              <label class="field">Véhicule pour l’aperçu hors jeu
                 <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
+              <div class="muted" style="font-size:13px">En jeu, le mode camion ou autocar est détecté automatiquement par le plugin.</div>
               <details class="acc">
                 <summary>Règle des km réels / course</summary>
                 <div class="acc-in" style="display:flex;flex-direction:column;gap:14px">
