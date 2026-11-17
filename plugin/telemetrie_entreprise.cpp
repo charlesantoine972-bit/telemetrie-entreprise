@@ -24,7 +24,7 @@
 #include "common/scssdk_telemetry_trailer_common_channels.h"
 #include "common/scssdk_telemetry_job_common_channels.h"
 
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.1.0"
 static const unsigned short APP_PORT = 47311;
 
 // ---------------------------------------------------------------- état
@@ -104,14 +104,23 @@ static void sendRaw(const std::string &msg) {
     sendto(sock, msg.c_str(), (int)msg.size(), 0, (sockaddr *)&appAddr, sizeof appAddr);
 }
 
+// Vrai si la fenêtre au premier plan appartient au jeu (sinon : Alt+Tab, bureau, autre appli)
+static bool gameFocused() {
+    HWND w = GetForegroundWindow();
+    if (!w) return false;
+    DWORD pid = 0;
+    GetWindowThreadProcessId(w, &pid);
+    return pid == GetCurrentProcessId() && !IsIconic(w);
+}
+
 static void sendState() {
-    char b[1024];
+    char b[1100];
     snprintf(b, sizeof b,
-        "{\"type\":\"state\",\"plugin\":\"" PLUGIN_VERSION "\",\"game\":%s,\"gameVersion\":%u,\"paused\":%s,"
+        "{\"type\":\"state\",\"plugin\":\"" PLUGIN_VERSION "\",\"game\":%s,\"gameVersion\":%u,\"paused\":%s,\"focused\":%s,"
         "\"speed\":%.3f,\"odometer\":%.4f,\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"heading\":%.4f,"
         "\"navDistance\":%.1f,\"navTime\":%.1f,\"speedLimit\":%.3f,\"fuel\":%.2f,\"fuelRange\":%.1f,"
         "\"cargoDamage\":%.4f,\"gameTime\":%u,\"restStop\":%d,\"trailerConnected\":%s,\"engine\":%s,\"parkingBrake\":%s,",
-        esc(gameId.c_str()).c_str(), gameVersion, paused ? "true" : "false",
+        esc(gameId.c_str()).c_str(), gameVersion, paused ? "true" : "false", gameFocused() ? "true" : "false",
         t.speed, t.odometer, t.x, t.y, t.z, t.heading,
         t.navDistance, t.navTime, t.speedLimit, t.fuel, t.fuelRange,
         t.cargoDamage, t.gameTime, t.restStop,

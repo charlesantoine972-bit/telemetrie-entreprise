@@ -115,7 +115,12 @@ function hudData() {
     sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 };
     sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
   }
-  return { ...sn, jobs: undefined, options: settings.hud, show: sn.connected || test };
+  // Affiché seulement quand on joue vraiment : jeu au premier plan (pas d'Alt+Tab, pas le bureau),
+  // pas en pause (menu Échap), et données fraîches (le jeu n'envoie plus rien quand il est réduit).
+  const L = sn.live || {};
+  const fresh = Date.now() - telemetry.lastPacket < 700;
+  const playing = sn.connected && fresh && !L.paused && L.focused !== false;
+  return { ...sn, jobs: undefined, options: settings.hud, show: playing || test };
 }
 function syncHud() {
   const on = !!(settings.modules && settings.modules.hud) || Date.now() < hudTestUntil;

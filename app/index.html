@@ -502,7 +502,7 @@
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>Bandeau / HUD</h1>
-      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres. Il apparaît tout seul quand tu roules et disparaît quand le jeu est fermé.</p>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres. Il n'apparaît que <b>quand tu joues</b> : il se cache tout seul dans le menu pause (Échap), quand tu fais Alt+Tab ou que tu reviens sur le bureau, quand le jeu est réduit ou fermé.</p>
       <div class="panel" id="hudStage" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:200px;padding:26px;margin-bottom:18px;overflow:hidden;
         background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
         <span id="hudStageTag" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU</span>
@@ -1388,6 +1388,7 @@ function renderMkItem(id){
 document.getElementById('mkBack').onclick = () => go(mkFrom);
 const MK_FEATURED = ['tablette', 'gps'];
 const MK_NEWS = [
+  { d: '17/11/2026', t: 'HUD : seulement quand tu joues', x: 'Le bandeau se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit. Plugin du jeu mis à jour (1.1.0) : relance le jeu une fois.' },
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },
   { d: '17/11/2026', t: 'Accessibilité revue (WCAG 2.1 AA)', x: 'Navigation complète au clavier, lien « Aller au contenu », lecteurs d\'écran (NVDA, Narrateur), contrastes vérifiés dans tous les thèmes, mode Contraste élevé de Windows, une seule couleur d\'action.' },
   { d: '17/11/2026', t: 'Bandeau / HUD en jeu', x: 'Le bandeau par-dessus le jeu est disponible : vitesse, limitation, mode réel / course, distance restante. À activer dans Hub → Entreprise.' },
