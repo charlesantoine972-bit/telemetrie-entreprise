@@ -1,8 +1,16 @@
 # Truck & Coach Hub
 
-## Mise à jour 0.12.4 : vérifications des jeux et HUD (17 novembre 2026)
+## Mise à jour 0.12.6 : cartes DLC, HUD Coaches et réglages (17 novembre 2026)
 
-La version **0.12.4** est préparée pour publication. La Release et l'installateur seront générés par GitHub Actions après intégration sur `main`.
+La version **0.12.6** regroupe les dernières évolutions. Après son intégration sur `main`, GitHub Actions génère la Release et l'installateur Windows.
+
+- **Carte** : importe les tuiles locales exportées depuis TsMap pour ETS2 et ATS. La génération reste manuelle ; les fichiers du jeu ne sont ni modifiés ni téléversés.
+- **HUD** : détecte automatiquement les missions camion ou car. En mode car, il affiche les informations de service et le GPS du prochain arrêt plutôt que les détails de livraison camion. Les champs de ligne et d'arrêts doivent encore être validés en jeu.
+- **Réglages** : « Plugin du jeu » et « Profil chauffeur » sont regroupés dans une section repliable.
+
+Les tests automatisés sont vérifiés avec `npm test`.
+
+## Vérifications des jeux et HUD
 
 - Dans **Carte → Fichiers du jeu et DLC → Vérifier les jeux**, l'application recherche ETS2 et ATS dans Steam, dans les dossiers choisis et dans les chemins du dernier journal. Elle lit les en-têtes des archives `.scs`, leur taille et date, ainsi que le journal du jeu, sans modifier ces fichiers. Une archive présente n'est pas une preuve d'achat ni d'activation. Le journal décrit la dernière session, pas nécessairement la session actuelle. Les mods Workshop ne sont pas inventoriés.
 - La carte peut charger un export local de tuiles TsMap : ouvre la version actuelle de [TsMap](https://github.com/dariowouters/ts-map), sélectionne le dossier du jeu, génère les tuiles aux zooms 0–8, puis clique sur **Importer les tuiles** dans Carte et choisis le dossier contenant `TileMapInfo.json` et `Tiles`. Cela inclut les DLC officiels présents dans l'installation selon la version du générateur (dont les régions prises en charge par TsMap, y compris l’Islande). Les archives du jeu ne sont ni téléversées ni modifiées. Chaque jeu a son propre export ; le fond historique reste disponible. La génération n'est pas automatique et l'ordre des mods n'est pas utilisé ici.
@@ -26,7 +34,7 @@ Références : [SDK officiel SCS](https://modding.scssoft.com/wiki/Documentation
 
 Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2** : classement des chauffeurs (km chargés / à vide), carte en direct, fiche chauffeur et tablette in-game.
 
-> Version préparée : **0.12.4** — carte en direct (ETS2 / ATS), HUD configurable, prise en charge des carrières camion et car, outils Truck Tools et Coach Tools.
+> Version préparée : **0.12.6** — import de cartes DLC, HUD adapté aux missions camion et car, réglages regroupés.
 > Les pages « Aperçu » utilisent des données d'exemple ; les pages « Bientôt » décrivent les fonctions à venir.
 
 ## Comment ça marche
