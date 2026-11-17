@@ -4,7 +4,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { execFileSync, execFile } = require('child_process');
 
 const TRUCK_SKILLS = [
   { key: 'adr', label: 'ADR (matières dangereuses)', max: 63, adr: true },
@@ -41,6 +41,95 @@ class SaveEditor {
       if (!txt.startsWith('SiiNunit')) throw new Error('Déchiffrement impossible.');
       return txt;
     } finally { fs.rmSync(tmp, { force: true }); }
+  }
+
+  // Version asynchrone de read() : ne bloque pas l'appli pendant le déchiffrement (analyse de nombreux fichiers)
+  readAsync(file) {
+    return new Promise((resolve, reject) => {
+      const head = Buffer.alloc(8); const fd = fs.openSync(file, 'r'); fs.readSync(fd, head, 0, 8, 0); fs.closeSync(fd);
+      if (head.toString('latin1', 0, 8) === 'SiiNunit') return resolve(fs.readFileSync(file, 'utf8'));
+      if (!this.available()) return reject(new Error('Outil de déchiffrement introuvable.'));
+      const tmp = path.join(os.tmpdir(), `tch-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}.sii`);
+      execFile(this.exe, [file, tmp], { windowsHide: true, timeout: 60000 }, (err) => {
+        try {
+          if (err) throw new Error('Déchiffrement impossible.');
+          const txt = fs.readFileSync(tmp, 'utf8');
+          if (!txt.startsWith('SiiNunit')) throw new Error('Déchiffrement impossible.');
+          resolve(txt);
+        } catch (e) { reject(e); } finally { fs.rmSync(tmp, { force: true }); }
+      });
+    });
+  }
+
+  // ----------- analyse : la sauvegarde est-elle corrompue ?
+  // Format d'après les premiers octets : texte clair, chiffré (ScsC) ou binaire (BSII)
+  static format(head) {
+    const s = head.toString('latin1', 0, 8);
+    if (s === 'SiiNunit') return 'texte';
+    if (s.startsWith('ScsC')) return 'chiffré';
+    if (s.startsWith('BSII')) return 'binaire';
+    return null;
+  }
+  // Vérifie la structure d'un texte SII : blocs bien ouverts et fermés, lignes lisibles, unités obligatoires présentes
+  static checkText(text, required = []) {
+    const issues = [];
+    if (text.includes('\u0000')) issues.push('Le fichier contient des octets nuls (écriture interrompue).');
+    const lines = text.replace(/\r/g, '').split('\n');
+    let i = 0; while (i < lines.length && !lines[i].trim()) i++;
+    if ((lines[i] || '').trim() !== 'SiiNunit') return { issues: ['En-tête « SiiNunit » absent.'], units: 0 };
+    i++; while (i < lines.length && !lines[i].trim()) i++;
+    if ((lines[i] || '').trim() !== '{') return { issues: ['Accolade d\'ouverture absente après l\'en-tête.'], units: 0 };
+    let unit = null, closed = false, units = 0, bad = 0, firstBad = '';
+    const ids = new Set(), types = new Set(); let dup = 0;
+    for (i = i + 1; i < lines.length; i++) {
+      const l = lines[i].trimEnd();
+      if (!l.trim()) continue;
+      if (closed) { issues.push('Du contenu se trouve après la fin du fichier.'); break; }
+      if (l.trim() === '}') { if (unit) unit = null; else closed = true; continue; }
+      const h = l.match(/^([a-z0-9_]+)\s*:\s*([^\s{]+)\s*\{$/i);
+      if (h) {
+        if (unit) { issues.push(`Bloc « ${unit} » jamais refermé.`); }
+        unit = h[1]; units++; types.add(h[1]);
+        if (ids.has(h[2])) dup++; else ids.add(h[2]);
+        continue;
+      }
+      if (unit && /^\s+[A-Za-z0-9_]+(\[\d*\])?\s*:/.test(l)) continue;
+      bad++; if (!firstBad) firstBad = `ligne ${i + 1}`;
+    }
+    if (unit) issues.push(`Le fichier s'arrête au milieu du bloc « ${unit} » (fichier tronqué).`);
+    else if (!closed) issues.push('Accolade de fin absente (fichier tronqué).');
+    if (bad) issues.push(`${bad} ligne(s) illisible(s) (première : ${firstBad}).`);
+    if (dup) issues.push(`${dup} identifiant(s) de bloc en double.`);
+    for (const r of required) if (!types.has(r)) issues.push(`Bloc obligatoire « ${r} » absent.`);
+    return { issues, units };
+  }
+  // Analyse un fichier .sii : { status: 'ok' | 'warn' | 'bad', format, size, issues, notes }
+  async checkFile(file, required = [], optional = false) {
+    const res = { file: path.basename(file), status: 'ok', format: null, size: 0, issues: [], notes: [] };
+    let st; try { st = fs.statSync(file); } catch {
+      res.status = optional ? 'warn' : 'bad'; res.issues.push('Fichier absent.'); return res;
+    }
+    res.size = st.size;
+    if (!st.size) { res.status = 'bad'; res.issues.push('Fichier vide (0 octet).'); return res; }
+    const n = Math.min(st.size, 4096), head = Buffer.alloc(n);
+    const fd = fs.openSync(file, 'r'); fs.readSync(fd, head, 0, n, 0); fs.closeSync(fd);
+    if (head.every(b => b === 0)) { res.status = 'bad'; res.issues.push('Fichier rempli de zéros (coupure pendant l\'enregistrement).'); return res; }
+    res.format = SaveEditor.format(head);
+    if (!res.format) { res.status = 'bad'; res.issues.push('Format inconnu : ce n\'est pas un fichier de sauvegarde lisible.'); return res; }
+    if (res.format !== 'texte' && !this.available()) { res.status = 'warn'; res.notes.push('Contenu non vérifié : outil de déchiffrement absent.'); return res; }
+    let text; try { text = await this.readAsync(file); } catch (e) { res.status = 'bad'; res.issues.push('Impossible de lire le contenu : ' + e.message); return res; }
+    const c = SaveEditor.checkText(text, required);
+    res.units = c.units; res.issues.push(...c.issues);
+    if (c.issues.length) res.status = 'bad';
+    return res;
+  }
+  // Analyse un créneau de sauvegarde (game.sii + info.sii)
+  async analyzeSlot(slotDir) {
+    const game = await this.checkFile(path.join(slotDir, 'game.sii'), ['economy', 'bank', 'player']);
+    const info = await this.checkFile(path.join(slotDir, 'info.sii'), [], true);
+    if (info.status === 'bad') info.status = 'warn'; // le jeu reconstruit info.sii ; seul game.sii est vital
+    const status = game.status === 'bad' ? 'bad' : (game.status === 'warn' || info.status === 'warn') ? 'warn' : 'ok';
+    return { status, files: [game, info] };
   }
 
   // ----------- outils sur le texte SII
@@ -120,6 +209,68 @@ class SaveEditor {
     return [...set].sort();
   }
 
+  // ----------- bilan du profil (lecture seule) : finances, flotte, état, cohérence, avec alertes
+  static bilan(text) {
+    const B = SaveEditor;
+    const blockOf = (re) => { const b = B.block(text, re); return b ? b.body : ''; };
+    const eco = blockOf(/^economy : /m), bank = blockOf(/^bank : /m), player = blockOf(/^player : /m);
+    // Tous les identifiants de blocs, pour repérer les références cassées
+    const ids = new Map(); { const re = /^([a-z0-9_]+) : ([^\s{]+) \{$/gm; let m; while ((m = re.exec(text))) ids.set(m[2], m[1]); }
+    const unitBody = (id) => { const i = text.indexOf(` : ${id} {\n`); if (i < 0) return null; const s = text.lastIndexOf('\n', i) + 1; return text.slice(s, text.indexOf('\n}', s)); };
+    const isNull = v => !v || v === 'null' || v === '""';
+    const refs = (body, key) => B.getArray(body, key).filter(v => !isNull(v));
+    const alerts = [];
+    const add = (level, text, page) => alerts.push({ level, text, page: page || null });
+
+    // Finances
+    const money = Number(B.get(bank, 'money_account')) || 0;
+    const overdraft = B.get(bank, 'overdraft') === 'true';
+    const loans = refs(bank, 'loans').map(id => {
+      const b = unitBody(id); if (!b) return { id, missing: true };
+      const num = k => { const v = B.get(b, k); return v == null ? null : (v.startsWith('&') ? B.float(v) : Number(v)); };
+      return { amount: num('amount'), original: num('original_amount'), months: num('duration'), rate: num('interest_rate') };
+    });
+    const debt = loans.reduce((a, l) => a + (l.amount || 0), 0);
+    if (money < 0 || overdraft) add('bad', `Compte à découvert (${money.toLocaleString('fr-FR')} €). Tu peux corriger l'argent juste en dessous.`);
+    if (loans.length) add('info', `${loans.length} prêt(s) en cours, ${debt.toLocaleString('fr-FR')} € restant à rembourser.`);
+
+    // Flotte
+    const trucks = refs(player, 'trucks'), trailers = refs(player, 'trailers'), drivers = refs(player, 'drivers');
+    const garages = B.unitBlocks(text, 'garage').map(b => text.slice(b.start, b.end)).filter(g => Number(B.get(g, 'status')) > 0).length;
+    const myTruck = B.get(player, 'my_truck') || B.get(player, 'assigned_truck');
+
+    // État des véhicules du joueur
+    const worn = []; let worst = 0;
+    for (const id of trucks) {
+      const b = unitBody(id); if (!b) continue;
+      const w = Math.max(0, ...['engine_wear', 'transmission_wear', 'cabin_wear', 'chassis_wear'].map(k => B.float(B.get(b, k))));
+      worst = Math.max(worst, w); if (w >= 0.5) worn.push(id);
+    }
+    if (worn.length) add('warn', `${worn.length} camion(s) très usé(s) (jusqu'à ${Math.round(worst * 100)} %).`, 'at-repar');
+    let fuel = null;
+    if (!isNull(myTruck)) { const b = unitBody(myTruck); if (b) fuel = B.float(B.get(b, 'fuel_relative')); }
+    if (fuel != null && fuel < 0.1) add('warn', `Ton camion est presque à sec (${Math.round(fuel * 100)} % de carburant).`, 'at-camion');
+    const cargo = B.unitBlocks(text, 'trailer').map(b => B.float(B.get(text.slice(b.start, b.end), 'cargo_damage'))).filter(v => v > 0.2).length;
+    if (cargo) add('warn', `${cargo} remorque(s) avec une cargaison abîmée à plus de 20 %.`, 'at-repar');
+
+    // Cohérence : références vers des blocs qui n'existent pas (signe de sauvegarde abîmée)
+    const broken = [...trucks, ...trailers, ...drivers, ...loans.filter(l => l.missing).map(l => l.id)].filter(id => !ids.has(id)).length
+      + (!isNull(myTruck) && !ids.has(myTruck) ? 1 : 0);
+    if (broken) add('bad', `${broken} référence(s) vers des éléments introuvables (camion, remorque, chauffeur ou prêt) : sauvegarde probablement abîmée.`);
+    const integ = B.checkText(text, ['economy', 'bank', 'player']).issues;
+    if (integ.length) add('bad', 'Structure du fichier : ' + integ.join(' '));
+    if (isNull(myTruck) && trucks.length) add('info', 'Aucun camion attribué à ton chauffeur.');
+
+    const level = alerts.some(a => a.level === 'bad') ? 'bad' : alerts.some(a => a.level === 'warn') ? 'warn' : 'ok';
+    return {
+      level, alerts,
+      money, overdraft, loans: loans.filter(l => !l.missing), debt,
+      trucks: trucks.length, trailers: trailers.length, drivers: drivers.length, garages,
+      worstWear: worst, fuel,
+      gameDays: Math.floor((Number(B.get(eco, 'game_time')) || 0) / 1440)
+    };
+  }
+
   // ----------- lecture (résumé pour l'interface)
   summary(slotDir) {
     const text = this.read(path.join(slotDir, 'game.sii'));
@@ -137,8 +288,9 @@ class SaveEditor {
     const fuel = vehicles.map(v => SaveEditor.float(SaveEditor.get(v, 'fuel_relative')));
     let names = { profileName: '', companyName: '' };
     try { names = this.profileNames(path.join(slotDir, '..', '..')); } catch {}
+    let bilan = null; try { bilan = SaveEditor.bilan(text); } catch (e) { bilan = { level: 'bad', alerts: [{ level: 'bad', text: 'Bilan impossible : ' + e.message }] }; }
     return {
-      ...names,
+      ...names, bilan,
       money: Number(SaveEditor.get(bank, 'money_account')) || 0,
       xp: Number(SaveEditor.get(eco, 'experience_points')) || 0,
       busXp: SaveEditor.get(eco, 'bus_experience_points') == null ? null : Number(SaveEditor.get(eco, 'bus_experience_points')),

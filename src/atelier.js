@@ -37,6 +37,53 @@ class Atelier {
     return { report, backupName };
   }
 
+  // ---------- Analyse : sauvegardes corrompues ou non (lecture seule, rien n'est modifié)
+  async analyze(id) {
+    const r = this.resolve(id);
+    if (!fs.existsSync(r.dir)) throw new Error('Dossier du profil introuvable.');
+    const profile = await this.editor.checkFile(path.join(r.dir, 'profile.sii'), ['user_profile']);
+    const saveDir = path.join(r.dir, 'save');
+    let dirs = []; try { dirs = fs.readdirSync(saveDir, { withFileTypes: true }).filter(d => d.isDirectory() && d.name !== 'multiplayer_backup'); } catch {}
+    const labels = new Map(this.editor.slots(r.dir).map(s => [s.slot, s.label]));
+    const slots = [];
+    for (const d of dirs) {
+      const dir = path.join(saveDir, d.name);
+      let modified = 0; try { modified = fs.statSync(path.join(dir, 'game.sii')).mtimeMs; } catch { try { modified = fs.statSync(dir).mtimeMs; } catch {} }
+      const res = await this.editor.analyzeSlot(dir);
+      slots.push({ slot: d.name, label: labels.get(d.name) || (d.name === 'autosave' ? 'Sauvegarde automatique' : 'Sauvegarde ' + d.name), modified, ...res });
+    }
+    slots.sort((a, b) => b.modified - a.modified);
+    const count = k => slots.filter(s => s.status === k).length;
+    return { id, running: this.isRunning(r.game), tool: this.editor.available(), profile, slots,
+      ok: count('ok'), warn: count('warn') + (profile.status === 'warn' ? 1 : 0), bad: count('bad') + (profile.status === 'bad' ? 1 : 0), at: Date.now() };
+  }
+
+  // ---------- Copie d'un profil (pour faire des tests sans toucher à l'original)
+  // La copie est toujours créée dans « profiles » (local), jamais dans le Steam Cloud.
+  duplicate(id, newName) {
+    const r = this.resolve(id);
+    if (this.isRunning(r.game)) throw new Error(`Ferme ${GAMES[r.game].name} avant de dupliquer un profil.`);
+    if (!fs.existsSync(r.dir)) throw new Error('Dossier du profil introuvable.');
+    const name = SaveEditor.checkName(newName, 'Le nom de la copie');
+    const folder = Buffer.from(name, 'utf8').toString('hex').toUpperCase();
+    const dst = path.join(this.gameDir(r.game), 'profiles', folder);
+    const taken = PROFILE_DIRS.some(k => fs.existsSync(path.join(this.gameDir(r.game), k, folder)))
+      || this.profiles().some(p => p.game === r.game && p.name.toLowerCase() === name.toLowerCase());
+    if (taken) throw new Error(`Un profil s'appelle déjà « ${name} ». Choisis un autre nom.`);
+    fs.mkdirSync(path.dirname(dst), { recursive: true });
+    fs.cpSync(r.dir, dst, { recursive: true });
+    try {
+      const file = path.join(dst, 'profile.sii');
+      const txt = SaveEditor.set(this.editor.read(file), 'profile_name', SaveEditor.encStr(name));
+      if (!txt.startsWith('SiiNunit')) throw new Error('Fichier du profil illisible.');
+      fs.writeFileSync(file, txt);
+    } catch (e) {
+      fs.rmSync(dst, { recursive: true, force: true });
+      throw new Error('Copie annulée : ' + e.message);
+    }
+    return { id: `${r.game}/profiles/${folder}`, name };
+  }
+
   gameDir(game) { return path.join(this.docs, GAMES[game].folder); }
 
   // Le nom du dossier d'un profil est le nom du profil écrit en hexadécimal.
