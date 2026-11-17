@@ -3,7 +3,7 @@ function hudMission(root, d) {
   let panel = root.querySelector('.mission-widgets');
   if (!panel) {
     panel = document.createElement('div'); panel.className = 'mission-widgets';
-    for (const [key, label] of [['vehicle', 'Véhicule'], ['odometer', 'Compteur véhicule'], ['route', 'Itinéraire de livraison'], ['cargo', 'Marchandise'],
+    for (const [key, label] of [['vehicle', 'Véhicule'], ['odometer', 'Compteur véhicule'], ['fuelRange', 'Autonomie'], ['route', 'Itinéraire de livraison'], ['cargo', 'Marchandise'],
       ['remaining', 'Reste GPS'], ['stops', 'Arrêts'], ['game', 'GPS · jeu'], ['real', 'GPS · réel estimé'],
       ['arrival', 'Arrivée réelle estimée'], ['deadline', 'Délai de livraison · jeu'], ['deadlineReal', 'Délai · réel estimé']]) {
       const item = document.createElement('div'); item.className = 'mission-widget'; item.dataset.mission = key;
@@ -18,11 +18,23 @@ function hudMission(root, d) {
   const navigation = root.classList.contains('s-navigation');
   root.classList.toggle('is-coach', coach);
   root.classList.toggle('is-truck', !coach);
+  const clock = root.querySelector('[data-h="coachClock"]');
+  if (clock) {
+    const gameMinutes = live && live.gameTime;
+    if (typeof gameMinutes === 'number' && Number.isFinite(gameMinutes) && gameMinutes >= 0) {
+      const minutes = Math.floor(gameMinutes) % 1440;
+      clock.textContent = String(Math.floor(minutes / 60)).padStart(2, '0') + ':' + String(minutes % 60).padStart(2, '0');
+    } else clock.textContent = '--:--';
+  }
   const hasJob = coach ? !!(live && live.busJob) : !!(live && live.job);
   set('vehicle', coach ? 'CAR' : 'CAMION', !navigation);
   const odometer = live && live.odometer;
   set('odometer', typeof odometer === 'number' && Number.isFinite(odometer) && odometer >= 0
-    ? odometer.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' km' : '—', !coach && !navigation);
+    ? odometer.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' km' : '—', !navigation || coach);
+  const fuelRange = live && live.fuelRange;
+  const hasFuelRange = typeof fuelRange === 'number' && Number.isFinite(fuelRange) && fuelRange > 0;
+  set('fuelRange', hasFuelRange ? fuelRange.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' km' : '—',
+    navigation && coach && hasFuelRange);
   panel.querySelector('[data-mission=odometer]').title = 'Kilométrage total du véhicule transmis par le jeu, y compris avant le lancement de l’application.';
   const job = d.job;
   set('route', coach ? 'Service car en cours' : job ? `${job.from || '…'} → ${job.to || '…'}` : 'Hors mission', !coach || hasJob);
@@ -51,6 +63,7 @@ function hudMission(root, d) {
     set('arrival', '', false);
     set('deadline', '', false);
     set('real', fmt(t.realSeconds) + (t.paused ? ' · pause' : ''), hasJob);
+    if (coach) set('route', '', false);
   }
   const kmRow = root.querySelector('[data-h="kKm"]');
   if (kmRow) kmRow.classList.toggle('off', coach || !d.job);

@@ -2,6 +2,12 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.7', date: '2026-11-17', titre: 'HUD compact pour les cars', notes: [
+    ['ameliore', 'Le HUD des services car adopte un bandeau compact à deux lignes, inspiré du screenshot fourni.'],
+    ['nouveau', 'Le HUD car affiche l’heure du jeu, le GPS du prochain arrêt, son estimation de durée, le compteur et l’autonomie disponible.'],
+    ['ameliore', 'L’aperçu hors connexion propose un exemple de service car sans inventer de données de ligne.'],
+    ['ameliore', 'Après une mise à jour, l’application se ferme sans se relancer automatiquement.'],
+  ]},
   { version: '0.12.6', date: '2026-11-17', titre: 'Cartes DLC, HUD Coaches et réglages', notes: [
     ['nouveau', 'Carte : importe des tuiles locales générées avec TsMap pour les cartes DLC d’ETS2 et d’ATS.'],
     ['ameliore', 'Le HUD détecte automatiquement les missions camion et car et adapte les informations affichées.'],

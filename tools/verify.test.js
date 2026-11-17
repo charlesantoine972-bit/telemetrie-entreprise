@@ -118,6 +118,7 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
     if (hud) return this.children.find(e => e.dataset.h === hud[1]);
     return null;
   };
+  root.children.push(Object.assign(new Element('b'), { dataset: { h: 'coachClock' } }));
   const context = { document: { createElement: tag => new Element(tag) }, TCHMission: require('../app/mission-time') };
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../app/hud-mission.js'), 'utf8'), context);
   context.hudMission(root, {
@@ -137,15 +138,26 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
 
   context.hudMission(root, {
     connected: true, options: { style: 'navigation' }, vehicleType: 'camion',
-    live: { navDistance: 2200, navTime: 300, localScale: 20, busJob: {}, job: { 'delivery.time': 1100 } },
+    live: { navDistance: 2200, navTime: 300, localScale: 20, gameTime: 1000, odometer: 223872.7, fuelRange: 320, busJob: {}, job: { 'delivery.time': 1100 } },
     job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
   });
   assert.equal(root.querySelector('[data-h="mode"]').textContent, 'SERVICE CAR');
-  assert.equal(value('route').querySelector('b').textContent, 'Service car en cours');
+  assert.equal(value('route').hidden, true);
   assert.equal(value('cargo').hidden, true);
   assert.equal(value('deadlineReal').hidden, true);
   assert.equal(value('real').hidden, false);
+  assert.equal(value('odometer').hidden, false);
+  assert.equal(value('odometer').querySelector('b').textContent, '223 872,7 km');
+  assert.equal(value('fuelRange').querySelector('b').textContent, '320 km');
+  assert.equal(root.querySelector('[data-h="coachClock"]').textContent, '16:40');
   assert.equal(root.querySelector('[data-h="kKm"]').classList.contains('off'), true);
+
+  context.hudMission(root, {
+    connected: true, options: { style: 'navigation' }, vehicleType: 'car',
+    live: { busJob: {}, gameTime: NaN }, job: null
+  });
+  assert.equal(value('fuelRange').hidden, true);
+  assert.equal(root.querySelector('[data-h="coachClock"]').textContent, '--:--');
 });
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));
