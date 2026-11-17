@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
@@ -37,7 +37,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -87,15 +87,59 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   });
+  win.on('closed', () => { win = null; app.quit(); });
   Menu.setApplicationMenu(null);
   win.loadFile(path.join(__dirname, 'app', 'index.html'), { query: { v: app.getVersion() } });
   // Liens externes : toujours dans le navigateur, jamais dans l'appli
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https:\/\//.test(url)) shell.openExternal(url); return { action: 'deny' }; });
 }
 
+/* ---------- HUD : bandeau transparent par-dessus le jeu ----------
+   Fenêtre sans cadre, toujours au premier plan et traversée par la souris.
+   Visible seulement quand le jeu envoie des données (ou pendant un test).
+   Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
+let hudWin = null, hudTimer = null, hudTestUntil = 0;
+const HUD_W = 760, HUD_H = 76;
+function hudBounds() {
+  const wa = screen.getPrimaryDisplay().bounds;
+  const bas = settings.hud && settings.hud.position === 'bas';
+  return { x: Math.round(wa.x + (wa.width - HUD_W) / 2), y: bas ? wa.y + wa.height - HUD_H - 110 : wa.y + 8, width: HUD_W, height: HUD_H };
+}
+function hudData() {
+  const sn = telemetry.snapshot();
+  const test = Date.now() < hudTestUntil;
+  if (test && !sn.connected) {
+    const t = Date.now() / 1000;
+    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 };
+    sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
+  }
+  return { ...sn, jobs: undefined, options: settings.hud, show: sn.connected || test };
+}
+function syncHud() {
+  const on = !!(settings.modules && settings.modules.hud) || Date.now() < hudTestUntil;
+  if (!on) { clearInterval(hudTimer); hudTimer = null; if (hudWin) { hudWin.destroy(); hudWin = null; } return; }
+  if (!hudWin) {
+    hudWin = new BrowserWindow({ ...hudBounds(), frame: false, transparent: true, resizable: false, movable: false, focusable: false,
+      skipTaskbar: true, hasShadow: false, alwaysOnTop: true, show: false, backgroundColor: '#00000000',
+      webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, preload: path.join(__dirname, 'preload.js') } });
+    hudWin.setAlwaysOnTop(true, 'screen-saver');
+    hudWin.setIgnoreMouseEvents(true);
+    hudWin.loadFile(path.join(__dirname, 'app', 'hud.html'));
+    hudWin.on('closed', () => { hudWin = null; });
+  } else hudWin.setBounds(hudBounds());
+  if (!hudTimer) hudTimer = setInterval(() => {
+    if (!hudWin) return;
+    if (!(settings.modules && settings.modules.hud) && Date.now() >= hudTestUntil) { syncHud(); return; }
+    const d = hudData();
+    if (d.show) { if (!hudWin.isVisible()) hudWin.showInactive(); hudWin.webContents.send('hud', d); }
+    else if (hudWin.isVisible()) hudWin.hide();
+  }, 200);
+}
+
 /* ---------- Échanges avec l'interface ---------- */
 function setupIpc() {
   ipcMain.handle('snapshot', () => telemetry.snapshot());
+  ipcMain.handle('hud:test', () => { hudTestUntil = Date.now() + 10000; syncHud(); return true; });
   ipcMain.handle('plugin:status', () => pluginStatus);
   ipcMain.handle('plugin:install', () => installPlugin());
   ipcMain.handle('plugin:choose', async () => {
@@ -165,11 +209,13 @@ function setupIpc() {
     return false;
   });
   ipcMain.handle('settings:set', (_e, patch) => {
-    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier'];
+    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud'];
     for (const k of allowed) if (k in patch) settings[k] = patch[k];
     if (patch.look) settings.look = sanitizeLook({ ...settings.look, ...patch.look });
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
+    if (patch.hud) settings.hud = { ...DEFAULTS.hud, ...settings.hud, ...patch.hud };
     saveSettings();
+    if (patch.modules || patch.hud) syncHud();
     return settings;
   });
 }
@@ -212,6 +258,7 @@ if (!app.requestSingleInstanceLock()) {
     setupIpc();
     createWindow();
     setupUpdates();
+    syncHud();
   });
 
   app.on('before-quit', () => { if (telemetry) telemetry.stop(); });

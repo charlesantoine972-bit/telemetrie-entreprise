@@ -286,16 +286,18 @@
         <button class="navbtn" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
         <button class="navbtn" data-view="calendrier"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Calendrier</span><span class="soon">Bientôt</span></button>
         <button class="navbtn" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
-        <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
+        <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Afficher le bandeau en jeu"><input type="checkbox" data-module="hud" id="hudOnNav"><span></span></label></div>
       </div>
     </div>
     <div class="navscroll hidden" id="navMarket">
       <button class="navbtn" data-view="mk-discover"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Découvrir</span></button>
+      <button class="navbtn" data-view="mk-news"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13v16H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v10a2 2 0 0 1-2 2"/><path d="M8 8h5M8 12h5M8 16h3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">À la une &amp; news</span></button>
       <button class="navbtn" data-view="mk-installed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mes contenus</span></button>
       <button class="navbtn" data-view="mk-updates"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mises à jour</span><span class="soon" id="mkUpdCount" style="display:none">0</span></button>
       <button class="navbtn" data-view="mk-create"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Créer une livrée</span></button>
       <div class="navsec">Catégories</div>
       <button class="navbtn" data-view="mk-cat:modules"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Modules du Hub</span></button>
+      <button class="navbtn" data-view="mk-cat:trucks"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7"/><circle cx="6" cy="17" r="2"/><circle cx="16" cy="17" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
       <button class="navbtn" data-view="mk-cat:cars"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cars & bus</span></button>
     </div>
     <div class="navscroll hidden" id="navAtelier">
@@ -401,13 +403,46 @@
         <div class="mkbar"><label for="mkSearch" style="position:absolute;left:-9999px">Rechercher un contenu</label><input id="mkSearch" type="search" placeholder="Rechercher un mod…">
           <div class="seg" id="mkGame"><button data-g="all" class="on">Tous</button><button data-g="ETS2">ETS2</button><button data-g="ATS">ATS</button></div></div>
       </div>
-      <div class="mkfeat" style="margin-bottom:18px">
-        <div style="display:flex;flex-direction:column;gap:6px;max-width:600px"><span class="lbl" style="color:var(--accent)">À LA UNE · PAR TRUCK &amp; COACH HUB</span><b style="font-size:24px">Tablette in-game</b>
-          <span class="soft" style="font-size:14px;line-height:1.6">Une tablette à ouvrir en jeu : mission en cours, collègues en ligne, messages de l'entreprise, GPS et lecteur de musique. Version universelle, ou calée sur l'écran de ton camion.</span></div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-mk-item="tablette">Voir l'aperçu</button><button class="btn primary" disabled style="opacity:.6;cursor:not-allowed">Bientôt</button></div>
-      </div>
       <div class="mkgrid" id="mkGrid"></div>
       <p class="muted" style="font-size:13px;margin:16px 0 0">Les contenus d'autres auteurs ne sont proposés qu'avec leur accord ; sinon, la fiche renvoie vers leur page officielle.</p>
+    </section>
+    <section id="v-mk-news" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">MARKETPLACE</div><h1>À la une &amp; news</h1>
+      <h2>À la une</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:26px" id="mkFeatList"></div>
+      <h2>Nouveautés</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;max-width:900px" id="mkNewsList"></div>
+    </section>
+    <section id="v-hud" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>Bandeau / HUD</h1>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres. Il apparaît tout seul quand tu roules et disparaît quand le jeu est fermé.</p>
+      <div class="panel" style="display:flex;justify-content:center;padding:26px;background:var(--map);margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:14px;height:56px;padding:0 16px 0 10px;border-radius:16px;color:#fff;background:rgba(12,16,22,.86);border:1px solid rgba(255,255,255,.12);font-family:inherit">
+          <div id="hudPrevLogo" style="width:36px;height:36px;border-radius:10px;background:#E7B655;color:#0F1720;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">T&amp;C</div>
+          <div style="display:flex;align-items:baseline;gap:4px;min-width:96px"><b style="font-size:30px">88</b><span style="font-size:12px;color:#C3CDD6">km/h</span></div>
+          <div style="width:38px;height:38px;border-radius:50%;background:#fff;border:4px solid #D64545;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#111;font-weight:800;font-size:14px">90</div>
+          <div style="width:1px;height:30px;background:rgba(255,255,255,.16)"></div>
+          <span style="padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;background:rgba(111,216,196,.18);color:#8FE6D4">RÉEL</span>
+          <div style="display:flex;flex-direction:column;font-size:11px;color:#C3CDD6;text-transform:uppercase;letter-spacing:.04em">Reste<b style="font-size:16px;color:#fff;text-transform:none">214 km</b></div>
+          <div style="display:flex;flex-direction:column;font-size:11px;color:#C3CDD6;text-transform:uppercase;letter-spacing:.04em">Mission<b style="font-size:16px;color:#fff;text-transform:none">38,4 km chargés</b></div>
+        </div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:0;max-width:900px">
+        <div class="optrow" style="border-top:none;padding-top:0"><div><b>Afficher le bandeau en jeu</b><div class="muted">Même interrupteur que dans le menu, à côté de « Bandeau / HUD ».</div></div>
+          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn"><span></span></label></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Position</b><div class="muted">En haut au centre, ou en bas au-dessus du tableau de bord.</div></div>
+          <div class="seg" id="hudPos"><button data-hpos="haut">En haut</button><button data-hpos="bas">En bas</button></div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Logo</b><div class="muted">Le logo de ton entreprise arrivera avec les comptes.</div></div>
+          <div class="seg" id="hudLogo"><button data-hlogo="1">Logo de l'appli</button><button data-hlogo="0">Aucun</button></div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Opacité du fond</b><div class="muted">Plus bas = plus transparent.</div></div>
+          <div class="seg" id="hudOp"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Tester</b><div class="muted">Affiche le bandeau 10 secondes avec des valeurs d'exemple, même sans le jeu.</div></div>
+          <button class="btn" id="hudTest">Tester l'affichage</button></div>
+      </div>
+      <div class="panel" style="margin-top:18px;max-width:900px;border-style:dashed">
+        <h2>Important : le mode d'affichage du jeu</h2>
+        <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p>
+      </div>
     </section>
     <section id="v-mk-item" class="hidden">
       <button class="btn" id="mkBack" style="margin-bottom:16px">← Retour</button>
@@ -773,7 +808,7 @@ const SOON = {
   defis: { t: 'Défis & duels', d: 'Lance des défis à tes collègues et fixe-toi des objectifs.', l: ['Objectifs personnels (semaine / mois)', 'Duels entre chauffeurs (distance, gains, livraisons)', 'Défis entreprise contre entreprise', 'Célébrations des paliers atteints'], w: 'Prévu avec la partie en ligne (étape 2).' },
   missions: { t: 'Missions partagées', d: 'Envoie des missions et des feuilles de route à tes collègues.', l: ['Envoyer une mission à un chauffeur', 'Boucles et circuits en plusieurs étapes', 'Feuille de route en PDF'], w: 'Prévu avec la partie en ligne (étape 2).' },
   infos: { t: 'Infos VTC', d: 'La présentation de ton entreprise.', l: ['Histoire et règles de l\'entreprise', 'Conseils et FAQ', 'Liste des membres'], w: 'Prévu avec la partie en ligne (étape 2).' },
-  hud: { t: 'Bandeau / HUD', d: 'Un petit affichage discret par-dessus le jeu : vitesse, limitation, mode réel / course, distance restante.', l: ['Activable / désactivable avec l\'interrupteur du menu « En jeu »', 'Logo : celui de l\'appli, de ton entreprise ou aucun', 'Choix des infos affichées, position, taille, transparence', 'Alerte en cas d\'excès de vitesse'], w: 'Prévu à l\'étape 1.2. Le jeu doit être en « plein écran fenêtré ».' },
+  _hud: { t: 'Bandeau / HUD', d: 'Un petit affichage discret par-dessus le jeu : vitesse, limitation, mode réel / course, distance restante.', l: ['Activable / désactivable avec l\'interrupteur du menu « En jeu »', 'Logo : celui de l\'appli, de ton entreprise ou aucun', 'Choix des infos affichées, position, taille, transparence', 'Alerte en cas d\'excès de vitesse'], w: 'Prévu à l\'étape 1.2. Le jeu doit être en « plein écran fenêtré ».' },
   gps: { t: 'Mini-GPS', d: 'Un petit GPS discret en jeu, style TomTom.', l: ['Module complémentaire facultatif, à installer depuis Options', 'Destination, distance et temps restants', 'Limitation de vitesse'], w: 'Prévu à l\'étape 1.4.' }
 };
 const SOON_ICONS = {"at-profil": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "at-carte": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "at-camion": "<path d=\"M1 6h13v10H1zM14 10h4l3 3v3h-7z\"/><circle cx=\"5\" cy=\"18\" r=\"2\"/><circle cx=\"17\" cy=\"18\" r=\"2\"/>", "at-repar": "<path d=\"M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z\"/>", "calendrier": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "cartePerso": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "vtc": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1\"/><path d=\"M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4\"/>", "convois": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "defis": "<path d=\"M5 21V4h11l-2 4 2 4H5\"/>", "missions": "<path d=\"M3 7l9-4 9 4-9 4-9-4z\"/><path d=\"M3 7v10l9 4 9-4V7\"/><path d=\"M12 11v10\"/>", "infos": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v6M12 7.5h.01\"/>", "hud": "<rect x=\"3\" y=\"14\" width=\"18\" height=\"6\" rx=\"2\"/><path d=\"M3 5h18M3 9h10\"/>", "gps": "<path d=\"M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z\"/><circle cx=\"12\" cy=\"9\" r=\"2.5\"/>"};
@@ -833,6 +868,8 @@ function go(view){
   if (view.startsWith('mk-cat:')) renderMkCat(view.slice(7));
   if (view.startsWith('mk-item:')) renderMkItem(view.slice(8)); else if (view.startsWith('mk-')) mkFrom = view;
   if (view === 'mk-discover') renderMk();
+  if (view === 'mk-news') renderMkNews();
+  if (view === 'hud') renderHudPage();
   if (view === 'profil') renderProfile();
   if (view === 'reglages') loadSettingsUI();
   if (view === 'at-saves') renderSaves();
@@ -930,6 +967,27 @@ async function renderConsole(msg){
   setText('atConsoleMsg', msg || '');
   box.querySelectorAll('[data-con]').forEach(c => c.onchange = async () => { const x = await window.tel.atelier.setConsole(c.dataset.con, c.checked); renderConsole(x.ok ? 'Réglage enregistré ✓' : x.error); });
 }
+
+/* ---------- Bandeau / HUD ---------- */
+let hudSt = { on: false, opt: { position: 'haut', logo: true, opacity: 82 } };
+function renderHudPage(){
+  document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on;
+  document.querySelectorAll('[data-hpos]').forEach(b => b.classList.toggle('on', b.dataset.hpos === hudSt.opt.position));
+  document.querySelectorAll('[data-hlogo]').forEach(b => b.classList.toggle('on', (b.dataset.hlogo === '1') === (hudSt.opt.logo !== false)));
+  document.querySelectorAll('[data-hop]').forEach(b => b.classList.toggle('on', Number(b.dataset.hop) === Number(hudSt.opt.opacity)));
+  document.getElementById('hudPrevLogo').style.display = hudSt.opt.logo === false ? 'none' : 'flex';
+}
+function hudSave(patch){
+  if (patch.on != null) hudSt.on = patch.on; if (patch.opt) Object.assign(hudSt.opt, patch.opt);
+  renderHudPage();
+  if (window.tel) window.tel.setSettings(Object.assign({}, patch.on != null ? { modules: { hud: hudSt.on } } : {}, patch.opt ? { hud: hudSt.opt } : {}));
+}
+['hudOn', 'hudOnNav'].forEach(id => document.getElementById(id).onchange = (e) => hudSave({ on: e.target.checked }));
+document.querySelectorAll('[data-hpos]').forEach(b => b.onclick = () => hudSave({ opt: { position: b.dataset.hpos } }));
+document.querySelectorAll('[data-hlogo]').forEach(b => b.onclick = () => hudSave({ opt: { logo: b.dataset.hlogo === '1' } }));
+document.querySelectorAll('[data-hop]').forEach(b => b.onclick = () => hudSave({ opt: { opacity: Number(b.dataset.hop) } }));
+document.getElementById('hudTest').onclick = () => { if (window.tel && window.tel.testHud) window.tel.testHud(); else document.getElementById('hudTest').textContent = 'Disponible dans l\'appli installée'; };
+if (window.tel) window.tel.getSettings().then(st => { hudSt.on = !!(st.modules && st.modules.hud); if (st.hud) Object.assign(hudSt.opt, st.hud); renderHudPage(); });
 
 /* ---------- Atelier : éditeur de sauvegardes ---------- */
 const AT_PAGES = ['at-profil', 'at-coach', 'at-carte', 'at-camion', 'at-repar'];
@@ -1083,7 +1141,7 @@ async function atApply(view){
 }
 
 /* ---------- Marketplace (catalogue de départ : nos modules) ---------- */
-const MK_CATS = { modules: 'Modules du Hub', cars: 'Cars & bus' };
+const MK_CATS = { modules: 'Modules du Hub', trucks: 'Camions', cars: 'Cars & bus' };
 const MK = [
   { id: 'tablette', name: 'Tablette in-game', author: 'Truck & Coach Hub', cat: 'modules', games: ['ETS2', 'ATS'], version: '1.0 (en préparation)', size: '—',
     desc: 'Mission en cours, collègues en ligne, messages de l\'entreprise, GPS et musique, sur une tablette à ouvrir en jeu.',
@@ -1118,6 +1176,23 @@ function renderMkItem(id){
   else pv.appendChild(document.getElementById('tplGps').content.cloneNode(true));
 }
 document.getElementById('mkBack').onclick = () => go(mkFrom);
+const MK_FEATURED = ['tablette', 'gps'];
+const MK_NEWS = [
+  { d: '17/11/2026', t: 'Bandeau / HUD en jeu', x: 'Le bandeau par-dessus le jeu est disponible : vitesse, limitation, mode réel / course, distance restante. À activer dans Hub → Entreprise.' },
+  { d: '17/11/2026', t: 'Renommer son profil', x: 'Dans l\'Atelier, change le nom de ton profil et de ton entreprise en jeu.' },
+  { d: '17/11/2026', t: 'Thèmes et accessibilité', x: 'Thèmes De base, Sombre et Clair (comme Windows), couleurs adaptées au daltonisme, texte agrandi, contraste renforcé.' },
+  { d: '17/11/2026', t: 'Atelier : carrière car (DLC Coaches)', x: 'XP et compétences car, arrêts de bus, réparation, plein et carte, directement sur tes sauvegardes solo.' },
+  { d: '12/11/2026', t: 'Sortie du DLC Coaches', x: 'Les kilomètres en car sont comptés comme ceux en camion, avec leur propre seuil « course » (110 km/h par défaut).' }
+];
+function renderMkNews(){
+  document.getElementById('mkFeatList').innerHTML = MK_FEATURED.map(id => MK.find(x => x.id === id)).filter(Boolean).map(m => `
+    <div class="mkfeat" style="flex-direction:column;align-items:flex-start;gap:10px"><span class="lbl" style="color:var(--accent)">À LA UNE · ${escM(m.author.toUpperCase())}</span>
+      <b style="font-size:22px">${escM(m.name)}</b><span class="soft" style="font-size:14px;line-height:1.6">${escM(m.desc)}</span>
+      <div style="display:flex;gap:10px"><button class="btn" data-mk-item="${m.id}">Voir l'aperçu</button><button class="btn primary" disabled style="opacity:.6;cursor:not-allowed">Bientôt</button></div></div>`).join('');
+  document.getElementById('mkNewsList').innerHTML = MK_NEWS.map(n => `<div class="panel" style="display:flex;gap:16px;align-items:flex-start;padding:14px 18px">
+    <span class="muted" style="font-size:12px;white-space:nowrap;padding-top:3px">${n.d}</span><div><b>${escM(n.t)}</b><div class="soft" style="font-size:14px;line-height:1.6;margin-top:3px">${escM(n.x)}</div></div></div>`).join('');
+  mkFrom = 'mk-news'; bindMkPreview(document.getElementById('v-mk-news'));
+}
 function renderMk(){
   const q = (document.getElementById('mkSearch').value || '').toLowerCase();
   const list = MK.filter(m => (mkGame === 'all' || m.games.includes(mkGame)) && (!q || (m.name + ' ' + m.desc).toLowerCase().includes(q)));

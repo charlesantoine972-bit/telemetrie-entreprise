@@ -13,6 +13,8 @@ contextBridge.exposeInMainWorld('tel', {
   installUpdate: () => ipcRenderer.invoke('update:install'),
   launchGame: (game) => ipcRenderer.invoke('game:launch', game),
   openLink: (key) => ipcRenderer.invoke('link:open', key),
+  testHud: () => ipcRenderer.invoke('hud:test'),
+  onHud: (cb) => ipcRenderer.on('hud', (_e, d) => cb(d)),
   atelier: {
     status: () => ipcRenderer.invoke('atelier:status'),
     profiles: () => ipcRenderer.invoke('atelier:profiles'),
