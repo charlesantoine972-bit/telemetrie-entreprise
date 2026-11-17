@@ -2,6 +2,11 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.11', date: '2026-11-18', titre: 'Feuille de route et HUD indépendants', notes: [
+    ['nouveau', 'Entreprise : feuille de route avec départ, arrivée, carburant ajouté ou consommé et dépenses signalées par le jeu.'],
+    ['ameliore', 'Les réglages et aperçus du HUD camion et autocar sont séparés ; un seul interrupteur contrôle l’overlay.'],
+    ['corrige', 'Le profil autocar reste actif en mode car et les réglages de chaque HUD sont sauvegardés sans écraser l’autre profil.'],
+  ]},
   { version: '0.12.10', date: '2026-11-18', titre: 'Détection automatique camion / autocar', notes: [
     ['ameliore', 'En jeu, le mode autocar est déterminé par les données de mission autocar du plugin ; en leur absence, le mode camion est utilisé.'],
     ['ameliore', 'Le choix manuel du véhicule est conservé uniquement pour l’aperçu hors jeu.'],
