@@ -5,6 +5,22 @@ const fs = require('fs');
 const { Telemetry } = require('./src/telemetry');
 const installer = require('./src/plugin-installer');
 
+/* ---------- Dossier de données : garde l'historique malgré le changement de nom ---------- */
+(function pinUserData() {
+  const appData = app.getPath('appData');
+  const dir = path.join(appData, 'Truck and Coach Hub');
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    for (const old of ['Telemetrie Entreprise', 'telemetrie-entreprise']) {
+      for (const f of ['donnees.json', 'reglages.json']) {
+        const src = path.join(appData, old, f), dst = path.join(dir, f);
+        if (!fs.existsSync(dst) && fs.existsSync(src)) fs.copyFileSync(src, dst);
+      }
+    }
+  } catch (e) { console.error('Migration des données :', e.message); }
+  app.setPath('userData', dir);
+})();
+
 let win;
 let telemetry;
 let pluginStatus = [];
@@ -19,7 +35,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { theme: 'sombre', vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function loadSettings() {
@@ -49,8 +65,8 @@ function createWindow() {
     height: 820,
     minWidth: 1000,
     minHeight: 680,
-    backgroundColor: '#0F1720',
-    title: 'Télémétrie Entreprise',
+    backgroundColor: settings.theme === 'clair' ? '#F4F6F9' : '#0F1720',
+    title: 'Truck & Coach Hub',
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true, nodeIntegration: false, sandbox: true,
@@ -84,13 +100,26 @@ function setupIpc() {
   ipcMain.handle('update:status', () => ({ ...updateState, current: app.getVersion() }));
   ipcMain.handle('update:check', async () => {
     if (!app.isPackaged) return { ...updateState, current: app.getVersion() };
+    if (['downloading', 'ready'].includes(updateState.state)) return { ...updateState, current: app.getVersion() };
     try { updateState = { state: 'checking', version: null }; await autoUpdater.checkForUpdates(); }
     catch (e) { updateState = { state: 'error', version: null }; }
     return { ...updateState, current: app.getVersion() };
   });
-  ipcMain.handle('update:install', () => {
-    if (updateState.state === 'ready') { setImmediate(() => autoUpdater.quitAndInstall()); return true; }
+  ipcMain.handle('update:download', async () => {
+    if (!app.isPackaged) return false;
+    if (updateState.state === 'available' || updateState.state === 'failed') {
+      updateState = { ...updateState, state: 'downloading', progress: 0 };
+      autoUpdater.downloadUpdate().catch(() => { updateState = { ...updateState, state: 'failed' }; });
+      return true;
+    }
     return false;
+  });
+  ipcMain.handle('update:install', () => {
+    if (updateState.state !== 'ready') return false;
+    if (telemetry) telemetry.stop();
+    // isSilent = true : pas d'assistant Windows ; isForceRunAfter = true : l'appli se relance toute seule
+    setTimeout(() => autoUpdater.quitAndInstall(true, true), 1200);
+    return true;
   });
   ipcMain.handle('game:launch', async (_e, game) => {
     const id = STEAM_IDS[game];
@@ -109,7 +138,7 @@ function setupIpc() {
     return false;
   });
   ipcMain.handle('settings:set', (_e, patch) => {
-    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo'];
+    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'theme'];
     for (const k of allowed) if (k in patch) settings[k] = patch[k];
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
     saveSettings();
@@ -117,30 +146,24 @@ function setupIpc() {
   });
 }
 
-/* ---------- Mises à jour automatiques (GitHub Releases) ---------- */
+/* ---------- Mises à jour (GitHub Releases), entièrement dans l'appli ---------- */
+// Vérification automatique ; le téléchargement se lance avec le bouton « Mettre à jour » ;
+// l'installation est silencieuse (pas d'assistant Windows) et l'appli redémarre toute seule.
 function setupUpdates() {
   if (!app.isPackaged) return;
-  autoUpdater.autoDownload = true;
+  autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.on('checking-for-update', () => { updateState = { state: 'checking', version: null }; });
+  autoUpdater.on('checking-for-update', () => { if (!['downloading', 'ready'].includes(updateState.state)) updateState = { state: 'checking', version: null }; });
   autoUpdater.on('update-not-available', () => { updateState = { state: 'none', version: null }; });
-  autoUpdater.on('update-available', (info) => { updateState = { state: 'downloading', version: info.version }; });
-  autoUpdater.on('update-downloaded', async (info) => {
-    updateState = { state: 'ready', version: info.version };
-    const { response } = await dialog.showMessageBox(win, {
-      type: 'info',
-      buttons: ['Redémarrer maintenant', 'Plus tard'],
-      defaultId: 0,
-      cancelId: 1,
-      title: 'Mise à jour disponible',
-      message: `La version ${info.version} est prête.`,
-      detail: 'Redémarre l\'application pour profiter des nouveautés. Sinon, elle sera installée à la prochaine fermeture.'
-    });
-    if (response === 0) autoUpdater.quitAndInstall();
+  autoUpdater.on('update-available', (info) => { if (updateState.state !== 'downloading' && updateState.state !== 'ready') updateState = { state: 'available', version: info.version, notes: info.releaseName || '' }; });
+  autoUpdater.on('download-progress', (p) => { updateState = { ...updateState, state: 'downloading', progress: Math.round(p.percent || 0) }; });
+  autoUpdater.on('update-downloaded', (info) => { updateState = { state: 'ready', version: info.version, progress: 100 }; });
+  autoUpdater.on('error', (err) => {
+    updateState = { state: updateState.state === 'downloading' ? 'failed' : 'error', version: updateState.version };
+    console.error('Mise à jour :', err && err.message);
   });
-  autoUpdater.on('error', (err) => { updateState = { state: 'error', version: null }; console.error('Mise à jour :', err && err.message); });
   autoUpdater.checkForUpdates().catch(() => {});
-  setInterval(() => autoUpdater.checkForUpdates().catch(() => {}), 30 * 60 * 1000);
+  setInterval(() => { if (!['downloading', 'ready'].includes(updateState.state)) autoUpdater.checkForUpdates().catch(() => {}); }, 30 * 60 * 1000);
 }
 
 /* ---------- Démarrage ---------- */

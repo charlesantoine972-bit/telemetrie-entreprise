@@ -1,8 +1,8 @@
-# Télémétrie Entreprise
+# Truck & Coach Hub
 
 Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2** : classement des chauffeurs (km chargés / à vide), carte en direct, fiche chauffeur et tablette in-game.
 
-> Version actuelle : **0.4** — menu par catégories (Général / Entreprise / En jeu / Options), page Accueil avec lancement du jeu, télémétrie branchée sur le jeu.
+> Version actuelle : **0.5** — écran de lancement Marketplace / Hub, menu à catégories dépliables, thème clair / sombre, mises à jour installées dans l'appli.
 > Les pages « Aperçu » utilisent des données d'exemple ; les pages « Bientôt » décrivent les fonctions à venir.
 
 ## Comment ça marche
@@ -21,7 +21,7 @@ Télécharge le dernier `Telemetrie-Entreprise-Setup-x.y.z.exe` dans la page **R
 
 ## Mises à jour automatiques
 
-L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe une nouvelle version dans les Releases GitHub. Si c'est le cas, elle la télécharge et propose de redémarrer.
+L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe une nouvelle version dans les Releases GitHub. Le bouton « Mettre à jour » la télécharge (barre de progression dans l'appli), l'installe sans assistant Windows et relance l'appli.
 
 ## Publier une nouvelle version
 

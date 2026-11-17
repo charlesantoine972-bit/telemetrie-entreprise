@@ -1,7 +1,7 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.4.2",
-  "description": "Télémétrie Entreprise - application de suivi pour Euro Truck Simulator 2",
+  "version": "0.5.0",
+  "description": "Truck & Coach Hub - télémétrie, carrière, entreprise et mods pour ETS2 / ATS",
   "author": "charlesantoine972-bit",
   "main": "main.js",
   "repository": "https://github.com/charlesantoine972-bit/telemetrie-entreprise",
@@ -14,7 +14,7 @@
   },
   "build": {
     "appId": "fr.telemetrie.entreprise",
-    "productName": "Telemetrie Entreprise",
+    "productName": "Truck and Coach Hub",
     "files": [
       "main.js",
       "preload.js",
@@ -29,8 +29,8 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "shortcutName": "Télémétrie Entreprise",
-      "artifactName": "Telemetrie-Entreprise-Setup-${version}.exe"
+      "shortcutName": "Truck & Coach Hub",
+      "artifactName": "Truck-and-Coach-Hub-Setup-${version}.exe"
     },
     "publish": [
       {

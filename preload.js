@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('tel', {
   setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
   updateStatus: () => ipcRenderer.invoke('update:status'),
   checkUpdate: () => ipcRenderer.invoke('update:check'),
+  downloadUpdate: () => ipcRenderer.invoke('update:download'),
   installUpdate: () => ipcRenderer.invoke('update:install'),
   launchGame: (game) => ipcRenderer.invoke('game:launch', game),
   openLink: (key) => ipcRenderer.invoke('link:open', key)

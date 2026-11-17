@@ -3,20 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
-<title>Télémétrie Entreprise</title>
+<title>Truck &amp; Coach Hub</title>
 <style>
   :root{
     --bg:#0F1720; --panel:#18222D; --line:#26323F; --nav:#131C26;
     --text:#E8EDF2; --soft:#C3CDD6; --muted:#9AA7B4;
-    --loaded:#F2A93B; --empty:#5BA4E6; --ok:#6FD39A;
+    --loaded:#F2A93B; --empty:#5BA4E6; --ok:#6FD39A; --race:#FF8A5B;
+    --hover:#1A2531; --active:#1F2B38; --map:#121D28; --on-accent:#0F1720;
+    --accent:var(--loaded); --accent-soft:rgba(242,169,59,.14);
   }
+  [data-theme="clair"]{
+    --bg:#F4F6F9; --panel:#FFFFFF; --line:#D9E0E8; --nav:#EAEFF4;
+    --text:#14202B; --soft:#3A4855; --muted:#5D6B78;
+    --loaded:#B9700C; --empty:#2672BA; --ok:#15864A; --race:#C9501F;
+    --hover:#E1E7EE; --active:#DDE4EC; --map:#E6ECF2;
+  }
+  [data-side="market"]{ --accent:#4FD1A5; --accent-soft:rgba(79,209,165,.14); }
+  [data-theme="clair"][data-side="market"]{ --accent:#0F8A63; --accent-soft:rgba(15,138,99,.12); }
+  [data-theme="clair"] .hero{background:linear-gradient(180deg,#FFFFFF 0%,#F4F6F9 100%)}
+  [data-theme="clair"] .launch{box-shadow:0 8px 24px rgba(185,112,12,.18)}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
     font-family:"Segoe UI",Inter,system-ui,sans-serif;}
   button{font-family:inherit;cursor:pointer}
   .app{display:flex;height:100vh}
-  .side{width:248px;flex:none;background:var(--nav);border-right:1px solid var(--line);
+  .side{width:264px;flex:none;background:var(--nav);border-right:1px solid var(--line);
     display:flex;flex-direction:column;padding:18px 12px 12px;gap:4px}
+  .navscroll.hidden{display:none}
+  .navscroll{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+  .navscroll::-webkit-scrollbar{width:6px} .navscroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px} .navscroll::-webkit-scrollbar-track{background:transparent}
   .navscroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -4px;padding:0 4px}
   .navrow{display:flex;align-items:center;gap:6px}
   .navrow .navbtn{flex:1;min-width:0}
@@ -32,7 +47,7 @@
   .sidefoot{border-top:1px solid var(--line);padding:10px 10px 2px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
   .sidefoot b{color:var(--soft)}
   .hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);
-    background:radial-gradient(1200px 500px at 50% -10%, #1C3348 0%, rgba(15,23,32,0) 60%), linear-gradient(180deg,#132131 0%,#0F1720 100%);}
+    background:radial-gradient(1200px 500px at 50% -10%, var(--accent-soft) 0%, transparent 60%), linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%);}
   .hero::before{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
     background:repeating-linear-gradient(115deg, transparent 0 46px, rgba(242,169,59,.06) 46px 48px, transparent 48px 120px);}
   .hero-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:42px 32px 30px;text-align:center}
@@ -46,20 +61,63 @@
   .hint a{color:var(--loaded);font-weight:600}
   .shortcuts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
   .shortcut{display:flex;align-items:center;gap:10px;height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:rgba(24,34,45,.85);color:var(--text);font-size:14px;font-weight:600}
-  .shortcut:hover{border-color:#3A4A5B}
-  details.acc{width:min(620px,100%);background:rgba(24,34,45,.85);border:1px solid var(--line);border-radius:14px;text-align:left}
-  details.acc summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;color:var(--loaded);display:flex;justify-content:space-between}
+  .shortcut:hover{border-color:var(--muted)}
+  details.acc{width:min(620px,100%);background:var(--panel);border:1px solid var(--line);border-radius:14px;text-align:left}
+  details.acc summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;color:var(--accent);display:flex;justify-content:space-between}
   details.acc summary::after{content:"▾";color:var(--muted)}
   details.acc[open] summary::after{content:"▴"}
   details.acc .acc-in{padding:0 18px 16px;color:var(--soft);font-size:14px;line-height:1.7}
+  #launcher{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;overflow:auto}
+  #launcher.hidden{display:none}
+  .lhead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--line)}
+  .logo{width:38px;height:38px;border-radius:11px;background:var(--loaded);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
+  [data-side="market"] .side .logo{background:var(--accent)}
+  .lmain{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px 32px}
+  .lgrid{width:100%;max-width:1080px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+  .lcard{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:16px;padding:28px;border-radius:22px;background:var(--panel);border:1px solid var(--line);color:var(--text);transition:transform .15s,border-color .15s}
+  .lcard:hover,.lcard:focus-visible{transform:translateY(-2px);border-color:var(--c)}
+  .lcard .ic{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
+  .lcard .kick{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--c)}
+  .lcard .ttl{font-size:28px;font-weight:800}
+  .lcard .go{align-self:flex-start;height:46px;padding:0 22px;border-radius:12px;background:var(--c);color:var(--on-accent);font-weight:800;display:flex;align-items:center}
+  .lstat{flex:1;min-width:120px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+  .lstat span{font-size:12px;color:var(--muted)} .lstat b{font-size:18px}
+  .sideswitch{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:0 2px 8px}
+  .sideswitch button{flex:1;height:34px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:13px}
+  .sideswitch button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
+  .navcat{display:flex;align-items:center;justify-content:space-between;height:34px;padding:0 12px;margin-top:6px;border:none;border-radius:8px;background:transparent;color:var(--text);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .navcat:hover{background:var(--hover)}
+  .navcat .arr{color:var(--muted);font-size:13px;letter-spacing:0}
+  .navcat .cnt{font-size:10px;letter-spacing:0;background:var(--line);color:var(--soft);padding:1px 7px;border-radius:999px;margin-right:8px}
+  .navgroup{display:flex;flex-direction:column;gap:2px;padding-left:6px}
+  .navgroup.closed{display:none}
+  .updbanner{margin:6px 2px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent);font-size:12px;color:var(--text);display:flex;flex-direction:column;gap:8px}
+  .updbanner.hidden{display:none}
+  .progress{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+  .progress > div{height:100%;width:0;background:var(--accent);transition:width .3s}
+  #installing{position:fixed;inset:0;z-index:60;background:color-mix(in srgb,var(--bg) 92%,transparent);display:flex;align-items:center;justify-content:center}
+  #installing.hidden{display:none}
+  .spinner{width:44px;height:44px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--accent);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .seg{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);flex-wrap:wrap}
+  .seg button{height:38px;padding:0 16px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:14px}
+  .seg button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
+  .mkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .mkbar input{height:42px;width:280px;max-width:100%;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:14px inherit;font-family:inherit}
+  .mkfeat{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;padding:22px;border-radius:18px;background:var(--accent-soft);border:1px solid var(--accent)}
+  .mkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .mkcard{border-radius:16px;background:var(--panel);border:1px solid var(--line);overflow:hidden;display:flex;flex-direction:column}
+  .mkimg{height:110px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:var(--accent-soft)}
+  .mkbody{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .empty{padding:40px 20px;text-align:center;border:1px dashed var(--line);border-radius:16px;color:var(--soft);line-height:1.7}
   .soonbox{max-width:640px;display:flex;flex-direction:column;gap:14px}
   .soonicon{width:64px;height:64px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--loaded)}
   .brand{font-weight:700;font-size:18px;padding:4px 10px 2px}
   .brand-sub{font-size:12px;color:var(--muted);padding:0 10px 18px}
-  .navbtn{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:12px;
+  .navbtn{display:flex;align-items:center;gap:11px;height:38px;padding:0 10px;border-radius:12px;
     border:none;background:transparent;color:var(--muted);font-size:14px;text-align:left}
-  .navbtn:hover{background:#1A2531;color:var(--text)}
-  .navbtn.on{background:#1F2B38;color:var(--loaded);font-weight:600}
+  .navbtn:hover{background:var(--hover);color:var(--text)}
+  .navbtn.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
   .navbtn svg{flex:none}
   .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
     border:1px dashed var(--line);border-radius:12px}
@@ -72,7 +130,7 @@
   .pill{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:13px}
   .pill.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
   .tab{flex:1;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-weight:600;font-size:13px}
-  .tab.on{background:var(--loaded);border-color:var(--loaded);color:var(--bg)}
+  .tab.on{background:var(--loaded);border-color:var(--loaded);color:var(--on-accent)}
   .bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line)}
   .bar .l{background:var(--loaded)} .bar .e{background:var(--empty);flex:1}
   .bar.thin{height:6px}
@@ -82,7 +140,7 @@
   .list{display:flex;flex-direction:column;gap:8px}
   .item{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);
     border-radius:14px;color:var(--text);text-align:left;width:100%}
-  .item:hover{border-color:#3A4A5B}
+  .item:hover{border-color:var(--muted)}
   .rank{width:28px;text-align:center;font-weight:700;font-size:18px}
   .av{width:40px;height:40px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;position:relative;flex:none}
   .av .dot{position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid var(--panel)}
@@ -93,11 +151,11 @@
   .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px}
   .stat b{font-size:19px}
   .lbl{font-size:12px;font-weight:700;letter-spacing:.03em}
-  .map{position:relative;height:520px;background:#121D28;border-radius:16px;border:1px solid var(--line);overflow:hidden}
+  .map{position:relative;height:520px;background:var(--map);border-radius:16px;border:1px solid var(--line);overflow:hidden}
   .city{position:absolute;font-size:12px;color:#7F8E9C;transform:translate(-50%,8px)}
   .citydot{position:absolute;width:6px;height:6px;border-radius:50%;background:#3A4A5B;transform:translate(-50%,-50%)}
   .truck{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px;transition:left 1s linear,top 1s linear;pointer-events:none}
-  .truck .tag{font-size:11px;font-weight:700;color:var(--bg);padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .truck .tag{font-size:11px;font-weight:700;color:var(--on-accent);padding:3px 8px;border-radius:999px;white-space:nowrap}
   .truck .pt{width:16px;height:16px;border-radius:50%;border:3px solid var(--bg)}
   .tablet{width:100%;max-width:1024px;aspect-ratio:1024/640;background:#05080B;border-radius:36px;padding:22px}
   .screen{width:100%;height:100%;background:var(--bg);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
@@ -105,7 +163,7 @@
   .k{display:flex;flex-direction:column;gap:2px} .k span:first-child{font-size:12px;color:var(--muted)} .k span:last-child{font-size:22px;font-weight:700}
   .hidden{display:none !important}
   .navsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7F8E9C;padding:12px 12px 4px}
-  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--bg);background:#7F8E9C;padding:2px 7px;border-radius:999px;flex:none}
+  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--on-accent);background:#7F8E9C;padding:2px 7px;border-radius:999px;flex:none}
   .soon.prev{background:#5BA4E6}
   .chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);vertical-align:middle;margin-left:10px}
   .chip .d{width:9px;height:9px;border-radius:50%}
@@ -118,47 +176,125 @@
   .kv .k span:last-child{font-size:20px}
   .steps{margin:0;padding-left:20px;line-height:1.9;color:var(--soft)}
   .btn{height:42px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:600;font-size:14px}
-  .btn.primary{background:var(--loaded);border-color:var(--loaded);color:var(--bg)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
   .field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--soft)}
-  .field input,.field select{height:40px;border-radius:10px;border:1px solid var(--line);background:#0F1720;color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
+  .field input,.field select{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
   table.jobs{width:100%;border-collapse:collapse;font-size:13px}
   table.jobs th{text-align:left;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
-  table.jobs td{padding:10px;border-bottom:1px solid #1E2935}
+  table.jobs td{padding:10px;border-bottom:1px solid var(--line)}
 </style>
 </head>
 <body>
+<div id="launcher">
+  <header class="lhead">
+    <div style="display:flex;align-items:center;gap:12px"><span class="logo">T&amp;C</span>
+      <div style="display:flex;flex-direction:column"><b style="font-size:17px">Truck &amp; Coach Hub</b><span class="muted" style="font-size:12px" id="lVersion">Version</span></div></div>
+    <div style="display:flex;align-items:center;gap:16px;font-size:13px;color:var(--soft)"><span id="lConn">En attente du jeu</span><span id="lPseudo"></span></div>
+  </header>
+  <main class="lmain">
+    <h1 style="margin:0;font-size:32px;font-weight:800;text-align:center">Que veux-tu ouvrir ?</h1>
+    <div class="lgrid">
+      <button class="lcard" data-open="market" style="--c:#4FD1A5">
+        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>
+          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">MODS &amp; CONTENUS · GRATUIT</span><span class="ttl">Marketplace</span></span></div>
+        <span class="soft" style="font-size:15px;line-height:1.6">Trouve, installe et mets à jour tes mods en un clic : modules du Hub, camions, cars, remorques, cartes, skins d'entreprise.</span>
+        <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Installés</span><b id="lMkInstalled">0 contenu</b></span><span class="lstat"><span>À venir</span><b>2 modules</b></span></span>
+        <span class="go">Ouvrir la Marketplace →</span>
+      </button>
+      <button class="lcard" data-open="hub" style="--c:#F2A93B">
+        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg></span>
+          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">TÉLÉMÉTRIE · CARRIÈRE · ENTREPRISE</span><span class="ttl">Hub</span></span></div>
+        <span class="soft" style="font-size:15px;line-height:1.6">Ta route et ton entreprise : télémétrie en direct, carrière, carte, classement, convois, défis et HUD en jeu.</span>
+        <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Aujourd'hui</span><b id="lToday">0 km</b></span><span class="lstat"><span>Missions enregistrées</span><b id="lJobs">0</b></span></span>
+        <span class="go">Ouvrir le Hub →</span>
+      </button>
+    </div>
+  </main>
+</div>
+<div id="installing" class="hidden"><div style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
+  <div class="spinner"></div><b style="font-size:18px" id="installingTitle">Installation de la mise à jour…</b>
+  <span class="soft">L'appli va redémarrer toute seule dans un instant.</span></div></div>
 <div class="app">
   <aside class="side">
-    <div class="brand" id="companyName">Télémétrie Entreprise</div>
-    <div class="brand-sub" id="appVersion" style="padding-bottom:8px">Version</div>
+    <button id="brandBtn" title="Revenir à l'écran de lancement" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:0 8px 6px">
+      <span class="logo" style="width:34px;height:34px;font-size:12px">T&amp;C</span>
+      <span style="display:flex;flex-direction:column;min-width:0"><span class="brand" style="padding:0;font-size:16px">Truck &amp; Coach Hub</span><span class="brand-sub" id="appVersion" style="padding:0">Version</span></span>
+    </button>
     <div class="sideconn" id="sideConn"><span class="d"></span><span>En attente du jeu</span></div>
-    <div class="navscroll">
-      <div class="navsec" style="padding-top:4px">Général</div>
-      <button class="navbtn on" data-view="accueil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Accueil</span></button>
-      <button class="navbtn" data-view="telemetrie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Télémétrie</span></button>
-      <button class="navbtn" data-view="trajets"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
-      <button class="navbtn" data-view="cartePerso"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span><span class="soon">Bientôt</span></button>
-      <div class="navsec">Entreprise</div>
-      <button class="navbtn" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="classement"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Classement</span><span class="soon prev">Aperçu</span></button>
-      <button class="navbtn" data-view="carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 20a7 7 0 0 0-3-5.7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chauffeurs live</span><span class="soon prev">Aperçu</span></button>
-      <button class="navbtn" data-view="convois"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Convois</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="defis"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h11l-2 4 2 4H5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Défis & duels</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="missions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Missions</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
+    <div class="sideswitch" role="tablist" aria-label="Côté de l'appli"><button data-side-btn="hub" class="on">Hub</button><button data-side-btn="market">Marketplace</button></div>
+    <div class="navscroll" id="navHub">
+      <button class="navcat" data-cat="gen" aria-expanded="true"><span>Général</span><span class="arr">▾</span></button>
+      <div class="navgroup" id="cat-gen">
+        <button class="navbtn" data-view="accueil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Accueil</span></button>
+        <button class="navbtn" data-view="telemetrie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Télémétrie</span></button>
+        <button class="navbtn" data-view="trajets"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
+        <button class="navbtn" data-view="cartePerso"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span><span class="soon">Bientôt</span></button>
+      </div>
+      <button class="navcat" data-cat="ent" aria-expanded="false"><span>Entreprise</span><span style="display:flex;align-items:center"><span class="cnt">7</span><span class="arr">▸</span></span></button>
+      <div class="navgroup closed" id="cat-ent">
+        <button class="navbtn" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
+        <button class="navbtn" data-view="classement"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Classement</span><span class="soon prev">Aperçu</span></button>
+        <button class="navbtn" data-view="carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 20a7 7 0 0 0-3-5.7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chauffeurs live</span><span class="soon prev">Aperçu</span></button>
+        <button class="navbtn" data-view="convois"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Convois</span><span class="soon">Bientôt</span></button>
+        <button class="navbtn" data-view="defis"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h11l-2 4 2 4H5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Défis & duels</span><span class="soon">Bientôt</span></button>
+        <button class="navbtn" data-view="missions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Missions</span><span class="soon">Bientôt</span></button>
+        <button class="navbtn" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
+      </div>
       <div class="navsec">En jeu</div>
-      <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span>Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
-      <div class="navsec">Options</div>
-      <button class="navbtn" data-view="reglages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
+      <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
     </div>
+    <div class="navscroll hidden" id="navMarket">
+      <button class="navbtn" data-view="mk-discover"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Découvrir</span></button>
+      <button class="navbtn" data-view="mk-installed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mes contenus</span></button>
+      <button class="navbtn" data-view="mk-updates"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mises à jour</span><span class="soon" id="mkUpdCount" style="display:none">0</span></button>
+      <div class="navsec">Catégories</div>
+      <button class="navbtn" data-view="mk-cat:modules"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Modules du Hub</span></button>
+      <button class="navbtn" data-view="mk-cat:camions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
+      <button class="navbtn" data-view="mk-cat:cars"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cars & bus</span></button>
+      <button class="navbtn" data-view="mk-cat:remorques"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Remorques</span></button>
+      <button class="navbtn" data-view="mk-cat:cartes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cartes</span></button>
+      <button class="navbtn" data-view="mk-cat:skins"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Skins d'entreprise</span></button>
+      <button class="navbtn" data-view="mk-cat:convoi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Packs de convoi</span></button>
+    </div>
+    <div class="updbanner hidden" id="updBanner"><span id="updBannerText">Mise à jour disponible</span><div class="progress hidden" id="updBannerBar"><div></div></div><button class="btn primary" id="updBannerBtn" style="height:34px;font-size:13px">Mettre à jour</button></div>
+    <button class="navbtn" data-view="reglages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
     <div class="sidefoot"><div>Chauffeur : <b id="sidePseudo">non défini</b></div><div>Entreprise : <b>aucune</b> <span style="opacity:.8">(bientôt)</span></div></div>
   </aside>
 
   <main class="main">
+    <!-- MARKETPLACE -->
+    <section id="v-mk-discover" class="hidden">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <div><div class="lbl" style="color:var(--accent);margin-bottom:4px">MARKETPLACE</div><h1 style="margin:0">Découvrir</h1></div>
+        <div class="mkbar"><label for="mkSearch" style="position:absolute;left:-9999px">Rechercher un contenu</label><input id="mkSearch" type="search" placeholder="Rechercher un mod…">
+          <div class="seg" id="mkGame"><button data-g="all" class="on">Tous</button><button data-g="ETS2">ETS2</button><button data-g="ATS">ATS</button></div></div>
+      </div>
+      <div class="mkfeat" style="margin-bottom:18px">
+        <div style="display:flex;flex-direction:column;gap:6px;max-width:600px"><span class="lbl" style="color:var(--accent)">À LA UNE · PAR TRUCK &amp; COACH HUB</span><b style="font-size:24px">Tablette in-game</b>
+          <span class="soft" style="font-size:14px;line-height:1.6">Une tablette à ouvrir en jeu : mission en cours, collègues en ligne, messages de l'entreprise, GPS et lecteur de musique. Version universelle, ou calée sur l'écran de ton camion.</span></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-goto-view="tablette">Voir l'aperçu</button><button class="btn primary" disabled style="opacity:.6;cursor:not-allowed">Bientôt</button></div>
+      </div>
+      <div class="mkgrid" id="mkGrid"></div>
+      <p class="muted" style="font-size:13px;margin:16px 0 0">Les contenus d'autres auteurs ne sont proposés qu'avec leur accord ; sinon, la fiche renvoie vers leur page officielle.</p>
+    </section>
+    <section id="v-mk-installed" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">MARKETPLACE</div><h1>Mes contenus</h1>
+      <div class="empty">Aucun contenu installé depuis la Marketplace pour l'instant.<br>Les premiers modules (mini-GPS, tablette) arrivent bientôt : tu pourras les installer ici en un clic.</div>
+    </section>
+    <section id="v-mk-updates" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">MARKETPLACE</div><h1>Mises à jour</h1>
+      <div class="empty">Tous tes contenus sont à jour.</div>
+    </section>
+    <section id="v-mk-cat" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">MARKETPLACE · CATÉGORIE</div><h1 id="mkCatTitle">Catégorie</h1>
+      <div class="mkgrid" id="mkCatGrid"></div>
+      <div class="empty hidden" id="mkCatEmpty">Aucun contenu dans cette catégorie pour l'instant.<br>Elle se remplira avec les contenus de l'équipe et de la communauté.</div>
+    </section>
+
     <!-- ACCUEIL -->
     <section id="v-accueil">
       <div class="hero"><div class="hero-in">
-        <div class="hero-title">Télémétrie Entreprise</div>
+        <div class="hero-title">Truck &amp; Coach Hub</div>
         <div class="hero-sub">Ton compagnon de route pour Euro Truck Simulator 2 et American Truck Simulator</div>
         <div class="statusrow">
           <span class="chip" id="hGame" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Jeu : en attente</span>
@@ -309,40 +445,20 @@
         </div>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <h2 style="margin:0">Mises à jour</h2>
-          <div class="soft" style="font-size:14px">Version installée : <b id="updCurrent">–</b></div>
-          <div class="muted" style="font-size:13px" id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</div>
-        </div>
-        <button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button>
+        <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0">Apparence</h2>
+          <div class="muted" style="font-size:13px">S'applique à tout le logiciel : Hub, Marketplace et Options.</div></div>
+        <div class="seg" id="themeSeg"><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div>
       </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
-        <div><h2 style="margin:0 0 4px">Modules complémentaires</h2>
-          <div class="muted" style="font-size:13px">Facultatifs : installe seulement ceux que tu veux. Ils s'ajoutent au jeu, sans rien changer au reste de l'appli.</div></div>
-        <div class="item" style="cursor:default;align-items:flex-start">
-          <div class="soonicon" style="width:48px;height:48px;border-radius:14px;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/></svg></div>
-          <div class="grow" style="display:flex;flex-direction:column;gap:4px">
-            <div class="row" style="gap:8px"><b style="font-size:15px">Tablette in-game</b><span class="soon" style="margin:0">Bientôt</span></div>
-            <div class="soft" style="font-size:13px;line-height:1.6">Une tablette à ouvrir en jeu avec une touche : mission en cours, collègues en ligne, messages de l'entreprise, applis (GPS, lecteur de musique…). Version universelle, ou calée sur l'écran de ton camion.</div>
-            <a href="#" class="addon-preview" data-goto="tablette" style="color:var(--loaded);font-size:13px;font-weight:600">Voir l'aperçu</a>
+      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0">Mises à jour</h2>
+            <div class="soft" style="font-size:14px">Version installée : <b id="updCurrent">–</b></div>
+            <div class="muted" style="font-size:13px" id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none">
-            <span class="muted" style="font-size:12px">Non installé</span>
-            <button class="btn" disabled style="opacity:.5;cursor:not-allowed">Installer</button>
-          </div>
+          <button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button>
         </div>
-        <div class="item" style="cursor:default;align-items:flex-start">
-          <div class="soonicon" style="width:48px;height:48px;border-radius:14px;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
-          <div class="grow" style="display:flex;flex-direction:column;gap:4px">
-            <div class="row" style="gap:8px"><b style="font-size:15px">Mini-GPS</b><span class="soon" style="margin:0">Bientôt</span></div>
-            <div class="soft" style="font-size:13px;line-height:1.6">Un petit GPS discret dans un coin de l'écran, style TomTom : prochaine direction, distance et temps restants, limitation de vitesse.</div>
-            <a href="#" class="addon-preview" data-goto="gps" style="color:var(--loaded);font-size:13px;font-weight:600">En savoir plus</a>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none">
-            <span class="muted" style="font-size:12px">Non installé</span>
-            <button class="btn" disabled style="opacity:.5;cursor:not-allowed">Installer</button>
-          </div>
-        </div>
+        <div class="progress hidden" id="updBar"><div></div></div>
       </div>
     </section>
 
@@ -453,7 +569,7 @@ const DRIVERS = [
   { id:'jade',   name:'Jade_L',     ini:'JL', truck:'MAN TGX',           loaded:2750, empty:1320, deliveries:9,  money:74600,  fuel:1290, damage:1.8, hours:60,  online:false },
 ];
 const PERIOD_FACTOR = { semaine:0.24, mois:1, total:7.3 };
-let state = { view:'accueil', metric:'total', period:'mois', profile:'lucas' };
+let state = { side:'hub', view:'accueil', metric:'total', period:'mois', profile:'lucas' };
 
 /* ---------- navigation ---------- */
 const SOON = {
@@ -467,12 +583,46 @@ const SOON = {
   gps: { t: 'Mini-GPS', d: 'Un petit GPS discret en jeu, style TomTom.', l: ['Module complémentaire facultatif, à installer depuis Options', 'Destination, distance et temps restants', 'Limitation de vitesse'], w: 'Prévu à l\'étape 1.4.' }
 };
 const SOON_ICONS = {"cartePerso": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "vtc": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1\"/><path d=\"M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4\"/>", "convois": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "defis": "<path d=\"M5 21V4h11l-2 4 2 4H5\"/>", "missions": "<path d=\"M3 7l9-4 9 4-9 4-9-4z\"/><path d=\"M3 7v10l9 4 9-4V7\"/><path d=\"M12 11v10\"/>", "infos": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v6M12 7.5h.01\"/>", "hud": "<rect x=\"3\" y=\"14\" width=\"18\" height=\"6\" rx=\"2\"/><path d=\"M3 5h18M3 9h10\"/>", "gps": "<path d=\"M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z\"/><circle cx=\"12\" cy=\"9\" r=\"2.5\"/>"};
+/* ---------- côtés (Hub / Marketplace), catégories dépliables, écran de lancement ---------- */
+const store = { get(k, d){ try { const v = localStorage.getItem('tch.' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+                set(k, v){ try { localStorage.setItem('tch.' + k, JSON.stringify(v)); } catch {} } };
+state.side = 'hub';
+const lastView = { hub: 'accueil', market: 'mk-discover' };
+function setSide(side){
+  state.side = side;
+  document.documentElement.dataset.side = side;
+  document.querySelectorAll('[data-side-btn]').forEach(b => b.classList.toggle('on', b.dataset.sideBtn === side));
+  document.getElementById('navHub').classList.toggle('hidden', side !== 'hub');
+  document.getElementById('navMarket').classList.toggle('hidden', side !== 'market');
+}
+document.querySelectorAll('[data-side-btn]').forEach(b => b.onclick = () => go(lastView[b.dataset.sideBtn]));
+const catState = store.get('cats', { gen: true, ent: false });
+function applyCats(){
+  for (const [k, open] of Object.entries(catState)) {
+    const g = document.getElementById('cat-' + k), btn = document.querySelector(`[data-cat="${k}"]`);
+    if (!g || !btn) continue;
+    g.classList.toggle('closed', !open); btn.setAttribute('aria-expanded', open); btn.querySelector('.arr').textContent = open ? '▾' : '▸';
+  }
+}
+document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catState[b.dataset.cat] = !catState[b.dataset.cat]; store.set('cats', catState); applyCats(); });
+applyCats();
+function showLauncher(on){ document.getElementById('launcher').classList.toggle('hidden', !on); }
+document.querySelectorAll('[data-open]').forEach(c => c.onclick = () => { showLauncher(false); go(lastView[c.dataset.open]); });
+document.getElementById('brandBtn').onclick = () => showLauncher(true);
+document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(b.dataset.gotoView));
+
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
 function go(view){
   state.view = view;
+  const side = view === 'reglages' ? state.side : (view.startsWith('mk-') ? 'market' : 'hub');
+  if (view !== 'reglages') lastView[side] = view;
+  setSide(side);
+  // ouvre la catégorie qui contient la page demandée
+  for (const k of Object.keys(catState)) { const g = document.getElementById('cat-' + k); if (g && g.querySelector(`[data-view="${view}"]`) && !catState[k]) { catState[k] = true; applyCats(); } }
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   const soon = SOON[view];
-  document.querySelectorAll('main > section').forEach(sec => sec.classList.toggle('hidden', sec.id !== 'v-' + (soon ? 'soon' : view)));
+  const secId = soon ? 'soon' : (view.startsWith('mk-cat:') ? 'mk-cat' : view);
+  document.querySelectorAll('main > section').forEach(sec => sec.classList.toggle('hidden', sec.id !== 'v-' + secId));
   if (soon){
     document.getElementById('soonTitle').textContent = soon.t;
     document.getElementById('soonText').textContent = soon.d;
@@ -480,10 +630,59 @@ function go(view){
     document.getElementById('soonList').innerHTML = soon.l.map(x => '<li>' + x + '</li>').join('');
     document.getElementById('soonIcon').innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + SOON_ICONS[view] + '</svg>';
   }
+  if (view.startsWith('mk-cat:')) renderMkCat(view.slice(7));
+  if (view === 'mk-discover') renderMk();
   if (view === 'profil') renderProfile();
   if (view === 'reglages') loadSettingsUI();
   document.querySelector('main').scrollTop = 0;
 }
+
+/* ---------- Marketplace (catalogue de départ : nos modules) ---------- */
+const MK_CATS = { modules: 'Modules du Hub', camions: 'Camions', cars: 'Cars & bus', remorques: 'Remorques', cartes: 'Cartes', skins: 'Skins d\'entreprise', convoi: 'Packs de convoi' };
+const MK = [
+  { id: 'tablette', name: 'Tablette in-game', author: 'Truck & Coach Hub', cat: 'modules', games: ['ETS2', 'ATS'], desc: 'Mission en cours, collègues en ligne, messages de l\'entreprise, GPS et musique, sur une tablette à ouvrir en jeu.', preview: 'tablette' },
+  { id: 'gps', name: 'Mini-GPS', author: 'Truck & Coach Hub', cat: 'modules', games: ['ETS2', 'ATS'], desc: 'Un petit GPS discret, style TomTom : prochaine direction, distance et temps restants, limitation.', preview: 'gps' }
+];
+let mkGame = 'all';
+const escM = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function mkCard(m){
+  return `<article class="mkcard"><div class="mkimg"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${m.id === 'gps' ? '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>' : '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/>'}</svg></div>
+    <div class="mkbody"><div class="row" style="gap:8px"><b style="font-size:15px">${escM(m.name)}</b><span class="soon" style="margin:0">Bientôt</span></div>
+    <span class="muted" style="font-size:12px">${escM(m.author)} · ${m.games.join(' / ')} · ${escM(MK_CATS[m.cat])}</span>
+    <span class="soft" style="font-size:13px;line-height:1.6;flex:1">${escM(m.desc)}</span>
+    <div class="row" style="gap:8px;margin-top:4px"><button class="btn primary" disabled style="height:36px;opacity:.55;cursor:not-allowed">Installer</button><button class="btn" style="height:36px" data-mk-preview="${m.preview}">${m.preview === 'tablette' ? 'Voir l\'aperçu' : 'En savoir plus'}</button></div></div></article>`;
+}
+function bindMkPreview(root){ root.querySelectorAll('[data-mk-preview]').forEach(b => b.onclick = () => go(b.dataset.mkPreview)); }
+function renderMk(){
+  const q = (document.getElementById('mkSearch').value || '').toLowerCase();
+  const list = MK.filter(m => (mkGame === 'all' || m.games.includes(mkGame)) && (!q || (m.name + ' ' + m.desc).toLowerCase().includes(q)));
+  const g = document.getElementById('mkGrid');
+  g.innerHTML = list.length ? list.map(mkCard).join('') : '<div class="empty" style="grid-column:1/-1">Aucun contenu ne correspond à ta recherche.</div>';
+  bindMkPreview(g);
+}
+function renderMkCat(cat){
+  document.getElementById('mkCatTitle').textContent = MK_CATS[cat] || 'Catégorie';
+  const list = MK.filter(m => m.cat === cat);
+  const g = document.getElementById('mkCatGrid');
+  g.innerHTML = list.map(mkCard).join(''); bindMkPreview(g);
+  document.getElementById('mkCatEmpty').classList.toggle('hidden', list.length > 0);
+}
+document.getElementById('mkSearch').oninput = renderMk;
+document.querySelectorAll('#mkGame [data-g]').forEach(b => b.onclick = () => { mkGame = b.dataset.g; document.querySelectorAll('#mkGame [data-g]').forEach(x => x.classList.toggle('on', x === b)); renderMk(); });
+
+/* ---------- Thème clair / sombre ---------- */
+let themePref = store.get('theme', 'sombre');
+const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+function applyTheme(pref){
+  themePref = pref; store.set('theme', pref);
+  const t = pref === 'systeme' ? (mq && mq.matches ? 'clair' : 'sombre') : pref;
+  document.documentElement.dataset.theme = t;
+  document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.toggle('on', b.dataset.themeBtn === pref));
+}
+if (mq && mq.addEventListener) mq.addEventListener('change', () => { if (themePref === 'systeme') applyTheme('systeme'); });
+document.querySelectorAll('[data-theme-btn]').forEach(b => b.onclick = () => { applyTheme(b.dataset.themeBtn); if (window.tel) window.tel.setSettings({ theme: b.dataset.themeBtn }); });
+applyTheme(themePref);
+if (window.tel) window.tel.getSettings().then(st => { if (st.theme && st.theme !== themePref) applyTheme(st.theme); });
 
 /* ---------- classement ---------- */
 function scaled(d){ const f = PERIOD_FACTOR[state.period];
@@ -640,6 +839,8 @@ function renderLive(sn){
   const dotCol = !sn.connected ? '#7F8E9C' : L.paused ? '#F2C14E' : 'var(--ok)';
   const txt = !sn.connected ? 'En attente du jeu' : (L.paused ? 'Jeu en pause' : 'Jeu connecté');
   document.getElementById('sideConn').innerHTML = `<span class="d" style="background:${dotCol}"></span><span>${txt}</span>`;
+  document.getElementById('lConn').innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:${dotCol}"></span>${txt}`;
+  setText('lToday', km(sn.today.loaded + sn.today.empty)); setText('lJobs', String(sn.totals.deliveries));
   document.getElementById('hGame').innerHTML = `<span class="d" style="background:${dotCol}"></span>Jeu : ${!sn.connected ? 'en attente' : (L.paused ? 'en pause' : 'connecté')}`;
   const t = sn.today, nb = sn.jobs.filter(j => new Date(j.ended).toDateString() === new Date().toDateString() && j.status === 'livrée').length;
   document.getElementById('hToday').innerHTML = (t.loaded + t.empty) > 0
@@ -749,25 +950,57 @@ async function refreshPseudo(){
   if (!HAS_APP) return;
   const st = await window.tel.getSettings();
   setText('sidePseudo', st.pseudo || 'non défini');
+  setText('lPseudo', st.pseudo ? 'Chauffeur : ' + st.pseudo : '');
 }
+let autoInstall = false, installing = false;
 async function refreshUpdate(){
   if (!HAS_APP) return;
   const u = await window.tel.updateStatus();
   const M = { dev: ['#7F8E9C', 'mode test'], idle: ['#7F8E9C', 'vérification…'], checking: ['#7F8E9C', 'vérification…'], none: ['var(--ok)', 'à jour (v' + u.current + ')'],
-    downloading: ['#F2C14E', 'téléchargement de la v' + u.version + '…'], ready: ['var(--loaded)', 'v' + u.version + ' prête, redémarre'], error: ['#7F8E9C', 'hors ligne'] };
+    available: ['var(--loaded)', 'v' + u.version + ' disponible'], downloading: ['#F2C14E', 'téléchargement ' + (u.progress || 0) + ' %'],
+    ready: ['var(--loaded)', 'v' + u.version + ' prête'], error: ['#7F8E9C', 'hors ligne'], failed: ['var(--race)', 'téléchargement interrompu'] };
   const m = M[u.state] || M.idle;
   document.getElementById('hUpdate').innerHTML = `<span class="d" style="background:${m[0]}"></span>Mises à jour : ${m[1]}`;
   renderUpdatePanel(u);
+  // bannière dans le menu
+  const ban = document.getElementById('updBanner'), show = ['available', 'downloading', 'ready', 'failed'].includes(u.state);
+  ban.classList.toggle('hidden', !show);
+  if (show) {
+    setText('updBannerText', u.state === 'downloading' ? `Téléchargement de la v${u.version}… ${u.progress || 0} %` : u.state === 'ready' ? `La v${u.version} est prête.` : u.state === 'failed' ? 'Téléchargement interrompu.' : `Mise à jour v${u.version} disponible.`);
+    const bb = document.getElementById('updBannerBar'); bb.classList.toggle('hidden', u.state !== 'downloading'); bb.firstElementChild.style.width = (u.progress || 0) + '%';
+    const btn = document.getElementById('updBannerBtn'); btn.classList.toggle('hidden', u.state === 'downloading');
+    btn.textContent = u.state === 'ready' ? 'Installer maintenant' : u.state === 'failed' ? 'Réessayer' : 'Mettre à jour';
+  }
+  if (u.state === 'ready' && autoInstall && !installing) doInstall(u.version);
+}
+async function startUpdate(){
+  const cur = await window.tel.updateStatus();
+  if (cur.state === 'ready') return doInstall(cur.version);
+  if (cur.state === 'available' || cur.state === 'failed') { autoInstall = true; await window.tel.downloadUpdate(); return refreshUpdate(); }
+  renderUpdatePanel({ ...cur, state: 'checking' });
+  const u = await window.tel.checkUpdate();
+  renderUpdatePanel(u); refreshUpdate();
+}
+async function doInstall(version){
+  installing = true;
+  setText('installingTitle', `Installation de la v${version}…`);
+  document.getElementById('installing').classList.remove('hidden');
+  const ok = await window.tel.installUpdate();
+  if (!ok) { installing = false; document.getElementById('installing').classList.add('hidden'); }
 }
 function renderUpdatePanel(u, extra){
   setText('updCurrent', 'v' + u.current);
   const btn = document.getElementById('btnUpdate');
   const MSG = { dev: 'Mode test : les mises à jour ne sont actives que dans l\'appli installée.', checking: 'Recherche en cours…', none: 'Tu as la dernière version.',
-    downloading: 'Nouvelle version v' + u.version + ' en cours de téléchargement…', ready: 'La version v' + u.version + ' est prête.', error: 'Impossible de vérifier (pas de connexion ?).', idle: 'L\'appli vérifie toute seule au démarrage puis toutes les 30 minutes.' };
+    available: 'La version v' + u.version + ' est disponible. Elle s\'installe ici, sans assistant Windows, puis l\'appli redémarre toute seule.',
+    downloading: 'Téléchargement de la v' + u.version + ' : ' + (u.progress || 0) + ' %', ready: 'La version v' + u.version + ' est prête à être installée.',
+    error: 'Impossible de vérifier (pas de connexion ?).', failed: 'Le téléchargement s\'est interrompu. Réessaie.', idle: 'L\'appli vérifie toute seule au démarrage puis toutes les 30 minutes.' };
   setText('updMsg', extra || MSG[u.state] || MSG.idle);
-  btn.textContent = u.state === 'ready' ? 'Installer et redémarrer' : u.state === 'checking' ? 'Recherche…' : 'Rechercher une mise à jour';
+  btn.textContent = u.state === 'ready' ? 'Installer et redémarrer' : u.state === 'available' ? 'Mettre à jour vers v' + u.version : u.state === 'failed' ? 'Réessayer'
+    : u.state === 'downloading' ? 'Téléchargement… ' + (u.progress || 0) + ' %' : u.state === 'checking' ? 'Recherche…' : 'Rechercher une mise à jour';
   btn.disabled = u.state === 'checking' || u.state === 'downloading';
   btn.style.opacity = btn.disabled ? .6 : 1;
+  const bar = document.getElementById('updBar'); bar.classList.toggle('hidden', u.state !== 'downloading'); bar.firstElementChild.style.width = (u.progress || 0) + '%';
 }
 async function launch(game){
   const hint = document.getElementById('launchHint');
@@ -786,14 +1019,9 @@ if (HAS_APP){
     const ok = await window.tel.openLink(b.dataset.link);
     if (!ok && b.dataset.link === 'mods') setText('launchHint', 'Dossier des mods introuvable (Documents\\Euro Truck Simulator 2\\mod).');
   });
-  document.getElementById('btnUpdate').onclick = async () => {
-    const cur = await window.tel.updateStatus();
-    if (cur.state === 'ready') { await window.tel.installUpdate(); return; }
-    renderUpdatePanel({ ...cur, state: 'checking' });
-    const u = await window.tel.checkUpdate();
-    renderUpdatePanel(u); refreshUpdate();
-  };
-  refreshPseudo(); refreshUpdate(); setInterval(refreshUpdate, 5000);
+  document.getElementById('btnUpdate').onclick = startUpdate;
+  document.getElementById('updBannerBtn').onclick = startUpdate;
+  refreshPseudo(); refreshUpdate(); setInterval(refreshUpdate, 1500);
   document.getElementById('btnSave').onclick = async () => {
     await window.tel.setSettings({
       pseudo: document.getElementById('sPseudo').value.trim(),
@@ -820,7 +1048,8 @@ if (HAS_APP){
 }
 
 const v = new URLSearchParams(location.search).get('v');
-if (v) document.getElementById('appVersion').textContent = 'Version ' + v;
+if (v) { document.getElementById('appVersion').textContent = 'Version ' + v; document.getElementById('lVersion').textContent = 'Version ' + v; }
+renderMk(); go('accueil'); showLauncher(true);
 renderRanking(); tickMap(); tickTablet();
 setInterval(tickMap, 1000);
 setInterval(tickTablet, 3000);
