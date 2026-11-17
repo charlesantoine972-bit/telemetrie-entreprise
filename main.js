@@ -37,7 +37,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -99,11 +99,11 @@ function createWindow() {
    Visible seulement quand le jeu envoie des données (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
-const HUD_W = 760, HUD_H = 76;
+const HUD_W = 820, HUD_H = 240;
 function hudBounds() {
   const wa = screen.getPrimaryDisplay().bounds;
   const bas = settings.hud && settings.hud.position === 'bas';
-  return { x: Math.round(wa.x + (wa.width - HUD_W) / 2), y: bas ? wa.y + wa.height - HUD_H - 110 : wa.y + 8, width: HUD_W, height: HUD_H };
+  return { x: Math.round(wa.x + (wa.width - HUD_W) / 2), y: bas ? wa.y + wa.height - HUD_H - 100 : wa.y + 4, width: HUD_W, height: HUD_H };
 }
 function hudData() {
   const sn = telemetry.snapshot();
@@ -209,7 +209,7 @@ function setupIpc() {
     return false;
   });
   ipcMain.handle('settings:set', (_e, patch) => {
-    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud'];
+    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud', 'showSoon'];
     for (const k of allowed) if (k in patch) settings[k] = patch[k];
     if (patch.look) settings.look = sanitizeLook({ ...settings.look, ...patch.look });
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };

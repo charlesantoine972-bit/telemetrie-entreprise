@@ -5,66 +5,101 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
 <title>HUD</title>
 <style>
-  html,body{margin:0;background:transparent;overflow:hidden;font-family:"Segoe UI",Inter,system-ui,sans-serif;user-select:none}
-  body{display:flex;justify-content:center;padding-top:6px}
-  body.bas{align-items:flex-end;padding:0 0 6px}
-  .bar{display:flex;align-items:center;gap:14px;height:56px;padding:0 16px 0 10px;border-radius:16px;color:#fff;
-    background:rgba(12,16,22,var(--op,.82));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35);transition:border-color .3s}
-  .bar.race{border-color:#E070A8}
-  .logo{width:36px;height:36px;border-radius:10px;background:#E7B655;color:#0F1720;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
-  .logo.off{display:none}
-  .sp{display:flex;align-items:baseline;gap:4px;min-width:96px}
-  .sp b{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
-  .sp span{font-size:12px;color:#C3CDD6}
-  .sp.over b{color:#F4B860}
-  .lim{width:38px;height:38px;border-radius:50%;background:#fff;border:4px solid #D64545;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#111;font-weight:800;font-size:14px}
-  .lim.off{display:none}
-  .sep{width:1px;height:30px;background:rgba(255,255,255,.16)}
-  .k{display:flex;flex-direction:column;gap:1px;font-size:11px;color:#C3CDD6;letter-spacing:.04em;text-transform:uppercase}
-  .k b{font-size:16px;color:#fff;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
-  .mode{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em}
-  .mode.real{background:rgba(111,216,196,.18);color:#8FE6D4}
-  .mode.race{background:rgba(224,112,168,.22);color:#F2A6CC}
-  .mode.none{background:rgba(255,255,255,.08);color:#C3CDD6}
-  .hidden{display:none}
+  html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+  body{display:flex;justify-content:center;align-items:flex-start;padding:6px;box-sizing:border-box}
+  body.bas{align-items:flex-end}
+
+.hud{--op:.82;display:inline-flex;align-items:center;gap:14px;color:#fff;font-family:"Segoe UI",Inter,system-ui,sans-serif;user-select:none;transition:border-color .3s}
+.hud .logo{width:36px;height:36px;border-radius:10px;background:#E7B655;color:#0F1720;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex:none}
+.hud .logo.off{display:none}
+.hud .sp{display:flex;align-items:baseline;gap:4px;min-width:92px}
+.hud .sp b{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.hud .sp span{font-size:12px;color:#C3CDD6}
+.hud .sp.over b{color:#F4B860}
+.hud .lim{width:38px;height:38px;border-radius:50%;background:#fff;border:4px solid #D64545;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#111;font-weight:800;font-size:14px;flex:none}
+.hud .lim.off{visibility:hidden}
+.hud .sep{width:1px;height:30px;background:rgba(255,255,255,.16)}
+.hud .k{display:flex;flex-direction:column;gap:1px;font-size:11px;color:#C3CDD6;letter-spacing:.04em;text-transform:uppercase}
+.hud .k b{font-size:16px;color:#fff;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hud .k.off{display:none}
+.hud .mode{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;white-space:nowrap}
+.hud .mode.real{background:rgba(111,216,196,.18);color:#8FE6D4}
+.hud .mode.race{background:rgba(224,112,168,.22);color:#F2A6CC}
+.hud .mode.none{background:rgba(255,255,255,.08);color:#C3CDD6}
+/* Style « Bandeau » */
+.hud.s-bandeau{height:56px;padding:0 16px 0 10px;border-radius:16px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.hud.s-bandeau.race{border-color:#E070A8}
+/* Style « Compact » : l'essentiel seulement */
+.hud.s-compact{height:46px;gap:10px;padding:0 12px 0 8px;border-radius:999px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12)}
+.hud.s-compact .logo{width:30px;height:30px;border-radius:50%;font-size:10px}
+.hud.s-compact .sp{min-width:70px}.hud.s-compact .sp b{font-size:24px}
+.hud.s-compact .lim{width:32px;height:32px;font-size:12px;border-width:3px}
+.hud.s-compact .k,.hud.s-compact .sep{display:none}
+.hud.s-compact.race{border-color:#E070A8}
+/* Style « Tableau de bord » : petite carte verticale */
+.hud.s-tableau{flex-direction:column;align-items:stretch;gap:10px;width:250px;padding:14px;border-radius:18px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.hud.s-tableau .sep{display:none}
+.hud.s-tableau .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hud.s-tableau .mid{display:flex;align-items:center;justify-content:space-between}
+.hud.s-tableau .sp b{font-size:40px}
+.hud.s-tableau .lim{width:46px;height:46px;font-size:16px}
+.hud.s-tableau .rows{display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.12);padding-top:10px}
+.hud.s-tableau .k{flex-direction:row;justify-content:space-between;align-items:baseline}
+.hud.s-tableau .k b{font-size:14px}
+.hud.s-tableau.race{border-color:#E070A8}
+/* Style « Minimal » : texte seul, sans fond */
+.hud.s-minimal{gap:12px;padding:4px 8px;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
+.hud.s-minimal .logo,.hud.s-minimal .sep,.hud.s-minimal .lim{display:none}
+.hud.s-minimal .mode{background:none!important;padding:0;font-size:14px}
+.hud.s-minimal .k{color:#E8EDF2}
+.hud .top,.hud .mid,.hud .rows{display:contents}
+.hud.s-tableau .top,.hud.s-tableau .mid,.hud.s-tableau .rows{display:flex}
+
+.hud:not(.s-tableau) .logo{order:0}.hud:not(.s-tableau) .sp{order:1}.hud:not(.s-tableau) .lim{order:2}
+.hud:not(.s-tableau) .sep{order:3}.hud:not(.s-tableau) .mode{order:4}.hud:not(.s-tableau) .k{order:5}
+
 </style>
 </head>
 <body>
-  <div class="bar" id="bar">
-    <div class="logo" id="logo">T&amp;C</div>
-    <div class="sp" id="sp"><b id="speed">0</b><span>km/h</span></div>
-    <div class="lim" id="lim">90</div>
-    <div class="sep"></div>
-    <span class="mode none" id="mode">SANS MISSION</span>
-    <div class="k hidden" id="kLeft">Reste<b id="left">–</b></div>
-    <div class="k hidden" id="kKm">Mission<b id="km">–</b></div>
-    <div class="k" id="kToday">Aujourd'hui<b id="today">0 km</b></div>
+<div class="hud s-bandeau" data-hud>
+  <div class="top"><div class="logo" data-h="logo">T&amp;C</div><span class="mode none" data-h="mode">SANS MISSION</span></div>
+  <div class="mid"><div class="sp" data-h="sp"><b data-h="speed">0</b><span>km/h</span></div><div class="lim" data-h="lim">90</div></div>
+  <div class="sep"></div>
+  <div class="rows">
+    <div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div>
+    <div class="k" data-h="kKm">Mission<b data-h="km">–</b></div>
+    <div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div>
   </div>
+</div>
 <script>
-const $ = id => document.getElementById(id);
-const fmt = (n, d = 0) => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: d, minimumFractionDigits: d });
-function render(d){
+
+const HUD_STYLES = { bandeau: 'Bandeau', compact: 'Compact', tableau: 'Tableau de bord', minimal: 'Minimal' };
+function hudRender(root, d){
+  const q = k => root.querySelector('[data-h="' + k + '"]');
+  const fmt = (n, dd = 0) => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: dd, minimumFractionDigits: dd });
   const o = d.options || {};
-  document.body.classList.toggle('bas', o.position === 'bas');
-  document.documentElement.style.setProperty('--op', (o.opacity || 82) / 100);
-  $('logo').classList.toggle('off', o.logo === false);
+  root.className = 'hud s-' + (HUD_STYLES[o.style] ? o.style : 'bandeau');
+  root.style.setProperty('--op', (o.opacity || 82) / 100);
+  q('logo').classList.toggle('off', o.logo === false);
   const L = d.live || {}, th = d.thresholds || { limit: 100, pct: 5 };
   const kmh = Math.round((L.speed || 0) * 3.6);
-  $('speed').textContent = Math.abs(kmh);
-  $('sp').classList.toggle('over', kmh > th.limit);
+  q('speed').textContent = Math.abs(kmh);
+  q('sp').classList.toggle('over', kmh > th.limit);
   const lim = Math.round((L.speedLimit || 0) * 3.6);
-  $('lim').textContent = lim; $('lim').classList.toggle('off', !lim);
-  const j = d.job;
-  const m = $('mode'); m.className = 'mode ' + (!j ? 'none' : j.mode === 'course' ? 'race' : 'real');
+  q('lim').textContent = lim; q('lim').classList.toggle('off', !lim);
+  const j = d.job, m = q('mode');
+  m.className = 'mode ' + (!j ? 'none' : j.mode === 'course' ? 'race' : 'real');
   m.textContent = !j ? 'SANS MISSION' : j.mode === 'course' ? 'COURSE · ' + fmt(j.overPct, 0) + ' %' : 'RÉEL';
-  $('bar').classList.toggle('race', !!j && j.mode === 'course');
-  $('kLeft').classList.toggle('hidden', !(L.navDistance > 0));
-  $('left').textContent = fmt((L.navDistance || 0) / 1000, 0) + ' km';
-  $('kKm').classList.toggle('hidden', !j);
-  if (j) $('km').textContent = fmt(j.loaded, 1) + ' km chargés';
-  $('today').textContent = fmt((d.today && (d.today.loaded + d.today.empty)) || 0, 0) + ' km';
+  root.classList.toggle('race', !!j && j.mode === 'course');
+  q('kLeft').classList.toggle('off', !(L.navDistance > 0));
+  q('left').textContent = fmt((L.navDistance || 0) / 1000, 0) + ' km';
+  q('kKm').classList.toggle('off', !j);
+  if (j) q('km').textContent = fmt(j.loaded, 1) + ' km chargés';
+  q('today').textContent = fmt((d.today && (d.today.loaded + d.today.empty)) || 0, 0) + ' km';
 }
-if (window.tel && window.tel.onHud) window.tel.onHud(render);
+
+const root = document.querySelector('[data-hud]');
+if (window.tel && window.tel.onHud) window.tel.onHud(d => { document.body.classList.toggle('bas', (d.options || {}).position === 'bas'); hudRender(root, d); });
 </script>
 </body>
 </html>
