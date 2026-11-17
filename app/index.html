@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <script src="vendor/leaflet/leaflet.js"></script>
 <script src="data/villes.js"></script>
+<script src="data/notes-version.js"></script>
 <title>Truck &amp; Coach Hub</title>
 <style>
   /* ===== Thème de base (bleu nuit, accent orange ambre) : couleurs douces, distinguables par les daltoniens ===== */
@@ -191,6 +192,25 @@
   .lcard .ttl{font-size:28px;font-weight:800}
   .lcard:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
   .lcard .go{align-self:flex-start;height:46px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:800;display:flex;align-items:center}
+  .lnotes-hint:hover{color:var(--text) !important}
+  .lnotes-hint:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+  .lnotes{width:100%;max-width:1080px;margin:0 auto;padding:8px 32px 48px;box-sizing:content-box;display:flex;flex-direction:column;gap:12px}
+  .lnotes h2{margin:0;font-size:22px;font-weight:800}
+  .lnotes details{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+  .lnotes summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px}
+  .lnotes summary::-webkit-details-marker{display:none}
+  .lnotes summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+  .lnotes details[open] summary::after{content:"▴"}
+  .lnotes summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:14px}
+  .lnotes .ver{font-size:17px;font-weight:800}
+  .lnotes .vtitle{color:var(--soft);font-size:15px}
+  .lnotes .vdate{color:var(--muted);font-size:13px}
+  .lnotes .vnow{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent);color:var(--on-accent)}
+  .lnotes ul{list-style:none;margin:0;padding:0 18px 16px;display:flex;flex-direction:column;gap:8px}
+  .lnotes li{display:flex;gap:10px;align-items:baseline;font-size:14px;line-height:1.6;color:var(--text)}
+  .lnotes .tag{flex:none;min-width:74px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--text)}
+  .lnotes .tag::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--tc)}
+  .lnotes .t-nouveau{--tc:var(--accent)} .lnotes .t-ameliore{--tc:var(--ok)} .lnotes .t-corrige{--tc:var(--race)}
   .lstat{flex:1;min-width:120px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
   .lstat span{font-size:12px;color:var(--muted)} .lstat b{font-size:18px}
   .sideswitch{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:0 2px 8px}
@@ -361,7 +381,13 @@
         <span class="go">Ouvrir l'Atelier →</span>
       </button>
     </div>
+    <button type="button" class="lnotes-hint" id="lNotesHint" style="all:unset;cursor:pointer;font-size:14px;font-weight:600;color:var(--soft)">Notes de version ↓</button>
   </div>
+  <section class="lnotes" id="lNotes" aria-labelledby="lNotesTitle">
+    <h2 id="lNotesTitle">Notes de version</h2>
+    <p class="muted" style="margin:-6px 0 4px;font-size:14px">Ce qui a été ajouté, amélioré et corrigé à chaque mise à jour.</p>
+    <div id="lNotesList" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
 </div>
 <div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody"><div class="box">
   <h2 style="margin:0" id="modalTitle"></h2><div class="soft" style="font-size:14px;line-height:1.7" id="modalBody"></div>
@@ -2136,6 +2162,22 @@ if (HAS_APP){
 
 const v = new URLSearchParams(location.search).get('v');
 if (v) { document.getElementById('appVersion').textContent = 'Version ' + v; document.getElementById('lVersion').textContent = 'Version ' + v; }
+// Notes de version en bas de l'écran d'accueil : la version installée est ouverte, les autres sont repliées.
+function renderNotes(current) {
+  const list = window.NOTES_VERSION || [], box = document.getElementById('lNotesList');
+  if (!box) return;
+  if (!list.length) { document.getElementById('lNotes').classList.add('hidden'); document.getElementById('lNotesHint').classList.add('hidden'); return; }
+  const cur = current && list.some(n => n.version === current) ? current : list[0].version;
+  const lab = { nouveau: 'Nouveau', ameliore: 'Amélioré', corrige: 'Corrigé' };
+  const fmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return d; } };
+  box.innerHTML = list.map(n => `<details${n.version === cur ? ' open' : ''}><summary><span class="ver">Version ${escM(n.version)}</span>`
+    + (n.version === cur ? '<span class="vnow">Ta version</span>' : '')
+    + `<span class="vtitle">${escM(n.titre || '')}</span><span class="vdate">${escM(fmt(n.date))}</span></summary><ul>`
+    + n.notes.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${lab[t] || escM(t)}</span><span>${escM(txt)}</span></li>`).join('')
+    + '</ul></details>').join('');
+}
+renderNotes(v);
+document.getElementById('lNotesHint').onclick = () => document.getElementById('lNotes').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'reduit' ? 'auto' : 'smooth', block: 'start' });
 renderMk(); go('accueil'); showLauncher(true);
 renderRanking(); tickMap(); tickTablet();
 setInterval(tickMap, 1000);
