@@ -2,6 +2,25 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.3', date: '2026-11-17', titre: 'Notes de version', notes: [
+    ['nouveau', 'Les notes de toutes les versions s\'affichent en bas de l\'écran d\'accueil (lien « Notes de version ↓ » sous les cartes).'],
+  ]},
+  { version: '0.12.2', date: '2026-11-17', titre: 'Nouvelle couleur et outils de sauvegarde', notes: [
+    ['ameliore', 'Le jaune et le bleu laissent place à un orange ambre, dans tous les thèmes.'],
+    ['nouveau', 'Options → Apparence : choisis ta couleur d\'accent (pastilles, roue de couleurs ou couleur de Windows).'],
+    ['ameliore', '« Comme Windows » suit aussi la couleur d\'accent de Windows.'],
+    ['nouveau', 'Atelier → Sauvegardes : « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues, sans rien modifier.'],
+    ['nouveau', 'Atelier → Sauvegardes : « Dupliquer » crée une copie de ton profil pour faire des tests sans risque.'],
+    ['nouveau', 'Atelier → Profil : bilan du profil (compte en banque, prêts, flotte, usure) avec les problèmes à corriger.'],
+    ['ameliore', 'Fenêtres de confirmation : la touche Tab passe par tous les champs.'],
+  ]},
+  { version: '0.12.1', date: '2026-11-17', titre: 'HUD seulement en jeu', notes: [
+    ['ameliore', 'Le bandeau en jeu se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit.'],
+    ['ameliore', 'Plugin du jeu mis à jour (1.1.0) : relance le jeu une fois.'],
+  ]},
+  { version: '0.12.0', date: '2026-11-17', titre: 'Nouvelles icônes', notes: [
+    ['ameliore', 'Nouvelles icônes dans le style de Windows 11 : menus, écran d\'accueil, Marketplace et carte.'],
+  ]},
   { version: '0.11.0', date: '2026-11-17', titre: 'Accessibilité', notes: [
     ['ameliore', 'Toute l\'appli respecte les règles d\'accessibilité WCAG 2.1 AA, dans tous les thèmes et les modes daltonisme.'],
     ['ameliore', 'Une seule couleur pour les actions (boutons, sélection, interrupteurs) : plus lisible.'],
