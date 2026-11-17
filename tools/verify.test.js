@@ -159,6 +159,63 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   assert.equal(value('fuelRange').hidden, true);
   assert.equal(root.querySelector('[data-h="coachClock"]').textContent, '--:--');
 });
+test('le HUD autocar affiche les mesures reçues et laisse les horaires de ligne inconnus', () => {
+  const createNode = () => {
+    const node = {
+      textContent: '', title: '', dataset: {}, style: {}, children: [], attributes: {},
+      classes: new Set(),
+      classList: {
+        toggle(name, on) { on ? node.classes.add(name) : node.classes.delete(name); },
+        contains(name) { return node.classes.has(name); }
+      },
+      setAttribute(name, value) { node.attributes[name] = value; },
+      append(...items) { node.children.push(...items); }
+    };
+    return node;
+  };
+  let panel = null;
+  const root = createNode();
+  root.querySelector = selector => selector === '.coach-panel' ? panel : null;
+  root.append = node => { panel = node; };
+  const makePanel = () => {
+    const result = createNode(), fields = new Map();
+    result.querySelector = selector => {
+      const field = /^\[data-c="(.+)"\]$/.exec(selector);
+      if (field) return fields.get(field[1]) || null;
+      if (selector === '.coach-details') return result.details;
+      return null;
+    };
+    result.details = createNode();
+    Object.defineProperty(result, 'innerHTML', {
+      set(markup) {
+        for (const match of markup.matchAll(/data-c="([^"]+)"/g)) fields.set(match[1], createNode());
+      }
+    });
+    return result;
+  };
+  const context = { document: { createElement: makePanel }, TCHMission: require('../app/mission-time') };
+  vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../app/hud-coach.js'), 'utf8'), context);
+  context.hudCoach(root, {
+    connected: true,
+    live: {
+      busJob: {}, speed: 20, speedLimit: 25, navDistance: 12345, navTime: 300,
+      localScale: 20, gameTime: 64, odometer: 1200, fuel: 40, fuelRange: 320,
+      restStop: 60, truck: { 'fuel.capacity': 100 }
+    }
+  });
+  const value = key => panel.querySelector(`[data-c="${key}"]`).textContent;
+  assert.equal(value('line'), '—');
+  assert.equal(value('stops'), '—');
+  assert.equal(value('stop'), '—');
+  assert.equal(value('delay'), '—');
+  assert.equal(value('satisfaction'), '—');
+  assert.equal(value('clock'), '01:04');
+  assert.equal(value('distance'), '12,3 km');
+  assert.equal(value('speed'), '72 km/h');
+  assert.equal(value('limit'), '90 km/h');
+  assert.equal(value('fuelRange'), '320 km');
+  assert.equal(value('restStop'), '1 h 00');
+});
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));
   try {

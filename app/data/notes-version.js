@@ -2,11 +2,16 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.9', date: '2026-11-17', titre: 'HUD autocar et mise à jour automatique', notes: [
+    ['ameliore', 'Le HUD autocar regroupe les informations de conduite reçues du jeu : heure, vitesse, GPS, temps estimé, compteur, carburant et pause obligatoire.'],
+    ['ameliore', 'Les données de ligne, d’arrêts, d’horaire et de satisfaction non fournies par la télémétrie restent indiquées comme indisponibles.'],
+    ['corrige', 'Après installation d’une mise à jour, l’application redémarre automatiquement.'],
+  ]},
   { version: '0.12.8', date: '2026-11-17', titre: 'Nouveau bandeau dédié aux cars', notes: [
     ['nouveau', 'Interface car dédiée : pastille de ligne rouge, heure du jeu, vitesse, limitation et prochain arrêt, inspirée de la référence visuelle.'],
     ['ameliore', 'Seconde rangée compacte : distance GPS, compteur kilométrique du véhicule, temps jeu et réel estimé, arrivée estimée et carburant.'],
     ['ameliore', 'Le HUD camion conserve ses styles ; le bandeau car utilise sa propre présentation.'],
-    ['ameliore', 'Les exemples de ligne, arrêt et avance sont réservés à l’aperçu marqué DONNÉES FICTIVES. En jeu, les données non disponibles restent indiquées par un tiret.'],
+    ['ameliore', 'Les données de ligne, d’arrêt et d’horaire non disponibles en jeu sont indiquées par un tiret.'],
   ]},
   { version: '0.12.7', date: '2026-11-17', titre: 'HUD compact pour les cars', notes: [
     ['ameliore', 'Le HUD des services car adopte un bandeau compact à deux lignes, inspiré du screenshot fourni.'],

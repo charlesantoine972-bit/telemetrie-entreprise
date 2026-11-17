@@ -320,8 +320,8 @@ function setupIpc() {
   ipcMain.handle('update:install', () => {
     if (updateState.state !== 'ready') return false;
     if (telemetry) telemetry.stop();
-    // Installation silencieuse puis fermeture : ne pas relancer l'application.
-    setTimeout(() => autoUpdater.quitAndInstall(true, false), 1200);
+    // Installation silencieuse puis redémarrage automatique de l'application.
+    setTimeout(() => autoUpdater.quitAndInstall(true, true), 1200);
     return true;
   });
   ipcMain.handle('game:launch', async (_e, game) => {
@@ -358,7 +358,7 @@ function setupIpc() {
 
 /* ---------- Mises à jour (GitHub Releases), entièrement dans l'appli ---------- */
 // Vérification automatique ; le téléchargement se lance avec le bouton « Mettre à jour » ;
-// l'installation est silencieuse (pas d'assistant Windows) et l'appli reste fermée ensuite.
+// l'installation est silencieuse (pas d'assistant Windows), puis l'appli redémarre.
 function setupUpdates() {
   if (!app.isPackaged) return;
   autoUpdater.autoDownload = false;
