@@ -21,7 +21,7 @@ const COACH_SKILLS = [
   { key: 'satisfaction_increase', label: 'Favori des passagers', max: 3 },
   { key: 'satisfaction_decrease', label: 'Passagers patients', max: 3 },
   { key: 'low_acceleration', label: 'Conduite en douceur', max: 3 },
-  { key: 'ecodriving', label: 'Éco-conduite (car)', max: 3 }
+  { key: 'ecodriving', label: 'Éco-conduite (coach)', max: 3 }
 ];
 
 class SaveEditor {
@@ -315,12 +315,12 @@ class SaveEditor {
     let body = eco.body;
     const report = [];
     if (e.xp != null) { body = SaveEditor.set(body, 'experience_points', Math.max(0, Math.round(e.xp))); report.push('XP camion'); }
-    if (e.busXp != null && SaveEditor.get(body, 'bus_experience_points') != null) { body = SaveEditor.set(body, 'bus_experience_points', Math.max(0, Math.round(e.busXp))); report.push('XP car'); }
+    if (e.busXp != null && SaveEditor.get(body, 'bus_experience_points') != null) { body = SaveEditor.set(body, 'bus_experience_points', Math.max(0, Math.round(e.busXp))); report.push('XP coach'); }
     if (e.skills) for (const s of TRUCK_SKILLS) if (e.skills[s.key] != null) body = SaveEditor.set(body, s.key, Math.min(s.max, Math.max(0, e.skills[s.key] | 0)));
     if (e.skills) report.push('compétences camion');
     if (e.coachSkills && SaveEditor.get(body, 'long_duty') != null) {
       for (const s of COACH_SKILLS) if (e.coachSkills[s.key] != null && SaveEditor.get(body, s.key) != null) body = SaveEditor.set(body, s.key, Math.min(s.max, Math.max(0, e.coachSkills[s.key] | 0)));
-      report.push('compétences car');
+      report.push('compétences coach');
     }
     if (e.visitAllCities) {
       const all = SaveEditor.cities(text);
