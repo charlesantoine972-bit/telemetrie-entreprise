@@ -2,6 +2,13 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.5', date: '2026-11-17', titre: 'Navigation et intégrations', notes: [
+    ['nouveau', 'Le HUD Navigation met en avant la livraison en cours, la marchandise, la distance GPS et les temps estimés.'],
+    ['ameliore', 'Le style HUD déjà choisi est conservé après la mise à jour ; Navigation est le choix par défaut des nouvelles installations.'],
+    ['nouveau', 'Options → Steam et Discord : profil Steam, jeux ETS2 / ATS et présence Discord facultative.'],
+    ['ameliore', 'Les seuils kilométriques sont regroupés et validés avant enregistrement.'],
+    ['corrige', 'Le raccourci Profil reste indisponible au lieu d’ouvrir Options tant que la page n’existe pas.'],
+  ]},
   { version: '0.12.4', date: '2026-11-17', titre: 'Truck Tools et Coach Tools', notes: [
     ['ameliore', 'L’ancien Atelier est renommé Truck Tools et Coach Tools, avec une présentation dédiée.'],
     ['nouveau', 'Diagnostic des fichiers de jeu et des capacités de télémétrie disponibles.'],
