@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const { calculate, duration } = require('../app/mission-time');
 const { scan, archives, rootFromLog } = require('../src/game-content');
 const { readTileset } = require('../src/map-tileset');
-const { mergeSavedSettings, validateSettingsPatch } = require('../src/settings');
+const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch } = require('../src/settings');
 const steam = require('../src/steam');
 const { EventEmitter } = require('node:events');
 const { DiscordPresence, buildActivity } = require('../src/discord-presence');
@@ -53,10 +53,49 @@ test('Plugin du jeu et Profil chauffeur sont regroupés dans une sous-catégorie
   assert.doesNotMatch(group.match(/^<details[^>]*>/)[0], /\bopen\b/);
 });
 
-test('les valeurs HUD sauvegardées sont conservées et les nouveaux réglages utilisent Navigation', () => {
-  const defaults = { look: { theme: 'base' }, hud: { style: 'navigation', position: 'haut' } };
-  assert.equal(mergeSavedSettings(defaults, { hud: { style: 'bandeau' } }).hud.style, 'bandeau');
-  assert.equal(mergeSavedSettings(defaults, {}).hud.style, 'navigation');
+test('les profils HUD camion et bus restent indépendants et migrent les anciens réglages', () => {
+  const defaults = {
+    look: { theme: 'base' },
+    hud: {
+      truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 },
+      bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }
+    }
+  };
+  const migrated = mergeSavedSettings(defaults, { hud: { style: 'bandeau', opacity: 60 } });
+  assert.equal(migrated.hud.truck.style, 'bandeau');
+  assert.equal(migrated.hud.bus.style, 'bandeau');
+  assert.equal(migrated.hud.truck.opacity, 60);
+  const separate = mergeSavedSettings(defaults, { hud: { truck: { style: 'minimal' }, bus: { style: 'compact' } } });
+  assert.equal(separate.hud.truck.style, 'minimal');
+  assert.equal(separate.hud.bus.style, 'compact');
+  assert.equal(separate.hud.truck.position, 'haut');
+  const busUpdated = mergeHudSettings(defaults.hud, separate.hud, { bus: { opacity: 60 } });
+  assert.equal(busUpdated.truck.style, 'minimal');
+  assert.equal(busUpdated.bus.style, 'compact');
+  assert.equal(busUpdated.bus.opacity, 60);
+  const truckUpdated = mergeHudSettings(defaults.hud, busUpdated, { truck: { scale: 125 } });
+  assert.equal(truckUpdated.truck.style, 'minimal');
+  assert.equal(truckUpdated.truck.scale, 125);
+  assert.equal(truckUpdated.bus.opacity, 60);
+});
+
+test('la taille de chaque aperçu HUD applique son échelle sans changer la position', () => {
+  const keys = ['logo', 'speed', 'sp', 'lim', 'mode', 'kLeft', 'left', 'kKm', 'km', 'today'];
+  const nodes = new Map(keys.map(key => [key, { textContent: '', className: '', classList: { toggle() {} } }]));
+  const root = {
+    className: '',
+    classList: { toggle() {} },
+    style: { setProperty() {} },
+    querySelector(selector) {
+      const match = /^\[data-h="(.+)"\]$/.exec(selector);
+      return match && nodes.get(match[1]);
+    }
+  };
+  const context = { HUD_STYLES: { bandeau: 'Bandeau', navigation: 'Navigation' }, hudMission() {}, hudCoach() {} };
+  vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud-render.js'), 'utf8'), context);
+  context.hudRender(root, { options: { style: 'navigation', scale: 80, position: 'bas' }, live: {}, today: {} });
+  assert.equal(root.style.transform, 'scale(0.8)');
+  assert.equal(root.style.transformOrigin, 'bottom center');
 });
 
 test('les seuils kilométriques sont bornés et entiers', () => {
@@ -215,6 +254,8 @@ test('le HUD autocar affiche les mesures reçues et laisse les horaires de ligne
   assert.equal(value('limit'), '90 km/h');
   assert.equal(value('fuelRange'), '320 km');
   assert.equal(value('restStop'), '1 h 00');
+  context.hudCoach(root, { connected: true, vehicleType: 'car', live: { job: null } });
+  assert.equal(root.classes.has('hud-coach'), true);
 });
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));

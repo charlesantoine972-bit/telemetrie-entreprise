@@ -3,7 +3,7 @@ const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 const { Telemetry } = require('./src/telemetry');
-const { mergeSavedSettings, validateSettingsPatch } = require('./src/settings');
+const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch } = require('./src/settings');
 const installer = require('./src/plugin-installer');
 const { Atelier } = require('./src/atelier');
 const carte = require('./src/map');
@@ -45,7 +45,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { style: 'navigation', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -152,10 +152,15 @@ function createWindow() {
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
 const HUD_W = 980, HUD_H = 440;
+function activeHudOptions(live = telemetry && telemetry.live, vehicleType = settings.vehicleType) {
+  const isBus = !!(live && live.busJob) || (vehicleType === 'car' && !(live && live.job));
+  const profile = isBus ? 'bus' : 'truck';
+  return settings.hud && settings.hud[profile] || DEFAULTS.hud[profile];
+}
 function hudBounds() {
   const wa = screen.getPrimaryDisplay().bounds;
   const width = Math.min(HUD_W, wa.width), height = Math.min(HUD_H, wa.height);
-  const bas = settings.hud && settings.hud.position === 'bas';
+  const bas = activeHudOptions().position === 'bas';
   return { x: Math.round(wa.x + (wa.width - width) / 2), y: bas ? wa.y + Math.max(0, wa.height - height - 24) : wa.y + 4, width, height };
 }
 function hudData() {
@@ -171,7 +176,7 @@ function hudData() {
   const L = sn.live || {};
   const fresh = Date.now() - telemetry.lastPacket < 700;
   const playing = sn.connected && fresh && !L.paused && L.focused !== false;
-  return { ...sn, jobs: undefined, options: settings.hud, show: playing || test };
+  return { ...sn, jobs: undefined, options: activeHudOptions(sn.live, sn.vehicleType), show: playing || test };
 }
 function syncHud() {
   const on = !!(settings.modules && settings.modules.hud) || Date.now() < hudTestUntil;
@@ -345,10 +350,10 @@ function setupIpc() {
     validateSettingsPatch(patch);
     if ('steamId' in patch && patch.steamId && !steam.validSteamId(patch.steamId)) throw new Error('Saisis un SteamID64 valide (17 chiffres).');
     if ('discordClientId' in patch && patch.discordClientId && !/^\d{17,20}$/.test(String(patch.discordClientId))) throw new Error('Saisis un ID d’application Discord valide (17 à 20 chiffres).');
-    for (const k of allowed) if (k in patch) settings[k] = patch[k];
+    for (const k of allowed) if (k in patch && k !== 'hud') settings[k] = patch[k];
     if (patch.look) settings.look = sanitizeLook({ ...settings.look, ...patch.look });
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
-    if (patch.hud) settings.hud = { ...DEFAULTS.hud, ...settings.hud, ...patch.hud };
+    if (patch.hud) settings.hud = mergeHudSettings(DEFAULTS.hud, settings.hud, patch.hud);
     saveSettings();
     if (patch.modules || patch.hud) syncHud();
     if ('discordClientId' in patch && discordPresence) await discordPresence.setClientId(settings.discordClientId);

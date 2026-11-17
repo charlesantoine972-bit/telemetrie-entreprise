@@ -6,8 +6,27 @@ function mergeSavedSettings(defaults, saved) {
     settings.look = { ...defaults.look, theme: theme === 'sombre' ? 'base' : theme };
   }
   settings.look = { ...defaults.look, ...(settings.look || {}) };
-  settings.hud = { ...defaults.hud, ...(settings.hud || {}) };
+  const savedHud = settings.hud || {};
+  const hudDefaults = defaults.hud || {};
+  const legacyHud = Object.fromEntries(['style', 'position', 'logo', 'opacity', 'scale']
+    .filter(key => key in savedHud).map(key => [key, savedHud[key]]));
+  settings.hud = {
+    truck: { ...(hudDefaults.truck || {}), ...legacyHud, ...(savedHud.truck || {}) },
+    bus: { ...(hudDefaults.bus || {}), ...legacyHud, ...(savedHud.bus || {}) }
+  };
   return settings;
+}
+
+function mergeHudSettings(defaults, current, patch) {
+  const existing = current || {};
+  const updates = patch || {};
+  return {
+    ...defaults,
+    ...existing,
+    ...updates,
+    truck: { ...defaults.truck, ...(existing.truck || {}), ...(updates.truck || {}) },
+    bus: { ...defaults.bus, ...(existing.bus || {}), ...(updates.bus || {}) }
+  };
 }
 
 function validateSettingsPatch(patch) {
@@ -25,4 +44,4 @@ function validateSettingsPatch(patch) {
   }
 }
 
-module.exports = { mergeSavedSettings, validateSettingsPatch };
+module.exports = { mergeSavedSettings, mergeHudSettings, validateSettingsPatch };

@@ -4,7 +4,7 @@ Quand le jeu est connecté, le mode autocar est sélectionné automatiquement si
 
 ## Version 0.12.9 — HUD autocar et mise à jour automatique
 
-Le HUD autocar regroupe les données reçues du jeu : heure, vitesse, limitation, distance et durée GPS, compteur, carburant, autonomie et temps avant pause obligatoire. L’application redémarre automatiquement après l’installation d’une mise à jour.
+Le HUD autocar regroupe les données reçues du jeu : heure, vitesse, limitation, distance et durée GPS, compteur, carburant, autonomie et temps avant pause obligatoire. Les affichages camion et bus disposent de prévisualisations et réglages distincts (style, taille, position, logo, opacité), avec un seul interrupteur commun. L’application redémarre automatiquement après l’installation d’une mise à jour.
 
 Les numéros de ligne, arrêts, horaires et satisfaction restent à « — » tant que le jeu ne les transmet pas. Aucun renseignement n’est simulé.
 
@@ -47,7 +47,7 @@ Le HUD affiche aussi **Compteur véhicule** : il s'agit directement de `truck.od
 
 `npm test` vérifie les calculs, les cas d'indisponibilité et la lecture non destructive d'archives de test. `npm run verify-games` réalise le diagnostic seul, sans démarrer Electron ni installer de plugin. On peut fournir un dossier Documents, puis des dossiers de jeux : `node tools/verify-game-content.js "D:/Documents" "D:/Steam/steamapps/common/Euro Truck Simulator 2"`.
 
-Pour tester l'interface : `npm start`, puis **Bandeau / HUD**, choisir **Camion** ou **Car / Coaches** dans l'aperçu. Essayer **Navigation** et **En bas**. Le bouton véhicule de l'aperçu n'affecte pas les réglages en jeu. Le simulateur fournit des données fictives avec une échelle de 19 uniquement pour les tests.
+Pour tester l'interface : `npm start`, puis **Bandeau / HUD**. Les deux prévisualisations camion et bus sont affichées avec leurs réglages indépendants. Essayer **Navigation**, **Petit / Normal / Grand** et **En bas**. Le simulateur fournit des données fictives avec une échelle de 19 uniquement pour les tests.
 
 Validation locale : ETS2 détecté, 107 archives DLC présentes ; ATS absent. Test d'affichage Electron réalisé sur les cinq styles pour les deux véhicules. **Aucun trajet réel ni arrêt Coaches validé en jeu**, aucun installateur publié. Le chargement natif de la DLL et ses deux points d'entrée SDK ont été vérifiés sous Windows.
 
@@ -65,6 +65,7 @@ Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2*
 - `plugin/` : petit plugin du jeu (DLL, SDK officiel SCS). Il envoie les infos du camion à l'application en local (UDP 127.0.0.1:47311), environ 10 fois par seconde. Il n'affiche rien et ne modifie rien dans le jeu.
 - L'application installe le plugin automatiquement dans Euro Truck Simulator 2 et American Truck Simulator (toutes les bibliothèques Steam), et le remet si une mise à jour du jeu l'a supprimé.
 - Comptage : **chargé** = mission en cours + remorque attelée ; **à vide** = le reste. Les sauts (ferry, train, changement de camion) ne sont pas comptés.
+- **Feuille de route** : suit le départ, l’arrivée, le carburant ajouté / consommé et les frais de mission reçus du jeu (péages, ferries, trains, amendes et annulations). Le prix des pleins n’est pas transmis par le SDK ; le total monétaire n’inclut donc pas le carburant.
 - **Réel / course** : une mission passe en course si plus de 5 % de sa distance est faite au-dessus du seuil (100 km/h camion, 110 km/h car). Modifiable dans Réglages.
 - **Carte** : il n'existe pas d'API officielle SCS. La position du camion vient du plugin (coordonnées monde x / z). Par défaut, la carte utilise les anciennes tuiles TsMap de ETS2 1.49 / ATS 1.48, téléchargées à la demande puis mises en cache sur le PC. Pour afficher les DLC installés, génère un export avec la version actuelle de [TsMap](https://github.com/dariowouters/ts-map) puis importe le dossier dans Carte. Les tuiles locales s'affichent sans Internet et ne sont ni téléversées ni modifiées par l'application.
 - **Steam et Discord** : dans Options, Steam Web API permet de lire le nom du profil public et de vérifier si ETS2 / ATS apparaissent dans les jeux possédés (avec le temps de jeu). Le profil et les détails de jeux doivent être publics. La clé API est chiffrée par le système sur cet appareil et transmise uniquement à Steam lors des requêtes. Discord Rich Presence nécessite l'application Discord de bureau ouverte et l'ID d'une application créée dans le [Discord Developer Portal](https://discord.com/developers/applications) ; seuls le jeu et l'état « En mission » / « En conduite » sont affichés, pas le trajet ni le cargo. Crée une clé sur [Steam Web API Key](https://steamcommunity.com/dev/apikey), puis saisis la clé, ton SteamID64 et l'ID Discord dans Options pour tester les connexions.
