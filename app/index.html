@@ -554,7 +554,7 @@
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>Bandeau / HUD</h1>
-      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">En style <b>Navigation</b>, le HUD privilégie ta livraison en cours : itinéraire, marchandise, distance GPS et temps estimés. L’aperçu reprend les données du jeu lorsqu’il est connecté ; sinon, il montre un exemple. Le bandeau en jeu se cache automatiquement en pause, quand tu fais Alt+Tab ou lorsque le jeu est réduit ou fermé.</p>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un seul HUD s’adapte automatiquement à l’activité détectée dans le jeu : livraison poids lourd ou service car. En style <b>Navigation</b>, il privilégie l’itinéraire, la marchandise ou le prochain arrêt GPS selon le véhicule. L’aperçu reprend les données du jeu lorsqu’il est connecté ; sinon, il montre un exemple. Le bandeau se cache en pause, quand tu fais Alt+Tab ou lorsque le jeu est réduit ou fermé.</p>
       <div class="panel" id="hudStage" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:380px;padding:26px;margin-bottom:18px;overflow:hidden;
         background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
         <span id="hudStageTag" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU</span>
@@ -574,7 +574,7 @@
           <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
         <div class="optrow" style="margin-top:14px"><div><b>Style</b><div class="muted">Navigation affiche l’itinéraire et les infos utiles à la livraison ; les autres styles gardent le bandeau général.</div></div>
           <div class="seg" id="hudStyle"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact">Compact</button><button data-hstyle="tableau">Tableau de bord</button><button data-hstyle="minimal">Minimal</button><button data-hstyle="navigation">Navigation</button></div></div>
-        <div class="optrow" style="margin-top:14px"><div><b>Véhicule de l’aperçu</b><div class="muted">En jeu : détection du service car, sinon choix du véhicule dans Réglages.</div></div><div class="seg"><button data-hvehicle="camion" class="on">Camion</button><button data-hvehicle="car">Car / Coaches</button></div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Exemple hors connexion</b><div class="muted">Ce choix ne change que l’aperçu. En jeu, le HUD bascule selon la télémétrie du service car.</div></div><div class="seg"><button data-hvehicle="camion" class="on">Camion</button><button data-hvehicle="car">Car / Coaches</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Position</b><div class="muted">En haut au centre, ou en bas au-dessus du tableau de bord.</div></div>
           <div class="seg" id="hudPos"><button data-hpos="haut">En haut</button><button data-hpos="bas">En bas</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Logo</b><div class="muted">Le logo de ton entreprise arrivera avec les comptes.</div></div>

@@ -62,6 +62,8 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   const root = new Element('root');
   root.className = 'hud s-navigation'; root.classes.add('s-navigation');
   root.children.push(Object.assign(new Element('div'), { className: 'mode', dataset: { h: 'mode' } }));
+  root.children.push(Object.assign(new Element('div'), { className: 'k', dataset: { h: 'kKm' } }));
+  root.children.push(Object.assign(new Element('div'), { className: 'k', dataset: { h: 'kToday' } }));
   root.querySelector = function (selector) {
     if (selector === '.mission-widgets') return this.children.find(e => e.className === 'mission-widgets');
     const hud = /^\[data-h="(.+)"\]$/.exec(selector);
@@ -71,7 +73,7 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   const context = { document: { createElement: tag => new Element(tag) }, TCHMission: require('../app/mission-time') };
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../app/hud-mission.js'), 'utf8'), context);
   context.hudMission(root, {
-    options: { style: 'navigation' }, vehicleType: 'camion',
+    connected: true, options: { style: 'navigation' }, vehicleType: 'car',
     live: { navDistance: 85600, navTime: 3600, localScale: 20, gameTime: 1000, job: { 'delivery.time': 1100 } },
     job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
   });
@@ -84,6 +86,18 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   assert.equal(value('deadlineReal').querySelector('b').textContent, '0 h 05');
   assert.equal(value('odometer').hidden, true);
   assert.equal(value('game').hidden, true);
+
+  context.hudMission(root, {
+    connected: true, options: { style: 'navigation' }, vehicleType: 'camion',
+    live: { navDistance: 2200, navTime: 300, localScale: 20, busJob: {}, job: { 'delivery.time': 1100 } },
+    job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
+  });
+  assert.equal(root.querySelector('[data-h="mode"]').textContent, 'SERVICE CAR');
+  assert.equal(value('route').querySelector('b').textContent, 'Service car en cours');
+  assert.equal(value('cargo').hidden, true);
+  assert.equal(value('deadlineReal').hidden, true);
+  assert.equal(value('real').hidden, false);
+  assert.equal(root.querySelector('[data-h="kKm"]').classList.contains('off'), true);
 });
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));
