@@ -5,22 +5,46 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
 <title>Truck &amp; Coach Hub</title>
 <style>
+  /* ===== Thème de base (bleu nuit) : couleurs douces, distinguables par les daltoniens ===== */
   :root{
-    --bg:#0F1720; --panel:#18222D; --line:#26323F; --nav:#131C26;
+    --bg:#0F1720; --panel:#18222D; --line:#2A3746; --nav:#131C26;
     --text:#E8EDF2; --soft:#C3CDD6; --muted:#9AA7B4;
-    --loaded:#F2A93B; --empty:#5BA4E6; --ok:#6FD39A; --race:#FF8A5B;
+    --loaded:#E7B655; --empty:#6A9CD0; --ok:#6FD8C4; --race:#D86464; --warn:#E8D27A;
     --hover:#1A2531; --active:#1F2B38; --map:#121D28; --on-accent:#0F1720;
-    --accent:var(--loaded); --accent-soft:rgba(242,169,59,.14);
+    --c-hub:#E7B655; --c-market:#4FD1A5; --c-atelier:#A78BFA;
+    --accent:var(--loaded); --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
   }
+  [data-side="hub"]{ --accent:var(--c-hub); }
+  [data-side="market"]{ --accent:var(--c-market); }
+  [data-side="atelier"]{ --accent:var(--c-atelier); }
+  /* ===== Sombre, comme Windows : tout noir, texte blanc ===== */
+  [data-theme="sombre"]{
+    --bg:#202020; --panel:#2B2B2B; --line:#3D3D3D; --nav:#1C1C1C;
+    --text:#FFFFFF; --soft:#E0E0E0; --muted:#ABABAB;
+    --loaded:#E7B655; --empty:#6A9CD0; --ok:#6FD8C4; --race:#DC6E6E; --warn:#E8D27A;
+    --hover:#2D2D2D; --active:#343434; --map:#191919; --on-accent:#000000;
+    --c-hub:#60CDFF; --c-market:#60CDFF; --c-atelier:#60CDFF;
+  }
+  /* ===== Clair, comme Windows : tout blanc, texte noir ===== */
   [data-theme="clair"]{
-    --bg:#F4F6F9; --panel:#FFFFFF; --line:#D9E0E8; --nav:#EAEFF4;
-    --text:#14202B; --soft:#3A4855; --muted:#5D6B78;
-    --loaded:#B9700C; --empty:#2672BA; --ok:#15864A; --race:#C9501F;
-    --hover:#E1E7EE; --active:#DDE4EC; --map:#E6ECF2;
+    --bg:#F3F3F3; --panel:#FFFFFF; --line:#DCDCDC; --nav:#EBEBEB;
+    --text:#000000; --soft:#1F1F1F; --muted:#5C5C5C;
+    --loaded:#9B6B3B; --empty:#2A5A8A; --ok:#2E7D70; --race:#8A2E2E; --warn:#6E5A00;
+    --hover:#E5E5E5; --active:#DDDDDD; --map:#E8E8E8; --on-accent:#FFFFFF;
+    --c-hub:#005FB8; --c-market:#005FB8; --c-atelier:#005FB8;
   }
-  [data-side="market"]{ --accent:#4FD1A5; --accent-soft:rgba(79,209,165,.14); }
-  [data-side="atelier"]{ --accent:#A78BFA; --accent-soft:rgba(167,139,250,.15); }
-  [data-theme="clair"][data-side="atelier"]{ --accent:#6D4BD8; --accent-soft:rgba(109,75,216,.12); }
+  /* ===== Vision des couleurs (s'ajoute à n'importe quel thème) ===== */
+  [data-vision="rg"]{ --loaded:#CA9E72; --empty:#79C6EC; --ok:#5586E7; --race:#E070A8; --warn:#F0F0F0; }
+  [data-theme="clair"][data-vision="rg"]{ --loaded:#815931; --empty:#1B6BBB; --ok:#2A2AA8; --race:#7A2D5E; --warn:#000000; }
+  [data-vision="by"]{ --loaded:#D5909C; --empty:#4FCFCF; --ok:#B8CF8E; --race:#E25336; --warn:#F0F0F0; }
+  [data-theme="clair"][data-vision="by"]{ --loaded:#7A2E52; --empty:#2E7A7A; --ok:#526827; --race:#9A2626; --warn:#000000; }
+  [data-vision="rg"]:not([data-theme]), [data-vision="rg"][data-theme="base"]{ --c-hub:#CA9E72; --c-market:#79C6EC; --c-atelier:#E070A8; }
+  [data-vision="by"]:not([data-theme]), [data-vision="by"][data-theme="base"]{ --c-hub:#D5909C; --c-market:#4FCFCF; --c-atelier:#B8CF8E; }
+  /* Contraste renforcé : textes secondaires plus lisibles, bordures plus visibles */
+  [data-contrast="fort"]{ --soft:var(--text); --muted:color-mix(in srgb,var(--text) 82%,var(--bg)); --line:color-mix(in srgb,var(--text) 45%,var(--bg)); }
+  [data-motion="reduit"] *{ transition:none !important; animation-duration:0s !important; }
+  [data-motion="reduit"] .spinner{ animation:spin 1.5s linear infinite !important; }
+  :focus-visible{ outline:3px solid var(--accent); outline-offset:2px; }
   [data-side="atelier"] .side .logo{background:var(--accent)}
   .expbanner{display:none;align-items:center;gap:10px;margin:-6px 0 18px;padding:10px 14px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent);font-size:13px;color:var(--text)}
   [data-side="atelier"] .expbanner{display:flex}
@@ -29,9 +53,12 @@
   #modal .box{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px}
   .prof{display:flex;flex-direction:column;gap:12px}
   .prof .bk{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-size:13px}
-  [data-theme="clair"][data-side="market"]{ --accent:#0F8A63; --accent-soft:rgba(15,138,99,.12); }
-  [data-theme="clair"] .hero{background:linear-gradient(180deg,#FFFFFF 0%,#F4F6F9 100%)}
-  [data-theme="clair"] .launch{box-shadow:0 8px 24px rgba(185,112,12,.18)}
+  [data-theme="clair"] .hero{background:linear-gradient(180deg,#FFFFFF 0%,#F3F3F3 100%)}
+  .optrow{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line)}
+  .optrow > div:first-child{display:flex;flex-direction:column;gap:3px;max-width:560px;font-size:14px}
+  .optrow .muted{font-size:13px;line-height:1.5}
+  .cvdlegend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--soft);padding-top:14px;border-top:1px solid var(--line)}
+  .cvdlegend span{display:flex;align-items:center;gap:8px} .cvdlegend i{width:28px;height:12px;border-radius:4px}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
     font-family:"Segoe UI",Inter,system-ui,sans-serif;}
@@ -53,24 +80,24 @@
   .switch input:checked + span::after{left:calc(100% - 19px);background:#fff}
   .switch input:disabled + span{opacity:.45;cursor:not-allowed}
   .sideconn{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);padding:0 10px 12px}
-  .sideconn .d{width:8px;height:8px;border-radius:50%;background:#7F8E9C}
+  .sideconn .d{width:8px;height:8px;border-radius:50%;background:var(--muted)}
   .sidefoot{border-top:1px solid var(--line);padding:10px 10px 2px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
   .sidefoot b{color:var(--soft)}
   .hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);
     background:radial-gradient(1200px 500px at 50% -10%, var(--accent-soft) 0%, transparent 60%), linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%);}
   .hero::before{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
-    background:repeating-linear-gradient(115deg, transparent 0 46px, rgba(242,169,59,.06) 46px 48px, transparent 48px 120px);}
+    background:repeating-linear-gradient(115deg, transparent 0 46px, color-mix(in srgb,var(--accent) 6%,transparent) 46px 48px, transparent 48px 120px);}
   .hero-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:42px 32px 30px;text-align:center}
   .hero-title{font-size:40px;font-weight:800;letter-spacing:.01em}
   .hero-sub{font-size:15px;color:var(--soft);margin-top:-10px}
   .statusrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-  .launch{width:min(520px,100%);height:58px;border:none;border-radius:14px;font-size:17px;font-weight:800;letter-spacing:.04em;color:#0F1720;
-    background:linear-gradient(90deg,#F2A93B,#FFC56B);box-shadow:0 8px 30px rgba(242,169,59,.25)}
+  .launch{width:min(520px,100%);height:58px;border:none;border-radius:14px;font-size:17px;font-weight:800;letter-spacing:.04em;color:var(--on-accent);
+    background:var(--accent);box-shadow:0 8px 26px color-mix(in srgb,var(--accent) 22%,transparent)}
   .launch:hover{filter:brightness(1.06)}
   .hint{font-size:13px;color:var(--muted);margin-top:-8px}
-  .hint a{color:var(--loaded);font-weight:600}
+  .hint a{color:var(--accent);font-weight:600}
   .shortcuts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-  .shortcut{display:flex;align-items:center;gap:10px;height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:rgba(24,34,45,.85);color:var(--text);font-size:14px;font-weight:600}
+  .shortcut{display:flex;align-items:center;gap:10px;height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 88%,transparent);color:var(--text);font-size:14px;font-weight:600}
   .shortcut:hover{border-color:var(--muted)}
   details.acc{width:min(620px,100%);background:var(--panel);border:1px solid var(--line);border-radius:14px;text-align:left}
   details.acc summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;color:var(--accent);display:flex;justify-content:space-between}
@@ -80,7 +107,7 @@
   #launcher{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;overflow:auto}
   #launcher.hidden{display:none}
   .lhead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--line)}
-  .logo{width:38px;height:38px;border-radius:11px;background:var(--loaded);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
+  .logo{width:38px;height:38px;border-radius:11px;background:var(--c-hub);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
   [data-side="market"] .side .logo{background:var(--accent)}
   .lmain{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px 32px}
   .lgrid{width:100%;max-width:1080px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
@@ -122,7 +149,7 @@
   #mkItemPreview .tablet{max-width:860px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
   .empty{padding:40px 20px;text-align:center;border:1px dashed var(--line);border-radius:16px;color:var(--soft);line-height:1.7}
   .soonbox{max-width:640px;display:flex;flex-direction:column;gap:14px}
-  .soonicon{width:64px;height:64px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--loaded)}
+  .soonicon{width:64px;height:64px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--accent)}
   .brand{font-weight:700;font-size:18px;padding:4px 10px 2px}
   .brand-sub{font-size:12px;color:var(--muted);padding:0 10px 18px}
   .navbtn{display:flex;align-items:center;gap:11px;height:38px;padding:0 10px;border-radius:12px;
@@ -133,7 +160,7 @@
   .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
     border:1px dashed var(--line);border-radius:12px}
   .main{flex:1;overflow:auto;padding:28px 32px}
-  .demo{display:inline-block;font-size:11px;color:#0F1720;background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
+  .demo{display:inline-block;font-size:11px;color:var(--bg);background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
   h1{margin:0 0 18px;font-size:30px}
   h2{margin:0 0 12px;font-size:18px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
@@ -141,7 +168,7 @@
   .pill{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:13px}
   .pill.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
   .tab{flex:1;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-weight:600;font-size:13px}
-  .tab.on{background:var(--loaded);border-color:var(--loaded);color:var(--on-accent)}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
   .bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line)}
   .bar .l{background:var(--loaded)} .bar .e{background:var(--empty);flex:1}
   .bar.thin{height:6px}
@@ -163,7 +190,7 @@
   .stat b{font-size:19px}
   .lbl{font-size:12px;font-weight:700;letter-spacing:.03em}
   .map{position:relative;height:520px;background:var(--map);border-radius:16px;border:1px solid var(--line);overflow:hidden}
-  .city{position:absolute;font-size:12px;color:#7F8E9C;transform:translate(-50%,8px)}
+  .city{position:absolute;font-size:12px;color:var(--muted);transform:translate(-50%,8px)}
   .citydot{position:absolute;width:6px;height:6px;border-radius:50%;background:#3A4A5B;transform:translate(-50%,-50%)}
   .truck{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px;transition:left 1s linear,top 1s linear;pointer-events:none}
   .truck .tag{font-size:11px;font-weight:700;color:var(--on-accent);padding:3px 8px;border-radius:999px;white-space:nowrap}
@@ -173,16 +200,16 @@
   .tgrid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-height:0}
   .k{display:flex;flex-direction:column;gap:2px} .k span:first-child{font-size:12px;color:var(--muted)} .k span:last-child{font-size:22px;font-weight:700}
   .hidden{display:none !important}
-  .navsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7F8E9C;padding:12px 12px 4px}
-  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--on-accent);background:#7F8E9C;padding:2px 7px;border-radius:999px;flex:none}
-  .soon.prev{background:#5BA4E6}
+  .navsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 12px 4px}
+  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--on-accent);background:var(--muted);padding:2px 7px;border-radius:999px;flex:none}
+  .soon.prev{background:var(--empty)}
   .chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);vertical-align:middle;margin-left:10px}
   .chip .d{width:9px;height:9px;border-radius:50%}
   .speed{font-size:84px;font-weight:700;line-height:1;letter-spacing:-.02em}
   .limit{width:66px;height:66px;border-radius:50%;border:6px solid #D64545;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;flex:none}
   .mode{font-size:13px;font-weight:800;letter-spacing:.06em;padding:6px 12px;border-radius:10px}
-  .mode.real{background:rgba(111,211,154,.15);color:var(--ok)}
-  .mode.race{background:rgba(242,107,59,.18);color:#FF8A5B}
+  .mode.real{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+  .mode.race{background:color-mix(in srgb,var(--race) 18%,transparent);color:var(--race)}
   .kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
   .kv .k span:last-child{font-size:20px}
   .steps{margin:0;padding-left:20px;line-height:1.9;color:var(--soft)}
@@ -208,21 +235,21 @@
   <main class="lmain">
     <h1 style="margin:0;font-size:32px;font-weight:800;text-align:center">Que veux-tu ouvrir ?</h1>
     <div class="lgrid">
-      <button class="lcard" data-open="market" style="--c:#4FD1A5">
+      <button class="lcard" data-open="market" style="--c:var(--c-market)">
         <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">MODS &amp; CONTENUS · GRATUIT</span><span class="ttl">Marketplace</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Trouve, installe et mets à jour tes contenus en un clic : les modules du Hub (tablette, mini-GPS) et les cars &amp; bus.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Installés</span><b id="lMkInstalled">0 contenu</b></span><span class="lstat"><span>À venir</span><b>2 modules</b></span></span>
         <span class="go">Ouvrir la Marketplace →</span>
       </button>
-      <button class="lcard" data-open="hub" style="--c:#F2A93B">
+      <button class="lcard" data-open="hub" style="--c:var(--c-hub)">
         <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">TÉLÉMÉTRIE · CARRIÈRE · ENTREPRISE</span><span class="ttl">Hub</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Ta route et ton entreprise : télémétrie en direct, carrière, carte, classement, convois, défis et HUD en jeu.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Aujourd'hui</span><b id="lToday">0 km</b></span><span class="lstat"><span>Missions enregistrées</span><b id="lJobs">0</b></span></span>
         <span class="go">Ouvrir le Hub →</span>
       </button>
-      <button class="lcard hidden" data-open="atelier" id="lcardAtelier" style="--c:#A78BFA">
+      <button class="lcard hidden" data-open="atelier" id="lcardAtelier" style="--c:var(--c-atelier)">
         <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">OUTILS AVANCÉS · EXPÉRIMENTAL</span><span class="ttl">Atelier</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Sauvegarde et modifie tes profils solo : console de développement, et bientôt argent, carte, camion, réparation.</span>
@@ -427,10 +454,10 @@
         <div class="hero-title">Truck &amp; Coach Hub</div>
         <div class="hero-sub">Ton compagnon de route pour Euro Truck Simulator 2 et American Truck Simulator</div>
         <div class="statusrow">
-          <span class="chip" id="hGame" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Jeu : en attente</span>
-          <span class="chip" id="hPlugin" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Plugin : vérification…</span>
-          <span class="chip" id="hUpdate" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Mises à jour : vérification…</span>
-          <span class="chip" style="margin:0"><span class="d" style="background:#7F8E9C"></span>Serveur entreprise : bientôt</span>
+          <span class="chip" id="hGame" style="margin:0"><span class="d" style="background:var(--muted)"></span>Jeu : en attente</span>
+          <span class="chip" id="hPlugin" style="margin:0"><span class="d" style="background:var(--muted)"></span>Plugin : vérification…</span>
+          <span class="chip" id="hUpdate" style="margin:0"><span class="d" style="background:var(--muted)"></span>Mises à jour : vérification…</span>
+          <span class="chip" style="margin:0"><span class="d" style="background:var(--muted)"></span>Serveur entreprise : bientôt</span>
         </div>
         <button class="launch" id="btnLaunch">LANCER EURO TRUCK SIMULATOR 2</button>
         <div class="hint" id="launchHint">Le plugin est vérifié, puis le jeu se lance via Steam. <a href="#" id="lnkAts">Lancer American Truck Simulator</a></div>
@@ -481,7 +508,7 @@
 
     <!-- TÉLÉMÉTRIE (réelle) -->
     <section id="v-telemetrie" class="hidden">
-      <h1>Télémétrie <span class="chip" id="connChip"><span class="d" style="background:#7F8E9C"></span>En attente du jeu</span></h1>
+      <h1>Télémétrie <span class="chip" id="connChip"><span class="d" style="background:var(--muted)"></span>En attente du jeu</span></h1>
       <div id="waitPanel" class="panel" style="margin-bottom:18px">
         <h2>En attente du jeu</h2>
         <ol class="steps">
@@ -587,10 +614,20 @@
           <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
         </div>
       </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-        <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0">Apparence</h2>
-          <div class="muted" style="font-size:13px">S'applique à tout le logiciel : Hub, Marketplace et Options.</div></div>
-        <div class="seg" id="themeSeg"><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div>
+      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0">Apparence et accessibilité</h2>
+          <div class="muted" style="font-size:13px">S'applique à tout le logiciel : Hub, Marketplace, Atelier et Options.</div></div>
+        <div class="optrow"><div><b>Thème</b><div class="muted">« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc, comme Windows.</div></div>
+          <div class="seg" id="themeSeg"><button data-theme-btn="base">De base</button><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div></div>
+        <div class="optrow"><div><b>Vision des couleurs</b><div class="muted">Couleurs adaptées si tu distingues mal certaines couleurs (daltonisme). Les graphiques et les indicateurs changent de teintes.</div></div>
+          <div class="seg" id="visionSeg"><button data-vision-btn="normale">Standard</button><button data-vision-btn="rg">Rouge-vert</button><button data-vision-btn="by">Bleu-jaune</button></div></div>
+        <div class="optrow"><div><b>Taille du texte</b><div class="muted">Agrandit tout le logiciel.</div></div>
+          <div class="seg" id="zoomSeg"><button data-zoom-btn="100">Normale</button><button data-zoom-btn="115">Grande</button><button data-zoom-btn="130">Très grande</button></div></div>
+        <div class="optrow"><div><b>Contraste renforcé</b><div class="muted">Textes secondaires et bordures plus marqués.</div></div>
+          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="contrastSwitch"><span></span></label></div>
+        <div class="optrow"><div><b>Réduire les animations</b><div class="muted">Supprime les effets de mouvement.</div></div>
+          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="motionSwitch"><span></span></label></div>
+        <div class="cvdlegend" aria-hidden="true"><span><i style="background:var(--loaded)"></i>Km chargés</span><span><i style="background:var(--empty)"></i>Km à vide</span><span><i style="background:var(--ok)"></i>Réel</span><span><i style="background:var(--race)"></i>Course</span></div>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
         <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Outils avancés (expérimental)</h2>
@@ -856,7 +893,7 @@ async function renderSaves(msg){
   const box = document.getElementById('atProfiles');
   if (!HAS_APP) { box.innerHTML = '<div class="empty">Disponible dans l\'appli installée.</div>'; return; }
   const st = await window.tel.atelier.status();
-  if (st.ok) document.getElementById('atGames').innerHTML = Object.entries(st.data).map(([g, v]) => `<span class="chip" style="margin:0"><span class="d" style="background:${!v.installed ? '#7F8E9C' : v.running ? 'var(--race)' : 'var(--ok)'}"></span>${g === 'ets2' ? 'ETS2' : 'ATS'} : ${!v.installed ? 'non trouvé' : v.running ? 'ouvert (ferme-le pour restaurer)' : 'fermé'}</span>`).join('');
+  if (st.ok) document.getElementById('atGames').innerHTML = Object.entries(st.data).map(([g, v]) => `<span class="chip" style="margin:0"><span class="d" style="background:${!v.installed ? 'var(--muted)' : v.running ? 'var(--race)' : 'var(--ok)'}"></span>${g === 'ets2' ? 'ETS2' : 'ATS'} : ${!v.installed ? 'non trouvé' : v.running ? 'ouvert (ferme-le pour restaurer)' : 'fermé'}</span>`).join('');
   const r = await window.tel.atelier.profiles();
   setText('atMsg', msg || '');
   if (!r.ok) { box.innerHTML = `<div class="empty">${escM(r.error)}</div>`; return; }
@@ -1080,19 +1117,33 @@ document.getElementById('mkSearch').oninput = renderMk;
 bindMkPreview(document.getElementById('v-mk-discover'));
 document.querySelectorAll('#mkGame [data-g]').forEach(b => b.onclick = () => { mkGame = b.dataset.g; document.querySelectorAll('#mkGame [data-g]').forEach(x => x.classList.toggle('on', x === b)); renderMk(); });
 
-/* ---------- Thème clair / sombre ---------- */
-let themePref = store.get('theme', 'sombre');
+/* ---------- Apparence : thème, vision des couleurs, taille du texte ---------- */
+const DEF_LOOK = { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false };
+let look = Object.assign({}, DEF_LOOK, store.get('look', {}));
 const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
-function applyTheme(pref){
-  themePref = pref; store.set('theme', pref);
-  const t = pref === 'systeme' ? (mq && mq.matches ? 'clair' : 'sombre') : pref;
-  document.documentElement.dataset.theme = t;
-  document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.toggle('on', b.dataset.themeBtn === pref));
+function applyLook(patch, save){
+  Object.assign(look, patch || {}); store.set('look', look);
+  const de = document.documentElement;
+  de.dataset.theme = look.theme === 'systeme' ? (mq && mq.matches ? 'clair' : 'sombre') : look.theme;
+  if (look.vision === 'normale') delete de.dataset.vision; else de.dataset.vision = look.vision;
+  if (look.contrast) de.dataset.contrast = 'fort'; else delete de.dataset.contrast;
+  if (look.motion) de.dataset.motion = 'reduit'; else delete de.dataset.motion;
+  de.style.zoom = (Number(look.zoom) || 100) / 100;
+  document.querySelectorAll('[data-theme-btn]').forEach(x => x.classList.toggle('on', x.dataset.themeBtn === look.theme));
+  document.querySelectorAll('[data-vision-btn]').forEach(x => x.classList.toggle('on', x.dataset.visionBtn === look.vision));
+  document.querySelectorAll('[data-zoom-btn]').forEach(x => x.classList.toggle('on', x.dataset.zoomBtn === String(look.zoom)));
+  const cs = document.getElementById('contrastSwitch'); if (cs) cs.checked = !!look.contrast;
+  const ms = document.getElementById('motionSwitch'); if (ms) ms.checked = !!look.motion;
+  if (save && window.tel) window.tel.setSettings({ look });
 }
-if (mq && mq.addEventListener) mq.addEventListener('change', () => { if (themePref === 'systeme') applyTheme('systeme'); });
-document.querySelectorAll('[data-theme-btn]').forEach(b => b.onclick = () => { applyTheme(b.dataset.themeBtn); if (window.tel) window.tel.setSettings({ theme: b.dataset.themeBtn }); });
-applyTheme(themePref);
-if (window.tel) window.tel.getSettings().then(st => { if (st.theme && st.theme !== themePref) applyTheme(st.theme); applyAtelier(!!st.atelier); if (st.atelier) window.tel.atelier.profiles().then(r => r.ok && setText('lAtProfiles', String(r.data.length))); });
+if (mq && mq.addEventListener) mq.addEventListener('change', () => { if (look.theme === 'systeme') applyLook(); });
+document.querySelectorAll('[data-theme-btn]').forEach(x => x.onclick = () => applyLook({ theme: x.dataset.themeBtn }, true));
+document.querySelectorAll('[data-vision-btn]').forEach(x => x.onclick = () => applyLook({ vision: x.dataset.visionBtn }, true));
+document.querySelectorAll('[data-zoom-btn]').forEach(x => x.onclick = () => applyLook({ zoom: x.dataset.zoomBtn }, true));
+document.getElementById('contrastSwitch').onchange = (e) => applyLook({ contrast: e.target.checked }, true);
+document.getElementById('motionSwitch').onchange = (e) => applyLook({ motion: e.target.checked }, true);
+applyLook();
+if (window.tel) window.tel.getSettings().then(st => { if (st.look) applyLook(st.look); applyAtelier(!!st.atelier); if (st.atelier) window.tel.atelier.profiles().then(r => r.ok && setText('lAtProfiles', String(r.data.length))); });
 
 /* ---------- classement ---------- */
 function scaled(d){ const f = PERIOD_FACTOR[state.period];
@@ -1110,7 +1161,7 @@ function renderRanking(){
     `<button class="tab ${state.metric===k?'on':''}" data-m="${k}">${l}</button>`).join('');
   document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { state.metric=b.dataset.m; renderRanking(); });
 
-  const medal = ['#F2C14E','#C9D2DB','#D9925B'];
+  const medal = ['var(--warn)','#C9D2DB','#D9925B'];
   const rows = DRIVERS.map(scaled).sort((a,b) => val(b)-val(a));
   document.getElementById('ranking').innerHTML = rows.map((d,i) => {
     const v = val(d), pct = Math.round(d.loaded/(d.loaded+d.empty)*100);
@@ -1242,11 +1293,11 @@ function setText(id, v){ const el = document.getElementById(id); if (el && el.te
 function renderLive(sn){
   const L = sn.live, chip = document.getElementById('connChip');
   const game = L && L.game === 'ats' ? 'American Truck Simulator' : 'Euro Truck Simulator 2';
-  chip.innerHTML = !sn.connected ? '<span class="d" style="background:#7F8E9C"></span>En attente du jeu'
-    : L.paused ? '<span class="d" style="background:#F2C14E"></span>' + game + ' · en pause'
+  chip.innerHTML = !sn.connected ? '<span class="d" style="background:var(--muted)"></span>En attente du jeu'
+    : L.paused ? '<span class="d" style="background:var(--warn)"></span>' + game + ' · en pause'
     : '<span class="d" style="background:var(--ok)"></span>' + game + ' · connecté';
   document.getElementById('waitPanel').classList.toggle('hidden', sn.connected);
-  const dotCol = !sn.connected ? '#7F8E9C' : L.paused ? '#F2C14E' : 'var(--ok)';
+  const dotCol = !sn.connected ? 'var(--muted)' : L.paused ? 'var(--warn)' : 'var(--ok)';
   const txt = !sn.connected ? 'En attente du jeu' : (L.paused ? 'Jeu en pause' : 'Jeu connecté');
   setText('lToday', km(sn.today.loaded + sn.today.empty)); setText('lJobs', String(sn.totals.deliveries));
   document.getElementById('hGame').innerHTML = `<span class="d" style="background:${dotCol}"></span>Jeu : ${!sn.connected ? 'en attente' : (L.paused ? 'en pause' : 'connecté')}`;
@@ -1263,7 +1314,7 @@ function renderLive(sn){
     const lim = Math.round(L.speedLimit * 3.6);
     const limEl = document.getElementById('lLimit');
     limEl.style.visibility = lim > 0 ? 'visible' : 'hidden'; setText('lLimit', lim || '');
-    document.getElementById('lSpeed').style.color = kmh > th.limit ? '#FF8A5B' : '';
+    document.getElementById('lSpeed').style.color = kmh > th.limit ? 'var(--race)' : '';
     setText('tName', L.truck ? `${L.truck.brand || ''} ${L.truck.name || ''}`.trim() : '–');
     setText('tFuel', L.fuel ? Math.round(L.fuel) + ' L' : '–');
     setText('tRange', L.fuelRange ? km(L.fuelRange) : '–');
@@ -1288,7 +1339,7 @@ function renderLive(sn){
     setText('jDmg', L ? (L.cargoDamage * 100).toFixed(1).replace('.', ',') + ' %' : '–');
     setText('jLoaded', km(j.loaded)); setText('jEmpty', km(j.empty));
     setText('jOver', j.overPct.toFixed(1).replace('.', ',') + ' %');
-    document.getElementById('jOver').style.color = race ? '#FF8A5B' : '';
+    document.getElementById('jOver').style.color = race ? 'var(--race)' : '';
     const total = j.planned || (left != null ? j.distance + left : 0);
     document.getElementById('jProg').style.width = total ? Math.min(100, Math.round(j.distance / total * 100)) + '%' : '0%';
     setText('jState', L && L.trailerConnected ? 'CHARGÉ' : 'À VIDE');
@@ -1308,7 +1359,7 @@ function renderHistory(sn){
   const t = sn.totals;
   const cards = [
     ['Km chargés', km(t.loaded), 'var(--loaded)'], ['Km à vide', km(t.empty), 'var(--empty)'],
-    ['Km réels', km(t.real), 'var(--ok)'], ['Km en course', km(t.race), '#FF8A5B'],
+    ['Km réels', km(t.real), 'var(--ok)'], ['Km en course', km(t.race), 'var(--race)'],
     ['Livraisons', fmt(t.deliveries), ''], ['Revenus', fmt(Math.round(t.revenue)) + ' €', ''],
     ['Carburant consommé', fmt(Math.round(t.fuelUsed)) + ' L', ''], ['Amendes', `${t.fines} (${fmt(t.finesAmount)} €)`, '']
   ];
@@ -1322,7 +1373,7 @@ function renderHistory(sn){
     <td>${new Date(j.ended).toLocaleDateString('fr-FR')} ${new Date(j.ended).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</td>
     <td><b>${escH(j.from)} → ${escH(j.to)}</b></td><td>${escH(j.cargo)}</td>
     <td style="color:var(--loaded)">${km(j.loaded)}</td><td style="color:var(--empty)">${km(j.empty)}</td>
-    <td style="color:${j.mode==='course'?'#FF8A5B':'var(--ok)'}">${j.mode === 'course' ? 'Course' : 'Réel'}</td>
+    <td style="color:${j.mode==='course'?'var(--race)':'var(--ok)'}">${j.mode === 'course' ? 'Course' : 'Réel'}</td>
     <td>${escH(j.status)}</td><td>${j.revenue ? fmt(j.revenue) + ' €' : '–'}</td></tr>`).join('');
 }
 
@@ -1330,12 +1381,12 @@ function renderPlugin(list, msg){
   const el = document.getElementById('pluginList');
   if (!HAS_APP){ el.innerHTML = '<div class="soft">Disponible dans l\'application installée.</div>'; return; }
   el.innerHTML = list.length ? list.map(g => `<div class="item" style="cursor:default">
-      <span style="font-size:20px;color:${g.status==='ok'?'var(--ok)':'#FF8A5B'}">${g.status==='ok'?'✓':'!'}</span>
+      <span style="font-size:20px;color:${g.status==='ok'?'var(--ok)':'var(--race)'}">${g.status==='ok'?'✓':'!'}</span>
       <div class="grow"><b>${g.name}</b><div class="muted" style="font-size:12px;overflow:hidden;text-overflow:ellipsis">${g.bin}</div></div>
       <span class="soft" style="font-size:13px;text-align:right">${g.message}</span></div>`).join('')
     : '<div class="soft">Aucun jeu trouvé automatiquement. Clique sur « Choisir le dossier du jeu… » et sélectionne le dossier d\'Euro Truck Simulator 2.</div>';
   const okCount = list.filter(g => g.status === 'ok').length;
-  const pc = !HAS_APP ? ['#7F8E9C', 'disponible dans l\'appli'] : okCount ? ['var(--ok)', 'installé'] : list.length ? ['#FF8A5B', 'à vérifier'] : ['#FF8A5B', 'jeu introuvable'];
+  const pc = !HAS_APP ? ['var(--muted)', 'disponible dans l\'appli'] : okCount ? ['var(--ok)', 'installé'] : list.length ? ['var(--race)', 'à vérifier'] : ['var(--race)', 'jeu introuvable'];
   document.getElementById('hPlugin').innerHTML = `<span class="d" style="background:${pc[0]}"></span>Plugin : ${pc[1]}`;
   const w = document.getElementById('waitPlugin');
   const ok = list.filter(g => g.status === 'ok').map(g => g.name);
@@ -1364,9 +1415,9 @@ let autoInstall = false, installing = false;
 async function refreshUpdate(){
   if (!HAS_APP) return;
   const u = await window.tel.updateStatus();
-  const M = { dev: ['#7F8E9C', 'mode test'], idle: ['#7F8E9C', 'vérification…'], checking: ['#7F8E9C', 'vérification…'], none: ['var(--ok)', 'à jour (v' + u.current + ')'],
-    available: ['var(--loaded)', 'v' + u.version + ' disponible'], downloading: ['#F2C14E', 'téléchargement ' + (u.progress || 0) + ' %'],
-    ready: ['var(--loaded)', 'v' + u.version + ' prête'], error: ['#7F8E9C', 'hors ligne'], failed: ['var(--race)', 'téléchargement interrompu'] };
+  const M = { dev: ['var(--muted)', 'mode test'], idle: ['var(--muted)', 'vérification…'], checking: ['var(--muted)', 'vérification…'], none: ['var(--ok)', 'à jour (v' + u.current + ')'],
+    available: ['var(--loaded)', 'v' + u.version + ' disponible'], downloading: ['var(--warn)', 'téléchargement ' + (u.progress || 0) + ' %'],
+    ready: ['var(--loaded)', 'v' + u.version + ' prête'], error: ['var(--muted)', 'hors ligne'], failed: ['var(--race)', 'téléchargement interrompu'] };
   const m = M[u.state] || M.idle;
   document.getElementById('hUpdate').innerHTML = `<span class="d" style="background:${m[0]}"></span>Mises à jour : ${m[1]}`;
   renderUpdatePanel(u);
@@ -1452,7 +1503,7 @@ if (HAS_APP){
   document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {
   renderPlugin([]);
-  document.getElementById('hUpdate').innerHTML = '<span class="d" style="background:#7F8E9C"></span>Mises à jour : dans l\'appli';
+  document.getElementById('hUpdate').innerHTML = '<span class="d" style="background:var(--muted)"></span>Mises à jour : dans l\'appli';
 }
 
 const v = new URLSearchParams(location.search).get('v');

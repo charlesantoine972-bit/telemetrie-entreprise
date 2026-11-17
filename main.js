@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
@@ -37,11 +37,23 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, theme: 'sombre', vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
+function sanitizeLook(l) {
+  const pick = (v, list, d) => list.includes(String(v)) ? String(v) : d;
+  return { theme: pick(l.theme, ['base', 'sombre', 'clair', 'systeme'], 'base'), vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
+    zoom: pick(l.zoom, ['100', '115', '130'], '100'), contrast: !!l.contrast, motion: !!l.motion };
+}
+function windowBackground(st) {
+  const t = st.look && st.look.theme === 'systeme' ? (nativeTheme.shouldUseDarkColors ? 'sombre' : 'clair') : (st.look && st.look.theme) || 'base';
+  return { base: '#0F1720', sombre: '#202020', clair: '#F3F3F3' }[t] || '#0F1720';
+}
 function loadSettings() {
   try { settings = { ...DEFAULTS, ...JSON.parse(fs.readFileSync(settingsFile(), 'utf8')) }; } catch { settings = { ...DEFAULTS }; }
+  // Ancien réglage « theme » (avant la 0.8) : l'ancien « sombre » est devenu le thème « de base »
+  if (settings.theme) { const t = settings.theme; delete settings.theme; settings.look = { ...DEFAULTS.look, theme: t === 'sombre' ? 'base' : t }; }
+  settings.look = { ...DEFAULTS.look, ...(settings.look || {}) };
 }
 function saveSettings() {
   fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
@@ -67,7 +79,7 @@ function createWindow() {
     height: 820,
     minWidth: 1000,
     minHeight: 680,
-    backgroundColor: settings.theme === 'clair' ? '#F4F6F9' : '#0F1720',
+    backgroundColor: windowBackground(settings),
     title: 'Truck & Coach Hub',
     autoHideMenuBar: true,
     webPreferences: {
@@ -153,8 +165,9 @@ function setupIpc() {
     return false;
   });
   ipcMain.handle('settings:set', (_e, patch) => {
-    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'theme', 'atelier'];
+    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier'];
     for (const k of allowed) if (k in patch) settings[k] = patch[k];
+    if (patch.look) settings.look = sanitizeLook({ ...settings.look, ...patch.look });
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
     saveSettings();
     return settings;
