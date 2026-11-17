@@ -6,6 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { calculate, duration } = require('../app/mission-time');
 const { scan, archives, rootFromLog } = require('../src/game-content');
+const { readTileset } = require('../src/map-tileset');
 const { mergeSavedSettings, validateSettingsPatch } = require('../src/settings');
 const steam = require('../src/steam');
 const { EventEmitter } = require('node:events');
@@ -155,6 +156,26 @@ test('lecture des archives sans modification, DLC présents distincts de leur ac
 test('chemin de jeu tiré du journal, espaces et guillemets compris', () => {
   assert.equal(rootFromLog('00:00 [sys] Command line: "D:\\Steam\\Euro Truck Simulator 2\\bin\\win_x64\\eurotrucks2.exe" -pure'), path.normalize('D:\\Steam\\Euro Truck Simulator 2'));
   assert.equal(rootFromLog('rien'), null);
+});
+test('import des tuiles TsMap valide les bornes et utilise le format 256 px', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-map-'));
+  try {
+    const tiles = path.join(root, 'Tiles', '0', '0');
+    fs.mkdirSync(tiles, { recursive: true });
+    fs.writeFileSync(path.join(root, 'TileMapInfo.json'), JSON.stringify({
+      x1: -100, x2: 200, y1: -150, y2: 150, minZoom: 0, maxZoom: 8
+    }));
+    fs.writeFileSync(path.join(tiles, '0.png'), Buffer.from([137, 80, 78, 71]));
+    const map = readTileset('ets2', root);
+    assert.equal(map.info.tileSize, 256);
+    assert.equal(map.info.localGenerated, true);
+    assert.equal(map.info.maxZoom, 8);
+    assert.throws(() => readTileset('ats', path.join(root, 'missing')), /ENOENT/);
+    fs.writeFileSync(path.join(root, 'TileMapInfo.json'), JSON.stringify({
+      x1: 5, x2: 1, y1: -150, y2: 150, minZoom: 0, maxZoom: 8
+    }));
+    assert.throws(() => readTileset('ets2', root), /invalide ou incomplet/);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
 test('Steam : validation des identifiants et lecture du profil public avec les deux jeux', async () => {
   const calls = [];

@@ -20,7 +20,7 @@
         } else {
           section.append(text('p', g.dir));
           if (g.error) section.append(text('p', 'Lecture impossible : ' + g.error));
-          section.append(text('p', 'Fond de carte actuel : tuiles historiques. Les DLC détectés ne sont pas encore convertis en routes.'));
+          section.append(text('p', 'La présence d’un DLC ne met pas automatiquement à jour le fond de carte. Pour inclure le contenu installé, génère une carte avec TsMap puis importe son dossier dans la section Carte.'));
           section.append(text('p', `Mods .scs dans Documents : ${g.mods.length}. Leur présence ne garantit pas leur activation ; les mods Workshop ne sont pas inventoriés ici.`));
           const list = document.createElement('ul');
           for (const f of dlcs) list.append(text('li', `${f.name} · ${f.format || f.error} · ${f.mountedInLastLog ? 'monté dans le dernier journal' : 'activation non confirmée'}`));

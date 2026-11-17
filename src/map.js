@@ -6,19 +6,45 @@
 // une zone déjà vue s'affiche ensuite instantanément, même sans Internet.
 //
 // La position du camion vient du plugin (coordonnées monde x / z en mètres).
-// Conversion : la tuile de zoom 0 (512 px) couvre le carré [x1..x2] × [y1..y2]
-// du monde du jeu (valeurs de TileMapInfo.json ci-dessous).
+// À zoom 0, la tuile couvre [x1..x2] × [y1..y2] (512 px historique, 256 px TsMap).
 const { protocol, net } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const { readTileset } = require('./map-tileset');
 
 const SCHEME = 'tchmap';
 const SOURCE = process.env.TCH_MAP_SOURCE || 'https://raw.githubusercontent.com/Unicor-p/SCS_Map_Tiles/master';
+const tilesets = {};
 
 const MAPS = {
-  ets2: { dir: 'ets2/latest', x1: -94621.8047, x2: 79370.13, y1: -80209.1641, y2: 93782.77, tileSize: 512, minZoom: 0, maxZoom: 8, version: '1.49' },
-  ats: { dir: 'ats/latest', x1: -127721.344, x2: 20049.6563, y1: -72181.5, y2: 75589.5, tileSize: 512, minZoom: 0, maxZoom: 8, version: '1.48' }
+  ets2: { dir: 'ets2/latest', x1: -94621.8047, x2: 79370.13, y1: -80209.1641, y2: 93782.77, tileSize: 512, minZoom: 0, maxZoom: 8, version: '1.49', localGenerated: false },
+  ats: { dir: 'ats/latest', x1: -127721.344, x2: 20049.6563, y1: -72181.5, y2: 75589.5, tileSize: 512, minZoom: 0, maxZoom: 8, version: '1.48', localGenerated: false }
 };
+
+function info() {
+  return Object.fromEntries(Object.entries(MAPS).map(([game, map]) => [
+    game, { ...map, ...(tilesets[game] ? tilesets[game].info : {}) }
+  ]));
+}
+
+function setTileset(game, directory) {
+  if (!Object.prototype.hasOwnProperty.call(MAPS, game)) throw new Error('Jeu de carte inconnu.');
+  if (!directory) {
+    delete tilesets[game];
+    return info()[game];
+  }
+  const tileset = readTileset(game, directory);
+  tilesets[game] = tileset;
+  return info()[game];
+}
+
+function loadTilesets(paths = {}) {
+  for (const game of Object.keys(MAPS)) {
+    if (!paths[game]) continue;
+    try { setTileset(game, paths[game]); }
+    catch (e) { console.error(`Carte ${game} ignorée :`, e.message); }
+  }
+}
 
 // À appeler avant app.whenReady()
 function registerScheme() {
@@ -36,7 +62,17 @@ function setup(cacheDir) {
     if (!map || !m) return new Response('', { status: 404 });
     const [z, x, y] = [Number(m[1]), Number(m[2]), Number(m[3])];
     const n = 2 ** z;
-    if (z > map.maxZoom || x >= n || y >= n) return new Response('', { status: 404 });
+    const activeMap = info()[game];
+    if (z < activeMap.minZoom || z > activeMap.maxZoom || x >= n || y >= n) return new Response('', { status: 404 });
+    if (tilesets[game]) {
+      try {
+        const file = path.join(tilesets[game].root, 'Tiles', String(z), String(x), y + '.png');
+        const buf = await fs.promises.readFile(file);
+        return new Response(buf, { headers: { 'content-type': 'image/png', 'cache-control': 'no-cache' } });
+      } catch (e) {
+        return new Response('', { status: e.code === 'ENOENT' ? 404 : 500 });
+      }
+    }
     const file = path.join(cacheDir, game, String(z), String(x), y + '.png');
     try {
       const buf = await fs.promises.readFile(file);
@@ -82,4 +118,4 @@ function clearCache(cacheDir) {
   return cacheSize(cacheDir);
 }
 
-module.exports = { MAPS, SCHEME, registerScheme, setup, cacheSize, clearCache };
+module.exports = { MAPS, SCHEME, info, setTileset, loadTilesets, registerScheme, setup, cacheSize, clearCache };
