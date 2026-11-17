@@ -17,6 +17,15 @@ test('syntaxe de tous les scripts de production et des pages', () => {
   }
 });
 
+test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const button = html.match(/<button id="profileChip"([^>]*)>/);
+  assert.ok(button);
+  assert.match(button[1], /\bdisabled\b/);
+  assert.match(button[1], /title="La page Profil est en préparation\."/);
+  assert.doesNotMatch(html, /document\.getElementById\('profileChip'\)\.onclick\s*=/);
+});
+
 test('temps jeu, temps réel, délai dépassé et arrondi', () => {
   const t = calculate({ navTime: 7200, navDistance: 1000, localScale: 20, gameTime: 1440, job: { 'delivery.time': 1439 } }, 0);
   assert.equal(t.gameSeconds, 7200); assert.equal(t.realSeconds, 360); assert.equal(t.arrivalReal, 360000);
