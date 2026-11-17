@@ -79,6 +79,26 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
   assert.equal(truckUpdated.bus.opacity, 60);
 });
 
+test('les réglages bus/car ne proposent que la taille et l’opacité', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const start = html.indexOf('<h2>2. Affichage bus / car</h2>');
+  const end = html.indexOf('<b>Tester l’overlay</b>', start);
+  assert.ok(start >= 0 && end > start);
+  const section = html.slice(start, end);
+  assert.match(section, /Taille bus \/ car/);
+  assert.match(section, /Opacité bus \/ car/);
+  assert.doesNotMatch(section, /Style bus \/ car|Position bus \/ car|Logo bus \/ car/);
+  const controls = [...section.matchAll(/data-hud-profile="bus" data-hud-control="([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(controls, ['scale', 'opacity']);
+});
+
+test('la détection du véhicule pour l’overlay est affichée comme active et verrouillée', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /Détection automatique du véhicule/);
+  assert.match(html, /id="hudVehicleDetection"[^>]*checked disabled[^>]*role="switch"/);
+  assert.match(html, /profil camion ou bus \/ car selon le véhicule détecté en jeu/);
+});
+
 test('la taille de chaque aperçu HUD applique son échelle sans changer la position', () => {
   const keys = ['logo', 'speed', 'sp', 'lim', 'mode', 'kLeft', 'left', 'kKm', 'km', 'today'];
   const nodes = new Map(keys.map(key => [key, { textContent: '', className: '', classList: { toggle() {} } }]));
