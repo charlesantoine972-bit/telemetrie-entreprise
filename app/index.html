@@ -769,36 +769,41 @@
     <!-- RÉGLAGES -->
     <section id="v-reglages" class="hidden">
       <h1>Options</h1>
-      <div class="grid2">
-        <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-          <h2 style="margin:0">Plugin du jeu</h2>
-          <div id="pluginList" class="list"></div>
-          <div class="row" style="flex-wrap:wrap">
-            <button class="btn primary" id="btnInstall">Vérifier / réinstaller</button>
-            <button class="btn" id="btnChoose">Choisir le dossier du jeu…</button>
-          </div>
-          <div class="muted" style="font-size:13px" id="pluginMsg"></div>
-        </div>
-        <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-          <h2 style="margin:0">Profil chauffeur</h2>
-          <label class="field">Ton pseudo de chauffeur
-            <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
-          <label class="field">Type de véhicule
-            <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
-          <details class="acc">
-            <summary>Règle des km réels / course</summary>
-            <div class="acc-in" style="display:flex;flex-direction:column;gap:14px">
-              <div class="row" style="gap:14px">
-                <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150" step="1" required></label>
-                <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150" step="1" required></label>
+      <details class="acc" id="gameProfileOptions" style="width:100%">
+        <summary>Configuration du jeu et du chauffeur</summary>
+        <div class="acc-in">
+          <div class="grid2">
+            <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+              <h2 style="margin:0">Plugin du jeu</h2>
+              <div id="pluginList" class="list"></div>
+              <div class="row" style="flex-wrap:wrap">
+                <button class="btn primary" id="btnInstall">Vérifier / réinstaller</button>
+                <button class="btn" id="btnChoose">Choisir le dossier du jeu…</button>
               </div>
-              <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
-                <input id="sPct" type="number" min="0" max="100" step="1" required></label>
+              <div class="muted" style="font-size:13px" id="pluginMsg"></div>
             </div>
-          </details>
-          <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
+            <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+              <h2 style="margin:0">Profil chauffeur</h2>
+              <label class="field">Ton pseudo de chauffeur
+                <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
+              <label class="field">Type de véhicule
+                <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
+              <details class="acc">
+                <summary>Règle des km réels / course</summary>
+                <div class="acc-in" style="display:flex;flex-direction:column;gap:14px">
+                  <div class="row" style="gap:14px">
+                    <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150" step="1" required></label>
+                    <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150" step="1" required></label>
+                  </div>
+                  <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
+                    <input id="sPct" type="number" min="0" max="100" step="1" required></label>
+                </div>
+              </details>
+              <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
       <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
         <div><h2 style="margin:0">Steam et Discord</h2>
           <div class="muted" style="font-size:13px;margin-top:5px">Steam lit le profil public et vérifie ETS2 / ATS. Discord affiche le jeu et l’état de conduite aux personnes qui voient ta Rich Presence ; aucun trajet ni cargo n’est partagé.</div></div>
