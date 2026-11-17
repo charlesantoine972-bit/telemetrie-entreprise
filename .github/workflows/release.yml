@@ -22,6 +22,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Outil de déchiffrement des sauvegardes (DecryptTruck, licence MIT), compilé depuis ses sources
+      - name: Compiler decrypt_truck.exe
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal
+          cargo +stable install --git https://github.com/CoffeSiberian/DecryptTruck --rev 4b6a167d7b35a5234bb3dde17ac1532740860791 --root rust-tools decrypt_truck --locked
+          mkdir -p resources/tools
+          cp rust-tools/bin/decrypt_truck.exe resources/tools/
+          cp THIRD_PARTY_NOTICES.txt resources/tools/
       - run: npm run release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

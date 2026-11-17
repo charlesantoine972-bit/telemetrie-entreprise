@@ -20,6 +20,10 @@ contextBridge.exposeInMainWorld('tel', {
     restore: (id, name) => ipcRenderer.invoke('atelier:restore', id, name),
     openBackups: () => ipcRenderer.invoke('atelier:openBackups'),
     consoleState: (game) => ipcRenderer.invoke('atelier:console', game),
+    editorInfo: () => ipcRenderer.invoke('atelier:editorInfo'),
+    slots: (id) => ipcRenderer.invoke('atelier:slots', id),
+    summary: (id, slot) => ipcRenderer.invoke('atelier:summary', id, slot),
+    apply: (id, slot, edits) => ipcRenderer.invoke('atelier:apply', id, slot, edits),
     setConsole: (game, on) => ipcRenderer.invoke('atelier:setConsole', game, on)
   }
 });

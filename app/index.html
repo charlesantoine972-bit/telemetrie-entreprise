@@ -273,10 +273,11 @@
     </div>
     <div class="navscroll hidden" id="navAtelier">
       <button class="navbtn" data-view="at-saves"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sauvegardes</span></button>
-      <button class="navbtn" data-view="at-profil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Profil</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="at-carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="at-camion"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7z"/><circle cx="5" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camion & remorque</span><span class="soon">Bientôt</span></button>
-      <button class="navbtn" data-view="at-repar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Réparation</span><span class="soon">Bientôt</span></button>
+      <button class="navbtn" data-view="at-profil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Profil</span></button>
+      <button class="navbtn" data-view="at-coach"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 10h18M7 21v-4M17 21v-4"/><circle cx="7.5" cy="13.5" r=".5"/><circle cx="16.5" cy="13.5" r=".5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Coach (car)</span></button>
+      <button class="navbtn" data-view="at-carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span></button>
+      <button class="navbtn" data-view="at-camion"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7z"/><circle cx="5" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camion & remorque</span></button>
+      <button class="navbtn" data-view="at-repar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Réparation</span></button>
       <button class="navbtn" data-view="at-jeu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6M12 19h8"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Jeu</span></button>
     </div>
     <div class="updbanner hidden" id="updBanner"><span id="updBannerText">Mise à jour disponible</span><div class="progress hidden" id="updBannerBar"><div></div></div><button class="btn primary" id="updBannerBtn" style="height:34px;font-size:13px">Mettre à jour</button></div>
@@ -295,12 +296,60 @@
       <div class="muted" style="font-size:13px;margin-bottom:12px" id="atMsg"></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px" id="atProfiles"></div>
     </section>
+    <section id="v-at-profil" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Profil</h1>
+      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Modifie l'argent, l'expérience et les compétences de ta carrière <b>camion</b>.</p>
+      <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
+      <div class="atbody" data-page="at-profil"></div>
+    </section>
+    <section id="v-at-coach" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Coach (car)</h1>
+      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">La carrière <b>car</b> du DLC Coaches a sa propre expérience et ses propres compétences (3 rangs chacune). Tu peux aussi découvrir tous les arrêts de bus.</p>
+      <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
+      <div class="atbody" data-page="at-coach"></div>
+    </section>
+    <section id="v-at-carte" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Carte</h1>
+      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Découvre la carte d'un coup en marquant toutes les villes comme visitées.</p>
+      <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
+      <div class="atbody" data-page="at-carte"></div>
+    </section>
+    <section id="v-at-camion" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Camion & remorque</h1>
+      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Fais le plein de tous tes véhicules (camions et cars).</p>
+      <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
+      <div class="atbody" data-page="at-camion"></div>
+    </section>
+    <section id="v-at-repar" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Réparation</h1>
+      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Remets à neuf tous tes véhicules : moteur, boîte, cabine, châssis, roues, caisse des remorques, et l'état des cargaisons.</p>
+      <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
+      <div class="atbody" data-page="at-repar"></div>
+    </section>
     <section id="v-at-jeu" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Jeu</h1>
       <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <div class="panel" style="display:flex;flex-direction:column;gap:14px;max-width:760px">
         <h2 style="margin:0">Console de développement</h2>
-        <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Active la console du jeu (touche <b>²</b> sur un clavier AZERTY, <b>~</b> en QWERTY) pour changer l'heure, la météo, etc. Le jeu doit être <b>fermé</b> : il réécrit ce réglage en quittant. Une copie de ton fichier de configuration est faite avant chaque changement.</p>
+        <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Active le <b>mode développeur</b> du jeu. Une fois activé, tu as accès à :</p>
+        <ul class="soft" style="margin:0;padding-left:20px;font-size:14px;line-height:1.9">
+          <li><b>La console</b> : touche <b>²</b> sur un clavier AZERTY (<b>~</b> en QWERTY) pour taper des commandes.</li>
+          <li><b>La caméra libre</b> : touche <b>0</b> (rangée du haut) pour détacher la caméra et te déplacer librement autour du camion, idéal pour les captures d'écran.</li>
+          <li><b>Quelques commandes utiles</b> :
+            <ul style="margin:4px 0;padding-left:20px">
+              <li><code>g_set_time 12</code> : régler l'heure (ici midi) ;</li>
+              <li><code>g_set_weather 0</code> ou <code>1</code> : temps sec ou pluie ;</li>
+              <li><code>warp 2</code> : accélérer le temps (<code>warp 1</code> pour revenir à la normale) ;</li>
+              <li><code>g_traffic 0</code> à <code>10</code> : densité du trafic ;</li>
+              <li><code>g_minicons 0</code> : masquer les petites icônes de la carte.</li>
+            </ul></li>
+        </ul>
+        <p class="muted" style="margin:0;font-size:13px;line-height:1.7">Solo uniquement. Le jeu doit être <b>fermé</b> pour changer ce réglage : il le réécrit en quittant. Une copie de ton fichier de configuration est faite avant chaque changement. Les commandes peuvent changer d'une version du jeu à l'autre.</p>
         <div id="atConsole" style="display:flex;flex-direction:column;gap:10px"></div>
         <div class="muted" style="font-size:13px" id="atConsoleMsg"></div>
       </div>
@@ -678,10 +727,10 @@ let state = { side:'hub', view:'accueil', metric:'total', period:'mois', profile
 const SOON = {
   cartePerso: { t: 'Carte', d: "La vraie carte d'Euro Truck Simulator 2, avec ton camion en direct.", l: ['Ta position en direct sur la carte du jeu', 'Destination, distance et temps restants', 'Tracé de tes trajets terminés'], w: 'Prévu à l\'étape 1.3.' },
   _vtc: { t: 'Ma VTC', d: 'La vue d\'ensemble de ton entreprise.', l: ['Kilomètres et livraisons de toute l\'entreprise', 'Chauffeurs en ligne', 'Objectif collectif du mois', 'Événement du jour'], w: 'Prévu avec la partie en ligne (étape 2).' },
-  'at-profil': { t: 'Profil', d: 'Modifier ton profil solo.', l: ['Argent du compte', 'Points d\'expérience et niveau', 'Ville du QG'], w: 'Prévu dans une prochaine version de l\'Atelier. Une copie de secours sera faite avant chaque modification.' },
-  'at-carte': { t: 'Carte', d: 'Découvrir la carte d\'un coup.', l: ['Marquer les villes comme visitées', 'Débloquer les concessionnaires', 'Débloquer les agences de recrutement'], w: 'Prévu dans une prochaine version de l\'Atelier.' },
-  'at-camion': { t: 'Camion & remorque', d: 'Ajuster ton camion et ta remorque.', l: ['Poids de la cargaison (simple et double remorque)', 'Carburant', 'Configuration du moteur'], w: 'Prévu dans une prochaine version de l\'Atelier.' },
-  'at-repar': { t: 'Réparation', d: 'Remettre ton matériel à neuf.', l: ['Usure du moteur et de la boîte', 'Cabine et châssis', 'Roues', 'Caisse de la remorque'], w: 'Prévu dans une prochaine version de l\'Atelier.' },
+  '_at-profil': { t: 'Profil', d: 'Modifier ton profil solo.', l: ['Argent du compte', 'Points d\'expérience et niveau', 'Ville du QG'], w: 'Prévu dans une prochaine version de l\'Atelier. Une copie de secours sera faite avant chaque modification.' },
+  '_at-carte': { t: 'Carte', d: 'Découvrir la carte d\'un coup.', l: ['Marquer les villes comme visitées', 'Débloquer les concessionnaires', 'Débloquer les agences de recrutement'], w: 'Prévu dans une prochaine version de l\'Atelier.' },
+  '_at-camion': { t: 'Camion & remorque', d: 'Ajuster ton camion et ta remorque.', l: ['Poids de la cargaison (simple et double remorque)', 'Carburant', 'Configuration du moteur'], w: 'Prévu dans une prochaine version de l\'Atelier.' },
+  '_at-repar': { t: 'Réparation', d: 'Remettre ton matériel à neuf.', l: ['Usure du moteur et de la boîte', 'Cabine et châssis', 'Roues', 'Caisse de la remorque'], w: 'Prévu dans une prochaine version de l\'Atelier.' },
   calendrier: { t: 'Calendrier', d: 'Le calendrier de ton entreprise : convois, événements et rendez-vous du mois.', l: ['Vue du mois avec tous les événements', 'Détail d\'un événement : rendez-vous, départ, trajet, mods requis', 'Inscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   convois: { t: 'Convois & événements', d: 'Le calendrier des convois de ton entreprise, avec les inscriptions.', l: ['Calendrier du mois', 'Détail d\'un convoi : rendez-vous, départ, trajet', 'Inscription / désinscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   defis: { t: 'Défis & duels', d: 'Lance des défis à tes collègues et fixe-toi des objectifs.', l: ['Objectifs personnels (semaine / mois)', 'Duels entre chauffeurs (distance, gains, livraisons)', 'Défis entreprise contre entreprise', 'Célébrations des paliers atteints'], w: 'Prévu avec la partie en ligne (étape 2).' },
@@ -750,6 +799,7 @@ function go(view){
   if (view === 'profil') renderProfile();
   if (view === 'reglages') loadSettingsUI();
   if (view === 'at-saves') renderSaves();
+  if (AT_PAGES.includes(view)) atEnsure().then(() => renderAtPage(view));
   if (view === 'at-jeu') renderConsole();
   document.querySelector('main').scrollTop = 0;
 }
@@ -842,6 +892,138 @@ async function renderConsole(msg){
   box.innerHTML = rows.join('');
   setText('atConsoleMsg', msg || '');
   box.querySelectorAll('[data-con]').forEach(c => c.onchange = async () => { const x = await window.tel.atelier.setConsole(c.dataset.con, c.checked); renderConsole(x.ok ? 'Réglage enregistré ✓' : x.error); });
+}
+
+/* ---------- Atelier : éditeur de sauvegardes ---------- */
+const AT_PAGES = ['at-profil', 'at-coach', 'at-carte', 'at-camion', 'at-repar'];
+const atSel = { profiles: [], profileId: null, slots: [], slot: null, summary: null, info: null, msg: '' };
+const nf = n => Number(n || 0).toLocaleString('fr-FR');
+async function atEnsure(){
+  if (!HAS_APP) return false;
+  if (!atSel.info) { const r = await window.tel.atelier.editorInfo(); atSel.info = r.ok ? r.data : { available: false, truckSkills: [], coachSkills: [] }; }
+  const r = await window.tel.atelier.profiles(); atSel.profiles = r.ok ? r.data : [];
+  if (!atSel.profileId && atSel.profiles.length) atSel.profileId = atSel.profiles[0].id;
+  if (atSel.profileId && !atSel.slots.length) await atLoadSlots();
+  return true;
+}
+async function atLoadSlots(){
+  const r = await window.tel.atelier.slots(atSel.profileId);
+  atSel.slots = r.ok ? r.data : []; atSel.slot = atSel.slots.length ? atSel.slots[0].slot : null; atSel.summary = null;
+}
+async function atLoadSummary(){
+  if (!atSel.profileId || !atSel.slot) return;
+  atSel.msg = 'Lecture de la sauvegarde…'; renderAtPage(state.view);
+  const r = await window.tel.atelier.summary(atSel.profileId, atSel.slot);
+  atSel.summary = r.ok ? r.data : null; atSel.msg = r.ok ? '' : r.error;
+  renderAtPage(state.view);
+}
+function atSelHtml(){
+  const p = atSel.profiles.find(x => x.id === atSel.profileId);
+  return `<label class="field" style="min-width:220px;flex:1">Profil<select id="atProf">${atSel.profiles.map(x => `<option value="${escM(x.id)}" ${x.id === atSel.profileId ? 'selected' : ''}>${escM(x.name)} (${x.game === 'ets2' ? 'ETS2' : 'ATS'}${x.cloud ? ', Steam Cloud' : ''})</option>`).join('')}</select></label>
+    <label class="field" style="min-width:260px;flex:1">Sauvegarde<select id="atSlot">${atSel.slots.map(x => `<option value="${escM(x.slot)}" ${x.slot === atSel.slot ? 'selected' : ''}>${escM(x.label)} · ${fmtDate(x.modified)}</option>`).join('')}</select></label>
+    <button class="btn primary" id="atLoad">${atSel.summary ? 'Relire' : 'Charger'}</button>
+    <div class="muted" style="font-size:12px;flex-basis:100%">Après une modification, charge <b>cette sauvegarde</b> dans le jeu. ${p && p.cloud ? 'Profil Steam Cloud : si Steam remet l\'ancienne version, coupe Steam Cloud pour ETS2 le temps de la modification.' : ''}</div>`;
+}
+function skillSel(id, skill, val){
+  if (skill.adr) {
+    const n = [0, 1, 3, 7, 15, 31, 63].indexOf(val); const cur = n < 0 ? Math.round(Math.log2((val || 0) + 1)) : n;
+    return `<label class="field">${escM(skill.label)}<select id="${id}" data-adr="1">${[0,1,2,3,4,5,6].map(i => `<option value="${(1 << i) - 1}" ${i === cur ? 'selected' : ''}>${i} classe${i > 1 ? 's' : ''} sur 6</option>`).join('')}</select></label>`;
+  }
+  return `<label class="field">${escM(skill.label)}<select id="${id}">${Array.from({ length: skill.max + 1 }, (_, i) => `<option value="${i}" ${i === val ? 'selected' : ''}>Niveau ${i} / ${skill.max}</option>`).join('')}</select></label>`;
+}
+function statBox(l, v){ return `<div class="stat"><span class="muted">${l}</span><b>${v}</b></div>`; }
+function renderAtPage(view){
+  if (!AT_PAGES.includes(view)) return;
+  document.querySelectorAll('.atbody').forEach(b => { if (b.dataset.page !== view) b.innerHTML = ''; });
+  const sec = document.getElementById('v-' + view); const sel = sec.querySelector('.atsel'), body = sec.querySelector('.atbody');
+  if (!HAS_APP) { sel.innerHTML = ''; body.innerHTML = '<div class="empty">Disponible dans l\'appli installée.</div>'; return; }
+  if (atSel.info && !atSel.info.available) { sel.innerHTML = ''; body.innerHTML = '<div class="empty">L\'outil de lecture des sauvegardes est introuvable. Réinstalle l\'appli ou fais la dernière mise à jour.</div>'; return; }
+  if (!atSel.profiles.length) { sel.innerHTML = ''; body.innerHTML = '<div class="empty">Aucun profil trouvé. Lance le jeu une fois et crée un profil.</div>'; return; }
+  sel.innerHTML = atSelHtml();
+  sel.querySelector('#atProf').onchange = async (e) => { atSel.profileId = e.target.value; atSel.slots = []; await atLoadSlots(); renderAtPage(state.view); };
+  sel.querySelector('#atSlot').onchange = (e) => { atSel.slot = e.target.value; atSel.summary = null; renderAtPage(state.view); };
+  sel.querySelector('#atLoad').onclick = atLoadSummary;
+  const S = atSel.summary;
+  if (!S) { body.innerHTML = `<div class="empty">${atSel.msg ? escM(atSel.msg) : (atSel.slots.length ? 'Choisis la sauvegarde à modifier, puis clique sur « Charger ».' : 'Aucune sauvegarde dans ce profil.')}</div>`; return; }
+  const apply = '<div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn primary" id="atApply" style="height:46px;padding:0 22px">Appliquer à la sauvegarde</button><span class="muted" id="atApplyMsg" style="font-size:13px">' + escM(atSel.msg || '') + '</span></div>';
+  let html = '';
+  if (view === 'at-profil') {
+    html = `<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">${statBox('Argent', nf(S.money) + ' €')}${statBox('XP camion', nf(S.xp))}${statBox('Ville du QG', escM(S.hqCity || '–'))}${statBox('Véhicules', S.vehicles + ' · ' + S.trailers + ' remorque(s)')}</div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+        <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Argent (€)<input id="eMoney" type="number" min="0" step="1" value="${S.money}"></label>
+          <button class="btn" data-add="eMoney" data-v="1000000">+1 M€</button><button class="btn" data-add="eMoney" data-v="10000000">+10 M€</button></div>
+        <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Expérience camion (XP)<input id="eXp" type="number" min="0" step="1" value="${S.xp}"></label>
+          <button class="btn" data-add="eXp" data-v="100000">+100 000 XP</button><button class="btn" data-add="eXp" data-v="1000000">+1 000 000 XP</button></div>
+        <h2 style="margin:6px 0 0">Compétences camion</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">${atSel.info.truckSkills.map(k => skillSel('sk_' + k.key, k, S.skills[k.key])).join('')}</div>
+        <div><button class="btn" id="skMax">Tout au maximum</button></div>
+      </div>` + apply;
+  } else if (view === 'at-coach') {
+    html = S.busXp == null ? '<div class="empty">Cette sauvegarde ne contient pas encore de carrière car. Installe le DLC Coaches et lance une première partie en mode Coach.</div>'
+      : `<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">${statBox('XP car', nf(S.busXp))}${statBox('Cars possédés', S.buses)}${statBox('Arrêts découverts', S.busStopsDiscovered + ' / ' + S.busStops)}${statBox('XP totale', nf(S.xp + S.busXp))}</div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+        <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Expérience car (XP)<input id="eBusXp" type="number" min="0" step="1" value="${S.busXp}"></label>
+          <button class="btn" data-add="eBusXp" data-v="10000">+10 000 XP</button><button class="btn" data-add="eBusXp" data-v="100000">+100 000 XP</button></div>
+        <h2 style="margin:6px 0 0">Compétences car (3 rangs)</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">${atSel.info.coachSkills.map(k => skillSel('ck_' + k.key, k, S.coachSkills ? S.coachSkills[k.key] : 0)).join('')}</div>
+        <div><button class="btn" id="ckMax">Tout au maximum</button></div>
+        <label class="row" style="gap:10px;font-size:14px"><input type="checkbox" id="eBusStops" ${S.busStopsDiscovered === S.busStops ? 'disabled' : ''}> Découvrir tous les arrêts de bus (${S.busStops - S.busStopsDiscovered} restants)</label>
+      </div>` + apply;
+  } else if (view === 'at-carte') {
+    html = `<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">${statBox('Villes visitées', S.visitedCities + ' / ' + S.totalCities)}${statBox('Concessionnaires', S.dealers)}${statBox('Agences de recrutement', S.recruitments)}${statBox('Arrêts de bus', S.busStopsDiscovered + ' / ' + S.busStops)}</div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <label class="row" style="gap:10px;font-size:14px"><input type="checkbox" id="eCities" ${S.visitedCities >= S.totalCities ? 'disabled' : ''}> Marquer toutes les villes comme visitées (${Math.max(0, S.totalCities - S.visitedCities)} restantes)</label>
+        <label class="row" style="gap:10px;font-size:14px"><input type="checkbox" id="eBusStops" ${S.busStopsDiscovered === S.busStops ? 'disabled' : ''}> Découvrir tous les arrêts de bus</label>
+        <p class="muted" style="margin:0;font-size:13px">Bientôt : débloquer tous les concessionnaires et toutes les agences de recrutement.</p>
+      </div>` + apply;
+  } else if (view === 'at-camion') {
+    html = `<div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:16px">${statBox('Véhicules', S.vehicles)}${statBox('Remorques', S.trailers)}${statBox('Carburant moyen', Math.round(S.fuelAvg * 100) + ' %')}</div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <label class="row" style="gap:10px;font-size:14px"><input type="checkbox" id="eFuel"> Faire le plein de tous les véhicules</label>
+        <p class="muted" style="margin:0;font-size:13px">Bientôt : poids de la cargaison (simple et double remorque) et configuration du moteur.</p>
+      </div>` + apply;
+  } else if (view === 'at-repar') {
+    html = `<div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:16px">${statBox('Véhicules', S.vehicles)}${statBox('Remorques', S.trailers)}${statBox('Usure moyenne', (S.wearAvg * 100).toFixed(1).replace('.', ',') + ' %')}</div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <label class="row" style="gap:10px;font-size:14px"><input type="checkbox" id="eRepair"> Tout réparer : moteur, boîte, cabine, châssis, roues, caisse des remorques et état des cargaisons</label>
+      </div>` + apply;
+  }
+  body.innerHTML = html;
+  body.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { const i = document.getElementById(b.dataset.add); i.value = (Number(i.value) || 0) + Number(b.dataset.v); });
+  const mx = (pfx, list) => list.forEach(k => { const el = document.getElementById(pfx + k.key); if (el) el.value = el.options[el.options.length - 1].value; });
+  const skMax = document.getElementById('skMax'); if (skMax) skMax.onclick = () => mx('sk_', atSel.info.truckSkills);
+  const ckMax = document.getElementById('ckMax'); if (ckMax) ckMax.onclick = () => mx('ck_', atSel.info.coachSkills);
+  const ap = document.getElementById('atApply'); if (ap) ap.onclick = () => atApply(view);
+}
+async function atApply(view){
+  const S = atSel.summary, e = {}, list = [];
+  const num = id => { const el = document.getElementById(id); return el ? Number(el.value) : null; };
+  const chk = id => { const el = document.getElementById(id); return !!(el && el.checked); };
+  if (view === 'at-profil') {
+    if (num('eMoney') !== S.money) { e.money = num('eMoney'); list.push('Argent : ' + nf(S.money) + ' → ' + nf(e.money) + ' €'); }
+    if (num('eXp') !== S.xp) { e.xp = num('eXp'); list.push('XP camion : ' + nf(S.xp) + ' → ' + nf(e.xp)); }
+    const sk = {}; let ch = false; atSel.info.truckSkills.forEach(k => { const v = num('sk_' + k.key); sk[k.key] = v; if (v !== S.skills[k.key]) ch = true; });
+    if (ch) { e.skills = sk; list.push('Compétences camion'); }
+  }
+  if (view === 'at-coach' && S.busXp != null) {
+    if (num('eBusXp') !== S.busXp) { e.busXp = num('eBusXp'); list.push('XP car : ' + nf(S.busXp) + ' → ' + nf(e.busXp)); }
+    const ck = {}; let ch = false; atSel.info.coachSkills.forEach(k => { const v = num('ck_' + k.key); ck[k.key] = v; if (S.coachSkills && v !== S.coachSkills[k.key]) ch = true; });
+    if (ch) { e.coachSkills = ck; list.push('Compétences car'); }
+  }
+  if (chk('eBusStops')) { e.discoverBusStops = true; list.push('Découvrir tous les arrêts de bus'); }
+  if (chk('eCities')) { e.visitAllCities = true; list.push('Toutes les villes visitées'); }
+  if (chk('eFuel')) { e.refuelAll = true; list.push('Plein de tous les véhicules'); }
+  if (chk('eRepair')) { e.repairAll = true; list.push('Réparation complète'); }
+  if (!list.length) { atSel.msg = 'Aucun changement à appliquer.'; renderAtPage(view); return; }
+  const slotLabel = (atSel.slots.find(x => x.slot === atSel.slot) || {}).label || atSel.slot;
+  const ok = await ask('Modifier la sauvegarde ?', `<b>${escM(slotLabel)}</b> du profil <b>${escM((atSel.profiles.find(x => x.id === atSel.profileId) || {}).name || '')}</b> :<ul style="margin:8px 0;padding-left:20px">${list.map(x => '<li>' + escM(x) + '</li>').join('')}</ul>Le jeu doit être fermé. Une copie de secours complète du profil est faite juste avant (restaurable dans « Sauvegardes »).`, 'Appliquer');
+  if (!ok) return;
+  atSel.msg = 'Modification en cours…'; renderAtPage(view);
+  const r = await window.tel.atelier.apply(atSel.profileId, atSel.slot, e);
+  if (!r.ok) { atSel.msg = r.error; renderAtPage(view); return; }
+  await atLoadSummary();
+  atSel.msg = 'Fait ✓ ' + r.data.report.join(', ') + '. Charge cette sauvegarde dans le jeu.';
+  renderAtPage(view);
 }
 
 /* ---------- Marketplace (catalogue de départ : nos modules) ---------- */

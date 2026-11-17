@@ -107,6 +107,10 @@ function setupIpc() {
   ipcMain.handle('atelier:restore', safe((id, name) => atelier.restore(id, name)));
   ipcMain.handle('atelier:openBackups', safe(async () => { fs.mkdirSync(atelier.backups, { recursive: true }); await shell.openPath(atelier.backups); return true; }));
   ipcMain.handle('atelier:console', safe((game) => atelier.consoleState(game)));
+  ipcMain.handle('atelier:editorInfo', safe(() => atelier.editorInfo()));
+  ipcMain.handle('atelier:slots', safe((id) => atelier.saveSlots(id)));
+  ipcMain.handle('atelier:summary', safe((id, slot) => atelier.saveSummary(id, slot)));
+  ipcMain.handle('atelier:apply', safe((id, slot, edits) => atelier.saveApply(id, slot, edits)));
   ipcMain.handle('atelier:setConsole', safe((game, on) => atelier.setConsole(game, !!on)));
   ipcMain.handle('update:status', () => ({ ...updateState, current: app.getVersion() }));
   ipcMain.handle('update:check', async () => {
@@ -186,7 +190,10 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     loadSettings();
     telemetry = new Telemetry(app.getPath('userData'), () => settings);
-    atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'));
+    const decryptExe = process.env.TCH_DECRYPT || (app.isPackaged
+      ? path.join(process.resourcesPath, 'tools', 'decrypt_truck.exe')
+      : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
+    atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);
     telemetry.start();
     installPlugin();
     setupIpc();

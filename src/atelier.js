@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const { SaveEditor, TRUCK_SKILLS, COACH_SKILLS } = require('./save-editor');
 
 const GAMES = {
   ets2: { name: 'Euro Truck Simulator 2', folder: 'Euro Truck Simulator 2', exe: 'eurotrucks2.exe' },
@@ -11,9 +12,29 @@ const GAMES = {
 const PROFILE_DIRS = ['profiles', 'steam_profiles'];
 
 class Atelier {
-  constructor(documentsDir, backupsDir) {
+  constructor(documentsDir, backupsDir, decryptExe) {
     this.docs = documentsDir;
     this.backups = backupsDir;
+    this.editor = new SaveEditor(decryptExe);
+  }
+
+  // ---------- Édition des sauvegardes
+  editorInfo() { return { available: this.editor.available(), truckSkills: TRUCK_SKILLS, coachSkills: COACH_SKILLS }; }
+  saveSlots(id) { return this.editor.slots(this.resolve(id).dir); }
+  saveSummary(id, slot) {
+    const r = this.resolve(id);
+    if (!/^[A-Za-z0-9_-]+$/.test(slot)) throw new Error('Sauvegarde inconnue.');
+    return this.editor.summary(path.join(r.dir, 'save', slot));
+  }
+  saveApply(id, slot, edits) {
+    const r = this.resolve(id);
+    if (this.isRunning(r.game)) throw new Error(`Ferme ${GAMES[r.game].name} avant de modifier une sauvegarde.`);
+    const allowed = ['money', 'xp', 'busXp', 'skills', 'coachSkills', 'visitAllCities', 'discoverBusStops', 'repairAll', 'refuelAll'];
+    const clean = {}; for (const k of allowed) if (edits && edits[k] != null) clean[k] = edits[k];
+    if (!Object.keys(clean).length) throw new Error('Aucune modification demandée.');
+    const backupName = this.backup(id, 'Avant modification (Atelier)');
+    const report = this.editor.apply(r.dir, slot, clean);
+    return { report, backupName };
   }
 
   gameDir(game) { return path.join(this.docs, GAMES[game].folder); }
