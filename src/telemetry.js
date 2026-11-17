@@ -7,6 +7,23 @@ const { EventEmitter } = require('events');
 
 const PORT = 47311;
 const MAX_TICK_KM = 0.5; // au-delà : saut (ferry, train, changement de camion) -> non compté
+// Carte : un point de tracé tous les TRAIL_STEP mètres ; au-delà de TRAIL_JUMP, on coupe le trait (ferry, train…)
+const TRAIL_STEP = 150, JOB_STEP = 400, TRAIL_JUMP = 3000, TRAIL_MAX = 20000, JOB_PATH_MAX = 300;
+const gameKey = (g) => g === 'ats' ? 'ats' : 'ets2';
+
+// Garde au plus `max` points (les coupures `null` sont conservées)
+function downsample(pts, max) {
+  if (pts.length <= max) return pts;
+  const step = pts.length / max, out = [];
+  for (let i = 0; i < pts.length; i += step) {
+    const k = Math.floor(i);
+    if (pts[k] === null) { if (out[out.length - 1] !== null) out.push(null); continue; }
+    out.push(pts[k]);
+  }
+  const last = pts[pts.length - 1];
+  if (last && out[out.length - 1] !== last) out.push(last);
+  return out;
+}
 
 function today() {
   const d = new Date();
@@ -27,6 +44,8 @@ class Telemetry extends EventEmitter {
     this.session = { loaded: 0, empty: 0, start: Date.now() };
     this.lastEvent = null;
     this.dirty = false;
+    this.trail = [];          // tracé de la session : [x, z, chargé 1/0] ou null (coupure)
+    this.trailGame = null;
   }
 
   load() {
@@ -91,7 +110,10 @@ class Telemetry extends EventEmitter {
         cargo: s.job['cargo'], mass: s.job['cargo.mass'] || 0, income: s.job['income'] || 0,
         planned: s.job['planned_distance.km'] || 0,
         loaded: 0, empty: 0, over: 0, maxSpeed: 0,
-        truck: s.truck ? `${s.truck.brand || ''} ${s.truck.name || ''}`.trim() : ''
+        truck: s.truck ? `${s.truck.brand || ''} ${s.truck.name || ''}`.trim() : '',
+        game: gameKey(s.game),
+        fromId: s.job['source.city.id'] || null, toId: s.job['destination.city.id'] || null,
+        path: []
       };
     } else if (!jobKey && this.current && !this.pendingFinish) {
       // Ancienne version du jeu sans évènement de livraison : on clôture quand la mission disparaît
@@ -124,11 +146,43 @@ class Telemetry extends EventEmitter {
       }
     }
 
+    this.recordTrail(s);
+
     // Carburant consommé (les pleins sont ignorés)
     if (this.lastFuel !== null && s.fuel < this.lastFuel && this.lastFuel - s.fuel < 5) {
       this.data.totals.fuelUsed += this.lastFuel - s.fuel;
     }
     this.lastFuel = s.fuel;
+  }
+
+  // Tracé pour la carte (position monde x / z, en mètres)
+  recordTrail(s) {
+    if (s.paused || (!s.x && !s.z)) return;
+    const g = gameKey(s.game);
+    if (this.trailGame !== g) { this.trail = []; this.trailGame = g; }
+    const loaded = s.job && s.trailerConnected ? 1 : 0;
+    const add = (list, step) => {
+      const p = [Math.round(s.x), Math.round(s.z), loaded];
+      const tail = list[list.length - 1];
+      if (!tail) { list.push(p); return; }          // liste vide (ou juste après une coupure)
+      const d = Math.hypot(s.x - tail[0], s.z - tail[1]);
+      if (d > TRAIL_JUMP) list.push(null, p);       // saut : on coupe le trait
+      else if (d >= step || tail[2] !== loaded) list.push(p);
+    };
+    add(this.trail, TRAIL_STEP);
+    if (this.trail.length > TRAIL_MAX) this.trail.splice(0, this.trail.length - TRAIL_MAX);
+    if (this.current && this.current.path && this.current.game === g) add(this.current.path, JOB_STEP);
+  }
+
+  mapHistory() {
+    const snap = this.snapshot();
+    return {
+      game: this.trailGame, trail: this.trail,
+      current: this.current ? { path: this.current.path, from: this.current.from, to: this.current.to, toId: this.current.toId, fromId: this.current.fromId, game: this.current.game } : null,
+      jobs: this.data.jobs.filter(j => j.path && j.path.length > 1).slice(0, 40)
+        .map(j => ({ from: j.from, to: j.to, game: j.game, status: j.status, ended: j.ended, distance: j.distance, mode: j.mode, path: j.path })),
+      live: snap.live
+    };
   }
 
   onGameplay(e) {
@@ -153,7 +207,7 @@ class Telemetry extends EventEmitter {
     if (status === 'livrée') { t.deliveries++; t.revenue += (info && info.revenue) || j.income || 0; }
     if (status === 'annulée') t.cancelled++;
     const entry = {
-      ...j, key: undefined, status, ended: Date.now(), distance: dist, overPct, mode: race ? 'course' : 'réel',
+      ...j, key: undefined, path: downsample(j.path || [], JOB_PATH_MAX), status, ended: Date.now(), distance: dist, overPct, mode: race ? 'course' : 'réel',
       revenue: info && info.revenue != null ? info.revenue : (status === 'livrée' ? j.income : 0),
       damage: info && info['cargo.damage'] != null ? info['cargo.damage'] : (this.live ? this.live.cargoDamage : 0),
       gameDistance: info && info['distance.km'] != null ? info['distance.km'] : null
@@ -174,7 +228,7 @@ class Telemetry extends EventEmitter {
     if (this.current) {
       const dist = this.current.loaded + this.current.empty;
       const overPct = dist > 0 ? (this.current.over / dist) * 100 : 0;
-      job = { ...this.current, key: undefined, distance: dist, overPct, mode: overPct > th.pct ? 'course' : 'réel' };
+      job = { ...this.current, key: undefined, path: undefined, distance: dist, overPct, mode: overPct > th.pct ? 'course' : 'réel' };
     }
     return {
       connected, socketError: this.socketError || null,
@@ -182,7 +236,7 @@ class Telemetry extends EventEmitter {
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },
-      jobs: this.data.jobs.slice(0, 50),
+      jobs: this.data.jobs.slice(0, 50).map(j => j.path ? { ...j, path: undefined } : j),
       lastEvent: this.lastEvent
     };
   }

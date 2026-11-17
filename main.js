@@ -5,7 +5,9 @@ const fs = require('fs');
 const { Telemetry } = require('./src/telemetry');
 const installer = require('./src/plugin-installer');
 const { Atelier } = require('./src/atelier');
+const carte = require('./src/map');
 let atelier;
+carte.registerScheme();
 
 /* ---------- Dossier de données : garde l'historique malgré le changement de nom ---------- */
 (function pinUserData() {
@@ -155,6 +157,12 @@ function setupIpc() {
     return { ok: true, status: installPlugin() };
   });
   ipcMain.handle('settings:get', () => settings);
+  // ----- Carte
+  const mapCache = () => path.join(app.getPath('userData'), 'Carte (cache)');
+  ipcMain.handle('map:info', () => carte.MAPS);
+  ipcMain.handle('map:history', () => telemetry.mapHistory());
+  ipcMain.handle('map:cache', () => carte.cacheSize(mapCache()));
+  ipcMain.handle('map:clearCache', () => carte.clearCache(mapCache()));
   // ----- Atelier (outils avancés) : chaque appel renvoie { ok, data | error }
   const safe = (fn) => async (_e, ...a) => { try { return { ok: true, data: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
   ipcMain.handle('atelier:status', safe(() => atelier.status()));
@@ -254,6 +262,7 @@ if (!app.requestSingleInstanceLock()) {
       : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
     atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);
     telemetry.start();
+    carte.setup(path.join(app.getPath('userData'), 'Carte (cache)'));
     installPlugin();
     setupIpc();
     createWindow();

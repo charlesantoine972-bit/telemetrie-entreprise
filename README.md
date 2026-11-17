@@ -2,7 +2,7 @@
 
 Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2** : classement des chauffeurs (km chargés / à vide), carte en direct, fiche chauffeur et tablette in-game.
 
-> Version actuelle : **0.5** — écran de lancement Marketplace / Hub, menu à catégories dépliables, thème clair / sombre, mises à jour installées dans l'appli.
+> Version actuelle : **0.10** — carte en direct (ETS2 / ATS), menu à catégories dépliables sans compteurs.
 > Les pages « Aperçu » utilisent des données d'exemple ; les pages « Bientôt » décrivent les fonctions à venir.
 
 ## Comment ça marche
@@ -11,6 +11,7 @@ Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2*
 - L'application installe le plugin automatiquement dans Euro Truck Simulator 2 et American Truck Simulator (toutes les bibliothèques Steam), et le remet si une mise à jour du jeu l'a supprimé.
 - Comptage : **chargé** = mission en cours + remorque attelée ; **à vide** = le reste. Les sauts (ferry, train, changement de camion) ne sont pas comptés.
 - **Réel / course** : une mission passe en course si plus de 5 % de sa distance est faite au-dessus du seuil (100 km/h camion, 110 km/h car). Modifiable dans Réglages.
+- **Carte** : il n'existe pas d'API officielle de SCS pour la carte. La position du camion vient du plugin (coordonnées monde x / z) et le fond de carte vient des tuiles générées depuis les fichiers du jeu par TsMap ([SCS_Map_Tiles](https://github.com/Unicor-p/SCS_Map_Tiles), ETS2 1.49 / ATS 1.48). Les tuiles sont téléchargées à la demande puis gardées sur le PC (`Carte (cache)` dans le dossier de données) : une zone déjà vue reste visible sans Internet. Les régions sorties après ces versions (Grèce, Nordic Horizons, etc.) n'ont pas encore de tuiles.
 - Les données sont enregistrées sur le PC (`%APPDATA%\telemetrie-entreprise\donnees.json`).
 
 Recompiler le plugin (Linux + mingw-w64) : `npm run build-plugin`. Tester sans le jeu : `npm start` puis `npm run simulateur`.

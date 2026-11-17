@@ -15,6 +15,12 @@ contextBridge.exposeInMainWorld('tel', {
   openLink: (key) => ipcRenderer.invoke('link:open', key),
   testHud: () => ipcRenderer.invoke('hud:test'),
   onHud: (cb) => ipcRenderer.on('hud', (_e, d) => cb(d)),
+  map: {
+    info: () => ipcRenderer.invoke('map:info'),
+    history: () => ipcRenderer.invoke('map:history'),
+    cache: () => ipcRenderer.invoke('map:cache'),
+    clearCache: () => ipcRenderer.invoke('map:clearCache')
+  },
   atelier: {
     status: () => ipcRenderer.invoke('atelier:status'),
     profiles: () => ipcRenderer.invoke('atelier:profiles'),
