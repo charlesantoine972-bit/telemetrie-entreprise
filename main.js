@@ -14,6 +14,7 @@ const LINKS = {
   truckersmp: 'https://truckersmp.com',
   trucky: 'https://truckyapp.com',
   trucksbook: 'https://trucksbook.eu',
+  haulmp: 'https://haulmp.com',
   github: 'https://github.com/charlesantoine972-bit/telemetrie-entreprise/releases'
 };
 
@@ -81,6 +82,16 @@ function setupIpc() {
   });
   ipcMain.handle('settings:get', () => settings);
   ipcMain.handle('update:status', () => ({ ...updateState, current: app.getVersion() }));
+  ipcMain.handle('update:check', async () => {
+    if (!app.isPackaged) return { ...updateState, current: app.getVersion() };
+    try { updateState = { state: 'checking', version: null }; await autoUpdater.checkForUpdates(); }
+    catch (e) { updateState = { state: 'error', version: null }; }
+    return { ...updateState, current: app.getVersion() };
+  });
+  ipcMain.handle('update:install', () => {
+    if (updateState.state === 'ready') { setImmediate(() => autoUpdater.quitAndInstall()); return true; }
+    return false;
+  });
   ipcMain.handle('game:launch', async (_e, game) => {
     const id = STEAM_IDS[game];
     if (!id) return { ok: false, error: 'Jeu inconnu.' };

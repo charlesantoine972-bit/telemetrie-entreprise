@@ -172,6 +172,7 @@
           <button class="shortcut" data-link="truckersmp">TruckersMP</button>
           <button class="shortcut" data-link="trucky">Trucky</button>
           <button class="shortcut" data-link="trucksbook">TrucksBook</button>
+          <button class="shortcut" data-link="haulmp">HaulMP <span class="soon" style="margin:0 0 0 2px;background:var(--ok)">Nouveau</span></button>
           <button class="shortcut" data-link="mods">Dossier des mods</button>
         </div>
         <div class="statusrow" id="hToday" style="color:var(--soft);font-size:14px"></div>
@@ -306,6 +307,14 @@
             <input id="sPct" type="number" min="0" max="100" step="1"></label>
           <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
         </div>
+      </div>
+      <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h2 style="margin:0">Mises à jour</h2>
+          <div class="soft" style="font-size:14px">Version installée : <b id="updCurrent">–</b></div>
+          <div class="muted" style="font-size:13px" id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</div>
+        </div>
+        <button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
         <div><h2 style="margin:0 0 4px">Modules complémentaires</h2>
@@ -748,6 +757,17 @@ async function refreshUpdate(){
     downloading: ['#F2C14E', 'téléchargement de la v' + u.version + '…'], ready: ['var(--loaded)', 'v' + u.version + ' prête, redémarre'], error: ['#7F8E9C', 'hors ligne'] };
   const m = M[u.state] || M.idle;
   document.getElementById('hUpdate').innerHTML = `<span class="d" style="background:${m[0]}"></span>Mises à jour : ${m[1]}`;
+  renderUpdatePanel(u);
+}
+function renderUpdatePanel(u, extra){
+  setText('updCurrent', 'v' + u.current);
+  const btn = document.getElementById('btnUpdate');
+  const MSG = { dev: 'Mode test : les mises à jour ne sont actives que dans l\'appli installée.', checking: 'Recherche en cours…', none: 'Tu as la dernière version.',
+    downloading: 'Nouvelle version v' + u.version + ' en cours de téléchargement…', ready: 'La version v' + u.version + ' est prête.', error: 'Impossible de vérifier (pas de connexion ?).', idle: 'L\'appli vérifie toute seule au démarrage puis toutes les 30 minutes.' };
+  setText('updMsg', extra || MSG[u.state] || MSG.idle);
+  btn.textContent = u.state === 'ready' ? 'Installer et redémarrer' : u.state === 'checking' ? 'Recherche…' : 'Rechercher une mise à jour';
+  btn.disabled = u.state === 'checking' || u.state === 'downloading';
+  btn.style.opacity = btn.disabled ? .6 : 1;
 }
 async function launch(game){
   const hint = document.getElementById('launchHint');
@@ -766,6 +786,13 @@ if (HAS_APP){
     const ok = await window.tel.openLink(b.dataset.link);
     if (!ok && b.dataset.link === 'mods') setText('launchHint', 'Dossier des mods introuvable (Documents\\Euro Truck Simulator 2\\mod).');
   });
+  document.getElementById('btnUpdate').onclick = async () => {
+    const cur = await window.tel.updateStatus();
+    if (cur.state === 'ready') { await window.tel.installUpdate(); return; }
+    renderUpdatePanel({ ...cur, state: 'checking' });
+    const u = await window.tel.checkUpdate();
+    renderUpdatePanel(u); refreshUpdate();
+  };
   refreshPseudo(); refreshUpdate(); setInterval(refreshUpdate, 5000);
   document.getElementById('btnSave').onclick = async () => {
     await window.tel.setSettings({
