@@ -26,6 +26,15 @@ test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => 
   assert.doesNotMatch(html, /document\.getElementById\('profileChip'\)\.onclick\s*=/);
 });
 
+test('les seuils de kilométrage sont regroupés dans un sous-menu replié', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const submenu = html.match(/<details class="acc">\s*<summary>Règle des km réels \/ course<\/summary>([\s\S]*?)<\/details>/);
+  assert.ok(submenu);
+  for (const id of ['sTruck', 'sCar', 'sPct']) assert.match(submenu[1], new RegExp(`id="${id}"`));
+  assert.ok(!/<details class="acc" open><summary>Règle des km réels \/ course/.test(html));
+  assert.ok(html.indexOf('id="btnSave"') > html.indexOf(submenu[0]));
+});
+
 test('temps jeu, temps réel, délai dépassé et arrondi', () => {
   const t = calculate({ navTime: 7200, navDistance: 1000, localScale: 20, gameTime: 1440, job: { 'delivery.time': 1439 } }, 0);
   assert.equal(t.gameSeconds, 7200); assert.equal(t.realSeconds, 360); assert.equal(t.arrivalReal, 360000);

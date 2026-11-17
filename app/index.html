@@ -780,17 +780,22 @@
           <div class="muted" style="font-size:13px" id="pluginMsg"></div>
         </div>
         <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-          <h2 style="margin:0">Profil et règle km réels / course</h2>
+          <h2 style="margin:0">Profil chauffeur</h2>
           <label class="field">Ton pseudo de chauffeur
             <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
           <label class="field">Type de véhicule
             <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
-          <div class="row" style="gap:14px">
-            <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150"></label>
-            <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150"></label>
-          </div>
-          <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
-            <input id="sPct" type="number" min="0" max="100" step="1"></label>
+          <details class="acc">
+            <summary>Règle des km réels / course</summary>
+            <div class="acc-in" style="display:flex;flex-direction:column;gap:14px">
+              <div class="row" style="gap:14px">
+                <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150"></label>
+                <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150"></label>
+              </div>
+              <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
+                <input id="sPct" type="number" min="0" max="100" step="1"></label>
+            </div>
+          </details>
           <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
         </div>
       </div>
