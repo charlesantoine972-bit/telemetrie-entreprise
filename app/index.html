@@ -968,6 +968,10 @@ function skillSel(id, skill, val){
   }
   return `<label class="field">${escM(skill.label)}<select id="${id}">${Array.from({ length: skill.max + 1 }, (_, i) => `<option value="${i}" ${i === val ? 'selected' : ''}>Niveau ${i} / ${skill.max}</option>`).join('')}</select></label>`;
 }
+// Barème officiel camion (début de chaque palier) ; car : seuls les niveaux 5 et 10 sont connus
+const TRUCK_TIERS = [[0,0],[5,3400],[10,11900],[15,25400],[20,44200],[25,70200],[30,103700],[40,176700],[50,249700],[100,575700]];
+function lvlTruck(xp){ let t = TRUCK_TIERS[0]; for (const x of TRUCK_TIERS) if (xp >= x[1]) t = x; return t[0] >= 100 ? '100 ou plus' : t[0] + ' ou plus'; }
+function lvlCoach(xp){ return xp < 3300 ? 'entre 0 et 4' : xp < 11100 ? 'entre 5 et 9' : xp < 75000 ? '10 ou plus' : '25 ou plus'; }
 function statBox(l, v){ return `<div class="stat"><span class="muted">${l}</span><b>${v}</b></div>`; }
 function renderAtPage(view){
   if (!AT_PAGES.includes(view)) return;
@@ -990,7 +994,10 @@ function renderAtPage(view){
         <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Argent (€)<input id="eMoney" type="number" min="0" step="1" value="${S.money}"></label>
           <button class="btn" data-add="eMoney" data-v="1000000">+1 M€</button><button class="btn" data-add="eMoney" data-v="10000000">+10 M€</button></div>
         <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Expérience camion (XP)<input id="eXp" type="number" min="0" step="1" value="${S.xp}"></label>
-          <button class="btn" data-add="eXp" data-v="100000">+100 000 XP</button><button class="btn" data-add="eXp" data-v="1000000">+1 000 000 XP</button></div>
+          <button class="btn" data-add="eXp" data-v="100000">+100 000 XP</button></div>
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><span class="muted" style="font-size:13px">Atteindre directement :</span>
+          <button class="btn" data-lvl="eXp" data-v="70200">Niveau 25 · 70 200 XP</button><button class="btn" data-lvl="eXp" data-v="150000">Niveau 36 · toutes les pièces</button></div>
+        <div class="muted" style="font-size:12px">Niveau actuel estimé : <b>${lvlTruck(S.xp)}</b>. Les boutons de niveau n'enlèvent jamais d'XP.</div>
         <h2 style="margin:6px 0 0">Compétences camion</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">${atSel.info.truckSkills.map(k => skillSel('sk_' + k.key, k, S.skills[k.key])).join('')}</div>
         <div><button class="btn" id="skMax">Tout au maximum</button></div>
@@ -1001,6 +1008,9 @@ function renderAtPage(view){
       <div class="panel" style="display:flex;flex-direction:column;gap:14px">
         <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Expérience car (XP)<input id="eBusXp" type="number" min="0" step="1" value="${S.busXp}"></label>
           <button class="btn" data-add="eBusXp" data-v="10000">+10 000 XP</button><button class="btn" data-add="eBusXp" data-v="100000">+100 000 XP</button></div>
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><span class="muted" style="font-size:13px">Atteindre directement :</span>
+          <button class="btn" data-lvl="eBusXp" data-v="75000">Niveau 25 · tout débloquer</button><button class="btn" data-lvl="eBusXp" data-v="150000">Niveau 36 et plus</button></div>
+        <div class="muted" style="font-size:12px;line-height:1.6">Niveau actuel estimé : <b>${lvlCoach(S.busXp)}</b>. La progression car est un peu moins chère que celle du camion (niveau 10 : 11 100 XP au lieu de 11 900). SCS n'a pas publié la suite du barème : les boutons prennent donc une marge (75 000 XP pour le niveau 25). Les boutons de niveau n'enlèvent jamais d'XP.</div>
         <h2 style="margin:6px 0 0">Compétences car (3 rangs)</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">${atSel.info.coachSkills.map(k => skillSel('ck_' + k.key, k, S.coachSkills ? S.coachSkills[k.key] : 0)).join('')}</div>
         <div><button class="btn" id="ckMax">Tout au maximum</button></div>
@@ -1026,6 +1036,7 @@ function renderAtPage(view){
       </div>` + apply;
   }
   body.innerHTML = html;
+  body.querySelectorAll('[data-lvl]').forEach(b => b.onclick = () => { const i = document.getElementById(b.dataset.lvl); i.value = Math.max(Number(i.value) || 0, Number(b.dataset.v)); });
   body.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { const i = document.getElementById(b.dataset.add); i.value = (Number(i.value) || 0) + Number(b.dataset.v); });
   const mx = (pfx, list) => list.forEach(k => { const el = document.getElementById(pfx + k.key); if (el) el.value = el.options[el.options.length - 1].value; });
   const skMax = document.getElementById('skMax'); if (skMax) skMax.onclick = () => mx('sk_', atSel.info.truckSkills);
