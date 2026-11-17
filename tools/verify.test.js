@@ -40,6 +40,18 @@ test('les seuils de kilométrage sont regroupés dans un sous-menu replié', () 
   assert.ok(html.indexOf('id="btnSave"') > html.indexOf(submenu[0]));
 });
 
+test('Plugin du jeu et Profil chauffeur sont regroupés dans une sous-catégorie repliée', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const start = html.indexOf('<details class="acc" id="gameProfileOptions"');
+  const end = html.indexOf('<h2 style="margin:0">Steam et Discord</h2>', start);
+  assert.ok(start >= 0 && end > start);
+  const group = html.slice(start, end);
+  assert.match(group, /<summary>Configuration du jeu et du chauffeur<\/summary>/);
+  assert.match(group, /<h2 style="margin:0">Plugin du jeu<\/h2>/);
+  assert.match(group, /<h2 style="margin:0">Profil chauffeur<\/h2>/);
+  assert.doesNotMatch(group.match(/^<details[^>]*>/)[0], /\bopen\b/);
+});
+
 test('les valeurs HUD sauvegardées sont conservées et les nouveaux réglages utilisent Navigation', () => {
   const defaults = { look: { theme: 'base' }, hud: { style: 'navigation', position: 'haut' } };
   assert.equal(mergeSavedSettings(defaults, { hud: { style: 'bandeau' } }).hud.style, 'bandeau');
