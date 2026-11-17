@@ -230,18 +230,14 @@
         <button class="navbtn" data-view="trajets"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
         <button class="navbtn" data-view="cartePerso"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span><span class="soon">Bientôt</span></button>
       </div>
-      <button class="navcat" data-cat="ent" aria-expanded="false"><span>Entreprise</span><span style="display:flex;align-items:center"><span class="cnt">7</span><span class="arr">▸</span></span></button>
+      <button class="navcat" data-cat="ent" aria-expanded="false"><span>Entreprise</span><span style="display:flex;align-items:center"><span class="cnt">4</span><span class="arr">▸</span></span></button>
       <div class="navgroup closed" id="cat-ent">
         <button class="navbtn" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
         <button class="navbtn" data-view="classement"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Classement</span><span class="soon prev">Aperçu</span></button>
         <button class="navbtn" data-view="carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 20a7 7 0 0 0-3-5.7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chauffeurs live</span><span class="soon prev">Aperçu</span></button>
-        <button class="navbtn" data-view="convois"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Convois</span><span class="soon">Bientôt</span></button>
-        <button class="navbtn" data-view="defis"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h11l-2 4 2 4H5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Défis & duels</span><span class="soon">Bientôt</span></button>
-        <button class="navbtn" data-view="missions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Missions</span><span class="soon">Bientôt</span></button>
         <button class="navbtn" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
+        <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
       </div>
-      <div class="navsec">En jeu</div>
-      <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
     </div>
     <div class="navscroll hidden" id="navMarket">
       <button class="navbtn" data-view="mk-discover"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Découvrir</span></button>
@@ -322,6 +318,19 @@
           Le calendrier des convois et événements de ton entreprise arrive avec la partie <b>Entreprise</b>.
         </div></details>
       </div></div>
+    </section>
+
+    <!-- MA VTC -->
+    <section id="v-vtc" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ENTREPRISE</div>
+      <h1 style="display:flex;align-items:center;gap:12px">Ma VTC <span class="demo" style="margin:0">Bientôt</span></h1>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px">Tout ce que fait ton entreprise, au même endroit.</p>
+      <div class="seg" id="vtcTabs" style="margin-bottom:18px"><button data-vtab="missions" class="on">Missions</button><button data-vtab="convois">Convois</button><button data-vtab="defis">Défis &amp; duels</button></div>
+      <div class="soonbox" style="max-width:720px">
+        <p class="soft" style="font-size:15px;line-height:1.7;margin:0" id="vtcText"></p>
+        <div class="panel"><h2 style="margin-bottom:8px">Ce qui est prévu</h2><ul class="soft" id="vtcList" style="margin:0;padding-left:20px;line-height:1.9"></ul></div>
+        <div class="muted" style="font-size:13px">Prévu avec la partie en ligne (étape 2).</div>
+      </div>
     </section>
 
     <!-- PAGES À VENIR -->
@@ -574,7 +583,7 @@ let state = { side:'hub', view:'accueil', metric:'total', period:'mois', profile
 /* ---------- navigation ---------- */
 const SOON = {
   cartePerso: { t: 'Carte', d: "La vraie carte d'Euro Truck Simulator 2, avec ton camion en direct.", l: ['Ta position en direct sur la carte du jeu', 'Destination, distance et temps restants', 'Tracé de tes trajets terminés'], w: 'Prévu à l\'étape 1.3.' },
-  vtc: { t: 'Ma VTC', d: 'La vue d\'ensemble de ton entreprise.', l: ['Kilomètres et livraisons de toute l\'entreprise', 'Chauffeurs en ligne', 'Objectif collectif du mois', 'Événement du jour'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  _vtc: { t: 'Ma VTC', d: 'La vue d\'ensemble de ton entreprise.', l: ['Kilomètres et livraisons de toute l\'entreprise', 'Chauffeurs en ligne', 'Objectif collectif du mois', 'Événement du jour'], w: 'Prévu avec la partie en ligne (étape 2).' },
   convois: { t: 'Convois & événements', d: 'Le calendrier des convois de ton entreprise, avec les inscriptions.', l: ['Calendrier du mois', 'Détail d\'un convoi : rendez-vous, départ, trajet', 'Inscription / désinscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   defis: { t: 'Défis & duels', d: 'Lance des défis à tes collègues et fixe-toi des objectifs.', l: ['Objectifs personnels (semaine / mois)', 'Duels entre chauffeurs (distance, gains, livraisons)', 'Défis entreprise contre entreprise', 'Célébrations des paliers atteints'], w: 'Prévu avec la partie en ligne (étape 2).' },
   missions: { t: 'Missions partagées', d: 'Envoie des missions et des feuilles de route à tes collègues.', l: ['Envoyer une mission à un chauffeur', 'Boucles et circuits en plusieurs étapes', 'Feuille de route en PDF'], w: 'Prévu avec la partie en ligne (étape 2).' },
@@ -636,6 +645,16 @@ function go(view){
   if (view === 'reglages') loadSettingsUI();
   document.querySelector('main').scrollTop = 0;
 }
+
+/* ---------- Ma VTC : onglets Missions / Convois / Défis & duels ---------- */
+function renderVtc(tab){
+  const d = SOON[tab];
+  document.querySelectorAll('#vtcTabs [data-vtab]').forEach(b => b.classList.toggle('on', b.dataset.vtab === tab));
+  document.getElementById('vtcText').textContent = d.d;
+  document.getElementById('vtcList').innerHTML = d.l.map(x => '<li>' + x + '</li>').join('');
+}
+document.querySelectorAll('#vtcTabs [data-vtab]').forEach(b => b.onclick = () => renderVtc(b.dataset.vtab));
+renderVtc('missions');
 
 /* ---------- Marketplace (catalogue de départ : nos modules) ---------- */
 const MK_CATS = { modules: 'Modules du Hub', camions: 'Camions', cars: 'Cars & bus', remorques: 'Remorques', cartes: 'Cartes', skins: 'Skins d\'entreprise', convoi: 'Packs de convoi' };
