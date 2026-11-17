@@ -189,7 +189,10 @@
   <header class="lhead">
     <div style="display:flex;align-items:center;gap:12px"><span class="logo">T&amp;C</span>
       <div style="display:flex;flex-direction:column"><b style="font-size:17px">Truck &amp; Coach Hub</b><span class="muted" style="font-size:12px" id="lVersion">Version</span></div></div>
-    <div style="display:flex;align-items:center;gap:16px;font-size:13px;color:var(--soft)"><span id="lConn">En attente du jeu</span><span id="lPseudo"></span></div>
+    <button id="profileChip" title="Modifier mon pseudo dans Options" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel)">
+      <span id="pAvatar" style="width:36px;height:36px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">?</span>
+      <span style="display:flex;flex-direction:column;line-height:1.3"><b id="pName" style="font-size:14px">Chauffeur</b><span class="muted" style="font-size:12px">Entreprise : aucune</span></span>
+    </button>
   </header>
   <main class="lmain">
     <h1 style="margin:0;font-size:32px;font-weight:800;text-align:center">Que veux-tu ouvrir ?</h1>
@@ -197,7 +200,7 @@
       <button class="lcard" data-open="market" style="--c:#4FD1A5">
         <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">MODS &amp; CONTENUS · GRATUIT</span><span class="ttl">Marketplace</span></span></div>
-        <span class="soft" style="font-size:15px;line-height:1.6">Trouve, installe et mets à jour tes mods en un clic : modules du Hub, camions, cars, remorques, cartes, skins d'entreprise.</span>
+        <span class="soft" style="font-size:15px;line-height:1.6">Trouve, installe et mets à jour tes contenus en un clic : les modules du Hub (tablette, mini-GPS) et les cars &amp; bus.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Installés</span><b id="lMkInstalled">0 contenu</b></span><span class="lstat"><span>À venir</span><b>2 modules</b></span></span>
         <span class="go">Ouvrir la Marketplace →</span>
       </button>
@@ -220,7 +223,6 @@
       <span class="logo" style="width:34px;height:34px;font-size:12px">T&amp;C</span>
       <span style="display:flex;flex-direction:column;min-width:0"><span class="brand" style="padding:0;font-size:16px">Truck &amp; Coach Hub</span><span class="brand-sub" id="appVersion" style="padding:0">Version</span></span>
     </button>
-    <div class="sideconn" id="sideConn"><span class="d"></span><span>En attente du jeu</span></div>
     <div class="sideswitch" role="tablist" aria-label="Côté de l'appli"><button data-side-btn="hub" class="on">Hub</button><button data-side-btn="market">Marketplace</button></div>
     <div class="navscroll" id="navHub">
       <button class="navcat" data-cat="gen" aria-expanded="true"><span>Général</span><span class="arr">▾</span></button>
@@ -230,11 +232,10 @@
         <button class="navbtn" data-view="trajets"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
         <button class="navbtn" data-view="cartePerso"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span><span class="soon">Bientôt</span></button>
       </div>
-      <button class="navcat" data-cat="ent" aria-expanded="false"><span>Entreprise</span><span style="display:flex;align-items:center"><span class="cnt">4</span><span class="arr">▸</span></span></button>
+      <button class="navcat" data-cat="ent" aria-expanded="false"><span>Entreprise</span><span style="display:flex;align-items:center"><span class="cnt">3</span><span class="arr">▸</span></span></button>
       <div class="navgroup closed" id="cat-ent">
         <button class="navbtn" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
-        <button class="navbtn" data-view="classement"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Classement</span><span class="soon prev">Aperçu</span></button>
-        <button class="navbtn" data-view="carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 20a7 7 0 0 0-3-5.7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chauffeurs live</span><span class="soon prev">Aperçu</span></button>
+        <button class="navbtn" data-view="calendrier"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Calendrier</span><span class="soon">Bientôt</span></button>
         <button class="navbtn" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
         <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Arrive dans une prochaine version"><input type="checkbox" data-module="hud" disabled><span></span></label></div>
       </div>
@@ -245,16 +246,10 @@
       <button class="navbtn" data-view="mk-updates"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mises à jour</span><span class="soon" id="mkUpdCount" style="display:none">0</span></button>
       <div class="navsec">Catégories</div>
       <button class="navbtn" data-view="mk-cat:modules"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Modules du Hub</span></button>
-      <button class="navbtn" data-view="mk-cat:camions"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
       <button class="navbtn" data-view="mk-cat:cars"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cars & bus</span></button>
-      <button class="navbtn" data-view="mk-cat:remorques"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Remorques</span></button>
-      <button class="navbtn" data-view="mk-cat:cartes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cartes</span></button>
-      <button class="navbtn" data-view="mk-cat:skins"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Skins d'entreprise</span></button>
-      <button class="navbtn" data-view="mk-cat:convoi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Packs de convoi</span></button>
     </div>
     <div class="updbanner hidden" id="updBanner"><span id="updBannerText">Mise à jour disponible</span><div class="progress hidden" id="updBannerBar"><div></div></div><button class="btn primary" id="updBannerBtn" style="height:34px;font-size:13px">Mettre à jour</button></div>
     <button class="navbtn" data-view="reglages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
-    <div class="sidefoot"><div>Chauffeur : <b id="sidePseudo">non défini</b></div><div>Entreprise : <b>aucune</b> <span style="opacity:.8">(bientôt)</span></div></div>
   </aside>
 
   <main class="main">
@@ -323,9 +318,9 @@
     <!-- MA VTC -->
     <section id="v-vtc" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ENTREPRISE</div>
-      <h1 style="display:flex;align-items:center;gap:12px">Ma VTC <span class="demo" style="margin:0">Bientôt</span></h1>
+      <h1 style="display:flex;align-items:center;gap:12px">Ma VTC <span class="demo" style="margin:0" id="vtcTag">Bientôt</span></h1>
       <p class="soft" style="margin:-6px 0 18px;font-size:15px">Tout ce que fait ton entreprise, au même endroit.</p>
-      <div class="seg" id="vtcTabs" style="margin-bottom:18px"><button data-vtab="missions" class="on">Missions</button><button data-vtab="convois">Convois</button><button data-vtab="defis">Défis &amp; duels</button></div>
+      <div class="seg vtcbar" style="margin-bottom:18px"></div>
       <div class="soonbox" style="max-width:720px">
         <p class="soft" style="font-size:15px;line-height:1.7;margin:0" id="vtcText"></p>
         <div class="panel"><h2 style="margin-bottom:8px">Ce qui est prévu</h2><ul class="soft" id="vtcList" style="margin:0;padding-left:20px;line-height:1.9"></ul></div>
@@ -473,6 +468,8 @@
 
     <!-- CLASSEMENT -->
     <section id="v-classement" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ENTREPRISE · MA VTC</div>
+      <div class="seg vtcbar" style="margin-bottom:18px"></div>
       <h1>Classement <span class="demo">Données d'exemple</span></h1>
       <div class="row" style="margin-bottom:18px" id="periods"></div>
       <div class="grid2">
@@ -504,6 +501,8 @@
 
     <!-- CARTE -->
     <section id="v-carte" class="hidden">
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">ENTREPRISE · MA VTC</div>
+      <div class="seg vtcbar" style="margin-bottom:18px"></div>
       <h1>Carte en direct <span class="demo">Simulation</span></h1>
       <div class="grid2">
         <div class="map" id="map">
@@ -584,6 +583,7 @@ let state = { side:'hub', view:'accueil', metric:'total', period:'mois', profile
 const SOON = {
   cartePerso: { t: 'Carte', d: "La vraie carte d'Euro Truck Simulator 2, avec ton camion en direct.", l: ['Ta position en direct sur la carte du jeu', 'Destination, distance et temps restants', 'Tracé de tes trajets terminés'], w: 'Prévu à l\'étape 1.3.' },
   _vtc: { t: 'Ma VTC', d: 'La vue d\'ensemble de ton entreprise.', l: ['Kilomètres et livraisons de toute l\'entreprise', 'Chauffeurs en ligne', 'Objectif collectif du mois', 'Événement du jour'], w: 'Prévu avec la partie en ligne (étape 2).' },
+  calendrier: { t: 'Calendrier', d: 'Le calendrier de ton entreprise : convois, événements et rendez-vous du mois.', l: ['Vue du mois avec tous les événements', 'Détail d\'un événement : rendez-vous, départ, trajet, mods requis', 'Inscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   convois: { t: 'Convois & événements', d: 'Le calendrier des convois de ton entreprise, avec les inscriptions.', l: ['Calendrier du mois', 'Détail d\'un convoi : rendez-vous, départ, trajet', 'Inscription / désinscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   defis: { t: 'Défis & duels', d: 'Lance des défis à tes collègues et fixe-toi des objectifs.', l: ['Objectifs personnels (semaine / mois)', 'Duels entre chauffeurs (distance, gains, livraisons)', 'Défis entreprise contre entreprise', 'Célébrations des paliers atteints'], w: 'Prévu avec la partie en ligne (étape 2).' },
   missions: { t: 'Missions partagées', d: 'Envoie des missions et des feuilles de route à tes collègues.', l: ['Envoyer une mission à un chauffeur', 'Boucles et circuits en plusieurs étapes', 'Feuille de route en PDF'], w: 'Prévu avec la partie en ligne (étape 2).' },
@@ -591,7 +591,7 @@ const SOON = {
   hud: { t: 'Bandeau / HUD', d: 'Un petit affichage discret par-dessus le jeu : vitesse, limitation, mode réel / course, distance restante.', l: ['Activable / désactivable avec l\'interrupteur du menu « En jeu »', 'Logo : celui de l\'appli, de ton entreprise ou aucun', 'Choix des infos affichées, position, taille, transparence', 'Alerte en cas d\'excès de vitesse'], w: 'Prévu à l\'étape 1.2. Le jeu doit être en « plein écran fenêtré ».' },
   gps: { t: 'Mini-GPS', d: 'Un petit GPS discret en jeu, style TomTom.', l: ['Module complémentaire facultatif, à installer depuis Options', 'Destination, distance et temps restants', 'Limitation de vitesse'], w: 'Prévu à l\'étape 1.4.' }
 };
-const SOON_ICONS = {"cartePerso": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "vtc": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1\"/><path d=\"M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4\"/>", "convois": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "defis": "<path d=\"M5 21V4h11l-2 4 2 4H5\"/>", "missions": "<path d=\"M3 7l9-4 9 4-9 4-9-4z\"/><path d=\"M3 7v10l9 4 9-4V7\"/><path d=\"M12 11v10\"/>", "infos": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v6M12 7.5h.01\"/>", "hud": "<rect x=\"3\" y=\"14\" width=\"18\" height=\"6\" rx=\"2\"/><path d=\"M3 5h18M3 9h10\"/>", "gps": "<path d=\"M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z\"/><circle cx=\"12\" cy=\"9\" r=\"2.5\"/>"};
+const SOON_ICONS = {"calendrier": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "cartePerso": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "vtc": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1\"/><path d=\"M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4\"/>", "convois": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "defis": "<path d=\"M5 21V4h11l-2 4 2 4H5\"/>", "missions": "<path d=\"M3 7l9-4 9 4-9 4-9-4z\"/><path d=\"M3 7v10l9 4 9-4V7\"/><path d=\"M12 11v10\"/>", "infos": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v6M12 7.5h.01\"/>", "hud": "<rect x=\"3\" y=\"14\" width=\"18\" height=\"6\" rx=\"2\"/><path d=\"M3 5h18M3 9h10\"/>", "gps": "<path d=\"M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z\"/><circle cx=\"12\" cy=\"9\" r=\"2.5\"/>"};
 /* ---------- côtés (Hub / Marketplace), catégories dépliables, écran de lancement ---------- */
 const store = { get(k, d){ try { const v = localStorage.getItem('tch.' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
                 set(k, v){ try { localStorage.setItem('tch.' + k, JSON.stringify(v)); } catch {} } };
@@ -618,6 +618,7 @@ applyCats();
 function showLauncher(on){ document.getElementById('launcher').classList.toggle('hidden', !on); }
 document.querySelectorAll('[data-open]').forEach(c => c.onclick = () => { showLauncher(false); go(lastView[c.dataset.open]); });
 document.getElementById('brandBtn').onclick = () => showLauncher(true);
+document.getElementById('profileChip').onclick = () => { showLauncher(false); go('reglages'); };
 document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(b.dataset.gotoView));
 
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
@@ -627,8 +628,11 @@ function go(view){
   if (view !== 'reglages') lastView[side] = view;
   setSide(side);
   // ouvre la catégorie qui contient la page demandée
-  for (const k of Object.keys(catState)) { const g = document.getElementById('cat-' + k); if (g && g.querySelector(`[data-view="${view}"]`) && !catState[k]) { catState[k] = true; applyCats(); } }
-  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+  for (const k of Object.keys(catState)) { const g = document.getElementById('cat-' + k); if (g && g.querySelector(`[data-view="${['classement','carte'].includes(view) ? 'vtc' : view}"]`) && !catState[k]) { catState[k] = true; applyCats(); } }
+  const navView = ['classement', 'carte'].includes(view) ? 'vtc' : view;
+  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('on', b.dataset.view === navView));
+  if (view === 'vtc' && ['classement', 'carte'].includes(vtcTab)) vtcTab = 'missions';
+  if (['vtc', 'classement', 'carte'].includes(view)) renderVtcBars(view === 'vtc' ? vtcTab : view);
   const soon = SOON[view];
   const secId = soon ? 'soon' : (view.startsWith('mk-cat:') ? 'mk-cat' : view);
   document.querySelectorAll('main > section').forEach(sec => sec.classList.toggle('hidden', sec.id !== 'v-' + secId));
@@ -639,6 +643,7 @@ function go(view){
     document.getElementById('soonList').innerHTML = soon.l.map(x => '<li>' + x + '</li>').join('');
     document.getElementById('soonIcon').innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + SOON_ICONS[view] + '</svg>';
   }
+  if (view === 'vtc') { const d = SOON[vtcTab]; document.getElementById('vtcText').textContent = d.d; document.getElementById('vtcList').innerHTML = d.l.map(x => '<li>' + x + '</li>').join(''); }
   if (view.startsWith('mk-cat:')) renderMkCat(view.slice(7));
   if (view === 'mk-discover') renderMk();
   if (view === 'profil') renderProfile();
@@ -647,17 +652,26 @@ function go(view){
 }
 
 /* ---------- Ma VTC : onglets Missions / Convois / Défis & duels ---------- */
-function renderVtc(tab){
+const VTC_TABS = [['missions', 'Missions'], ['convois', 'Convois'], ['defis', 'Défis & duels'], ['classement', 'Classement'], ['carte', 'Chauffeurs live']];
+let vtcTab = 'missions';
+function renderVtcBars(active){
+  document.querySelectorAll('.vtcbar').forEach(bar => {
+    bar.innerHTML = VTC_TABS.map(([k, l]) => `<button data-vtab="${k}" class="${k === active ? 'on' : ''}">${l}</button>`).join('');
+    bar.querySelectorAll('[data-vtab]').forEach(b => b.onclick = () => openVtcTab(b.dataset.vtab));
+  });
+}
+function openVtcTab(tab){
+  vtcTab = tab;
+  if (tab === 'classement' || tab === 'carte') { go(tab); return; }
+  if (state.view !== 'vtc') go('vtc');
   const d = SOON[tab];
-  document.querySelectorAll('#vtcTabs [data-vtab]').forEach(b => b.classList.toggle('on', b.dataset.vtab === tab));
   document.getElementById('vtcText').textContent = d.d;
   document.getElementById('vtcList').innerHTML = d.l.map(x => '<li>' + x + '</li>').join('');
+  renderVtcBars(tab);
 }
-document.querySelectorAll('#vtcTabs [data-vtab]').forEach(b => b.onclick = () => renderVtc(b.dataset.vtab));
-renderVtc('missions');
 
 /* ---------- Marketplace (catalogue de départ : nos modules) ---------- */
-const MK_CATS = { modules: 'Modules du Hub', camions: 'Camions', cars: 'Cars & bus', remorques: 'Remorques', cartes: 'Cartes', skins: 'Skins d\'entreprise', convoi: 'Packs de convoi' };
+const MK_CATS = { modules: 'Modules du Hub', cars: 'Cars & bus' };
 const MK = [
   { id: 'tablette', name: 'Tablette in-game', author: 'Truck & Coach Hub', cat: 'modules', games: ['ETS2', 'ATS'], desc: 'Mission en cours, collègues en ligne, messages de l\'entreprise, GPS et musique, sur une tablette à ouvrir en jeu.', preview: 'tablette' },
   { id: 'gps', name: 'Mini-GPS', author: 'Truck & Coach Hub', cat: 'modules', games: ['ETS2', 'ATS'], desc: 'Un petit GPS discret, style TomTom : prochaine direction, distance et temps restants, limitation.', preview: 'gps' }
@@ -857,8 +871,6 @@ function renderLive(sn){
   document.getElementById('waitPanel').classList.toggle('hidden', sn.connected);
   const dotCol = !sn.connected ? '#7F8E9C' : L.paused ? '#F2C14E' : 'var(--ok)';
   const txt = !sn.connected ? 'En attente du jeu' : (L.paused ? 'Jeu en pause' : 'Jeu connecté');
-  document.getElementById('sideConn').innerHTML = `<span class="d" style="background:${dotCol}"></span><span>${txt}</span>`;
-  document.getElementById('lConn').innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:${dotCol}"></span>${txt}`;
   setText('lToday', km(sn.today.loaded + sn.today.empty)); setText('lJobs', String(sn.totals.deliveries));
   document.getElementById('hGame').innerHTML = `<span class="d" style="background:${dotCol}"></span>Jeu : ${!sn.connected ? 'en attente' : (L.paused ? 'en pause' : 'connecté')}`;
   const t = sn.today, nb = sn.jobs.filter(j => new Date(j.ended).toDateString() === new Date().toDateString() && j.status === 'livrée').length;
@@ -968,8 +980,8 @@ async function loadSettingsUI(){
 async function refreshPseudo(){
   if (!HAS_APP) return;
   const st = await window.tel.getSettings();
-  setText('sidePseudo', st.pseudo || 'non défini');
-  setText('lPseudo', st.pseudo ? 'Chauffeur : ' + st.pseudo : '');
+  setText('pName', st.pseudo || 'Choisis ton pseudo');
+  setText('pAvatar', st.pseudo ? st.pseudo.replace(/[^A-Za-z0-9À-ÿ]/g, '').slice(0, 2).toUpperCase() || '?' : '?');
 }
 let autoInstall = false, installing = false;
 async function refreshUpdate(){
