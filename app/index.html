@@ -15,18 +15,18 @@
     --loaded:#E7B655; --empty:#6A9CD0; --ok:#6FD8C4; --race:#D86464; --warn:#E8D27A;
     --hover:#1A2531; --active:#1F2B38; --map:#121D28; --on-accent:#0F1720;
     --c-hub:#E7B655; --c-market:#4FD1A5; --c-atelier:#A78BFA;
-    --accent:var(--loaded); --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+    --ctl:#66778A; --accent-strong:var(--accent);
+    --accent:var(--c-hub); --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
   }
-  [data-side="hub"]{ --accent:var(--c-hub); }
-  [data-side="market"]{ --accent:var(--c-market); }
-  [data-side="atelier"]{ --accent:var(--c-atelier); }
+  /* Une seule couleur d'action (boutons, sélection, interrupteurs) dans tout le logiciel.
+     Les couleurs d'espace (Marketplace vert, Atelier violet) ne servent plus qu'aux icônes de l'écran d'accueil. */
   /* ===== Sombre, comme Windows : tout noir, texte blanc ===== */
   [data-theme="sombre"]{
     --bg:#202020; --panel:#2B2B2B; --line:#3D3D3D; --nav:#1C1C1C;
     --text:#FFFFFF; --soft:#E0E0E0; --muted:#ABABAB;
     --loaded:#E7B655; --empty:#6A9CD0; --ok:#6FD8C4; --race:#DC6E6E; --warn:#E8D27A;
     --hover:#2D2D2D; --active:#343434; --map:#191919; --on-accent:#000000;
-    --c-hub:#60CDFF; --c-market:#60CDFF; --c-atelier:#60CDFF;
+    --c-hub:#60CDFF; --c-market:#60CDFF; --c-atelier:#60CDFF; --ctl:#8A8A8A;
   }
   /* ===== Clair, comme Windows : tout blanc, texte noir ===== */
   [data-theme="clair"]{
@@ -34,8 +34,9 @@
     --text:#000000; --soft:#1F1F1F; --muted:#5C5C5C;
     --loaded:#9B6B3B; --empty:#2A5A8A; --ok:#2E7D70; --race:#8A2E2E; --warn:#6E5A00;
     --hover:#E5E5E5; --active:#DDDDDD; --map:#E8E8E8; --on-accent:#FFFFFF;
-    --c-hub:#005FB8; --c-market:#005FB8; --c-atelier:#005FB8;
+    --c-hub:#005FB8; --c-market:#005FB8; --c-atelier:#005FB8; --ctl:#858585; --accent-strong:#003E7A;
   }
+
   /* ===== Vision des couleurs (s'ajoute à n'importe quel thème) ===== */
   [data-vision="rg"]{ --loaded:#CA9E72; --empty:#79C6EC; --ok:#5586E7; --race:#E070A8; --warn:#F0F0F0; }
   [data-theme="clair"][data-vision="rg"]{ --loaded:#815931; --empty:#1B6BBB; --ok:#2A2AA8; --race:#7A2D5E; --warn:#000000; }
@@ -48,8 +49,17 @@
   [data-motion="reduit"] *{ transition:none !important; animation-duration:0s !important; }
   [data-motion="reduit"] .spinner{ animation:spin 1.5s linear infinite !important; }
   :focus-visible{ outline:3px solid var(--accent); outline-offset:2px; }
-  [data-side="atelier"] .side .logo{background:var(--accent)}
-  .expbanner{display:none;align-items:center;gap:10px;margin:-6px 0 18px;padding:10px 14px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent);font-size:13px;color:var(--text)}
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation-duration:0s !important; } .spinner{ animation:spin 1.5s linear infinite !important; } }
+  @media (forced-colors: active){
+    .switch span{ border:2px solid ButtonText; } .switch span::after{ background:ButtonText; forced-color-adjust:none; }
+    .switch input:checked + span{ background:Highlight; forced-color-adjust:none; } .switch input:checked + span::after{ background:HighlightText; }
+    .navbtn.on,.seg button.on,.sideswitch button.on{ outline:2px solid Highlight; } .soon{ border:1px solid ButtonText; }
+  }
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .skip{position:fixed;left:12px;top:-60px;z-index:100;padding:10px 16px;border-radius:10px;background:var(--accent);color:var(--on-accent);font-weight:700;text-decoration:none}
+  .skip:focus{top:12px}
+  #mainContent:focus{outline:none}
+  .expbanner{display:none;align-items:center;gap:10px;margin:-6px 0 18px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--warn) 10%,transparent);border:1px solid var(--warn);font-size:13px;color:var(--text)}
   [data-side="atelier"] .expbanner{display:flex}
   #modal{position:fixed;inset:0;z-index:55;background:rgba(5,8,12,.6);display:flex;align-items:center;justify-content:center;padding:20px}
   #modal.hidden{display:none}
@@ -73,7 +83,7 @@
   .hud .lim{width:38px;height:38px;border-radius:50%;background:#fff;border:4px solid #D64545;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#111;font-weight:800;font-size:14px;flex:none}
   .hud .lim.off{visibility:hidden}
   .hud .sep{width:1px;height:30px;background:rgba(255,255,255,.16)}
-  .hud .k{display:flex;flex-direction:column;gap:1px;font-size:11px;color:#C3CDD6;letter-spacing:.04em;text-transform:uppercase}
+  .hud .k{display:flex;flex-direction:column;gap:1px;font-size:12px;color:#C3CDD6;letter-spacing:.04em;text-transform:uppercase}
   .hud .k b{font-size:16px;color:#fff;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums;white-space:nowrap}
   .hud .k.off{display:none}
   .hud .mode{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;white-space:nowrap}
@@ -85,7 +95,7 @@
   .hud.s-bandeau.race{border-color:#E070A8}
   /* Style « Compact » : l'essentiel seulement */
   .hud.s-compact{height:46px;gap:10px;padding:0 12px 0 8px;border-radius:999px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12)}
-  .hud.s-compact .logo{width:30px;height:30px;border-radius:50%;font-size:10px}
+  .hud.s-compact .logo{width:30px;height:30px;border-radius:50%;font-size:12px}
   .hud.s-compact .sp{min-width:70px}.hud.s-compact .sp b{font-size:24px}
   .hud.s-compact .lim{width:32px;height:32px;font-size:12px;border-width:3px}
   .hud.s-compact .k,.hud.s-compact .sep{display:none}
@@ -128,10 +138,11 @@
   .navrow .navbtn{flex:1;min-width:0}
   .switch{position:relative;width:38px;height:22px;flex:none;margin-right:8px}
   .switch input{opacity:0;width:0;height:0;position:absolute}
-  .switch span{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:.2s;cursor:pointer}
-  .switch span::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:.2s}
-  .switch input:checked + span{background:var(--ok)}
-  .switch input:checked + span::after{left:calc(100% - 19px);background:#fff}
+  .switch span{position:absolute;inset:0;border-radius:999px;background:transparent;border:2px solid var(--ctl);transition:.2s;cursor:pointer}
+  .switch span::after{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:calc(100% - 50%);aspect-ratio:1;max-width:18px;border-radius:50%;background:var(--muted);transition:.2s}
+  .switch input:checked + span{background:var(--accent);border-color:var(--accent)}
+  .switch input:checked + span::after{left:auto;right:2px;background:var(--on-accent)}
+  .switch input:focus-visible + span{outline:3px solid var(--accent);outline-offset:2px}
   .switch input:disabled + span{opacity:.45;cursor:not-allowed}
   .sideconn{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);padding:0 10px 12px}
   .sideconn .d{width:8px;height:8px;border-radius:50%;background:var(--muted)}
@@ -162,7 +173,6 @@
   #launcher.hidden{display:none}
   .lhead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--line)}
   .logo{width:38px;height:38px;border-radius:11px;background:var(--c-hub);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
-  [data-side="market"] .side .logo{background:var(--accent)}
   .lmain{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px 32px}
   .lgrid{width:100%;max-width:1080px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
   .lcard{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:16px;padding:28px;border-radius:22px;background:var(--panel);border:1px solid var(--line);color:var(--text);transition:transform .15s,border-color .15s}
@@ -170,13 +180,14 @@
   .lcard .ic{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
   .lcard .kick{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--c)}
   .lcard .ttl{font-size:28px;font-weight:800}
-  .lcard .go{align-self:flex-start;height:46px;padding:0 22px;border-radius:12px;background:var(--c);color:var(--on-accent);font-weight:800;display:flex;align-items:center}
+  .lcard:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .lcard .go{align-self:flex-start;height:46px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:800;display:flex;align-items:center}
   .lstat{flex:1;min-width:120px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
   .lstat span{font-size:12px;color:var(--muted)} .lstat b{font-size:18px}
   .sideswitch{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:0 2px 8px}
   .sideswitch button{flex:1;height:34px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:13px}
   .sideswitch button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
-  .navcat{display:flex;align-items:center;justify-content:space-between;height:34px;padding:0 12px;margin-top:6px;border:none;border-radius:8px;background:transparent;color:var(--text);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .navcat{display:flex;align-items:center;justify-content:space-between;height:34px;padding:0 12px;margin-top:6px;border:none;border-radius:8px;background:transparent;color:var(--text);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
   .navcat:hover{background:var(--hover)}
   .navcat .arr{color:var(--muted);font-size:13px;letter-spacing:0}
   .navgroup{display:flex;flex-direction:column;gap:2px;padding-left:6px}
@@ -193,7 +204,7 @@
   .seg button{height:38px;padding:0 16px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:14px}
   .seg button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
   .mkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .mkbar input{height:42px;width:280px;max-width:100%;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:14px inherit;font-family:inherit}
+  .mkbar input{height:42px;width:280px;max-width:100%;padding:0 14px;border-radius:12px;border:1px solid var(--ctl);background:var(--panel);color:var(--text);font:14px inherit;font-family:inherit}
   .mkfeat{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;padding:22px;border-radius:18px;background:var(--accent-soft);border:1px solid var(--accent)}
   .mkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
   .mkcard{border-radius:16px;background:var(--panel);border:1px solid var(--line);overflow:hidden;display:flex;flex-direction:column}
@@ -208,12 +219,12 @@
   .navbtn{display:flex;align-items:center;gap:11px;height:38px;padding:0 10px;border-radius:12px;
     border:none;background:transparent;color:var(--muted);font-size:14px;text-align:left}
   .navbtn:hover{background:var(--hover);color:var(--text)}
-  .navbtn.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .navbtn.on{background:var(--accent-soft);color:var(--accent-strong);font-weight:600}
   .navbtn svg{flex:none}
   .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
     border:1px dashed var(--line);border-radius:12px}
   .main{flex:1;overflow:auto;padding:28px 32px}
-  .demo{display:inline-block;font-size:11px;color:var(--bg);background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
+  .demo{display:inline-block;font-size:12px;color:var(--bg);background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
   h1{margin:0 0 18px;font-size:30px}
   h2{margin:0 0 12px;font-size:18px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
@@ -267,30 +278,30 @@
   .city{position:absolute;font-size:12px;color:var(--muted);transform:translate(-50%,8px)}
   .citydot{position:absolute;width:6px;height:6px;border-radius:50%;background:#3A4A5B;transform:translate(-50%,-50%)}
   .truck{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px;transition:left 1s linear,top 1s linear;pointer-events:none}
-  .truck .tag{font-size:11px;font-weight:700;color:var(--on-accent);padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .truck .tag{font-size:12px;font-weight:700;color:var(--on-accent);padding:3px 8px;border-radius:999px;white-space:nowrap}
   .truck .pt{width:16px;height:16px;border-radius:50%;border:3px solid var(--bg)}
   .tablet{width:100%;max-width:1024px;aspect-ratio:1024/640;background:#05080B;border-radius:36px;padding:22px}
   .screen{width:100%;height:100%;background:var(--bg);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
   .tgrid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-height:0}
   .k{display:flex;flex-direction:column;gap:2px} .k span:first-child{font-size:12px;color:var(--muted)} .k span:last-child{font-size:22px;font-weight:700}
   .hidden{display:none !important}
-  .navsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 12px 4px}
-  .soon{margin-left:auto;font-size:10px;font-weight:700;color:var(--on-accent);background:var(--muted);padding:2px 7px;border-radius:999px;flex:none}
+  .navsec{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 12px 4px}
+  .soon{margin-left:auto;font-size:12px;font-weight:700;color:var(--on-accent);background:var(--muted);padding:2px 7px;border-radius:999px;flex:none}
   .soon.prev{background:var(--empty)}
   .chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);vertical-align:middle;margin-left:10px}
   .chip .d{width:9px;height:9px;border-radius:50%}
   .speed{font-size:84px;font-weight:700;line-height:1;letter-spacing:-.02em}
   .limit{width:66px;height:66px;border-radius:50%;border:6px solid #D64545;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;flex:none}
   .mode{font-size:13px;font-weight:800;letter-spacing:.06em;padding:6px 12px;border-radius:10px}
-  .mode.real{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
-  .mode.race{background:color-mix(in srgb,var(--race) 18%,transparent);color:var(--race)}
+  .mode.real{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--text);box-shadow:inset 0 0 0 2px var(--ok)}
+  .mode.race{background:color-mix(in srgb,var(--race) 18%,transparent);color:var(--text);box-shadow:inset 0 0 0 2px var(--race)}
   .kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
   .kv .k span:last-child{font-size:20px}
   .steps{margin:0;padding-left:20px;line-height:1.9;color:var(--soft)}
-  .btn{height:42px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:600;font-size:14px}
+  .btn{height:42px;padding:0 16px;border-radius:10px;border:1px solid var(--ctl);background:var(--panel);color:var(--text);font-weight:600;font-size:14px}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
   .field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--soft)}
-  .field input,.field select{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
+  .field input,.field select{height:40px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
   table.jobs{width:100%;border-collapse:collapse;font-size:13px}
   table.jobs th{text-align:left;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
   table.jobs td{padding:10px;border-bottom:1px solid var(--line)}
@@ -306,92 +317,94 @@
       <span style="display:flex;flex-direction:column;line-height:1.3"><b id="pName" style="font-size:14px">Chauffeur</b><span class="muted" style="font-size:12px">Entreprise : aucune</span></span>
     </button>
   </header>
-  <main class="lmain">
+  <div class="lmain" role="region" aria-label="Choix de l'espace">
     <h1 style="margin:0;font-size:32px;font-weight:800;text-align:center">Que veux-tu ouvrir ?</h1>
     <div class="lgrid">
       <button class="lcard" data-open="market" style="--c:var(--c-market)">
-        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>
+        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">MODS &amp; CONTENUS · GRATUIT</span><span class="ttl">Marketplace</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Trouve, installe et mets à jour tes contenus en un clic : les modules du Hub (tablette, mini-GPS) et les cars &amp; bus.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Installés</span><b id="lMkInstalled">0 contenu</b></span><span class="lstat"><span>À venir</span><b>2 modules</b></span></span>
         <span class="go">Ouvrir la Marketplace →</span>
       </button>
       <button class="lcard" data-open="hub" style="--c:var(--c-hub)">
-        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg></span>
+        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">TÉLÉMÉTRIE · CARRIÈRE · ENTREPRISE</span><span class="ttl">Hub</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Ta route et ton entreprise : télémétrie en direct, carrière, carte, classement, convois, défis et HUD en jeu.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Aujourd'hui</span><b id="lToday">0 km</b></span><span class="lstat"><span>Missions enregistrées</span><b id="lJobs">0</b></span></span>
         <span class="go">Ouvrir le Hub →</span>
       </button>
       <button class="lcard hidden" data-open="atelier" id="lcardAtelier" style="--c:var(--c-atelier)">
-        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span>
+        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span>
           <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">OUTILS AVANCÉS · EXPÉRIMENTAL</span><span class="ttl">Atelier</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Sauvegarde et modifie tes profils solo : console de développement, et bientôt argent, carte, camion, réparation.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Profils trouvés</span><b id="lAtProfiles">–</b></span><span class="lstat"><span>Mode</span><b>Solo uniquement</b></span></span>
         <span class="go">Ouvrir l'Atelier →</span>
       </button>
     </div>
-  </main>
+  </div>
 </div>
-<div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="box">
+<div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody"><div class="box">
   <h2 style="margin:0" id="modalTitle"></h2><div class="soft" style="font-size:14px;line-height:1.7" id="modalBody"></div>
   <div class="row" style="justify-content:flex-end;flex-wrap:wrap"><button class="btn" id="modalNo">Annuler</button><button class="btn primary" id="modalYes">Confirmer</button></div>
 </div></div>
-<div id="installing" class="hidden"><div style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
+<div id="installing" class="hidden" role="alertdialog" aria-modal="true" aria-labelledby="installingTitle"><div style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
   <div class="spinner"></div><b style="font-size:18px" id="installingTitle">Installation de la mise à jour…</b>
   <span class="soft">L'appli va redémarrer toute seule dans un instant.</span></div></div>
+<div id="srLive" class="sr-only" aria-live="polite"></div>
 <div class="app">
-  <aside class="side">
+  <a class="skip" href="#mainContent">Aller au contenu</a>
+  <aside class="side" aria-label="Menu">
     <button id="brandBtn" title="Revenir à l'écran de lancement" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:0 8px 6px">
       <span class="logo" style="width:34px;height:34px;font-size:12px">T&amp;C</span>
       <span style="display:flex;flex-direction:column;min-width:0"><span class="brand" style="padding:0;font-size:16px">Truck &amp; Coach Hub</span><span class="brand-sub" id="appVersion" style="padding:0">Version</span></span>
     </button>
-    <div class="sideswitch" role="tablist" aria-label="Côté de l'appli"><button data-side-btn="hub" class="on">Hub</button><button data-side-btn="market">Marketplace</button><button data-side-btn="atelier" class="hidden" id="sideBtnAtelier">Atelier</button></div>
-    <div class="navscroll" id="navHub">
+    <div class="sideswitch" role="group" aria-label="Espace"><button data-side-btn="hub" class="on">Hub</button><button data-side-btn="market">Marketplace</button><button data-side-btn="atelier" class="hidden" id="sideBtnAtelier">Atelier</button></div>
+    <nav class="navscroll" id="navHub" aria-label="Hub">
       <button class="navcat" data-cat="gen" aria-expanded="true"><span>Général</span><span class="arr">▾</span></button>
       <div class="navgroup" id="cat-gen">
-        <button class="navbtn" data-view="accueil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Accueil</span></button>
-        <button class="navbtn" data-view="telemetrie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Télémétrie</span></button>
-        <button class="navbtn" data-view="trajets"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
-        <button class="navbtn" data-view="cartePerso"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span></button>
+        <button class="navbtn" data-view="accueil"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Accueil</span></button>
+        <button class="navbtn" data-view="telemetrie"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Télémétrie</span></button>
+        <button class="navbtn" data-view="trajets"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma carrière</span></button>
+        <button class="navbtn" data-view="cartePerso"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span></button>
       </div>
       <button class="navcat" data-cat="ent" aria-expanded="false"><span>Entreprise</span><span class="arr">▸</span></button>
       <div class="navgroup closed" id="cat-ent">
-        <button class="navbtn is-soon" data-view="vtc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
-        <button class="navbtn is-soon" data-view="calendrier"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Calendrier</span><span class="soon">Bientôt</span></button>
-        <button class="navbtn is-soon" data-view="infos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
-        <div class="navrow"><button class="navbtn" data-view="hud"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Afficher le bandeau en jeu"><input type="checkbox" data-module="hud" id="hudOnNav"><span></span></label></div>
+        <button class="navbtn is-soon" data-view="vtc"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
+        <button class="navbtn is-soon" data-view="calendrier"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Calendrier</span><span class="soon">Bientôt</span></button>
+        <button class="navbtn is-soon" data-view="infos"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
+        <div class="navrow"><button class="navbtn" data-view="hud"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M3 5h18M3 9h10"/></svg><span style="white-space:nowrap">Bandeau / HUD</span></button><label class="switch" title="Afficher le bandeau en jeu"><input type="checkbox" data-module="hud" id="hudOnNav" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
       </div>
-    </div>
-    <div class="navscroll hidden" id="navMarket">
-      <button class="navbtn" data-view="mk-discover"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Découvrir</span></button>
-      <button class="navbtn" data-view="mk-news"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13v16H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v10a2 2 0 0 1-2 2"/><path d="M8 8h5M8 12h5M8 16h3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">À la une &amp; news</span></button>
-      <button class="navbtn" data-view="mk-installed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mes contenus</span></button>
-      <button class="navbtn" data-view="mk-updates"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mises à jour</span></button>
-      <button class="navbtn" data-view="mk-create"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Créer une livrée</span></button>
+    </nav>
+    <nav class="navscroll hidden" id="navMarket" aria-label="Marketplace">
+      <button class="navbtn" data-view="mk-discover"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Découvrir</span></button>
+      <button class="navbtn" data-view="mk-news"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13v16H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v10a2 2 0 0 1-2 2"/><path d="M8 8h5M8 12h5M8 16h3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">À la une &amp; news</span></button>
+      <button class="navbtn" data-view="mk-installed"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mes contenus</span></button>
+      <button class="navbtn" data-view="mk-updates"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mises à jour</span><span class="soon" id="mkUpdCount" style="display:none">0</span></button>
+      <button class="navbtn" data-view="mk-create"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Créer une livrée</span></button>
       <div class="navsec">Catégories</div>
-      <button class="navbtn" data-view="mk-cat:modules"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Modules du Hub</span></button>
-      <button class="navbtn" data-view="mk-cat:trucks"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7"/><circle cx="6" cy="17" r="2"/><circle cx="16" cy="17" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
-      <button class="navbtn" data-view="mk-cat:cars"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cars & bus</span></button>
-    </div>
-    <div class="navscroll hidden" id="navAtelier">
-      <button class="navbtn" data-view="at-saves"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sauvegardes</span></button>
-      <button class="navbtn" data-view="at-profil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Profil</span></button>
-      <button class="navbtn" data-view="at-coach"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 10h18M7 21v-4M17 21v-4"/><circle cx="7.5" cy="13.5" r=".5"/><circle cx="16.5" cy="13.5" r=".5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Coach (car)</span></button>
-      <button class="navbtn" data-view="at-carte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span></button>
-      <button class="navbtn" data-view="at-camion"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7z"/><circle cx="5" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camion & remorque</span></button>
-      <button class="navbtn" data-view="at-repar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Réparation</span></button>
-      <button class="navbtn" data-view="at-jeu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6M12 19h8"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Jeu</span></button>
-    </div>
+      <button class="navbtn" data-view="mk-cat:modules"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Modules du Hub</span></button>
+      <button class="navbtn" data-view="mk-cat:trucks"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7"/><circle cx="6" cy="17" r="2"/><circle cx="16" cy="17" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
+      <button class="navbtn" data-view="mk-cat:cars"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cars & bus</span></button>
+    </nav>
+    <nav class="navscroll hidden" id="navAtelier" aria-label="Atelier">
+      <button class="navbtn" data-view="at-saves"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sauvegardes</span></button>
+      <button class="navbtn" data-view="at-profil"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Profil</span></button>
+      <button class="navbtn" data-view="at-coach"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 10h18M7 21v-4M17 21v-4"/><circle cx="7.5" cy="13.5" r=".5"/><circle cx="16.5" cy="13.5" r=".5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Coach (car)</span></button>
+      <button class="navbtn" data-view="at-carte"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carte</span></button>
+      <button class="navbtn" data-view="at-camion"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7z"/><circle cx="5" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camion & remorque</span></button>
+      <button class="navbtn" data-view="at-repar"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Réparation</span></button>
+      <button class="navbtn" data-view="at-jeu"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6M12 19h8"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Jeu</span></button>
+    </nav>
     <div class="updbanner hidden" id="updBanner"><span id="updBannerText">Mise à jour disponible</span><div class="progress hidden" id="updBannerBar"><div></div></div><button class="btn primary" id="updBannerBtn" style="height:34px;font-size:13px">Mettre à jour</button></div>
-    <button class="navbtn" data-view="reglages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
+    <button class="navbtn" data-view="reglages"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
   </aside>
 
-  <main class="main">
+  <main class="main" id="mainContent" tabindex="0">
     <!-- ATELIER -->
     <section id="v-at-saves" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Sauvegardes de profils</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div class="statusrow" id="atGames" style="justify-content:flex-start"></div>
         <div class="row"><button class="btn" id="atRefresh">Actualiser</button><button class="btn" id="atOpenFolder">Ouvrir le dossier des sauvegardes</button></div>
@@ -401,42 +414,42 @@
     </section>
     <section id="v-at-profil" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Profil</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Modifie l'argent, l'expérience et les compétences de ta carrière <b>camion</b>.</p>
       <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
       <div class="atbody" data-page="at-profil"></div>
     </section>
     <section id="v-at-coach" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Coach (car)</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">La carrière <b>car</b> du DLC Coaches a sa propre expérience et ses propres compétences (3 rangs chacune). Tu peux aussi découvrir tous les arrêts de bus.</p>
       <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
       <div class="atbody" data-page="at-coach"></div>
     </section>
     <section id="v-at-carte" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Carte</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Découvre la carte d'un coup en marquant toutes les villes comme visitées.</p>
       <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
       <div class="atbody" data-page="at-carte"></div>
     </section>
     <section id="v-at-camion" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Camion & remorque</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Fais le plein de tous tes véhicules (camions et cars).</p>
       <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
       <div class="atbody" data-page="at-camion"></div>
     </section>
     <section id="v-at-repar" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Réparation</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Remets à neuf tous tes véhicules : moteur, boîte, cabine, châssis, roues, caisse des remorques, et l'état des cargaisons.</p>
       <div class="atsel panel" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px"></div>
       <div class="atbody" data-page="at-repar"></div>
     </section>
     <section id="v-at-jeu" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">ATELIER</div><h1>Jeu</h1>
-      <div class="expbanner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
+      <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <div class="panel" style="display:flex;flex-direction:column;gap:14px;max-width:760px">
         <h2 style="margin:0">Console de développement</h2>
         <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Active le <b>mode développeur</b> du jeu. Une fois activé, tu as accès à :</p>
@@ -492,7 +505,7 @@
       <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres. Il apparaît tout seul quand tu roules et disparaît quand le jeu est fermé.</p>
       <div class="panel" id="hudStage" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:200px;padding:26px;margin-bottom:18px;overflow:hidden;
         background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
-        <span id="hudStageTag" style="position:absolute;left:12px;top:10px;font-size:11px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU</span>
+        <span id="hudStageTag" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU</span>
         <div class="hud s-bandeau" data-hud>
           <div class="top"><div class="logo" data-h="logo">T&amp;C</div><span class="mode none" data-h="mode">SANS MISSION</span></div>
           <div class="mid"><div class="sp" data-h="sp"><b data-h="speed">0</b><span>km/h</span></div><div class="lim" data-h="lim">90</div></div>
@@ -506,7 +519,7 @@
       </div>
       <div class="panel" style="display:flex;flex-direction:column;gap:0;max-width:900px">
         <div class="optrow" style="border-top:none;padding-top:0"><div><b>Afficher le bandeau en jeu</b><div class="muted">Même interrupteur que dans le menu, à côté de « Bandeau / HUD ».</div></div>
-          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn"><span></span></label></div>
+          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
         <div class="optrow" style="margin-top:14px"><div><b>Style</b><div class="muted">Bandeau complet, pastille compacte, petite carte « tableau de bord », ou texte seul sans fond.</div></div>
           <div class="seg" id="hudStyle"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact">Compact</button><button data-hstyle="tableau">Tableau de bord</button><button data-hstyle="minimal">Minimal</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Position</b><div class="muted">En haut au centre, ou en bas au-dessus du tableau de bord.</div></div>
@@ -738,20 +751,20 @@
         <div class="optrow"><div><b>Taille du texte</b><div class="muted">Agrandit tout le logiciel.</div></div>
           <div class="seg" id="zoomSeg"><button data-zoom-btn="100">Normale</button><button data-zoom-btn="115">Grande</button><button data-zoom-btn="130">Très grande</button></div></div>
         <div class="optrow"><div><b>Contraste renforcé</b><div class="muted">Textes secondaires et bordures plus marqués.</div></div>
-          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="contrastSwitch"><span></span></label></div>
+          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="contrastSwitch" role="switch" aria-label="Contraste renforcé"><span></span></label></div>
         <div class="optrow"><div><b>Réduire les animations</b><div class="muted">Supprime les effets de mouvement.</div></div>
-          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="motionSwitch"><span></span></label></div>
+          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="motionSwitch" role="switch" aria-label="Réduire les animations"><span></span></label></div>
         <div class="cvdlegend" aria-hidden="true"><span><i style="background:var(--loaded)"></i>Km chargés</span><span><i style="background:var(--empty)"></i>Km à vide</span><span><i style="background:var(--ok)"></i>Réel</span><span><i style="background:var(--race)"></i>Course</span></div>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
         <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Pages en préparation</h2>
           <div class="muted" style="font-size:13px;line-height:1.6">Affiche dans le menu les pages pas encore terminées (marquées « Bientôt ») : Ma VTC et ses onglets (Missions, Convois, Défis &amp; duels, Classement, Chauffeurs live), Calendrier, Infos VTC.</div></div>
-        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch"><span></span></label>
+        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
         <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Outils avancés (expérimental)</h2>
           <div class="muted" style="font-size:13px;line-height:1.6">Ajoute l'espace <b>Atelier</b> : sauvegarde et modification de tes profils solo. Désactivé, il disparaît complètement de l'appli.</div></div>
-        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="atelierSwitch"><span></span></label>
+        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="atelierSwitch" role="switch" aria-label="Activer les outils avancés (Atelier)"><span></span></label>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
@@ -843,7 +856,7 @@
       <h1>Carte en direct <span class="demo">Simulation</span></h1>
       <div class="grid2">
         <div class="map" id="map">
-          <svg width="100%" height="100%" viewBox="0 0 600 520" preserveAspectRatio="none" style="position:absolute;inset:0" id="roads"></svg>
+          <svg aria-hidden="true" focusable="false" width="100%" height="100%" viewBox="0 0 600 520" preserveAspectRatio="none" style="position:absolute;inset:0" id="roads"></svg>
           <div style="position:absolute;left:14px;bottom:12px;font-size:12px;color:var(--soft);background:rgba(15,23,32,.9);padding:6px 10px;border-radius:8px">
             <span style="color:var(--loaded)">●</span> chargé &nbsp; <span style="color:var(--empty)">●</span> à vide &nbsp; · carte stylisée
           </div>
@@ -957,8 +970,19 @@ function applyCats(){
 }
 document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catState[b.dataset.cat] = !catState[b.dataset.cat]; store.set('cats', catState); applyCats(); });
 applyCats();
-function showLauncher(on){ document.getElementById('launcher').classList.toggle('hidden', !on); }
+function showLauncher(on){
+  document.getElementById('launcher').classList.toggle('hidden', !on);
+  document.querySelector('.app').inert = !!on;
+  if (on) setTimeout(() => { const c = document.querySelector('#launcher .lcard:not(.hidden)'); if (c) c.focus(); }, 0);
+}
+// Accessibilité : état « appuyé » des boutons de choix, annonces pour les lecteurs d'écran
+function announce(t){ const r = document.getElementById('srLive'); r.textContent = ''; setTimeout(() => { r.textContent = t; }, 60); }
+function syncPressed(root){ (root || document).querySelectorAll('.seg button, .sideswitch button, .vtcbar button').forEach(b => b.setAttribute('aria-pressed', b.classList.contains('on') ? 'true' : 'false')); }
+new MutationObserver(muts => { for (const m of muts) { const t = m.target; if (t.matches && t.matches('.seg button, .sideswitch button, .vtcbar button')) t.setAttribute('aria-pressed', t.classList.contains('on') ? 'true' : 'false'); else if (m.type === 'childList') syncPressed(t); } })
+  .observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'], childList: true });
+syncPressed();
 document.querySelectorAll('[data-open]').forEach(c => c.onclick = () => { showLauncher(false); go(lastView[c.dataset.open]); });
+document.querySelector('.skip').onclick = (e) => { e.preventDefault(); document.getElementById('mainContent').focus(); };
 document.getElementById('brandBtn').onclick = () => showLauncher(true);
 document.getElementById('profileChip').onclick = () => { showLauncher(false); go('reglages'); };
 document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(b.dataset.gotoView));
@@ -983,7 +1007,7 @@ function go(view){
     document.getElementById('soonText').textContent = soon.d;
     document.getElementById('soonWhen').textContent = soon.w;
     document.getElementById('soonList').innerHTML = soon.l.map(x => '<li>' + x + '</li>').join('');
-    document.getElementById('soonIcon').innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + SOON_ICONS[view] + '</svg>';
+    document.getElementById('soonIcon').innerHTML = '<svg aria-hidden="true" focusable="false" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + SOON_ICONS[view] + '</svg>';
   }
   if (view === 'vtc') { const d = SOON[vtcTab]; document.getElementById('vtcText').textContent = d.d; document.getElementById('vtcList').innerHTML = d.l.map(x => '<li>' + x + '</li>').join(''); }
   if (view.startsWith('mk-cat:')) renderMkCat(view.slice(7));
@@ -998,6 +1022,9 @@ function go(view){
   if (AT_PAGES.includes(view)) atEnsure().then(() => renderAtPage(view));
   if (view === 'at-jeu') renderConsole();
   document.querySelector('main').scrollTop = 0;
+  document.querySelectorAll('.navbtn').forEach(b => { if (b.classList.contains('on')) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  const h = document.querySelector('main > section:not(.hidden) h1'); const title = h ? h.textContent.trim() : '';
+  if (title) { document.title = title + ' · Truck & Coach Hub'; announce('Page ' + title); }
 }
 
 /* ---------- Ma VTC : onglets Missions / Convois / Défis & duels ---------- */
@@ -1023,10 +1050,15 @@ function openVtcTab(tab){
 function ask(title, html, yes = 'Confirmer'){
   return new Promise(res => {
     setText('modalTitle', title); document.getElementById('modalBody').innerHTML = html; setText('modalYes', yes);
-    const m = document.getElementById('modal'); m.classList.remove('hidden');
-    const done = v => { m.classList.add('hidden'); res(v); };
-    document.getElementById('modalYes').onclick = () => done(true);
-    document.getElementById('modalNo').onclick = () => done(false);
+    const m = document.getElementById('modal'), back = document.activeElement, app = document.querySelector('.app'), wasInert = app.inert;
+    m.classList.remove('hidden'); app.inert = true;
+    const no = document.getElementById('modalNo'), yesB = document.getElementById('modalYes');
+    const key = e => { if (e.key === 'Escape') { e.preventDefault(); done(false); }
+      else if (e.key === 'Tab') { e.preventDefault(); (document.activeElement === no ? yesB : no).focus(); } };
+    const done = v => { m.classList.add('hidden'); app.inert = wasInert; document.removeEventListener('keydown', key, true); setTimeout(() => { if (back && back.focus) back.focus(); }, 0); res(v); };
+    document.addEventListener('keydown', key, true);
+    yesB.onclick = () => done(true); no.onclick = () => done(false);
+    no.focus();
   });
 }
 
@@ -1311,10 +1343,10 @@ async function atApply(view){
   if (!ok) return;
   atSel.msg = 'Modification en cours…'; renderAtPage(view);
   const r = await window.tel.atelier.apply(atSel.profileId, atSel.slot, e);
-  if (!r.ok) { atSel.msg = r.error; renderAtPage(view); return; }
+  if (!r.ok) { atSel.msg = r.error; announce('Erreur : ' + r.error); renderAtPage(view); return; }
   if (e.profileName) { const pr = await window.tel.atelier.profiles(); if (pr.ok) atSel.profiles = pr.data; }
   await atLoadSummary();
-  atSel.msg = 'Fait ✓ ' + r.data.report.join(', ') + '. Charge cette sauvegarde dans le jeu.';
+  atSel.msg = 'Fait ✓ ' + r.data.report.join(', ') + '. Charge cette sauvegarde dans le jeu.'; announce(atSel.msg);
   renderAtPage(view);
 }
 
@@ -1333,7 +1365,7 @@ const MK = [
 let mkGame = 'all';
 const escM = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 function mkCard(m){
-  return `<article class="mkcard"><div class="mkimg"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${m.id === 'gps' ? '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>' : '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/>'}</svg></div>
+  return `<article class="mkcard"><div class="mkimg"><svg aria-hidden="true" focusable="false" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${m.id === 'gps' ? '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>' : '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M11 18h2"/>'}</svg></div>
     <div class="mkbody"><div class="row" style="gap:8px"><b style="font-size:15px">${escM(m.name)}</b><span class="soon" style="margin:0">Bientôt</span></div>
     <span class="muted" style="font-size:12px">${escM(m.author)} · ${m.games.join(' / ')} · ${escM(MK_CATS[m.cat])}</span>
     <span class="soft" style="font-size:13px;line-height:1.6;flex:1">${escM(m.desc)}</span>
@@ -1357,6 +1389,7 @@ document.getElementById('mkBack').onclick = () => go(mkFrom);
 const MK_FEATURED = ['tablette', 'gps'];
 const MK_NEWS = [
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },
+  { d: '17/11/2026', t: 'Accessibilité revue (WCAG 2.1 AA)', x: 'Navigation complète au clavier, lien « Aller au contenu », lecteurs d\'écran (NVDA, Narrateur), contrastes vérifiés dans tous les thèmes, mode Contraste élevé de Windows, une seule couleur d\'action.' },
   { d: '17/11/2026', t: 'Bandeau / HUD en jeu', x: 'Le bandeau par-dessus le jeu est disponible : vitesse, limitation, mode réel / course, distance restante. À activer dans Hub → Entreprise.' },
   { d: '17/11/2026', t: 'Renommer son profil', x: 'Dans l\'Atelier, change le nom de ton profil et de ton entreprise en jeu.' },
   { d: '17/11/2026', t: 'Thèmes et accessibilité', x: 'Thèmes De base, Sombre et Clair (comme Windows), couleurs adaptées au daltonisme, texte agrandi, contraste renforcé.' },
@@ -1526,8 +1559,8 @@ function mapCity(game, id, name){
   const low = String(name || '').toLowerCase();
   return list.find(c => id && c[0] === id) || list.find(c => low && c[1].toLowerCase() === low) || null;
 }
-const TRUCK_SVG = '<svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#0F1720" stroke="#E7B655" stroke-width="2.5"/><path d="M15 4 L23 24 L15 19.5 L7 24 Z" fill="#E7B655" stroke="#0F1720" stroke-width="1" stroke-linejoin="round"/></svg>';
-const FLAG_SVG = '<svg width="30" height="30" viewBox="0 0 24 24" fill="#6FD8C4" stroke="#0F1720" stroke-width="1.5" stroke-linejoin="round"><path d="M5 22V3"/><path d="M5 3h12l-2.5 4L17 11H5z"/></svg>';
+const TRUCK_SVG = '<svg aria-hidden="true" focusable="false" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#0F1720" stroke="#E7B655" stroke-width="2.5"/><path d="M15 4 L23 24 L15 19.5 L7 24 Z" fill="#E7B655" stroke="#0F1720" stroke-width="1" stroke-linejoin="round"/></svg>';
+const FLAG_SVG = '<svg aria-hidden="true" focusable="false" width="30" height="30" viewBox="0 0 24 24" fill="#6FD8C4" stroke="#0F1720" stroke-width="1.5" stroke-linejoin="round"><path d="M5 22V3"/><path d="M5 3h12l-2.5 4L17 11H5z"/></svg>';
 
 function mapInit(){
   if (M.map || !window.L) return;
