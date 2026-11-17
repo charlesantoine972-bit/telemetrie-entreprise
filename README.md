@@ -31,7 +31,7 @@ Les tests automatisés sont vérifiés avec `npm test`.
 
 ### Vérifier et tester
 
-Le HUD affiche aussi **Compteur véhicule** : il s'agit directement de `truck.odometer` (kilomètres) transmis par le SDK, et non d'une estimation vitesse × durée ou du total accumulé par l'application. Il reflète le véhicule actuellement conduit, y compris son historique antérieur au lancement de l'application. Sans donnée disponible, il affiche « — ». Les distances de mission et du jour restent des compteurs distincts. Le jeu doit être connecté : aucune sauvegarde hors ligne n'est lue pour ce compteur.
+Le HUD affiche aussi le nom du modèle transmis par la configuration du véhicule du SDK et **Compteur véhicule** : il s'agit directement de `truck.odometer` (kilomètres), pas d'une estimation vitesse × durée ou du total accumulé par l'application. Il reflète le véhicule actuellement conduit, y compris son historique antérieur au lancement de l'application. Sans donnée disponible, il affiche « — ». Les distances de mission et du jour restent des compteurs distincts. Le jeu doit être connecté : aucune sauvegarde hors ligne n'est lue, car la télémétrie donne déjà la valeur réelle du véhicule actif.
 
 `npm test` vérifie les calculs, les cas d'indisponibilité et la lecture non destructive d'archives de test. `npm run verify-games` réalise le diagnostic seul, sans démarrer Electron ni installer de plugin. On peut fournir un dossier Documents, puis des dossiers de jeux : `node tools/verify-game-content.js "D:/Documents" "D:/Steam/steamapps/common/Euro Truck Simulator 2"`.
 

@@ -29,12 +29,18 @@
 /* Style « Bandeau » */
 .hud.s-bandeau{height:56px;padding:0 16px 0 10px;border-radius:16px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35)}
 .hud.s-bandeau.race{border-color:#E070A8}
-/* Style « Compact » : l'essentiel seulement */
-.hud.s-compact{height:46px;gap:10px;padding:0 12px 0 8px;border-radius:999px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12)}
+/* Style « Compact » : commandes sur une rangée, trois infos sur la suivante */
+.hud.s-compact{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top mid" "stats stats";align-items:center;gap:5px 12px;width:min(440px,calc(100vw - 20px));max-width:calc(100vw - 20px);height:auto;min-height:0;padding:8px 10px;border-radius:12px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-sizing:border-box}
 .hud.s-compact .logo{width:30px;height:30px;border-radius:50%;font-size:10px}
-.hud.s-compact .sp{min-width:70px}.hud.s-compact .sp b{font-size:24px}
+.hud.s-compact .top{grid-area:top;display:flex;align-items:center;gap:8px;min-width:0}
+.hud.s-compact .mid{grid-area:mid;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.hud.s-compact .sp{min-width:0}.hud.s-compact .sp b{font-size:24px}
 .hud.s-compact .lim{width:32px;height:32px;font-size:12px;border-width:3px}
 .hud.s-compact .k,.hud.s-compact .sep{display:none}
+.hud.s-compact .mission-widgets{grid-area:stats;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:2px;padding-top:5px;border-top:1px solid rgba(255,255,255,.14)}
+.hud.s-compact .mission-widget{min-width:0;padding:2px 5px;border:0;border-radius:0;background:transparent;font-size:9px}
+.hud.s-compact .mission-widget span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hud.s-compact .mission-widget b{overflow:hidden;text-overflow:ellipsis;font-size:12px;white-space:nowrap}
 .hud.s-compact.race{border-color:#E070A8}
 /* Style « Tableau de bord » : petite carte verticale */
 .hud.s-tableau{flex-direction:column;align-items:stretch;gap:10px;width:250px;padding:14px;border-radius:18px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35)}

@@ -1,4 +1,5 @@
 .mission-widgets{display:flex;flex-wrap:wrap;gap:8px;order:10;width:100%;box-sizing:border-box}
+.mission-widgets[hidden]{display:none}
 .mission-widget{display:flex;flex-direction:column;gap:3px;padding:8px 11px;border-radius:8px;background:rgba(12,16,22,.88);min-width:90px;flex:1;font-size:10px;color:#bbc8d5;text-transform:uppercase;letter-spacing:.04em}
 .mission-widget[hidden]{display:none}
 .mission-widget b{color:#fff;font-size:13px;font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0;overflow-wrap:anywhere}
@@ -33,11 +34,19 @@
 .hud.is-coach.s-navigation .sp b{font-size:22px}
 .hud.is-coach.s-navigation .lim{width:30px;height:30px;font-size:12px;border-width:3px}
 .hud.is-coach.s-navigation .sep,.hud.is-coach.s-navigation .rows{display:none}
-.hud.is-coach.s-navigation .mission-widgets{grid-area:stats;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;order:0;margin-top:6px;padding-top:5px;border-top:1px solid rgba(255,255,255,.14)}
+.hud.is-coach.s-navigation .mission-widgets{grid-area:stats;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;order:0;margin-top:6px;padding-top:5px;border-top:1px solid rgba(255,255,255,.14)}
 .hud.is-coach.s-navigation .mission-widget{min-width:0;padding:2px 8px;border:0;border-left:1px solid rgba(255,255,255,.12);border-radius:0;background:transparent;font-size:9px}
 .hud.is-coach.s-navigation .mission-widget:first-child{border-left:0}
 .hud.is-coach.s-navigation .mission-widget span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hud.is-coach.s-navigation .mission-widget b{font-size:13px;white-space:nowrap}
+.hud.s-compact{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top mid" "stats stats";align-items:center;gap:5px 12px;width:min(440px,calc(100vw - 20px));max-width:calc(100vw - 20px);height:auto;min-height:0;padding:8px 10px;border-radius:12px;box-sizing:border-box}
+.hud.s-compact .top{grid-area:top;display:flex;align-items:center;gap:8px;min-width:0}
+.hud.s-compact .mid{grid-area:mid;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.hud.s-compact .sp{min-width:0}
+.hud.s-compact .mission-widgets{grid-area:stats;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:2px;padding-top:5px;border-top:1px solid rgba(255,255,255,.14)}
+.hud.s-compact .mission-widget{min-width:0;padding:2px 5px;border:0;border-radius:0;background:transparent;font-size:9px}
+.hud.s-compact .mission-widget span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hud.s-compact .mission-widget b{overflow:hidden;text-overflow:ellipsis;font-size:12px;white-space:nowrap}
 @media(max-width:480px){
   .hud.is-coach.s-navigation{grid-template-columns:1fr;grid-template-areas:"top" "mid" "stats";gap:6px}
   .hud.is-coach.s-navigation .mid{justify-content:flex-start}

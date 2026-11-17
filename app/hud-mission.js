@@ -16,6 +16,8 @@ function hudMission(root, d) {
   const live = d.live, t = TCHMission.calculate(live), fmt = TCHMission.duration;
   const coach = !!(live && live.busJob) || (!d.connected && d.vehicleType === 'car');
   const navigation = root.classList.contains('s-navigation');
+  const compact = root.classList.contains('s-compact');
+  panel.hidden = !navigation && !compact;
   root.classList.toggle('is-coach', coach);
   root.classList.toggle('is-truck', !coach);
   const clock = root.querySelector('[data-h="coachClock"]');
@@ -27,15 +29,19 @@ function hudMission(root, d) {
     } else clock.textContent = '--:--';
   }
   const hasJob = coach ? !!(live && live.busJob) : !!(live && live.job);
-  set('vehicle', coach ? 'CAR' : 'CAMION', !navigation);
+  const truck = live && live.truck;
+  const vehicleName = truck && [truck.brand, truck.name].filter(value => typeof value === 'string' && value.trim()).join(' ').trim();
+  set('vehicle', vehicleName || (coach ? 'Car / Coaches' : 'Camion'));
   const odometer = live && live.odometer;
   set('odometer', typeof odometer === 'number' && Number.isFinite(odometer) && odometer >= 0
-    ? odometer.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' km' : '—', !navigation || coach);
+    ? odometer.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' km' : '—');
   const fuelRange = live && live.fuelRange;
   const hasFuelRange = typeof fuelRange === 'number' && Number.isFinite(fuelRange) && fuelRange > 0;
   set('fuelRange', hasFuelRange ? fuelRange.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' km' : '—',
-    navigation && coach && hasFuelRange);
+    (navigation || compact) && coach && hasFuelRange);
   panel.querySelector('[data-mission=odometer]').title = 'Kilométrage total du véhicule transmis par le jeu, y compris avant le lancement de l’application.';
+  panel.querySelector('[data-mission=vehicle]').title = vehicleName
+    ? 'Modèle du véhicule actuellement transmis par le jeu.' : 'Le modèle apparaît lorsque le jeu transmet sa configuration.';
   const job = d.job;
   set('route', coach ? 'Service car en cours' : job ? `${job.from || '…'} → ${job.to || '…'}` : 'Hors mission', !coach || hasJob);
   const mass = job && Number.isFinite(job.mass) && job.mass > 0
@@ -45,17 +51,21 @@ function hudMission(root, d) {
   set('remaining', typeof distance === 'number' && Number.isFinite(distance) && distance > 0
     ? (distance / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' km' : '—', navigation && !!(distance > 0));
   set('stops', '', false);
-  set('game', fmt(t.gameSeconds));
-  set('real', fmt(t.realSeconds) + (t.paused ? ' · pause' : ''));
-  set('arrival', t.arrivalReal == null ? '—' : new Date(t.arrivalReal).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
-  set('deadline', fmt(t.deadlineGameSeconds), !coach && hasJob);
-  set('deadlineReal', t.deadlineRealSeconds == null ? fmt(t.deadlineGameSeconds) : fmt(t.deadlineRealSeconds), !coach && hasJob);
+  set('game', fmt(t.gameSeconds), navigation);
+  set('real', fmt(t.realSeconds) + (t.paused ? ' · pause' : ''), navigation && hasJob);
+  set('arrival', t.arrivalReal == null ? '—' : new Date(t.arrivalReal).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }), navigation);
+  set('deadline', fmt(t.deadlineGameSeconds), navigation && !coach && hasJob);
+  set('deadlineReal', t.deadlineRealSeconds == null ? fmt(t.deadlineGameSeconds) : fmt(t.deadlineRealSeconds), navigation && !coach && hasJob);
   panel.querySelector('[data-mission=route] span').textContent = coach ? 'Service' : 'Itinéraire de livraison';
   panel.querySelector('[data-mission=game] span').textContent = coach ? 'Prochain arrêt GPS · jeu' : 'Destination GPS · jeu';
   panel.querySelector('[data-mission=real] span').textContent = coach ? 'Temps jusqu’au prochain arrêt' : 'Temps jusqu’à destination';
   panel.querySelector('[data-mission=remaining] span').textContent = coach ? 'Prochain arrêt · GPS' : 'Distance restante · GPS';
   panel.querySelector('[data-mission=deadlineReal] span').textContent = t.deadlineRealSeconds == null
     ? 'Temps avant livraison · jeu' : 'Temps avant livraison · réel estimé';
+  if (compact) {
+    panel.querySelector('[data-mission=odometer] span').textContent = 'Kilométrage';
+    panel.querySelector('[data-mission=route] span').textContent = coach ? 'Service' : 'Trajet';
+  }
   panel.title = coach ? 'Affichage car basé sur les données du GPS du jeu. Les horaires et détails de ligne ne sont pas fournis par la télémétrie disponible.'
     : 'Temps réel estimé au facteur local du jeu ; pauses, villes, repos et ferries peuvent changer cette estimation.';
   if (navigation) {

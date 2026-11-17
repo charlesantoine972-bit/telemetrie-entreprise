@@ -133,15 +133,17 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   assert.equal(value('remaining').querySelector('b').textContent, '85,6 km');
   assert.equal(value('real').querySelector('b').textContent, '0 h 03');
   assert.equal(value('deadlineReal').querySelector('b').textContent, '0 h 05');
-  assert.equal(value('odometer').hidden, true);
+  assert.equal(value('vehicle').querySelector('b').textContent, 'Camion');
+  assert.equal(value('odometer').hidden, false);
   assert.equal(value('game').hidden, true);
 
   context.hudMission(root, {
     connected: true, options: { style: 'navigation' }, vehicleType: 'camion',
-    live: { navDistance: 2200, navTime: 300, localScale: 20, gameTime: 1000, odometer: 223872.7, fuelRange: 320, busJob: {}, job: { 'delivery.time': 1100 } },
+    live: { navDistance: 2200, navTime: 300, localScale: 20, gameTime: 1000, truck: { brand: 'MAN', name: 'Lion’s Coach' }, odometer: 223872.7, fuelRange: 320, busJob: {}, job: { 'delivery.time': 1100 } },
     job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
   });
   assert.equal(root.querySelector('[data-h="mode"]').textContent, 'SERVICE CAR');
+  assert.equal(value('vehicle').querySelector('b').textContent, 'MAN Lion’s Coach');
   assert.equal(value('route').hidden, true);
   assert.equal(value('cargo').hidden, true);
   assert.equal(value('deadlineReal').hidden, true);
@@ -158,6 +160,20 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   });
   assert.equal(value('fuelRange').hidden, true);
   assert.equal(root.querySelector('[data-h="coachClock"]').textContent, '--:--');
+
+  root.classes.delete('s-navigation'); root.classes.add('s-compact');
+  context.hudMission(root, {
+    connected: true, options: { style: 'compact' }, vehicleType: 'camion',
+    live: { truck: { brand: 'Volvo', name: 'FH16' }, odometer: 154320.5, navDistance: 1200, job: { 'delivery.time': 1100 } },
+    job: { from: 'Paris', to: 'Lyon' }
+  });
+  assert.equal(panel.hidden, false);
+  assert.equal(value('vehicle').querySelector('b').textContent, 'Volvo FH16');
+  assert.equal(value('odometer').querySelector('b').textContent, '154 320,5 km');
+  assert.equal(value('route').hidden, false);
+  assert.equal(value('odometer').querySelector('span').textContent, 'Kilométrage');
+  assert.equal(value('cargo').hidden, true);
+  assert.equal(value('game').hidden, true);
 });
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));
