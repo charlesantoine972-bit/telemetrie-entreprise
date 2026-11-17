@@ -2,6 +2,11 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.6', date: '2026-11-17', titre: 'Cartes DLC, HUD Coaches et réglages', notes: [
+    ['nouveau', 'Carte : importe des tuiles locales générées avec TsMap pour les cartes DLC d’ETS2 et d’ATS.'],
+    ['ameliore', 'Le HUD détecte automatiquement les missions camion et car et adapte les informations affichées.'],
+    ['ameliore', 'Les réglages Plugin du jeu et Profil chauffeur sont regroupés dans une section repliable.'],
+  ]},
   { version: '0.12.5', date: '2026-11-17', titre: 'Navigation et intégrations', notes: [
     ['nouveau', 'Le HUD Navigation met en avant la livraison en cours, la marchandise, la distance GPS et les temps estimés.'],
     ['ameliore', 'Le style HUD déjà choisi est conservé après la mise à jour ; Navigation est le choix par défaut des nouvelles installations.'],
