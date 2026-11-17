@@ -933,7 +933,12 @@
             <div class="cvdlegend" style="margin-top:8px"><span><i style="background:var(--loaded);height:4px"></i>chargé</span><span><i style="background:var(--empty);height:4px"></i>à vide</span><span><i style="background:#9FB3C8;height:3px;opacity:.7"></i>terminés</span></div>
           </div>
           <div class="panel" style="font-size:13px;line-height:1.6">
-            <div class="soft">Carte tirée des fichiers du jeu (ETS2 <span id="mapVerE">1.49</span>, ATS <span id="mapVerA">1.48</span>) : les régions sorties depuis n'y figurent pas encore. Les zones déjà vues sont gardées sur ton PC et restent visibles sans Internet.</div>
+            <div class="soft" id="mapTileStatus">Fond historique (ETS2 <span id="mapVerE">1.49</span>, ATS <span id="mapVerA">1.48</span>). Pour inclure les DLC officiels possédés, génère les tuiles avec TsMap depuis les fichiers locaux du jeu (zoom 0–8), puis importe le dossier ici. L’application ne modifie ni ne téléverse ces fichiers.</div>
+            <div class="between" style="margin-top:10px;align-items:center;gap:8px;flex-wrap:wrap">
+              <a class="btn" href="https://github.com/dariowouters/ts-map" target="_blank" rel="noreferrer" style="height:32px;font-size:12px">Générateur TsMap</a>
+              <button class="btn" id="mapImport" style="height:32px;font-size:12px">Importer les tuiles ETS2</button>
+              <button class="btn hidden" id="mapLegacy" style="height:32px;font-size:12px">Revenir au fond historique</button>
+            </div>
             <div class="between" style="margin-top:10px;align-items:center"><span class="muted" id="mapCache">Cache : —</span><button class="btn" id="mapClear" style="height:32px;font-size:12px">Vider</button></div>
           </div>
         </div>
@@ -1735,8 +1740,8 @@ function renderProfile(){
    les tuiles sont générées depuis les fichiers du jeu (projet libre SCS_Map_Tiles).
    Dans l'appli, elles passent par tchmap:// (cache disque) ; dans un navigateur, en direct depuis GitHub. */
 const MAP_FALLBACK = {
-  ets2: { x1: -94621.8047, x2: 79370.13, y1: -80209.1641, y2: 93782.77, maxZoom: 8, version: '1.49' },
-  ats: { x1: -127721.344, x2: 20049.6563, y1: -72181.5, y2: 75589.5, maxZoom: 8, version: '1.48' }
+  ets2: { x1: -94621.8047, x2: 79370.13, y1: -80209.1641, y2: 93782.77, tileSize: 512, minZoom: 0, maxZoom: 8, version: '1.49', localGenerated: false },
+  ats: { x1: -127721.344, x2: 20049.6563, y1: -72181.5, y2: 75589.5, tileSize: 512, minZoom: 0, maxZoom: 8, version: '1.48', localGenerated: false }
 };
 const MAP_RAW = { ets2: 'https://raw.githubusercontent.com/Unicor-p/SCS_Map_Tiles/master/ets2/latest/Tiles/{z}/{x}/{y}.png',
                   ats: 'https://raw.githubusercontent.com/Unicor-p/SCS_Map_Tiles/master/ats/latest/Tiles/{z}/{x}/{y}.png' };
@@ -1745,8 +1750,20 @@ const M = { map: null, info: MAP_FALLBACK, game: store.get('mapGame', 'ets2'), f
 const mapKm = n => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: n < 10 ? 1 : 0 });
 const mapGameOf = g => g === 'ats' ? 'ats' : 'ets2';
 function mapLL(x, z, game = M.game){
-  const i = M.info[game] || MAP_FALLBACK[game], P = 512 / (i.x2 - i.x1);
+  const i = M.info[game] || MAP_FALLBACK[game], P = i.tileSize / (i.x2 - i.x1);
   return L.latLng(-(z - i.y1) * P, (x - i.x1) * P);
+}
+function mapTileStatus(){
+  const info = M.info[M.game] || MAP_FALLBACK[M.game];
+  const button = document.getElementById('mapImport'), legacy = document.getElementById('mapLegacy');
+  button.textContent = `Importer les tuiles ${M.game === 'ats' ? 'ATS' : 'ETS2'}`;
+  legacy.classList.toggle('hidden', !info.localGenerated);
+  setText('mapVerE', (M.info.ets2 || {}).version || '1.49');
+  setText('mapVerA', (M.info.ats || {}).version || '1.48');
+  const status = document.getElementById('mapTileStatus');
+  status.textContent = info.localGenerated
+    ? `Carte locale ${M.game === 'ats' ? 'ATS' : 'ETS2'} · ${info.version} · tuiles ${info.minZoom}–${info.maxZoom}. Générée depuis les fichiers installés du jeu ; elle reste sur ce PC.`
+    : `Fond historique (ETS2 ${(M.info.ets2 || {}).version || '1.49'}, ATS ${(M.info.ats || {}).version || '1.48'}). Pour inclure les DLC officiels possédés, génère les tuiles avec TsMap depuis les fichiers locaux du jeu (zoom 0–8), puis importe le dossier ici. L’application ne modifie ni ne téléverse ces fichiers.`;
 }
 function mapCity(game, id, name){
   const list = (window.TCH_VILLES && window.TCH_VILLES[game]) || [];
@@ -1761,7 +1778,6 @@ function mapInit(){
   M.map = L.map('lmap', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 10, zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 90,
                           attributionControl: true, zoomControl: true, maxBoundsViscosity: 0.8, fadeAnimation: true });
   M.map.attributionControl.setPrefix(false);
-  M.map.setMaxBounds([[-640, -128], [128, 640]]);
   M.trail = L.layerGroup().addTo(M.map);
   M.jobs = L.layerGroup().addTo(M.map);
   M.cities = L.layerGroup();
@@ -1772,6 +1788,18 @@ function mapInit(){
   document.getElementById('mapShowJobs').onchange = mapDrawHistory;
   document.getElementById('mapShowCities').onchange = (e) => { e.target.checked ? M.cities.addTo(M.map) : M.cities.remove(); };
   document.getElementById('mapClear').onclick = async () => { if (window.tel) { await window.tel.map.clearCache(); mapCacheInfo(); } };
+  document.getElementById('mapImport').onclick = async () => {
+    try {
+      const result = await window.tel.map.selectTileset(M.game);
+      if (result.canceled) return;
+      M.info = result.info;
+      mapSetGame(M.game, true);
+    } catch (e) { document.getElementById('mapNote').textContent = 'Import impossible : ' + e.message; document.getElementById('mapNote').classList.remove('hidden'); }
+  };
+  document.getElementById('mapLegacy').onclick = async () => {
+    try { M.info = await window.tel.map.useLegacy(M.game); mapSetGame(M.game, true); }
+    catch (e) { document.getElementById('mapNote').textContent = 'Changement impossible : ' + e.message; document.getElementById('mapNote').classList.remove('hidden'); }
+  };
   mapSetGame(M.game, true);
 }
 function mapSetFollow(on){
@@ -1786,10 +1814,14 @@ function mapSetGame(game, force){
   document.querySelectorAll('[data-mapgame]').forEach(b => b.classList.toggle('on', b.dataset.mapgame === game));
   if (M.tiles) M.tiles.remove();
   M.tileOk = 0; M.tileErr = 0;
+  const mapInfo = M.info[game] || MAP_FALLBACK[game], size = mapInfo.tileSize || 512;
+  const minZoom = Number.isInteger(mapInfo.minZoom) ? mapInfo.minZoom : 0;
+  const maxZoom = Number.isInteger(mapInfo.maxZoom) ? mapInfo.maxZoom : 8;
   const url = window.tel ? `tchmap://${game}/{z}/{x}/{y}.png` : MAP_RAW[game];
-  M.tiles = L.tileLayer(url, { tileSize: 512, minZoom: 0, maxNativeZoom: (M.info[game] || {}).maxZoom || 8, maxZoom: 10, noWrap: true,
-    bounds: [[-512, 0], [0, 512]], keepBuffer: 3,
-    attribution: 'Carte : SCS Software (fichiers du jeu) · tuiles TsMap / SCS_Map_Tiles · Leaflet' }).addTo(M.map);
+  M.tiles = L.tileLayer(url, { tileSize: size, minZoom, maxNativeZoom: maxZoom, maxZoom: Math.max(10, minZoom), noWrap: true,
+    bounds: [[-size, 0], [0, size]], keepBuffer: 3,
+    attribution: 'Carte : SCS Software (fichiers locaux) · tuiles TsMap / SCS_Map_Tiles · Leaflet' }).addTo(M.map);
+  M.map.setMaxBounds([[-size * 1.25, -size * .25], [size * .25, size * 1.25]]);
   M.tiles.on('tileload', () => { M.tileOk++; mapNote(); });
   M.tiles.on('tileerror', () => { M.tileErr++; mapNote(); });
   M.cities.clearLayers();
@@ -1798,14 +1830,20 @@ function mapSetGame(game, force){
   if (M.truck) { M.truck.remove(); M.truck = null; }
   if (M.dest) { M.dest.remove(); M.dest = null; }
   M.firstFix = true;
-  M.map.setView(game === 'ats' ? [-250, 200] : [-245, 250], 1.5);
+  M.map.setView([-size / 2, size / 2], Math.max(1.5, minZoom));
+  mapTileStatus();
   mapDrawHistory();
 }
 function mapNote(){
   const el = document.getElementById('mapNote');
+  const mapInfo = M.info[M.game] || MAP_FALLBACK[M.game];
   let t = '';
-  if (M.tileErr && !M.tileOk) t = 'Impossible de charger la carte : vérifie ta connexion Internet. Les zones déjà vues restent disponibles hors ligne.';
-  else if (M.tileErr > 3) t = 'Certaines tuiles sont indisponibles : couverture ancienne ou problème réseau. Vérifie les DLC ci-dessous.';
+  if (M.tileErr && !M.tileOk) t = mapInfo.localGenerated
+    ? 'Impossible de lire l’export local. Vérifie le dossier importé et régénère les tuiles si nécessaire.'
+    : 'Impossible de charger la carte : vérifie ta connexion Internet. Les zones déjà vues restent disponibles hors ligne.';
+  else if (M.tileErr > 3) t = mapInfo.localGenerated
+    ? 'Certaines tuiles de l’export local sont absentes ou illisibles. Vérifie le dossier importé et régénère les niveaux 0–8 si nécessaire.'
+    : 'Certaines tuiles sont indisponibles : couverture ancienne ou problème réseau. Importe un export TsMap pour les DLC récents.';
   el.textContent = t; el.classList.toggle('hidden', !t);
   if (M.tileErr && !M.tileOk && !document.getElementById('mapShowCities').checked) { document.getElementById('mapShowCities').checked = true; M.cities.addTo(M.map); }
 }
@@ -1847,8 +1885,7 @@ async function mapCacheInfo(){
   try { const c = await window.tel.map.cache(); setText('mapCache', `Cache : ${(c.bytes / 1048576).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} Mo`); } catch {}
 }
 async function openMap(){
-  if (window.tel && M.info === MAP_FALLBACK) { try { M.info = await window.tel.map.info(); } catch {} }
-  setText('mapVerE', (M.info.ets2 || {}).version || '1.49'); setText('mapVerA', (M.info.ats || {}).version || '1.48');
+  if (window.tel) { try { M.info = await window.tel.map.info(); } catch {} }
   mapInit();
   setTimeout(() => M.map && M.map.invalidateSize(), 50);
   await mapLoadHistory();

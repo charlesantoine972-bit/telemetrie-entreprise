@@ -45,7 +45,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { style: 'navigation', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { style: 'navigation', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -66,6 +66,10 @@ function loadSettings() {
     if (error instanceof SyntaxError) console.error('Réglages illisibles :', error.message);
   }
   settings = mergeSavedSettings(DEFAULTS, saved);
+  if (!settings.mapTilesets || typeof settings.mapTilesets !== 'object' || Array.isArray(settings.mapTilesets)) settings.mapTilesets = {};
+  else settings.mapTilesets = Object.fromEntries(Object.entries(settings.mapTilesets).filter(([game, dir]) =>
+    ['ets2', 'ats'].includes(game) && typeof dir === 'string'));
+  carte.loadTilesets(settings.mapTilesets);
 }
 function saveSettings() {
   fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
@@ -237,7 +241,47 @@ function setupIpc() {
   ipcMain.handle('system:accent', () => systemAccent());
   // ----- Carte
   const mapCache = () => path.join(app.getPath('userData'), 'Carte (cache)');
-  ipcMain.handle('map:info', () => carte.MAPS);
+  ipcMain.handle('map:info', () => carte.info());
+  ipcMain.handle('map:selectTileset', async (_e, game) => {
+    if (!['ets2', 'ats'].includes(game)) throw new Error('Jeu de carte inconnu.');
+    const r = await dialog.showOpenDialog(win, {
+      title: 'Choisis le dossier exporté par TsMap (TileMapInfo.json et Tiles)',
+      properties: ['openDirectory']
+    });
+    if (r.canceled || !r.filePaths[0]) return { canceled: true };
+    const previousPath = settings.mapTilesets[game];
+    const mapInfo = carte.setTileset(game, r.filePaths[0]);
+    settings.mapTilesets[game] = r.filePaths[0];
+    try { saveSettings(); }
+    catch (e) {
+      if (previousPath) {
+        settings.mapTilesets[game] = previousPath;
+        try { carte.setTileset(game, previousPath); }
+        catch (restoreError) { console.error(`Restauration carte ${game} :`, restoreError.message); }
+      } else {
+        delete settings.mapTilesets[game];
+        carte.setTileset(game, null);
+      }
+      throw e;
+    }
+    return { canceled: false, info: carte.info(), selected: mapInfo };
+  });
+  ipcMain.handle('map:useLegacy', (_e, game) => {
+    if (!['ets2', 'ats'].includes(game)) throw new Error('Jeu de carte inconnu.');
+    const previousPath = settings.mapTilesets[game];
+    carte.setTileset(game, null);
+    delete settings.mapTilesets[game];
+    try { saveSettings(); }
+    catch (e) {
+      if (previousPath) {
+        settings.mapTilesets[game] = previousPath;
+        try { carte.setTileset(game, previousPath); }
+        catch (restoreError) { console.error(`Restauration carte ${game} :`, restoreError.message); }
+      }
+      throw e;
+    }
+    return carte.info();
+  });
   ipcMain.handle('map:history', () => telemetry.mapHistory());
   ipcMain.handle('map:cache', () => carte.cacheSize(mapCache()));
   ipcMain.handle('map:clearCache', () => carte.clearCache(mapCache()));

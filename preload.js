@@ -26,6 +26,8 @@ contextBridge.exposeInMainWorld('tel', {
   telemetryCapabilities: () => ipcRenderer.invoke('telemetry:capabilities'),
   map: {
     info: () => ipcRenderer.invoke('map:info'),
+    selectTileset: (game) => ipcRenderer.invoke('map:selectTileset', game),
+    useLegacy: (game) => ipcRenderer.invoke('map:useLegacy', game),
     history: () => ipcRenderer.invoke('map:history'),
     cache: () => ipcRenderer.invoke('map:cache'),
     clearCache: () => ipcRenderer.invoke('map:clearCache')
