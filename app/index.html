@@ -352,6 +352,8 @@
 <script src="mission-time.js"></script>
 <script src="hud-mission.js"></script>
 <script src="hud-render.js"></script>
+<link rel="stylesheet" href="hud-coach.css">
+<script src="hud-coach.js"></script>
 </head>
 <body>
 <div id="launcher">
@@ -1302,9 +1304,14 @@ function hudPreview(d){
   if (!data.connected && hudPreviewVehicle === 'car') {
     data.live = Object.assign({}, data.live, { busJob: {} });
     data.job = null;
+    data.coachPreview = true;
+    data.live = Object.assign({ fuel: 300, truck: { "fuel.capacity": 300 } }, data.live);
   }
   hudRender(document.querySelector('#hudStage [data-hud]'), data);
-  if (!hudDemo) setText('hudStageTag', data.connected ? 'APERÇU · DONNÉES DU JEU' : 'APERÇU · EXEMPLE');
+  if (!hudDemo) setText('hudStageTag', data.connected ? 'APERÇU · DONNÉES DU JEU' : data.coachPreview ? 'APERÇU CAR · DONNÉES FICTIVES' : 'APERÇU · EXEMPLE');
+  const coach = !!(data.live && data.live.busJob) || (!data.connected && hudPreviewVehicle === 'car');
+  document.getElementById('hudStyle').closest('.optrow').classList.toggle('hidden', coach);
+  document.getElementById('hudLogo').closest('.optrow').classList.toggle('hidden', coach);
 }
 document.querySelectorAll('[data-hvehicle]').forEach(b => b.onclick = () => { hudPreviewVehicle = b.dataset.hvehicle; document.querySelectorAll('[data-hvehicle]').forEach(x => x.classList.toggle('on', x === b)); hudPreview(); });
 function renderHudPage(){
@@ -2291,3 +2298,5 @@ setInterval(tickTablet, 3000);
 <script src="game-content-ui.js"></script>
 </body>
 </html>
+
+

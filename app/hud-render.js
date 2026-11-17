@@ -21,5 +21,8 @@ function hudRender(root, d){
   q('kKm').classList.toggle('off', !j);
   if (j) q('km').textContent = fmt(j.loaded, 1) + ' km chargés';
   hudMission(root, d);
+  hudCoach(root, d);
   q('today').textContent = fmt((d.today && (d.today.loaded + d.today.empty)) || 0, 0) + ' km';
 }
+
+

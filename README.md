@@ -1,3 +1,9 @@
+## Version 0.12.8 — bandeau car dédié
+
+Le HUD car reprend la référence visuelle fournie : bandeau sombre, numéro de ligne rouge, repères bleus et deux rangées compactes. Il utilise les données disponibles du jeu pour la vitesse, la limitation, l’heure, le GPS, le compteur véhicule et le carburant. Le temps réel et l’arrivée sont estimés à partir du facteur temporel du jeu.
+
+La ligne, les arrêts et l’avance/retard restent indisponibles en jeu tant que l’adaptateur Coaches n’est pas validé. Les exemples apparaissent uniquement dans **Bandeau / HUD → Car / Coaches**, avec la mention **DONNÉES FICTIVES**. La détection en jeu repose sur la mission car ; le HUD camion et les autres fonctionnalités de la 0.12.7 sont conservés.
+
 # Truck & Coach Hub
 
 ## Mise à jour 0.12.7 : HUD compact pour les cars (17 novembre 2026)
@@ -79,3 +85,5 @@ L'application vérifie au démarrage, puis toutes les 30 minutes, s'il existe un
 npm install
 npm start
 ```
+
+
