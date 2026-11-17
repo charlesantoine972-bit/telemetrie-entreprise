@@ -7,9 +7,15 @@
 .hud.s-minimal .mission-widget{background:transparent;padding:2px 6px}
 .hud.s-tableau .mission-widgets{display:grid;grid-template-columns:1fr 1fr}
 .hud.s-tableau .mission-widget{min-width:0;padding:5px}
-.hud.s-navigation{width:960px;gap:12px;align-items:center;background:rgba(12,16,22,var(--op));border-radius:12px;padding:10px}
-.hud.s-navigation .mid{padding:10px;background:rgba(12,16,22,var(--op));border-radius:12px}
-.hud.s-navigation .mission-widget{border-bottom:2px solid #e7b655;background:rgba(12,16,22,var(--op))}
+.hud.s-navigation{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:620px;max-width:calc(100vw - 20px);height:auto;padding:12px;border-radius:16px;background:rgba(12,16,22,var(--op));box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.hud.s-navigation .top{display:flex;align-items:center;justify-content:space-between;order:0}
+.hud.s-navigation .mid{display:flex;align-items:center;justify-content:space-between;order:1;padding:8px 10px;background:rgba(12,16,22,.55);border-radius:12px}
+.hud.s-navigation .sep,.hud.s-navigation .rows{display:none}
+.hud.s-navigation .mission-widgets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;order:2}
+.hud.s-navigation .mission-widget{min-width:0;padding:7px 9px;border-bottom:2px solid #e7b655;background:rgba(12,16,22,.72)}
+.hud.s-navigation .mission-widget[data-mission=route],.hud.s-navigation .mission-widget[data-mission=cargo]{grid-column:1/-1}
+.hud.s-navigation .mission-widget[data-mission=route] b{font-size:16px}
+.hud.s-navigation .mission-widget[data-mission=remaining] b,.hud.s-navigation .mission-widget[data-mission=real] b,.hud.s-navigation .mission-widget[data-mission=deadlineReal] b{font-size:15px}
 .hud.is-coach .mission-widget{border-bottom:2px solid #6fd8c4}
 .hud.s-tableau .mission-widget[data-mission=route],.hud.s-tableau .mission-widget[data-mission=stops]{grid-column:1/-1}
 .hud.s-tableau{width:320px;gap:6px;padding:10px}

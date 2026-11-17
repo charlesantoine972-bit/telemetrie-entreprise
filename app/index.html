@@ -358,7 +358,7 @@
   <header class="lhead">
     <div style="display:flex;align-items:center;gap:12px"><span class="logo">T&amp;C</span>
       <div style="display:flex;flex-direction:column"><b style="font-size:17px">Truck &amp; Coach Hub</b><span class="muted" style="font-size:12px" id="lVersion">Version</span></div></div>
-    <button id="profileChip" title="Modifier mon pseudo dans Options" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel)">
+    <button id="profileChip" title="La page Profil est en préparation." aria-label="Profil, bientôt disponible" disabled style="all:unset;cursor:default;opacity:.72;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel)">
       <span id="pAvatar" style="width:36px;height:36px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">?</span>
       <span style="display:flex;flex-direction:column;line-height:1.3"><b id="pName" style="font-size:14px">Chauffeur</b><span class="muted" style="font-size:12px">Entreprise : aucune</span></span>
     </button>
@@ -554,7 +554,7 @@
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>Bandeau / HUD</h1>
-      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres. Il n'apparaît que <b>quand tu joues</b> : il se cache tout seul dans le menu pause (Échap), quand tu fais Alt+Tab ou que tu reviens sur le bureau, quand le jeu est réduit ou fermé.</p>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">En style <b>Navigation</b>, le HUD privilégie ta livraison en cours : itinéraire, marchandise, distance GPS et temps estimés. L’aperçu reprend les données du jeu lorsqu’il est connecté ; sinon, il montre un exemple. Le bandeau en jeu se cache automatiquement en pause, quand tu fais Alt+Tab ou lorsque le jeu est réduit ou fermé.</p>
       <div class="panel" id="hudStage" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:380px;padding:26px;margin-bottom:18px;overflow:hidden;
         background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
         <span id="hudStageTag" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU</span>
@@ -572,7 +572,7 @@
       <div class="panel" style="display:flex;flex-direction:column;gap:0;max-width:900px">
         <div class="optrow" style="border-top:none;padding-top:0"><div><b>Afficher le bandeau en jeu</b><div class="muted">Même interrupteur que dans le menu, à côté de « Bandeau / HUD ».</div></div>
           <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
-        <div class="optrow" style="margin-top:14px"><div><b>Style</b><div class="muted">Bandeau complet, pastille compacte, petite carte « tableau de bord », ou texte seul sans fond.</div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Style</b><div class="muted">Navigation affiche l’itinéraire et les infos utiles à la livraison ; les autres styles gardent le bandeau général.</div></div>
           <div class="seg" id="hudStyle"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact">Compact</button><button data-hstyle="tableau">Tableau de bord</button><button data-hstyle="minimal">Minimal</button><button data-hstyle="navigation">Navigation</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Véhicule de l’aperçu</b><div class="muted">En jeu : détection du service car, sinon choix du véhicule dans Réglages.</div></div><div class="seg"><button data-hvehicle="camion" class="on">Camion</button><button data-hvehicle="car">Car / Coaches</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Position</b><div class="muted">En haut au centre, ou en bas au-dessus du tableau de bord.</div></div>
@@ -780,18 +780,42 @@
           <div class="muted" style="font-size:13px" id="pluginMsg"></div>
         </div>
         <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-          <h2 style="margin:0">Profil et règle km réels / course</h2>
+          <h2 style="margin:0">Profil chauffeur</h2>
           <label class="field">Ton pseudo de chauffeur
             <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
           <label class="field">Type de véhicule
             <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
-          <div class="row" style="gap:14px">
-            <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150"></label>
-            <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150"></label>
-          </div>
-          <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
-            <input id="sPct" type="number" min="0" max="100" step="1"></label>
+          <details class="acc">
+            <summary>Règle des km réels / course</summary>
+            <div class="acc-in" style="display:flex;flex-direction:column;gap:14px">
+              <div class="row" style="gap:14px">
+                <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150" step="1" required></label>
+                <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150" step="1" required></label>
+              </div>
+              <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
+                <input id="sPct" type="number" min="0" max="100" step="1" required></label>
+            </div>
+          </details>
           <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
+        <div><h2 style="margin:0">Steam et Discord</h2>
+          <div class="muted" style="font-size:13px;margin-top:5px">Steam lit le profil public et vérifie ETS2 / ATS. Discord affiche le jeu et l’état de conduite aux personnes qui voient ta Rich Presence ; aucun trajet ni cargo n’est partagé.</div></div>
+        <div class="grid2">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <b>Steam Web API</b>
+            <label class="field">SteamID64 (17 chiffres)<input id="steamId" inputmode="numeric" maxlength="17" placeholder="7656119…"></label>
+            <label class="field">Clé API Steam<input id="steamApiKey" type="password" autocomplete="off" placeholder="Laisser vide pour conserver la clé enregistrée"></label>
+            <div class="row"><button class="btn primary" id="btnSteamTest">Enregistrer la clé et vérifier Steam</button><button class="btn" id="btnSteamClear">Effacer la clé</button></div>
+            <div class="muted" id="steamStatus" style="font-size:13px" aria-live="polite"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <b>Discord Rich Presence</b>
+            <label class="field">ID de l’application Discord (17 à 20 chiffres)<input id="discordClientId" inputmode="numeric" maxlength="20" placeholder="ID depuis le Discord Developer Portal"></label>
+            <div class="row"><button class="btn primary" id="btnDiscordTest">Enregistrer et tester Discord</button></div>
+            <div class="muted" id="discordStatus" style="font-size:13px" aria-live="polite"></div>
+          </div>
         </div>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:18px">
@@ -1051,7 +1075,6 @@ syncPressed();
 document.querySelectorAll('[data-open]').forEach(c => c.onclick = () => { showLauncher(false); go(lastView[c.dataset.open]); });
 document.querySelector('.skip').onclick = (e) => { e.preventDefault(); document.getElementById('mainContent').focus(); };
 document.getElementById('brandBtn').onclick = () => showLauncher(true);
-document.getElementById('profileChip').onclick = () => { showLauncher(false); go('reglages'); };
 document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(b.dataset.gotoView));
 
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
@@ -1258,11 +1281,15 @@ applySoon(store.get('showSoon', false));
 if (window.tel) window.tel.getSettings().then(st => applySoon(!!st.showSoon));
 
 /* ---------- Bandeau / HUD ---------- */
-let hudSt = { on: false, opt: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 } };
+let hudSt = { on: false, opt: { style: 'navigation', position: 'haut', logo: true, opacity: 82 } };
 let hudDemo = null;
-const hudStatic = { live: { speed: 88 / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19 }, job: { from: 'Paris', to: 'Lyon', loaded: 38.4, mode: 'réel', overPct: 1.2 }, today: { loaded: 126, empty: 18 }, thresholds: { limit: 100, pct: 5 } };
+const hudStatic = { live: { speed: 88 / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19, gameTime: 1400, job: { 'delivery.time': 1460 } }, job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000, loaded: 38.4, mode: 'réel', overPct: 1.2 }, today: { loaded: 126, empty: 18 }, thresholds: { limit: 100, pct: 5 } };
 let hudPreviewVehicle = 'camion';
-function hudPreview(d){ hudRender(document.querySelector('#hudStage [data-hud]'), Object.assign({}, d || hudStatic, { options: hudSt.opt, vehicleType: hudPreviewVehicle })); }
+function hudPreview(d){
+  const data = Object.assign({}, d || hudStatic, { options: hudSt.opt, vehicleType: hudPreviewVehicle });
+  hudRender(document.querySelector('#hudStage [data-hud]'), data);
+  if (!hudDemo) setText('hudStageTag', data.connected ? 'APERÇU · DONNÉES DU JEU' : 'APERÇU · EXEMPLE');
+}
 document.querySelectorAll('[data-hvehicle]').forEach(b => b.onclick = () => { hudPreviewVehicle = b.dataset.hvehicle; document.querySelectorAll('[data-hvehicle]').forEach(x => x.classList.toggle('on', x === b)); hudPreview(); });
 function renderHudPage(){
   document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on;
@@ -1283,7 +1310,7 @@ document.querySelectorAll('[data-hstyle]').forEach(b => b.onclick = () => hudSav
 document.querySelectorAll('[data-hpos]').forEach(b => b.onclick = () => hudSave({ opt: { position: b.dataset.hpos } }));
 document.querySelectorAll('[data-hlogo]').forEach(b => b.onclick = () => hudSave({ opt: { logo: b.dataset.hlogo === '1' } }));
 document.querySelectorAll('[data-hop]').forEach(b => b.onclick = () => hudSave({ opt: { opacity: Number(b.dataset.hop) } }));
-// Test : l'aperçu roule 15 s (démarrage, croisière, excès de vitesse, passage en course)
+// Test : l'aperçu roule 15 s (vitesse et progression de la livraison)
 document.getElementById('hudTest').onclick = () => {
   clearInterval(hudDemo); const t0 = Date.now(); let loaded = 12, over = 0;
   const btn = document.getElementById('hudTest'); btn.textContent = 'Test en cours…'; setText('hudStageTag', 'TEST EN COURS');
@@ -1292,9 +1319,11 @@ document.getElementById('hudTest').onclick = () => {
     if (t > 15) { clearInterval(hudDemo); hudDemo = null; btn.textContent = 'Tester l\'affichage'; setText('hudStageTag', 'APERÇU'); hudPreview(); return; }
     const kmh = t < 4 ? t * 22 : t < 8 ? 88 + Math.sin(t * 2) * 3 : t < 12 ? 88 + (t - 8) * 6 : 112 - (t - 12) * 8;
     loaded += kmh / 3600 * 0.2 * 40; if (kmh > 100) over += kmh / 3600 * 0.2 * 40 * 3;
-    const pct = over / loaded * 100;
-    hudPreview({ live: { speed: kmh / 3.6, speedLimit: (t < 8 ? 90 : 110) / 3.6, navDistance: Math.max(0, 214000 - loaded * 1000) },
-      job: { loaded, mode: pct > 5 ? 'course' : 'réel', overPct: pct }, today: { loaded: 126 + loaded, empty: 18 }, thresholds: { limit: 100, pct: 5 } });
+    const pct = over / loaded * 100, remaining = Math.max(0, 214000 - loaded * 1000);
+    hudPreview({ connected: false, live: { speed: kmh / 3.6, speedLimit: (t < 8 ? 90 : 110) / 3.6, navDistance: remaining,
+        navTime: remaining / 20, localScale: 19, gameTime: 1400 + Math.floor(t / 3), job: { 'delivery.time': 1460 } },
+      job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000, loaded, mode: pct > 5 ? 'course' : 'réel', overPct: pct },
+      today: { loaded: 126 + loaded, empty: 18 }, thresholds: { limit: 100, pct: 5 } });
   }, 200);
 };
 if (window.tel) window.tel.getSettings().then(st => { hudSt.on = !!(st.modules && st.modules.hud); if (st.hud) Object.assign(hudSt.opt, st.hud); renderHudPage(); });
@@ -2043,6 +2072,10 @@ async function loadSettingsUI(){
   document.getElementById('sTruck').value = st.limitTruck;
   document.getElementById('sCar').value = st.limitCar;
   document.getElementById('sPct').value = st.racePct;
+  document.getElementById('steamId').value = st.steamId || '';
+  document.getElementById('discordClientId').value = st.discordClientId || '';
+  const integrationStatus = await window.tel.integrationStatus();
+  setText('steamStatus', integrationStatus.steamKeyConfigured ? 'Clé Steam chiffrée enregistrée sur cet appareil.' : 'Aucune clé enregistrée.');
   renderPlugin(await window.tel.pluginStatus());
 }
 
@@ -2123,15 +2156,52 @@ if (HAS_APP){
   document.getElementById('updBannerBtn').onclick = startUpdate;
   refreshPseudo(); refreshUpdate(); setInterval(refreshUpdate, 1500);
   document.getElementById('btnSave').onclick = async () => {
-    await window.tel.setSettings({
-      pseudo: document.getElementById('sPseudo').value.trim(),
-      vehicleType: document.getElementById('sType').value,
-      limitTruck: Number(document.getElementById('sTruck').value) || 100,
-      limitCar: Number(document.getElementById('sCar').value) || 110,
-      racePct: Math.max(0, Number(document.getElementById('sPct').value) || 0)
-    });
-    refreshPseudo();
-    setText('saveMsg', 'Enregistré ✓'); setTimeout(() => setText('saveMsg', ''), 2000);
+    const limits = ['sTruck', 'sCar', 'sPct'].map(id => document.getElementById(id));
+    if (!limits.every(input => input.reportValidity())) return;
+    try {
+      await window.tel.setSettings({
+        pseudo: document.getElementById('sPseudo').value.trim(),
+        vehicleType: document.getElementById('sType').value,
+        limitTruck: Number(document.getElementById('sTruck').value),
+        limitCar: Number(document.getElementById('sCar').value),
+        racePct: Number(document.getElementById('sPct').value)
+      });
+      refreshPseudo();
+      setText('saveMsg', 'Enregistré ✓'); setTimeout(() => setText('saveMsg', ''), 2000);
+    } catch (error) {
+      setText('saveMsg', error.message || 'Enregistrement impossible.');
+    }
+  };
+  document.getElementById('btnSteamTest').onclick = async () => {
+    const status = document.getElementById('steamStatus');
+    status.textContent = 'Vérification Steam…';
+    try {
+      const id = document.getElementById('steamId').value.trim();
+      await window.tel.setSettings({ steamId: id });
+      const key = document.getElementById('steamApiKey').value.trim();
+      if (key) await window.tel.setSteamApiKey(key);
+      const profile = await window.tel.steamProfile();
+      document.getElementById('steamApiKey').value = '';
+      status.textContent = `${profile.name} — ` + profile.games.map(g => `${g.name} : ${g.owned ? `possédé, ${g.playtimeHours} h` : 'non détecté'}`).join(' · ');
+    } catch (error) { status.textContent = error.message || 'Connexion Steam impossible.'; }
+  };
+  document.getElementById('btnSteamClear').onclick = async () => {
+    const status = document.getElementById('steamStatus');
+    try {
+      await window.tel.clearSteamApiKey();
+      document.getElementById('steamApiKey').value = '';
+      status.textContent = 'Clé Steam effacée.';
+    } catch (error) { status.textContent = error.message || 'Impossible d’effacer la clé.'; }
+  };
+  document.getElementById('btnDiscordTest').onclick = async () => {
+    const status = document.getElementById('discordStatus');
+    status.textContent = 'Connexion à Discord…';
+    try {
+      const clientId = document.getElementById('discordClientId').value.trim();
+      await window.tel.setSettings({ discordClientId: clientId });
+      const result = await window.tel.testDiscordPresence(clientId);
+      status.textContent = result.ok ? result.message : result.error;
+    } catch (error) { status.textContent = error.message || 'Connexion Discord impossible.'; }
   };
   document.getElementById('btnInstall').onclick = async () => renderPlugin(await window.tel.installPlugin(), 'Vérification terminée.');
   document.getElementById('btnChoose').onclick = async () => {
@@ -2139,7 +2209,7 @@ if (HAS_APP){
     renderPlugin(r.status, r.ok ? 'Dossier ajouté.' : (r.error || ''));
   };
   window.tel.pluginStatus().then(l => renderPlugin(l));
-  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'cartePerso') updateMap(sn); } catch(e) {} };
+  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
   document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {

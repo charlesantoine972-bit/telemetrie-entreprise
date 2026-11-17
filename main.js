@@ -1,14 +1,18 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences, safeStorage } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 const { Telemetry } = require('./src/telemetry');
+const { mergeSavedSettings, validateSettingsPatch } = require('./src/settings');
 const installer = require('./src/plugin-installer');
 const { Atelier } = require('./src/atelier');
 const carte = require('./src/map');
 const gameContent = require('./src/game-content');
+const steam = require('./src/steam');
+const { DiscordPresence } = require('./src/discord-presence');
 let contentPending = null;
 let atelier;
+let discordPresence;
 carte.registerScheme();
 
 /* ---------- Dossier de données : garde l'historique malgré le changement de nom ---------- */
@@ -41,7 +45,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { style: 'navigation', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -55,14 +59,45 @@ function windowBackground(st) {
   return { base: '#0F1720', sombre: '#202020', clair: '#F3F3F3' }[t] || '#0F1720';
 }
 function loadSettings() {
-  try { settings = { ...DEFAULTS, ...JSON.parse(fs.readFileSync(settingsFile(), 'utf8')) }; } catch { settings = { ...DEFAULTS }; }
-  // Ancien réglage « theme » (avant la 0.8) : l'ancien « sombre » est devenu le thème « de base »
-  if (settings.theme) { const t = settings.theme; delete settings.theme; settings.look = { ...DEFAULTS.look, theme: t === 'sombre' ? 'base' : t }; }
-  settings.look = { ...DEFAULTS.look, ...(settings.look || {}) };
+  let saved = {};
+  try { saved = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); }
+  catch (error) {
+    if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error;
+    if (error instanceof SyntaxError) console.error('Réglages illisibles :', error.message);
+  }
+  settings = mergeSavedSettings(DEFAULTS, saved);
 }
 function saveSettings() {
   fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
   fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2));
+}
+function integrationSecretsFile() {
+  return path.join(app.getPath('userData'), 'integrations.json');
+}
+function readSteamApiKey() {
+  const file = integrationSecretsFile();
+  if (!fs.existsSync(file)) return '';
+  if (!safeStorage.isEncryptionAvailable()) throw new Error('Le stockage chiffré du système est indisponible.');
+  const stored = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (!stored.steamApiKey) return '';
+  return safeStorage.decryptString(Buffer.from(stored.steamApiKey, 'base64'));
+}
+function writeSteamApiKey(apiKey) {
+  if (!safeStorage.isEncryptionAvailable()) throw new Error('Le stockage chiffré du système est indisponible.');
+  const file = integrationSecretsFile();
+  let stored = {};
+  if (fs.existsSync(file)) stored = JSON.parse(fs.readFileSync(file, 'utf8'));
+  stored.steamApiKey = safeStorage.encryptString(apiKey).toString('base64');
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(stored, null, 2));
+}
+function clearSteamApiKey() {
+  const file = integrationSecretsFile();
+  if (!fs.existsSync(file)) return;
+  const stored = JSON.parse(fs.readFileSync(file, 'utf8'));
+  delete stored.steamApiKey;
+  if (Object.keys(stored).length) fs.writeFileSync(file, JSON.stringify(stored, null, 2));
+  else fs.unlinkSync(file);
 }
 
 function systemAccent() {
@@ -124,8 +159,8 @@ function hudData() {
   const test = Date.now() < hudTestUntil;
   if (test && !sn.connected) {
     const t = Date.now() / 1000;
-    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19 };
-    sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
+    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19, gameTime: 1400, job: { 'delivery.time': 1460 } };
+    sn.job = { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000, loaded: 38.4, mode: 'réel', overPct: 1.2 };
   }
   // Affiché seulement quand on joue vraiment : jeu au premier plan (pas d'Alt+Tab, pas le bureau),
   // pas en pause (menu Échap), et données fraîches (le jeu n'envoie plus rien quand il est réduit).
@@ -182,6 +217,22 @@ function setupIpc() {
     return { ok: true, status: installPlugin() };
   });
   ipcMain.handle('settings:get', () => settings);
+  ipcMain.handle('integration:status', () => ({
+    steamKeyConfigured: fs.existsSync(integrationSecretsFile()) && !!JSON.parse(fs.readFileSync(integrationSecretsFile(), 'utf8')).steamApiKey,
+    discordClientId: settings.discordClientId || ''
+  }));
+  ipcMain.handle('steam:key:set', (_e, key) => {
+    if (!steam.validApiKey(key)) throw new Error('La clé Steam Web API doit contenir 32 caractères hexadécimaux.');
+    writeSteamApiKey(key);
+    return { configured: true };
+  });
+  ipcMain.handle('steam:key:clear', () => { clearSteamApiKey(); return { configured: false }; });
+  ipcMain.handle('steam:profile', async () => {
+    const key = readSteamApiKey();
+    if (!key) throw new Error('Enregistre une clé Steam Web API dans les options.');
+    return steam.getProfile(key, settings.steamId);
+  });
+  ipcMain.handle('discord:test', (_e, clientId) => discordPresence.test(clientId));
   // Couleur d'accent choisie dans Windows (Paramètres → Personnalisation → Couleurs), au format #RRGGBB
   ipcMain.handle('system:accent', () => systemAccent());
   // ----- Carte
@@ -245,14 +296,18 @@ function setupIpc() {
     }
     return false;
   });
-  ipcMain.handle('settings:set', (_e, patch) => {
-    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud', 'showSoon'];
+  ipcMain.handle('settings:set', async (_e, patch) => {
+    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud', 'showSoon', 'steamId', 'discordClientId'];
+    validateSettingsPatch(patch);
+    if ('steamId' in patch && patch.steamId && !steam.validSteamId(patch.steamId)) throw new Error('Saisis un SteamID64 valide (17 chiffres).');
+    if ('discordClientId' in patch && patch.discordClientId && !/^\d{17,20}$/.test(String(patch.discordClientId))) throw new Error('Saisis un ID d’application Discord valide (17 à 20 chiffres).');
     for (const k of allowed) if (k in patch) settings[k] = patch[k];
     if (patch.look) settings.look = sanitizeLook({ ...settings.look, ...patch.look });
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
     if (patch.hud) settings.hud = { ...DEFAULTS.hud, ...settings.hud, ...patch.hud };
     saveSettings();
     if (patch.modules || patch.hud) syncHud();
+    if ('discordClientId' in patch && discordPresence) await discordPresence.setClientId(settings.discordClientId);
     return settings;
   });
 }
@@ -286,11 +341,16 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     loadSettings();
     telemetry = new Telemetry(app.getPath('userData'), () => settings);
+    discordPresence = new DiscordPresence();
+    discordPresence.setClientId(settings.discordClientId).catch((e) => console.error('Discord Rich Presence :', e.message));
     const decryptExe = process.env.TCH_DECRYPT || (app.isPackaged
       ? path.join(process.resourcesPath, 'tools', 'decrypt_truck.exe')
       : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
     atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);
     telemetry.start();
+    setInterval(() => {
+      if (discordPresence && telemetry) discordPresence.update(telemetry.snapshot()).catch((e) => console.error('Discord Rich Presence :', e.message));
+    }, 10000);
     carte.setup(path.join(app.getPath('userData'), 'Carte (cache)'));
     installPlugin();
     setupIpc();
@@ -300,6 +360,9 @@ if (!app.requestSingleInstanceLock()) {
     syncHud();
   });
 
-  app.on('before-quit', () => { if (telemetry) telemetry.stop(); });
+  app.on('before-quit', () => {
+    if (telemetry) telemetry.stop();
+    if (discordPresence) discordPresence.disconnect().catch((e) => console.error('Discord Rich Presence :', e.message));
+  });
   app.on('window-all-closed', () => app.quit());
 }
