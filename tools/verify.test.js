@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const vm = require('node:vm');
 const { calculate, duration } = require('../app/mission-time');
 const { scan, archives, rootFromLog } = require('../src/game-content');
 
@@ -34,6 +35,55 @@ test('aucune échelle supposée, aucune heure d’arrivée pendant la pause', ()
 test('le GPS du car ne promet pas la fin de la ligne', () => {
   const t = calculate({ navTime: 1200, localScale: 3, busJob: { anything: 'unknown' } });
   assert.equal(t.scope, 'prochain arrêt GPS'); assert.equal(t.coach, true);
+});
+test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () => {
+  class Element {
+    constructor(tag) {
+      this.tagName = tag; this.dataset = {}; this.children = []; this.hidden = false;
+      this.className = ''; this.textContent = ''; this.title = '';
+      this.classes = new Set();
+      this.classList = {
+        toggle: (name, on) => on ? this.classes.add(name) : this.classes.delete(name),
+        contains: name => this.classes.has(name)
+      };
+    }
+    append(...items) { this.children.push(...items); }
+    querySelector(selector) {
+      if (selector === 'b' || selector === 'span') return this.children.find(e => e.tagName === selector);
+      if (selector.includes(' ')) {
+        const [parent, child] = selector.split(' ');
+        return this.querySelector(parent).querySelector(child);
+      }
+      const mission = /^\[data-mission=["']?(.+?)["']?\]$/.exec(selector);
+      if (mission) return this.children.find(e => e.dataset.mission === mission[1]);
+      return null;
+    }
+  }
+  const root = new Element('root');
+  root.className = 'hud s-navigation'; root.classes.add('s-navigation');
+  root.children.push(Object.assign(new Element('div'), { className: 'mode', dataset: { h: 'mode' } }));
+  root.querySelector = function (selector) {
+    if (selector === '.mission-widgets') return this.children.find(e => e.className === 'mission-widgets');
+    const hud = /^\[data-h="(.+)"\]$/.exec(selector);
+    if (hud) return this.children.find(e => e.dataset.h === hud[1]);
+    return null;
+  };
+  const context = { document: { createElement: tag => new Element(tag) }, TCHMission: require('../app/mission-time') };
+  vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../app/hud-mission.js'), 'utf8'), context);
+  context.hudMission(root, {
+    options: { style: 'navigation' }, vehicleType: 'camion',
+    live: { navDistance: 85600, navTime: 3600, localScale: 20, gameTime: 1000, job: { 'delivery.time': 1100 } },
+    job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
+  });
+  const panel = root.querySelector('.mission-widgets');
+  const value = key => panel.querySelector(`[data-mission=${key}]`);
+  assert.equal(value('route').querySelector('b').textContent, 'Paris → Lyon');
+  assert.equal(value('cargo').querySelector('b').textContent, 'Électronique · 18 t');
+  assert.equal(value('remaining').querySelector('b').textContent, '85,6 km');
+  assert.equal(value('real').querySelector('b').textContent, '0 h 03');
+  assert.equal(value('deadlineReal').querySelector('b').textContent, '0 h 05');
+  assert.equal(value('odometer').hidden, true);
+  assert.equal(value('game').hidden, true);
 });
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));

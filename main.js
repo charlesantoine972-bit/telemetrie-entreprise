@@ -41,7 +41,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'navigation', position: 'haut', logo: true, opacity: 82, navigationDefaultApplied: true }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -59,6 +59,11 @@ function loadSettings() {
   // Ancien réglage « theme » (avant la 0.8) : l'ancien « sombre » est devenu le thème « de base »
   if (settings.theme) { const t = settings.theme; delete settings.theme; settings.look = { ...DEFAULTS.look, theme: t === 'sombre' ? 'base' : t }; }
   settings.look = { ...DEFAULTS.look, ...(settings.look || {}) };
+  const savedHud = settings.hud || {};
+  const applyNavigationDefault = savedHud.navigationDefaultApplied !== true;
+  settings.hud = { ...DEFAULTS.hud, ...savedHud };
+  if (applyNavigationDefault && settings.hud.style === 'bandeau') settings.hud.style = 'navigation';
+  settings.hud.navigationDefaultApplied = true;
 }
 function saveSettings() {
   fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
@@ -124,8 +129,8 @@ function hudData() {
   const test = Date.now() < hudTestUntil;
   if (test && !sn.connected) {
     const t = Date.now() / 1000;
-    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19 };
-    sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
+    sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19, gameTime: 1400, job: { 'delivery.time': 1460 } };
+    sn.job = { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000, loaded: 38.4, mode: 'réel', overPct: 1.2 };
   }
   // Affiché seulement quand on joue vraiment : jeu au premier plan (pas d'Alt+Tab, pas le bureau),
   // pas en pause (menu Échap), et données fraîches (le jeu n'envoie plus rien quand il est réduit).
