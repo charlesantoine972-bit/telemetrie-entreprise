@@ -1,12 +1,12 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.12.9",
+  "version": "0.12.10",
   "description": "Truck & Coach Hub - télémétrie, carrière, entreprise et mods pour ETS2 / ATS",
   "author": "charlesantoine972-bit",
   "main": "main.js",
   "repository": "https://github.com/charlesantoine972-bit/telemetrie-entreprise",
   "scripts": {
-    "test": "node --test tools/verify.test.js",
+    "test": "node --test tools/verify.test.js tests/telemetry.test.js",
     "verify-games": "node tools/verify-game-content.js",
     "start": "electron .",
     "dist": "electron-builder --win nsis --x64",
