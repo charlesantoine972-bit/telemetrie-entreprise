@@ -29,7 +29,7 @@ class Atelier {
   saveApply(id, slot, edits) {
     const r = this.resolve(id);
     if (this.isRunning(r.game)) throw new Error(`Ferme ${GAMES[r.game].name} avant de modifier une sauvegarde.`);
-    const allowed = ['money', 'xp', 'busXp', 'skills', 'coachSkills', 'visitAllCities', 'discoverBusStops', 'repairAll', 'refuelAll'];
+    const allowed = ['profileName', 'companyName', 'money', 'xp', 'busXp', 'skills', 'coachSkills', 'visitAllCities', 'discoverBusStops', 'repairAll', 'refuelAll'];
     const clean = {}; for (const k of allowed) if (edits && edits[k] != null) clean[k] = edits[k];
     if (!Object.keys(clean).length) throw new Error('Aucune modification demandée.');
     const backupName = this.backup(id, 'Avant modification (Atelier)');
@@ -70,7 +70,10 @@ class Atelier {
           const full = path.join(dir, e.name);
           let mtime = 0;
           try { mtime = fs.statSync(path.join(full, 'profile.sii')).mtimeMs; } catch { try { mtime = fs.statSync(full).mtimeMs; } catch {} }
-          out.push({ id: `${game}/${kind}/${e.name}`, game, gameName: GAMES[game].name, kind, folder: e.name, name: Atelier.decodeName(e.name),
+          // Nom réel : lu dans profile.sii s'il est en texte clair (après un renommage par l'Atelier), sinon déduit du dossier
+          let name = Atelier.decodeName(e.name);
+          try { const head = fs.readFileSync(path.join(full, 'profile.sii'), 'utf8'); if (head.startsWith('SiiNunit')) { const m = head.match(/^ profile_name: (.*)$/m); if (m) name = SaveEditor.decStr(m[1]) || name; } } catch {}
+          out.push({ id: `${game}/${kind}/${e.name}`, game, gameName: GAMES[game].name, kind, folder: e.name, name,
             cloud: kind === 'steam_profiles', modified: mtime, backups: this.listBackups(`${game}/${kind}/${e.name}`) });
         }
       }

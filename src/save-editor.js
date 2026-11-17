@@ -66,6 +66,32 @@ class SaveEditor {
     return body.replace(new RegExp(`^ ${key}: \\d+$`, 'm'), ` ${key}: ${arr.length}` + arr.map((v, i) => `\n ${key}[${i}]: ${v}`).join(''));
   }
   static replaceBlock(text, b, newBody) { return text.slice(0, b.start) + newBody + text.slice(b.end); }
+  // Chaînes SII : caractères non ASCII écrits en \xHH (octets UTF-8)
+  static decStr(v) {
+    if (v == null) return '';
+    v = v.trim().replace(/^"|"$/g, '');
+    const bytes = []; for (let i = 0; i < v.length; i++) {
+      if (v[i] === '\\' && v[i + 1] === 'x') { bytes.push(parseInt(v.substr(i + 2, 2), 16)); i += 3; }
+      else if (v[i] === '\\' && v[i + 1] === '"') { bytes.push(34); i += 1; }
+      else for (const b of Buffer.from(v[i], 'utf8')) bytes.push(b);
+    }
+    return Buffer.from(bytes).toString('utf8');
+  }
+  static encStr(t) {
+    let out = ''; for (const b of Buffer.from(String(t), 'utf8')) out += (b < 0x20 || b > 0x7e || b === 34 || b === 92) ? '\\x' + b.toString(16).padStart(2, '0') : String.fromCharCode(b);
+    return '"' + out + '"';
+  }
+  static checkName(t, label) {
+    t = String(t || '').trim();
+    if (!t) throw new Error(label + ' ne peut pas être vide.');
+    if (t.length > 30) throw new Error(label + ' : 30 caractères maximum.');
+    if (/[\u0000-\u001f]/.test(t)) throw new Error(label + ' contient des caractères interdits.');
+    return t;
+  }
+  profileNames(profileDir) {
+    const t = this.read(path.join(profileDir, 'profile.sii'));
+    return { profileName: SaveEditor.decStr(SaveEditor.get(t, 'profile_name')), companyName: SaveEditor.decStr(SaveEditor.get(t, 'company_name')) };
+  }
   static float(v) {
     if (v == null) return 0;
     if (v.startsWith('&')) { const b = Buffer.alloc(4); b.writeUInt32BE(parseInt(v.slice(1), 16)); return b.readFloatBE(0); }
@@ -109,7 +135,10 @@ class SaveEditor {
     }
     const vehicles = SaveEditor.unitBlocks(text, 'vehicle').map(b => text.slice(b.start, b.end));
     const fuel = vehicles.map(v => SaveEditor.float(SaveEditor.get(v, 'fuel_relative')));
+    let names = { profileName: '', companyName: '' };
+    try { names = this.profileNames(path.join(slotDir, '..', '..')); } catch {}
     return {
+      ...names,
       money: Number(SaveEditor.get(bank, 'money_account')) || 0,
       xp: Number(SaveEditor.get(eco, 'experience_points')) || 0,
       busXp: SaveEditor.get(eco, 'bus_experience_points') == null ? null : Number(SaveEditor.get(eco, 'bus_experience_points')),
@@ -197,6 +226,11 @@ class SaveEditor {
       info = SaveEditor.set(SaveEditor.set(SaveEditor.set(info, 'info_players_experience', xp + busXp), 'info_money_account', money), 'info_visited_cities', visited);
     } catch { info = null; }
     try { profile = SaveEditor.set(this.read(path.join(profileDir, 'profile.sii')), 'cached_experience', xp); } catch { profile = null; }
+    if (edits.profileName != null || edits.companyName != null) {
+      if (!profile) throw new Error('Fichier du profil illisible, rien n\'a été écrit.');
+      if (edits.profileName != null) { profile = SaveEditor.set(profile, 'profile_name', SaveEditor.encStr(SaveEditor.checkName(edits.profileName, 'Le nom du profil'))); report.push('nom du profil'); }
+      if (edits.companyName != null) { profile = SaveEditor.set(profile, 'company_name', SaveEditor.encStr(SaveEditor.checkName(edits.companyName, 'Le nom de l\'entreprise'))); report.push('nom de l\'entreprise'); }
+    }
     fs.writeFileSync(gameFile, text);
     if (info) fs.writeFileSync(path.join(dir, 'info.sii'), info);
     if (profile) fs.writeFileSync(path.join(profileDir, 'profile.sii'), profile);

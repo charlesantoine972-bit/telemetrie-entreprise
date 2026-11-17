@@ -991,6 +991,10 @@ function renderAtPage(view){
   if (view === 'at-profil') {
     html = `<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">${statBox('Argent', nf(S.money) + ' €')}${statBox('XP camion', nf(S.xp))}${statBox('Ville du QG', escM(S.hqCity || '–'))}${statBox('Véhicules', S.vehicles + ' · ' + S.trailers + ' remorque(s)')}</div>
       <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+        <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end">
+          <label class="field" style="flex:1;min-width:220px">Nom du profil<input id="eProfName" maxlength="30" value="${escM(S.profileName)}"></label>
+          <label class="field" style="flex:1;min-width:220px">Nom de l'entreprise (en jeu)<input id="eCompName" maxlength="30" value="${escM(S.companyName)}"></label></div>
+        <div class="muted" style="font-size:12px;margin-top:-6px">Le nouveau nom s'affiche dans le choix du profil du jeu. Le dossier du profil sur ton PC garde son ancien nom, c'est normal.</div>
         <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Argent (€)<input id="eMoney" type="number" min="0" step="1" value="${S.money}"></label>
           <button class="btn" data-add="eMoney" data-v="1000000">+1 M€</button><button class="btn" data-add="eMoney" data-v="10000000">+10 M€</button></div>
         <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="field" style="flex:1;min-width:220px">Expérience camion (XP)<input id="eXp" type="number" min="0" step="1" value="${S.xp}"></label>
@@ -1048,6 +1052,9 @@ async function atApply(view){
   const num = id => { const el = document.getElementById(id); return el ? Number(el.value) : null; };
   const chk = id => { const el = document.getElementById(id); return !!(el && el.checked); };
   if (view === 'at-profil') {
+    const pn = document.getElementById('eProfName').value.trim(), cn = document.getElementById('eCompName').value.trim();
+    if (pn && pn !== S.profileName) { e.profileName = pn; list.push('Nom du profil : ' + S.profileName + ' → ' + pn); }
+    if (cn && cn !== S.companyName) { e.companyName = cn; list.push('Entreprise : ' + S.companyName + ' → ' + cn); }
     if (num('eMoney') !== S.money) { e.money = num('eMoney'); list.push('Argent : ' + nf(S.money) + ' → ' + nf(e.money) + ' €'); }
     if (num('eXp') !== S.xp) { e.xp = num('eXp'); list.push('XP camion : ' + nf(S.xp) + ' → ' + nf(e.xp)); }
     const sk = {}; let ch = false; atSel.info.truckSkills.forEach(k => { const v = num('sk_' + k.key); sk[k.key] = v; if (v !== S.skills[k.key]) ch = true; });
@@ -1069,6 +1076,7 @@ async function atApply(view){
   atSel.msg = 'Modification en cours…'; renderAtPage(view);
   const r = await window.tel.atelier.apply(atSel.profileId, atSel.slot, e);
   if (!r.ok) { atSel.msg = r.error; renderAtPage(view); return; }
+  if (e.profileName) { const pr = await window.tel.atelier.profiles(); if (pr.ok) atSel.profiles = pr.data; }
   await atLoadSummary();
   atSel.msg = 'Fait ✓ ' + r.data.report.join(', ') + '. Charge cette sauvegarde dans le jeu.';
   renderAtPage(view);
