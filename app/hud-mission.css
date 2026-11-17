@@ -22,3 +22,24 @@
 .hud.s-tableau .mission-widgets{gap:4px}
 .hud.s-tableau .mission-widget b{font-size:12px}
 .hud.s-tableau .mission-widget{font-size:9px;gap:1px;padding:4px}
+.coach-clock{display:none;align-items:center;gap:5px;color:#7eb9ff;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.coach-clock svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.coach-clock b{font-weight:700}
+.hud.is-coach.s-navigation{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top mid" "stats stats";align-items:center;gap:0 14px;width:min(570px,calc(100vw - 16px));max-width:calc(100vw - 16px);min-height:0;padding:7px 10px;border-radius:15px}
+.hud.is-coach.s-navigation .top{grid-area:top;display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0;order:0}
+.hud.is-coach.s-navigation .mid{grid-area:mid;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0;background:none;border-radius:0;order:0}
+.hud.is-coach.s-navigation .coach-clock{display:flex}
+.hud.is-coach.s-navigation .sp{min-width:0;align-items:baseline}
+.hud.is-coach.s-navigation .sp b{font-size:22px}
+.hud.is-coach.s-navigation .lim{width:30px;height:30px;font-size:12px;border-width:3px}
+.hud.is-coach.s-navigation .sep,.hud.is-coach.s-navigation .rows{display:none}
+.hud.is-coach.s-navigation .mission-widgets{grid-area:stats;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;order:0;margin-top:6px;padding-top:5px;border-top:1px solid rgba(255,255,255,.14)}
+.hud.is-coach.s-navigation .mission-widget{min-width:0;padding:2px 8px;border:0;border-left:1px solid rgba(255,255,255,.12);border-radius:0;background:transparent;font-size:9px}
+.hud.is-coach.s-navigation .mission-widget:first-child{border-left:0}
+.hud.is-coach.s-navigation .mission-widget span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hud.is-coach.s-navigation .mission-widget b{font-size:13px;white-space:nowrap}
+@media(max-width:480px){
+  .hud.is-coach.s-navigation{grid-template-columns:1fr;grid-template-areas:"top" "mid" "stats";gap:6px}
+  .hud.is-coach.s-navigation .mid{justify-content:flex-start}
+  .hud.is-coach.s-navigation .mission-widgets{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:5px}
+}

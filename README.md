@@ -1,5 +1,15 @@
 # Truck & Coach Hub
 
+## Mise à jour 0.12.7 : HUD compact pour les cars (17 novembre 2026)
+
+La version **0.12.7** ajoute un bandeau de navigation compact pour les services car, inspiré du screenshot fourni. La Release et l'installateur Windows seront générés par GitHub Actions après intégration sur `main`.
+
+- Le bandeau affiche le statut du service, l'heure du jeu, la vitesse et la limitation.
+- Une seconde ligne présente la distance et l'estimation GPS jusqu'au prochain arrêt, le compteur du véhicule et son autonomie lorsqu'elle est disponible.
+- L'aperçu hors connexion propose aussi un exemple car. Les noms d'arrêts, températures et pourcentages de carburant non transmis par le jeu ne sont pas inventés.
+
+`npm test` vérifie les calculs et l'affichage du HUD.
+
 ## Mise à jour 0.12.6 : cartes DLC, HUD Coaches et réglages (17 novembre 2026)
 
 La version **0.12.6** regroupe les dernières évolutions. Après son intégration sur `main`, GitHub Actions génère la Release et l'installateur Windows.
@@ -34,7 +44,7 @@ Références : [SDK officiel SCS](https://modding.scssoft.com/wiki/Documentation
 
 Application de suivi pour une entreprise virtuelle sur **Euro Truck Simulator 2** : classement des chauffeurs (km chargés / à vide), carte en direct, fiche chauffeur et tablette in-game.
 
-> Version préparée : **0.12.6** — import de cartes DLC, HUD adapté aux missions camion et car, réglages regroupés.
+> Version préparée : **0.12.7** — HUD car compact inspiré du screenshot, avec données GPS et autonomie disponibles.
 > Les pages « Aperçu » utilisent des données d'exemple ; les pages « Bientôt » décrivent les fonctions à venir.
 
 ## Comment ça marche
