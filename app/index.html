@@ -794,6 +794,25 @@
           <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
         </div>
       </div>
+      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
+        <div><h2 style="margin:0">Steam et Discord</h2>
+          <div class="muted" style="font-size:13px;margin-top:5px">Steam lit le profil public et vérifie ETS2 / ATS. Discord affiche le jeu et l’état de conduite aux personnes qui voient ta Rich Presence ; aucun trajet ni cargo n’est partagé.</div></div>
+        <div class="grid2">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <b>Steam Web API</b>
+            <label class="field">SteamID64 (17 chiffres)<input id="steamId" inputmode="numeric" maxlength="17" placeholder="7656119…"></label>
+            <label class="field">Clé API Steam<input id="steamApiKey" type="password" autocomplete="off" placeholder="Laisser vide pour conserver la clé enregistrée"></label>
+            <div class="row"><button class="btn primary" id="btnSteamTest">Enregistrer la clé et vérifier Steam</button><button class="btn" id="btnSteamClear">Effacer la clé</button></div>
+            <div class="muted" id="steamStatus" style="font-size:13px" aria-live="polite"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <b>Discord Rich Presence</b>
+            <label class="field">ID de l’application Discord (17 à 20 chiffres)<input id="discordClientId" inputmode="numeric" maxlength="20" placeholder="ID depuis le Discord Developer Portal"></label>
+            <div class="row"><button class="btn primary" id="btnDiscordTest">Enregistrer et tester Discord</button></div>
+            <div class="muted" id="discordStatus" style="font-size:13px" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0">Apparence et accessibilité</h2>
           <div class="muted" style="font-size:13px">S'applique à tout le logiciel : Hub, Marketplace, Truck Tools, Coach Tools et Options.</div></div>
@@ -2043,6 +2062,10 @@ async function loadSettingsUI(){
   document.getElementById('sTruck').value = st.limitTruck;
   document.getElementById('sCar').value = st.limitCar;
   document.getElementById('sPct').value = st.racePct;
+  document.getElementById('steamId').value = st.steamId || '';
+  document.getElementById('discordClientId').value = st.discordClientId || '';
+  const integrationStatus = await window.tel.integrationStatus();
+  setText('steamStatus', integrationStatus.steamKeyConfigured ? 'Clé Steam chiffrée enregistrée sur cet appareil.' : 'Aucune clé enregistrée.');
   renderPlugin(await window.tel.pluginStatus());
 }
 
@@ -2132,6 +2155,37 @@ if (HAS_APP){
     });
     refreshPseudo();
     setText('saveMsg', 'Enregistré ✓'); setTimeout(() => setText('saveMsg', ''), 2000);
+  };
+  document.getElementById('btnSteamTest').onclick = async () => {
+    const status = document.getElementById('steamStatus');
+    status.textContent = 'Vérification Steam…';
+    try {
+      const id = document.getElementById('steamId').value.trim();
+      await window.tel.setSettings({ steamId: id });
+      const key = document.getElementById('steamApiKey').value.trim();
+      if (key) await window.tel.setSteamApiKey(key);
+      const profile = await window.tel.steamProfile();
+      document.getElementById('steamApiKey').value = '';
+      status.textContent = `${profile.name} — ` + profile.games.map(g => `${g.name} : ${g.owned ? `possédé, ${g.playtimeHours} h` : 'non détecté'}`).join(' · ');
+    } catch (error) { status.textContent = error.message || 'Connexion Steam impossible.'; }
+  };
+  document.getElementById('btnSteamClear').onclick = async () => {
+    const status = document.getElementById('steamStatus');
+    try {
+      await window.tel.clearSteamApiKey();
+      document.getElementById('steamApiKey').value = '';
+      status.textContent = 'Clé Steam effacée.';
+    } catch (error) { status.textContent = error.message || 'Impossible d’effacer la clé.'; }
+  };
+  document.getElementById('btnDiscordTest').onclick = async () => {
+    const status = document.getElementById('discordStatus');
+    status.textContent = 'Connexion à Discord…';
+    try {
+      const clientId = document.getElementById('discordClientId').value.trim();
+      await window.tel.setSettings({ discordClientId: clientId });
+      const result = await window.tel.testDiscordPresence(clientId);
+      status.textContent = result.ok ? result.message : result.error;
+    } catch (error) { status.textContent = error.message || 'Connexion Discord impossible.'; }
   };
   document.getElementById('btnInstall').onclick = async () => renderPlugin(await window.tel.installPlugin(), 'Vérification terminée.');
   document.getElementById('btnChoose').onclick = async () => {

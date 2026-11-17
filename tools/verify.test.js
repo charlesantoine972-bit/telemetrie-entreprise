@@ -5,6 +5,9 @@ const os = require('node:os');
 const path = require('node:path');
 const { calculate, duration } = require('../app/mission-time');
 const { scan, archives, rootFromLog } = require('../src/game-content');
+const steam = require('../src/steam');
+const { EventEmitter } = require('node:events');
+const { DiscordPresence, buildActivity } = require('../src/discord-presence');
 
 test('syntaxe de tous les scripts de production et des pages', () => {
   const vm = require('node:vm'), root = path.resolve(__dirname, '..');
@@ -58,4 +61,47 @@ test('lecture des archives sans modification, DLC présents distincts de leur ac
 test('chemin de jeu tiré du journal, espaces et guillemets compris', () => {
   assert.equal(rootFromLog('00:00 [sys] Command line: "D:\\Steam\\Euro Truck Simulator 2\\bin\\win_x64\\eurotrucks2.exe" -pure'), path.normalize('D:\\Steam\\Euro Truck Simulator 2'));
   assert.equal(rootFromLog('rien'), null);
+});
+test('Steam : validation des identifiants et lecture du profil public avec les deux jeux', async () => {
+  const calls = [];
+  const profile = await steam.getProfile('a'.repeat(32), '76561198000000000', async (url) => {
+    calls.push(new URL(url));
+    if (calls.length === 1) return { response: { players: [{ personaname: 'Chauffeur', profileurl: 'https://steamcommunity.com/profiles/76561198000000000', avatarfull: 'https://example.test/avatar.jpg' }] } };
+    return { response: { games: [{ appid: 227300, playtime_forever: 1234 }] } };
+  });
+  assert.equal(profile.name, 'Chauffeur');
+  assert.deepEqual(profile.games.map(({ id, owned }) => [id, owned]), [['ets2', true], ['ats', false]]);
+  assert.equal(profile.games[0].playtimeHours, 21);
+  assert.equal(calls[0].hostname, 'api.steampowered.com');
+  assert.equal(calls[1].searchParams.get('appids_filter[1]'), '270880');
+  await assert.rejects(steam.getProfile('invalid', '76561198000000000'), /32 caractères/);
+  await assert.rejects(steam.getProfile('a'.repeat(32), '123'), /SteamID64/);
+});
+test('Discord Rich Presence ne partage pas les détails de mission', () => {
+  assert.equal(buildActivity({ connected: false }), null);
+  const activity = buildActivity({ connected: true, live: { game: 'ats' }, job: { from: 'Secret City', to: 'Other City' } });
+  assert.equal(activity.details, 'American Truck Simulator');
+  assert.equal(activity.state, 'En mission');
+  assert.equal(JSON.stringify(activity).includes('Secret City'), false);
+});
+test('Discord : test de connexion puis effacement de la présence quand le jeu se déconnecte', async () => {
+  const calls = [];
+  class Client extends EventEmitter {
+    async login(options) { calls.push(['login', options.clientId]); }
+    async setActivity(activity) { calls.push(['set', activity.details]); }
+    async clearActivity() { calls.push(['clear']); }
+    async destroy() {}
+  }
+  const presence = new DiscordPresence({ Client });
+  assert.deepEqual(await presence.test('12345678901234567'), {
+    ok: true,
+    message: 'Discord est connecté. Le test disparaît à la prochaine mise à jour de présence.'
+  });
+  await presence.update({ connected: false });
+  assert.deepEqual(calls, [
+    ['login', '12345678901234567'],
+    ['set', 'Truck & Coach Hub'],
+    ['clear']
+  ]);
+  await presence.disconnect();
 });
