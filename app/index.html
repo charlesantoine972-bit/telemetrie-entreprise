@@ -563,6 +563,12 @@
           <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Activer l’overlay"><span></span></label></div>
       </div>
       <div class="panel" style="max-width:900px;margin-bottom:18px">
+        <div class="optrow" style="border:0;padding:0">
+          <div><b>Détection automatique du véhicule</b><div class="muted">L’overlay choisit le profil camion ou bus / car selon le véhicule détecté en jeu. Ce réglage est verrouillé.</div></div>
+          <label class="switch" title="Détection automatique activée et verrouillée"><input type="checkbox" id="hudVehicleDetection" checked disabled role="switch" aria-label="Détection automatique du véhicule activée et verrouillée"><span></span></label>
+        </div>
+      </div>
+      <div class="panel" style="max-width:900px;margin-bottom:18px">
         <h2>1. Affichage camion</h2>
         <p class="muted" style="font-size:13px">Utilisé automatiquement pendant une mission poids lourd.</p>
         <div class="panel" id="hudStageTruck" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:220px;padding:26px;margin:12px 0;overflow:hidden;background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
@@ -595,14 +601,8 @@
             <div class="rows"><div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div><div class="k" data-h="kKm">Mission<b data-h="km">–</b></div><div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div></div>
           </div>
         </div>
-        <div class="optrow"><div><b>Style bus / car</b><div class="muted">Choisis un affichage indépendant de celui du camion.</div></div>
-          <div class="seg" data-hud-profile="bus" data-hud-control="style"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact">Compact</button><button data-hstyle="tableau">Tableau de bord</button><button data-hstyle="minimal">Minimal</button><button data-hstyle="navigation">Navigation</button></div></div>
         <div class="optrow"><div><b>Taille bus / car</b><div class="muted">Réglage indépendant de la taille du bandeau.</div></div>
           <div class="seg" data-hud-profile="bus" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div>
-        <div class="optrow"><div><b>Position bus / car</b><div class="muted">En haut au centre ou en bas de l’écran.</div></div>
-          <div class="seg" data-hud-profile="bus" data-hud-control="position"><button data-hpos="haut">En haut</button><button data-hpos="bas">En bas</button></div></div>
-        <div class="optrow"><div><b>Logo bus / car</b><div class="muted">Afficher ou masquer le logo du Hub.</div></div>
-          <div class="seg" data-hud-profile="bus" data-hud-control="logo"><button data-hlogo="1">Logo du Hub</button><button data-hlogo="0">Aucun</button></div></div>
         <div class="optrow"><div><b>Opacité bus / car</b><div class="muted">Règle la transparence du fond.</div></div>
           <div class="seg" data-hud-profile="bus" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div>
       </div>

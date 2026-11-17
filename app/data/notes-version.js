@@ -2,6 +2,10 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.12', date: '2026-11-18', titre: 'Détection auto et réglages bus simplifiés', notes: [
+    ['ameliore', 'Les réglages bus / car ne conservent que la taille et l’opacité.'],
+    ['ameliore', 'La page HUD indique la détection automatique du véhicule, activée et verrouillée ; l’overlay choisit le profil camion ou bus / car selon le véhicule en jeu.'],
+  ]},
   { version: '0.12.11', date: '2026-11-18', titre: 'Feuille de route et HUD indépendants', notes: [
     ['nouveau', 'Entreprise : feuille de route avec départ, arrivée, carburant ajouté ou consommé et dépenses signalées par le jeu.'],
     ['ameliore', 'Les réglages et aperçus du HUD camion et autocar sont séparés ; un seul interrupteur contrôle l’overlay.'],
