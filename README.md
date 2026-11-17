@@ -1,3 +1,7 @@
+## Version 0.12.10 — détection automatique camion / autocar
+
+Quand le jeu est connecté, le mode autocar est sélectionné automatiquement si le plugin transmet les données `bus_job`; sinon, l’application utilise le mode camion. Le choix manuel du véhicule ne sert qu’à l’aperçu hors jeu.
+
 ## Version 0.12.9 — HUD autocar et mise à jour automatique
 
 Le HUD autocar regroupe les données reçues du jeu : heure, vitesse, limitation, distance et durée GPS, compteur, carburant, autonomie et temps avant pause obligatoire. L’application redémarre automatiquement après l’installation d’une mise à jour.

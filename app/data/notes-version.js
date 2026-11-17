@@ -2,6 +2,10 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.12.10', date: '2026-11-18', titre: 'Détection automatique camion / autocar', notes: [
+    ['ameliore', 'En jeu, le mode autocar est déterminé par les données de mission autocar du plugin ; en leur absence, le mode camion est utilisé.'],
+    ['ameliore', 'Le choix manuel du véhicule est conservé uniquement pour l’aperçu hors jeu.'],
+  ]},
   { version: '0.12.9', date: '2026-11-17', titre: 'HUD autocar et mise à jour automatique', notes: [
     ['ameliore', 'Le HUD autocar regroupe les informations de conduite reçues du jeu : heure, vitesse, GPS, temps estimé, compteur, carburant et pause obligatoire.'],
     ['ameliore', 'Les données de ligne, d’arrêts, d’horaire et de satisfaction non fournies par la télémétrie restent indiquées comme indisponibles.'],

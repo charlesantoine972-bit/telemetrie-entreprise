@@ -46,3 +46,29 @@ test('Telemetry ignores missing coordinates instead of treating zero as missing'
 
   assert.deepStrictEqual(telemetry.trail, []);
 });
+
+test('vehicle mode follows live bus telemetry and uses the saved choice only offline', () => {
+  const telemetry = createTelemetry();
+  telemetry.getSettings = () => ({
+    vehicleType: 'car',
+    limitTruck: 100,
+    limitCar: 110,
+    racePct: 5
+  });
+  telemetry.lastPacket = Date.now();
+  telemetry.live = { busJob: null };
+  let snapshot = telemetry.snapshot();
+  assert.equal(snapshot.vehicleType, 'camion');
+  assert.equal(snapshot.thresholds.limit, 100);
+
+  telemetry.live = { busJob: { route: 'received' } };
+  telemetry.lastPacket = Date.now();
+  snapshot = telemetry.snapshot();
+  assert.equal(snapshot.vehicleType, 'car');
+  assert.equal(snapshot.thresholds.limit, 110);
+
+  telemetry.lastPacket = 0;
+  snapshot = telemetry.snapshot();
+  assert.equal(snapshot.connected, false);
+  assert.equal(snapshot.vehicleType, 'car');
+});
