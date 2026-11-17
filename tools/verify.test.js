@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const { calculate, duration } = require('../app/mission-time');
 const { scan, archives, rootFromLog } = require('../src/game-content');
 const { readTileset } = require('../src/map-tileset');
-const { mergeSavedSettings, validateSettingsPatch } = require('../src/settings');
+const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch } = require('../src/settings');
 const steam = require('../src/steam');
 const { EventEmitter } = require('node:events');
 const { DiscordPresence, buildActivity } = require('../src/discord-presence');
@@ -69,6 +69,14 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
   assert.equal(separate.hud.truck.style, 'minimal');
   assert.equal(separate.hud.bus.style, 'compact');
   assert.equal(separate.hud.truck.position, 'haut');
+  const busUpdated = mergeHudSettings(defaults.hud, separate.hud, { bus: { opacity: 60 } });
+  assert.equal(busUpdated.truck.style, 'minimal');
+  assert.equal(busUpdated.bus.style, 'compact');
+  assert.equal(busUpdated.bus.opacity, 60);
+  const truckUpdated = mergeHudSettings(defaults.hud, busUpdated, { truck: { scale: 125 } });
+  assert.equal(truckUpdated.truck.style, 'minimal');
+  assert.equal(truckUpdated.truck.scale, 125);
+  assert.equal(truckUpdated.bus.opacity, 60);
 });
 
 test('la taille de chaque aperçu HUD applique son échelle sans changer la position', () => {
@@ -246,6 +254,8 @@ test('le HUD autocar affiche les mesures reçues et laisse les horaires de ligne
   assert.equal(value('limit'), '90 km/h');
   assert.equal(value('fuelRange'), '320 km');
   assert.equal(value('restStop'), '1 h 00');
+  context.hudCoach(root, { connected: true, vehicleType: 'car', live: { job: null } });
+  assert.equal(root.classes.has('hud-coach'), true);
 });
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));

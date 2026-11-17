@@ -17,6 +17,18 @@ function mergeSavedSettings(defaults, saved) {
   return settings;
 }
 
+function mergeHudSettings(defaults, current, patch) {
+  const existing = current || {};
+  const updates = patch || {};
+  return {
+    ...defaults,
+    ...existing,
+    ...updates,
+    truck: { ...defaults.truck, ...(existing.truck || {}), ...(updates.truck || {}) },
+    bus: { ...defaults.bus, ...(existing.bus || {}), ...(updates.bus || {}) }
+  };
+}
+
 function validateSettingsPatch(patch) {
   const limits = {
     limitTruck: ['Seuil camion', 60, 150],
@@ -32,4 +44,4 @@ function validateSettingsPatch(patch) {
   }
 }
 
-module.exports = { mergeSavedSettings, validateSettingsPatch };
+module.exports = { mergeSavedSettings, mergeHudSettings, validateSettingsPatch };
