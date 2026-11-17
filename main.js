@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const { Telemetry } = require('./src/telemetry');
 const installer = require('./src/plugin-installer');
+const { Atelier } = require('./src/atelier');
+let atelier;
 
 /* ---------- Dossier de données : garde l'historique malgré le changement de nom ---------- */
 (function pinUserData() {
@@ -35,7 +37,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { theme: 'sombre', vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, theme: 'sombre', vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function loadSettings() {
@@ -97,6 +99,15 @@ function setupIpc() {
     return { ok: true, status: installPlugin() };
   });
   ipcMain.handle('settings:get', () => settings);
+  // ----- Atelier (outils avancés) : chaque appel renvoie { ok, data | error }
+  const safe = (fn) => async (_e, ...a) => { try { return { ok: true, data: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
+  ipcMain.handle('atelier:status', safe(() => atelier.status()));
+  ipcMain.handle('atelier:profiles', safe(() => atelier.profiles()));
+  ipcMain.handle('atelier:backup', safe((id) => atelier.backup(id)));
+  ipcMain.handle('atelier:restore', safe((id, name) => atelier.restore(id, name)));
+  ipcMain.handle('atelier:openBackups', safe(async () => { fs.mkdirSync(atelier.backups, { recursive: true }); await shell.openPath(atelier.backups); return true; }));
+  ipcMain.handle('atelier:console', safe((game) => atelier.consoleState(game)));
+  ipcMain.handle('atelier:setConsole', safe((game, on) => atelier.setConsole(game, !!on)));
   ipcMain.handle('update:status', () => ({ ...updateState, current: app.getVersion() }));
   ipcMain.handle('update:check', async () => {
     if (!app.isPackaged) return { ...updateState, current: app.getVersion() };
@@ -138,7 +149,7 @@ function setupIpc() {
     return false;
   });
   ipcMain.handle('settings:set', (_e, patch) => {
-    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'theme'];
+    const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'theme', 'atelier'];
     for (const k of allowed) if (k in patch) settings[k] = patch[k];
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
     saveSettings();
@@ -175,6 +186,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     loadSettings();
     telemetry = new Telemetry(app.getPath('userData'), () => settings);
+    atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'));
     telemetry.start();
     installPlugin();
     setupIpc();

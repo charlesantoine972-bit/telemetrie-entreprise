@@ -12,5 +12,14 @@ contextBridge.exposeInMainWorld('tel', {
   downloadUpdate: () => ipcRenderer.invoke('update:download'),
   installUpdate: () => ipcRenderer.invoke('update:install'),
   launchGame: (game) => ipcRenderer.invoke('game:launch', game),
-  openLink: (key) => ipcRenderer.invoke('link:open', key)
+  openLink: (key) => ipcRenderer.invoke('link:open', key),
+  atelier: {
+    status: () => ipcRenderer.invoke('atelier:status'),
+    profiles: () => ipcRenderer.invoke('atelier:profiles'),
+    backup: (id) => ipcRenderer.invoke('atelier:backup', id),
+    restore: (id, name) => ipcRenderer.invoke('atelier:restore', id, name),
+    openBackups: () => ipcRenderer.invoke('atelier:openBackups'),
+    consoleState: (game) => ipcRenderer.invoke('atelier:console', game),
+    setConsole: (game, on) => ipcRenderer.invoke('atelier:setConsole', game, on)
+  }
 });
