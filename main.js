@@ -98,7 +98,7 @@ function createWindow() {
 
 /* ---------- HUD : bandeau transparent par-dessus le jeu ----------
    Fenêtre sans cadre, toujours au premier plan et traversée par la souris.
-   Visible seulement quand le jeu envoie des données (ou pendant un test).
+   Visible seulement quand on roule : jeu connecté et pas en pause (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
 const HUD_W = 820, HUD_H = 240;
@@ -115,7 +115,9 @@ function hudData() {
     sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 };
     sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
   }
-  return { ...sn, jobs: undefined, options: settings.hud, show: sn.connected || test };
+  // Caché quand le jeu est en pause (menu Échap, marché des missions, réglages, carte, chargement) : affiché seulement en conduite.
+  const enJeu = sn.connected && !(sn.live && sn.live.paused);
+  return { ...sn, jobs: undefined, options: settings.hud, show: enJeu || test };
 }
 function syncHud() {
   const on = !!(settings.modules && settings.modules.hud) || Date.now() < hudTestUntil;
