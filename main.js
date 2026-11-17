@@ -39,7 +39,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], pseudo: '', modules: { hud: false }, hud: { style: 'bandeau', position: 'haut', orientation: 'horizontal', logo: true, opacity: 82 }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -101,11 +101,15 @@ function createWindow() {
    Visible seulement quand on roule : jeu connecté et pas en pause (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
-const HUD_W = 820, HUD_H = 240;
+// Position : haut, bas, gauche, droite, haut-gauche, haut-droite, bas-gauche, bas-droite.
+// Le contenu se cale dans le bon coin de la fenêtre (transparente et traversée par la souris).
 function hudBounds() {
-  const wa = screen.getPrimaryDisplay().bounds;
-  const bas = settings.hud && settings.hud.position === 'bas';
-  return { x: Math.round(wa.x + (wa.width - HUD_W) / 2), y: bas ? wa.y + wa.height - HUD_H - 100 : wa.y + 4, width: HUD_W, height: HUD_H };
+  const wa = screen.getPrimaryDisplay().bounds, o = settings.hud || {};
+  const pos = o.position || 'haut', vert = o.orientation === 'vertical' && o.style !== 'tableau';
+  const W = vert ? 240 : 820, H = vert ? 560 : o.style === 'tableau' ? 340 : 240, M = 16;
+  const x = pos.endsWith('gauche') ? wa.x + M : pos.endsWith('droite') ? wa.x + wa.width - W - M : Math.round(wa.x + (wa.width - W) / 2);
+  const y = pos.startsWith('haut') ? wa.y + 4 : pos.startsWith('bas') ? wa.y + wa.height - H - 100 : Math.round(wa.y + (wa.height - H) / 2);
+  return { x, y, width: W, height: H };
 }
 function hudData() {
   const sn = telemetry.snapshot();
@@ -113,7 +117,7 @@ function hudData() {
   if (test && !sn.connected) {
     const t = Date.now() / 1000;
     sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 };
-    sn.job = { loaded: 38.4, mode: 'réel', overPct: 1.2 };
+    sn.job = { loaded: 38.4, empty: 6.2, mode: 'réel', overPct: 1.2 };
   }
   // Caché quand le jeu est en pause (menu Échap, marché des missions, réglages, carte, chargement) : affiché seulement en conduite.
   const enJeu = sn.connected && !(sn.live && sn.live.paused);

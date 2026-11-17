@@ -7,7 +7,10 @@
 <style>
   html,body{margin:0;height:100%;background:transparent;overflow:hidden}
   body{display:flex;justify-content:center;align-items:flex-start;padding:6px;box-sizing:border-box}
-  body.bas{align-items:flex-end}
+  body[data-pos$="gauche"]{justify-content:flex-start}
+  body[data-pos$="droite"]{justify-content:flex-end}
+  body[data-pos^="bas"]{align-items:flex-end}
+  body[data-pos="gauche"],body[data-pos="droite"]{align-items:center}
 
 .hud{--op:.82;display:inline-flex;align-items:center;gap:14px;color:#fff;font-family:"Segoe UI",Inter,system-ui,sans-serif;user-select:none;transition:border-color .3s}
 .hud .logo{width:36px;height:36px;border-radius:10px;background:#E7B655;color:#0F1720;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex:none}
@@ -26,6 +29,12 @@
 .hud .mode.real{background:rgba(111,216,196,.18);color:#8FE6D4}
 .hud .mode.race{background:rgba(224,112,168,.22);color:#F2A6CC}
 .hud .mode.none{background:rgba(255,255,255,.08);color:#C3CDD6}
+.hud .mode.off{display:none}
+.hud.hud.v{flex-direction:column;align-items:center;gap:10px;height:auto;padding:12px 10px}
+.hud.hud.v .sp{min-width:0;flex-direction:column;align-items:center;gap:0}
+.hud.hud.v .sep{width:32px;height:1px}
+.hud.hud.v .k{align-items:center;text-align:center}
+.hud.s-compact.v{border-radius:22px}
 /* Style « Bandeau » */
 .hud.s-bandeau{height:56px;padding:0 16px 0 10px;border-radius:16px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35)}
 .hud.s-bandeau.race{border-color:#E070A8}
@@ -62,12 +71,13 @@
 </head>
 <body>
 <div class="hud s-bandeau" data-hud>
-  <div class="top"><div class="logo" data-h="logo">T&amp;C</div><span class="mode none" data-h="mode">SANS MISSION</span></div>
+  <div class="top"><div class="logo" data-h="logo">T&amp;C</div><span class="mode none off" data-h="mode"></span></div>
   <div class="mid"><div class="sp" data-h="sp"><b data-h="speed">0</b><span>km/h</span></div><div class="lim" data-h="lim">90</div></div>
   <div class="sep"></div>
   <div class="rows">
     <div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div>
-    <div class="k" data-h="kKm">Mission<b data-h="km">–</b></div>
+    <div class="k" data-h="kKm">Chargé<b data-h="km">–</b></div>
+    <div class="k" data-h="kEmpty">À vide<b data-h="empty">–</b></div>
     <div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div>
   </div>
 </div>
@@ -79,6 +89,7 @@ function hudRender(root, d){
   const fmt = (n, dd = 0) => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: dd, minimumFractionDigits: dd });
   const o = d.options || {};
   root.className = 'hud s-' + (HUD_STYLES[o.style] ? o.style : 'bandeau');
+  root.classList.toggle('v', o.orientation === 'vertical' && o.style !== 'tableau');
   root.style.setProperty('--op', (o.opacity || 82) / 100);
   q('logo').classList.toggle('off', o.logo === false);
   const L = d.live || {}, th = d.thresholds || { limit: 100, pct: 5 };
@@ -88,18 +99,19 @@ function hudRender(root, d){
   const lim = Math.round((L.speedLimit || 0) * 3.6);
   q('lim').textContent = lim; q('lim').classList.toggle('off', !lim);
   const j = d.job, m = q('mode');
-  m.className = 'mode ' + (!j ? 'none' : j.mode === 'course' ? 'race' : 'real');
-  m.textContent = !j ? 'SANS MISSION' : j.mode === 'course' ? 'COURSE · ' + fmt(j.overPct, 0) + ' %' : 'RÉEL';
+  m.className = 'mode ' + (!j ? 'none off' : j.mode === 'course' ? 'race' : 'real');
+  m.textContent = !j ? '' : j.mode === 'course' ? 'COURSE · ' + fmt(j.overPct, 0) + ' %' : 'RÉEL';
   root.classList.toggle('race', !!j && j.mode === 'course');
   q('kLeft').classList.toggle('off', !(L.navDistance > 0));
   q('left').textContent = fmt((L.navDistance || 0) / 1000, 0) + ' km';
   q('kKm').classList.toggle('off', !j);
-  if (j) q('km').textContent = fmt(j.loaded, 1) + ' km chargés';
+  q('kEmpty').classList.toggle('off', !j);
+  if (j) { q('km').textContent = fmt(j.loaded, 1) + ' km'; q('empty').textContent = fmt(j.empty, 1) + ' km'; }
   q('today').textContent = fmt((d.today && (d.today.loaded + d.today.empty)) || 0, 0) + ' km';
 }
 
 const root = document.querySelector('[data-hud]');
-if (window.tel && window.tel.onHud) window.tel.onHud(d => { document.body.classList.toggle('bas', (d.options || {}).position === 'bas'); hudRender(root, d); });
+if (window.tel && window.tel.onHud) window.tel.onHud(d => { document.body.dataset.pos = (d.options || {}).position || 'haut'; hudRender(root, d); });
 </script>
 </body>
 </html>

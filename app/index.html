@@ -91,6 +91,15 @@
   .hud .mode.real{background:rgba(111,216,196,.18);color:#8FE6D4}
   .hud .mode.race{background:rgba(224,112,168,.22);color:#F2A6CC}
   .hud .mode.none{background:rgba(255,255,255,.08);color:#C3CDD6}
+  .hud .mode.off{display:none}
+  .hud.hud.v{flex-direction:column;align-items:center;gap:10px;height:auto;padding:12px 10px}
+  .hud.hud.v .sp{min-width:0;flex-direction:column;align-items:center;gap:0}
+  .hud.hud.v .sep{width:32px;height:1px}
+  .hud.hud.v .k{align-items:center;text-align:center}
+  .hud.s-compact.v{border-radius:22px}
+  .seg.posgrid{display:inline-grid;grid-template-columns:repeat(3,44px);gap:4px}
+  .seg.posgrid button{padding:0;font-size:18px}
+  .seg.posgrid .mid{display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
   /* Style « Bandeau » */
   .hud.s-bandeau{height:56px;padding:0 16px 0 10px;border-radius:16px;background:rgba(12,16,22,var(--op));border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 20px rgba(0,0,0,.35)}
   .hud.s-bandeau.race{border-color:#E070A8}
@@ -528,17 +537,18 @@
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>Bandeau / HUD</h1>
-      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres. Il apparaît tout seul quand tu roules et disparaît quand le jeu est fermé.</p>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Un bandeau discret par-dessus le jeu : ta vitesse, la limitation, le mode <b>réel</b> ou <b>course</b> de la mission, la distance restante et tes kilomètres chargés et à vide. Il apparaît tout seul quand tu roules, et se cache quand le jeu est en pause (menus, missions, réglages) ou fermé.</p>
       <div class="panel" id="hudStage" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:200px;padding:26px;margin-bottom:18px;overflow:hidden;
         background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
         <span id="hudStageTag" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU</span>
         <div class="hud s-bandeau" data-hud>
-          <div class="top"><div class="logo" data-h="logo">T&amp;C</div><span class="mode none" data-h="mode">SANS MISSION</span></div>
+          <div class="top"><div class="logo" data-h="logo">T&amp;C</div><span class="mode none off" data-h="mode"></span></div>
           <div class="mid"><div class="sp" data-h="sp"><b data-h="speed">0</b><span>km/h</span></div><div class="lim" data-h="lim">90</div></div>
           <div class="sep"></div>
           <div class="rows">
             <div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div>
-            <div class="k" data-h="kKm">Mission<b data-h="km">–</b></div>
+            <div class="k" data-h="kKm">Chargé<b data-h="km">–</b></div>
+            <div class="k" data-h="kEmpty">À vide<b data-h="empty">–</b></div>
             <div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div>
           </div>
         </div>
@@ -548,8 +558,10 @@
           <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
         <div class="optrow" style="margin-top:14px"><div><b>Style</b><div class="muted">Bandeau complet, pastille compacte, petite carte « tableau de bord », ou texte seul sans fond.</div></div>
           <div class="seg" id="hudStyle"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact">Compact</button><button data-hstyle="tableau">Tableau de bord</button><button data-hstyle="minimal">Minimal</button></div></div>
-        <div class="optrow" style="margin-top:14px"><div><b>Position</b><div class="muted">En haut au centre, ou en bas au-dessus du tableau de bord.</div></div>
-          <div class="seg" id="hudPos"><button data-hpos="haut">En haut</button><button data-hpos="bas">En bas</button></div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Position</b><div class="muted">Où poser le bandeau sur l'écran. Évite le bas à droite (GPS du jeu) et le bas au centre si tu conduis un car (capteur de G).</div></div>
+          <div class="seg posgrid" id="hudPos" role="group" aria-label="Position du bandeau"><button data-hpos="haut-gauche" title="En haut à gauche" aria-label="En haut à gauche">↖</button><button data-hpos="haut" title="En haut au centre" aria-label="En haut au centre">↑</button><button data-hpos="haut-droite" title="En haut à droite" aria-label="En haut à droite">↗</button><button data-hpos="gauche" title="À gauche, au milieu" aria-label="À gauche, au milieu">←</button><span class="mid" aria-hidden="true">écran</span><button data-hpos="droite" title="À droite, au milieu" aria-label="À droite, au milieu">→</button><button data-hpos="bas-gauche" title="En bas à gauche" aria-label="En bas à gauche">↙</button><button data-hpos="bas" title="En bas au centre" aria-label="En bas au centre">↓</button><button data-hpos="bas-droite" title="En bas à droite" aria-label="En bas à droite">↘</button></div></div>
+        <div class="optrow" style="margin-top:14px"><div><b>Orientation</b><div class="muted">Vertical : une colonne étroite, pratique sur les côtés. Le style « Tableau de bord » est toujours vertical.</div></div>
+          <div class="seg" id="hudOrient"><button data-horient="horizontal">Horizontal</button><button data-horient="vertical">Vertical</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Logo</b><div class="muted">Le logo de ton entreprise arrivera avec les comptes.</div></div>
           <div class="seg" id="hudLogo"><button data-hlogo="1">Logo de l'appli</button><button data-hlogo="0">Aucun</button></div></div>
         <div class="optrow" style="margin-top:14px"><div><b>Opacité du fond</b><div class="muted">Plus bas = plus transparent.</div></div>
@@ -1156,6 +1168,7 @@ function hudRender(root, d){
   const fmt = (n, dd = 0) => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: dd, minimumFractionDigits: dd });
   const o = d.options || {};
   root.className = 'hud s-' + (HUD_STYLES[o.style] ? o.style : 'bandeau');
+  root.classList.toggle('v', o.orientation === 'vertical' && o.style !== 'tableau');
   root.style.setProperty('--op', (o.opacity || 82) / 100);
   q('logo').classList.toggle('off', o.logo === false);
   const L = d.live || {}, th = d.thresholds || { limit: 100, pct: 5 };
@@ -1165,13 +1178,14 @@ function hudRender(root, d){
   const lim = Math.round((L.speedLimit || 0) * 3.6);
   q('lim').textContent = lim; q('lim').classList.toggle('off', !lim);
   const j = d.job, m = q('mode');
-  m.className = 'mode ' + (!j ? 'none' : j.mode === 'course' ? 'race' : 'real');
-  m.textContent = !j ? 'SANS MISSION' : j.mode === 'course' ? 'COURSE · ' + fmt(j.overPct, 0) + ' %' : 'RÉEL';
+  m.className = 'mode ' + (!j ? 'none off' : j.mode === 'course' ? 'race' : 'real');
+  m.textContent = !j ? '' : j.mode === 'course' ? 'COURSE · ' + fmt(j.overPct, 0) + ' %' : 'RÉEL';
   root.classList.toggle('race', !!j && j.mode === 'course');
   q('kLeft').classList.toggle('off', !(L.navDistance > 0));
   q('left').textContent = fmt((L.navDistance || 0) / 1000, 0) + ' km';
   q('kKm').classList.toggle('off', !j);
-  if (j) q('km').textContent = fmt(j.loaded, 1) + ' km chargés';
+  q('kEmpty').classList.toggle('off', !j);
+  if (j) { q('km').textContent = fmt(j.loaded, 1) + ' km'; q('empty').textContent = fmt(j.empty, 1) + ' km'; }
   q('today').textContent = fmt((d.today && (d.today.loaded + d.today.empty)) || 0, 0) + ' km';
 }
 /* ---------- Pages en préparation (masquées par défaut) ---------- */
@@ -1187,9 +1201,9 @@ applySoon(store.get('showSoon', false));
 if (window.tel) window.tel.getSettings().then(st => applySoon(!!st.showSoon));
 
 /* ---------- Bandeau / HUD ---------- */
-let hudSt = { on: false, opt: { style: 'bandeau', position: 'haut', logo: true, opacity: 82 } };
+let hudSt = { on: false, opt: { style: 'bandeau', position: 'haut', orientation: 'horizontal', logo: true, opacity: 82 } };
 let hudDemo = null;
-const hudStatic = { live: { speed: 88 / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 }, job: { loaded: 38.4, mode: 'réel', overPct: 1.2 }, today: { loaded: 126, empty: 18 }, thresholds: { limit: 100, pct: 5 } };
+const hudStatic = { live: { speed: 88 / 3.6, speedLimit: 90 / 3.6, navDistance: 214000 }, job: { loaded: 38.4, empty: 6.2, mode: 'réel', overPct: 1.2 }, today: { loaded: 126, empty: 18 }, thresholds: { limit: 100, pct: 5 } };
 function hudPreview(d){ hudRender(document.querySelector('#hudStage [data-hud]'), Object.assign({}, d || hudStatic, { options: hudSt.opt })); }
 function renderHudPage(){
   document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on;
@@ -1197,7 +1211,10 @@ function renderHudPage(){
   document.querySelectorAll('[data-hpos]').forEach(b => b.classList.toggle('on', b.dataset.hpos === hudSt.opt.position));
   document.querySelectorAll('[data-hlogo]').forEach(b => b.classList.toggle('on', (b.dataset.hlogo === '1') === (hudSt.opt.logo !== false)));
   document.querySelectorAll('[data-hop]').forEach(b => b.classList.toggle('on', Number(b.dataset.hop) === Number(hudSt.opt.opacity)));
-  document.getElementById('hudStage').style.alignItems = hudSt.opt.position === 'bas' ? 'flex-end' : 'flex-start';
+  document.querySelectorAll('[data-horient]').forEach(b => b.classList.toggle('on', b.dataset.horient === (hudSt.opt.orientation || 'horizontal')));
+  const pos = hudSt.opt.position || 'haut', stage = document.getElementById('hudStage');
+  stage.style.alignItems = pos.startsWith('bas') ? 'flex-end' : (pos === 'gauche' || pos === 'droite') ? 'center' : 'flex-start';
+  stage.style.justifyContent = pos.endsWith('gauche') ? 'flex-start' : pos.endsWith('droite') ? 'flex-end' : 'center';
   if (!hudDemo) hudPreview();
 }
 function hudSave(patch){
@@ -1208,6 +1225,7 @@ function hudSave(patch){
 ['hudOn', 'hudOnNav'].forEach(id => document.getElementById(id).onchange = (e) => hudSave({ on: e.target.checked }));
 document.querySelectorAll('[data-hstyle]').forEach(b => b.onclick = () => hudSave({ opt: { style: b.dataset.hstyle } }));
 document.querySelectorAll('[data-hpos]').forEach(b => b.onclick = () => hudSave({ opt: { position: b.dataset.hpos } }));
+document.querySelectorAll('[data-horient]').forEach(b => b.onclick = () => hudSave({ opt: { orientation: b.dataset.horient } }));
 document.querySelectorAll('[data-hlogo]').forEach(b => b.onclick = () => hudSave({ opt: { logo: b.dataset.hlogo === '1' } }));
 document.querySelectorAll('[data-hop]').forEach(b => b.onclick = () => hudSave({ opt: { opacity: Number(b.dataset.hop) } }));
 // Test : l'aperçu roule 15 s (démarrage, croisière, excès de vitesse, passage en course)
@@ -1221,7 +1239,7 @@ document.getElementById('hudTest').onclick = () => {
     loaded += kmh / 3600 * 0.2 * 40; if (kmh > 100) over += kmh / 3600 * 0.2 * 40 * 3;
     const pct = over / loaded * 100;
     hudPreview({ live: { speed: kmh / 3.6, speedLimit: (t < 8 ? 90 : 110) / 3.6, navDistance: Math.max(0, 214000 - loaded * 1000) },
-      job: { loaded, mode: pct > 5 ? 'course' : 'réel', overPct: pct }, today: { loaded: 126 + loaded, empty: 18 }, thresholds: { limit: 100, pct: 5 } });
+      job: { loaded, empty: 6.2, mode: pct > 5 ? 'course' : 'réel', overPct: pct }, today: { loaded: 126 + loaded, empty: 18 }, thresholds: { limit: 100, pct: 5 } });
   }, 200);
 };
 if (window.tel) window.tel.getSettings().then(st => { hudSt.on = !!(st.modules && st.modules.hud); if (st.hud) Object.assign(hudSt.opt, st.hud); renderHudPage(); });
