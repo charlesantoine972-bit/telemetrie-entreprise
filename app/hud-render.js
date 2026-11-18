@@ -1,9 +1,10 @@
 const HUD_STYLES = { bandeau: 'Bandeau', compact: 'Compact', tableau: 'Tableau de bord', minimal: 'Minimal', navigation: 'Navigation' };
+const HUD_SELECTABLE_STYLES = ['bandeau', 'navigation'];
 function hudRender(root, d){
   const q = k => root.querySelector('[data-h="' + k + '"]');
   const fmt = (n, dd = 0) => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: dd, minimumFractionDigits: dd });
   const o = d.options || {};
-  root.className = 'hud s-' + (HUD_STYLES[o.style] ? o.style : 'bandeau');
+  root.className = 'hud s-' + (HUD_STYLES[o.style] && HUD_SELECTABLE_STYLES.includes(o.style) ? o.style : 'bandeau');
   root.style.setProperty('--op', (o.opacity || 82) / 100);
   const scale = [80, 100, 120].includes(Number(o.scale)) ? Number(o.scale) : 100;
   root.style.transform = `scale(${scale / 100})`;

@@ -120,7 +120,6 @@ class Telemetry extends EventEmitter {
     const savedType = this.getSettings().vehicleType;
     if (!connected || !live) return savedType;
     if (live.busJob) return 'car';
-    if (live.job) return 'camion';
     return savedType === 'car' ? 'car' : 'camion';
   }
 
