@@ -2,7 +2,7 @@
 // sont explicitement fictives ; aucun nom de champ bus_job non documenté n'est deviné.
 function hudCoach(root, d) {
   const live = d.live || {};
-  const enabled = !!live.busJob || (!live.job && d.vehicleType === 'car');
+  const enabled = d.vehicleType === 'car';
   root.classList.toggle('hud-coach', enabled);
   if (!enabled) return;
   let panel = root.querySelector('.coach-panel');

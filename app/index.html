@@ -564,8 +564,8 @@
       </div>
       <div class="panel" style="max-width:900px;margin-bottom:18px">
         <div class="optrow" style="border:0;padding:0">
-          <div><b>Détection automatique du véhicule</b><div class="muted">L’overlay choisit le profil camion ou bus / car selon le véhicule détecté en jeu. Ce réglage est verrouillé.</div></div>
-          <label class="switch" title="Détection automatique activée et verrouillée"><input type="checkbox" id="hudVehicleDetection" checked disabled role="switch" aria-label="Détection automatique du véhicule activée et verrouillée"><span></span></label>
+          <div><b>Détection automatique du véhicule</b><div class="muted">Les missions car ou camion détectées par le jeu sont prioritaires ; le profil chauffeur sert de secours sans mission. Ce réglage est verrouillé.</div></div>
+          <div style="display:flex;align-items:center;gap:10px"><span id="hudVehicleDetected" class="muted" role="status">En attente du jeu</span><label class="switch" title="Détection automatique activée et verrouillée"><input type="checkbox" id="hudVehicleDetection" checked disabled role="switch" aria-label="Détection automatique du véhicule activée et verrouillée"><span></span></label></div>
         </div>
       </div>
       <div class="panel" style="max-width:900px;margin-bottom:18px">
@@ -1350,7 +1350,7 @@ function hudPreview(d, profile){
   if (!profile) { for (const kind of ['truck', 'bus']) hudPreview(d, kind); return; }
   let source = d || hudStatic;
   const isBus = profile === 'bus';
-  const sourceIsBus = !!(source.live && source.live.busJob) || (!source.live?.job && source.vehicleType === 'car');
+  const sourceIsBus = source.vehicleType === 'car';
   if (source.connected && sourceIsBus !== isBus) source = hudStatic;
   const live = Object.assign({}, source.live || {});
   const data = Object.assign({}, source, { live, options: hudSt[profile], vehicleType: isBus ? 'car' : 'camion' });
@@ -2375,7 +2375,7 @@ if (HAS_APP){
     renderPlugin(r.status, r.ok ? 'Dossier ajouté.' : (r.error || ''));
   };
   window.tel.pluginStatus().then(l => renderPlugin(l));
-  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
+  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'hud') document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
   document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {

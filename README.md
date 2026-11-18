@@ -1,6 +1,10 @@
+## Version 0.12.13 — détection et HUD car
+
+La sélection du HUD camion ou bus / car utilise désormais une seule détection partagée entre l’application et l’overlay. Les données de mission du jeu sont prioritaires, avec le profil chauffeur en secours lorsqu’aucune mission n’est active. Le HUD car s’ajuste à son contenu au lieu de s’étirer sur presque toute la fenêtre; la page des réglages indique aussi le profil détecté.
+
 ## Version 0.12.10 — détection automatique camion / autocar
 
-Quand le jeu est connecté, le mode autocar est sélectionné automatiquement si le plugin transmet les données `bus_job`; sinon, l’application utilise le mode camion. Le choix manuel du véhicule ne sert qu’à l’aperçu hors jeu.
+Quand le jeu est connecté, les données `bus_job` sélectionnent le profil bus / car et une mission de livraison active sélectionne le profil camion. Sans mission signalée par le jeu, l’application utilise le profil chauffeur enregistré comme solution de secours.
 
 ## Version 0.12.9 — HUD autocar et mise à jour automatique
 

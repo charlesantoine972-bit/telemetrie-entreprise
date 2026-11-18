@@ -152,9 +152,8 @@ function createWindow() {
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
 const HUD_W = 980, HUD_H = 440;
-function activeHudOptions(live = telemetry && telemetry.live, vehicleType = settings.vehicleType) {
-  const isBus = !!(live && live.busJob) || (vehicleType === 'car' && !(live && live.job));
-  const profile = isBus ? 'bus' : 'truck';
+function activeHudOptions(live = telemetry && telemetry.live, vehicleType = telemetry ? telemetry.vehicleType(live) : settings.vehicleType) {
+  const profile = vehicleType === 'car' ? 'bus' : 'truck';
   return settings.hud && settings.hud[profile] || DEFAULTS.hud[profile];
 }
 function hudBounds() {

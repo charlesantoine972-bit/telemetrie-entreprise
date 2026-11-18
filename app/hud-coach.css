@@ -1,4 +1,4 @@
-.hud.hud-coach{display:block!important;width:min(1080px,calc(100vw - 16px))!important;max-width:100%!important;min-height:0!important;height:auto!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;text-shadow:none!important;border-radius:0!important}
+.hud.hud-coach{display:inline-block!important;width:fit-content!important;max-width:calc(100vw - 16px)!important;min-height:0!important;height:auto!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;text-shadow:none!important;border-radius:0!important}
 .hud.hud-coach>:not(.coach-panel){display:none!important}
 .hud:not(.hud-coach)>.coach-panel{display:none}
 .coach-panel{background:rgba(29,30,33,var(--op));border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:10px 12px 9px;color:#f4f4f6;font:12px "Segoe UI",system-ui,sans-serif;box-shadow:0 6px 20px #0004;font-variant-numeric:tabular-nums;box-sizing:border-box}

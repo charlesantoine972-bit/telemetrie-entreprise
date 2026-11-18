@@ -89,8 +89,11 @@ class Telemetry extends EventEmitter {
   }
 
   vehicleType(live = this.live, connected = Date.now() - this.lastPacket < 3000) {
-    if (!connected || !live) return this.getSettings().vehicleType;
-    return live.busJob ? 'car' : 'camion';
+    const savedType = this.getSettings().vehicleType;
+    if (!connected || !live) return savedType;
+    if (live.busJob) return 'car';
+    if (live.job) return 'camion';
+    return savedType === 'car' ? 'car' : 'camion';
   }
 
   thresholds(live = this.live, connected = Date.now() - this.lastPacket < 3000) {
