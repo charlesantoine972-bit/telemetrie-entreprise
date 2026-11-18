@@ -23,6 +23,56 @@ test('syntaxe de tous les scripts de production et des pages', () => {
   }
 });
 
+test('la feuille de route détaille les frais et le solde hors carburant', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const start = html.indexOf('function renderRoadmap(sn){');
+  const end = html.indexOf('\nfunction renderPlugin(', start);
+  assert.ok(start >= 0 && end > start);
+  const ids = ['routeConnection', 'routeMission', 'routeStats', 'routeExpenseTotal', 'routeExpenses', 'routeFuelStops', 'routeHistory'];
+  const nodes = new Map(ids.map(id => [id, { innerHTML: '', textContent: '' }]));
+  const context = {
+    document: { getElementById: id => nodes.get(id) },
+    fmt: value => String(value),
+    km: value => `${value} km`,
+    escM: value => String(value == null ? '' : value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+  };
+  vm.runInNewContext(html.slice(start, end), context);
+  const finished = {
+    from: 'Paris', to: 'Lyon', ended: 0, status: 'livrée', game: 'ets2',
+    distance: 450, fuelAdded: 25, fuelUsed: 10, revenue: 12000, expenses: 1450,
+    expenseItems: [
+      { type: 'péage', amount: 200, at: 0 },
+      { type: 'ferry', amount: 450, at: 1 },
+      { type: 'amende', amount: 800, at: 2 }
+    ]
+  };
+  const current = {
+    game: 'ets2', started: 0, from: 'Paris', to: 'Lyon', cargo: 'Colis',
+    truck: 'Scania', distance: 100, income: 12000, expenses: 1450,
+    fuelAdded: 0, fuelUsed: 0
+  };
+  const render = (job, jobs) => context.renderRoadmap({
+    connected: true, live: { game: 'ets2' }, totals: { fuelAdded: 0, fuelUsed: 0 }, job, jobs
+  });
+
+  render(current, [finished]);
+  assert.match(nodes.get('routeStats').innerHTML, /Solde prévu hors carburant/);
+  assert.match(nodes.get('routeStats').innerHTML, /10550 €/);
+  const history = nodes.get('routeHistory').innerHTML;
+  assert.match(history, /Revenu 12000 €/);
+  assert.match(history, /Frais 1450 €/);
+  assert.match(history, /Solde hors carburant 10550 €/);
+  assert.match(history, /péage/);
+  assert.match(history, /200 €/);
+  assert.match(history, /ferry/);
+  assert.match(history, /450 €/);
+  assert.match(history, /amende/);
+  assert.match(history, /800 €/);
+
+  render(null, [{ ...finished, expenseItems: undefined }]);
+  assert.match(nodes.get('routeHistory').innerHTML, /détail de cette ancienne mission n’est pas disponible/);
+});
+
 test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
   const button = html.match(/<button id="profileChip"([^>]*)>/);

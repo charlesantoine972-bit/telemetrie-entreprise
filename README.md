@@ -1,3 +1,7 @@
+## Version 0.12.15 — détail financier par trajet
+
+La feuille de route affiche le solde prévu de la mission en cours et permet de développer chaque trajet terminé pour consulter le revenu, le total des frais et leur détail (péages, ferries, trains, amendes et pénalités d’annulation). Le solde est calculé hors carburant : le jeu ne transmet pas le prix des pleins.
+
 ## Version 0.12.14 — destinations réelles dans la feuille de route
 
 La feuille de route lit maintenant les étapes de mission autocar transmises par le jeu : départ, arrivée finale et prochain arrêt selon l’étape active. Les champs absents restent vides plutôt que d’afficher une destination fictive. La distance GPS est identifiée comme celle jusqu’au prochain arrêt.
