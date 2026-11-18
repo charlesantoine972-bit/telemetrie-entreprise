@@ -796,7 +796,7 @@
       <div class="between" style="gap:12px;flex-wrap:wrap"><h1 style="margin:0">Feuille de route</h1><span class="chip" id="routeConnection"><span class="d" style="background:var(--muted)"></span>En attente du jeu</span></div>
       <p class="soft" style="margin:10px 0 18px;font-size:14px;max-width:900px;line-height:1.6">Le trajet, le carburant et les frais enregistrés pendant tes missions. Les données proviennent directement d’ETS2 / ATS.</p>
       <div class="panel" id="routeMission" style="display:flex;flex-direction:column;gap:14px"></div>
-      <div class="stats" id="routeStats" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:14px 0"></div>
+      <div class="stats" id="routeStats" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:14px 0"></div>
       <div class="panel" style="margin-bottom:14px">
         <div class="between" style="gap:12px;flex-wrap:wrap"><h2 style="margin:0">Dépenses de la mission</h2><b id="routeExpenseTotal">—</b></div>
         <div id="routeExpenses" class="soft" style="margin-top:12px">Aucune dépense enregistrée.</div>
@@ -2209,11 +2209,14 @@ function renderRoadmap(sn){
       <div class="k"><span>Revenu prévu</span><span>${money(j.income)}</span></div>
     </div>` : `<div><h2 style="margin:0 0 6px">Aucune mission en cours</h2><span class="soft">${sn.connected ? 'Les détails de ta prochaine mission apparaîtront ici dès que le jeu la transmettra.' : 'Lance ETS2 ou ATS avec le plugin pour suivre ta prochaine mission en direct.'}</span></div>`;
   const currentFuel = Number.isFinite(live.fuel) ? liters(live.fuel) : '—';
+  const currentBalance = j && Number.isFinite(j.income) && Number.isFinite(j.expenses)
+    ? money(j.income - j.expenses) : '—';
   document.getElementById('routeStats').innerHTML = [
     ['Carburant ajouté', liters(j ? j.fuelAdded : totals.fuelAdded)],
     ['Carburant consommé', liters(j ? j.fuelUsed : totals.fuelUsed)],
     ['Dans le réservoir', currentFuel],
-    ['Dépenses enregistrées', money(j ? j.expenses : 0)]
+    ['Dépenses enregistrées', money(j ? j.expenses : 0)],
+    ['Solde prévu hors carburant', currentBalance]
   ].map(([label,value]) => `<div class="stat"><span class="muted">${label}</span><b>${value}</b></div>`).join('');
   document.getElementById('routeExpenseTotal').textContent = money(j ? j.expenses : 0);
   const expenses = j && Array.isArray(j.expenseItems) ? j.expenseItems : [];
@@ -2227,11 +2230,33 @@ function renderRoadmap(sn){
   const jobs = Array.isArray(sn.jobs) ? sn.jobs.slice(0,10) : [];
   document.getElementById('routeHistory').innerHTML = jobs.length ? jobs.map(entry => {
     const unit = entry.game === 'ats' ? '$' : '€';
-    const spent = Number.isFinite(entry.expenses) ? fmt(Math.round(entry.expenses)) + ' ' + unit : '—';
-    return `<div class="between" style="gap:14px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--line)">
-      <div><b>${escM(entry.from || '—')} → ${escM(entry.to || '—')}</b><div class="muted" style="font-size:12px">${dateTime(entry.ended)} · ${escM(entry.status || '—')}</div></div>
-      <div class="soft" style="font-size:13px">${km(entry.distance)} · ${liters(entry.fuelAdded)} ajoutés · ${liters(entry.fuelUsed)} consommés · ${spent} dépensés</div>
-    </div>`;
+    const tripMoney = value => Number.isFinite(value) ? fmt(Math.round(value)) + ' ' + unit : '—';
+    const expenseItems = Array.isArray(entry.expenseItems) ? entry.expenseItems : null;
+    const expenses = Number.isFinite(entry.expenses) ? entry.expenses : null;
+    const revenue = Number.isFinite(entry.revenue) ? entry.revenue : null;
+    const balance = expenses !== null && revenue !== null ? revenue - expenses : null;
+    const expenseDetails = expenseItems && expenseItems.length
+      ? expenseItems.slice().reverse().map(item =>
+        `<div class="between" style="gap:12px;padding:8px 0;border-top:1px solid var(--line)"><span>${escM(item.type || 'Frais')} · ${dateTime(item.at)}</span><b>${tripMoney(item.amount)}</b></div>`
+      ).join('')
+      : expenses === null
+        ? '<span class="soft">Le détail des frais n’est pas disponible pour cette mission.</span>'
+        : expenses > 0
+        ? '<span class="soft">Le total est enregistré, mais le détail de cette ancienne mission n’est pas disponible.</span>'
+        : '<span class="soft">Aucun frais reçu pour cette mission.</span>';
+    return `<details style="padding:12px 0;border-top:1px solid var(--line)">
+      <summary style="cursor:pointer">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between">
+          <div><b>${escM(entry.from || '—')} → ${escM(entry.to || '—')}</b><div class="muted" style="font-size:12px">${dateTime(entry.ended)} · ${escM(entry.status || '—')}</div></div>
+          <div class="soft" style="font-size:13px">${km(entry.distance)} · ${liters(entry.fuelAdded)} ajoutés · ${liters(entry.fuelUsed)} consommés</div>
+          <div class="soft" style="font-size:13px">Revenu ${tripMoney(revenue)} · Frais ${tripMoney(expenses)} · Solde hors carburant ${tripMoney(balance)}</div>
+        </div>
+      </summary>
+      <div style="padding:10px 0 0 18px">
+        <div class="muted" style="font-size:12px;margin-bottom:4px">Détail des frais transmis par le jeu</div>
+        ${expenseDetails}
+      </div>
+    </details>`;
   }).join('') : '<span class="soft">Aucune mission terminée enregistrée.</span>';
 }
 
