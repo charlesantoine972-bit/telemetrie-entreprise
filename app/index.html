@@ -579,8 +579,8 @@
             <div class="rows"><div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div><div class="k" data-h="kKm">Mission<b data-h="km">–</b></div><div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div></div>
           </div>
         </div>
-        <div class="optrow"><div><b>Style camion</b><div class="muted">Navigation, bandeau, compact, tableau de bord ou minimal.</div></div>
-          <div class="seg" data-hud-profile="truck" data-hud-control="style"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact">Compact</button><button data-hstyle="tableau">Tableau de bord</button><button data-hstyle="minimal">Minimal</button><button data-hstyle="navigation">Navigation</button></div></div>
+        <div class="optrow"><div><b>Style camion</b><div class="muted">Choisis entre Bandeau et Navigation. Les autres styles sont en préparation.</div></div>
+          <div class="seg" data-hud-profile="truck" data-hud-control="style"><button data-hstyle="bandeau">Bandeau</button><button data-hstyle="compact" disabled title="Style en préparation">Compact · bientôt</button><button data-hstyle="tableau" disabled title="Style en préparation">Tableau de bord · bientôt</button><button data-hstyle="minimal" disabled title="Style en préparation">Minimal · bientôt</button><button data-hstyle="navigation">Navigation</button></div></div>
         <div class="optrow"><div><b>Taille camion</b><div class="muted">Réglage indépendant de la taille du bandeau.</div></div>
           <div class="seg" data-hud-profile="truck" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div>
         <div class="optrow"><div><b>Position camion</b><div class="muted">En haut au centre ou en bas de l’écran.</div></div>
@@ -589,6 +589,7 @@
           <div class="seg" data-hud-profile="truck" data-hud-control="logo"><button data-hlogo="1">Logo du Hub</button><button data-hlogo="0">Aucun</button></div></div>
         <div class="optrow"><div><b>Opacité camion</b><div class="muted">Règle la transparence du fond.</div></div>
           <div class="seg" data-hud-profile="truck" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" id="hudTestTruck">Tester le HUD camion</button></div>
       </div>
       <div class="panel" style="max-width:900px;margin-bottom:18px">
         <h2>2. Affichage bus / car</h2>
@@ -605,11 +606,9 @@
           <div class="seg" data-hud-profile="bus" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div>
         <div class="optrow"><div><b>Opacité bus / car</b><div class="muted">Règle la transparence du fond.</div></div>
           <div class="seg" data-hud-profile="bus" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" id="hudTestBus">Tester le HUD bus</button></div>
       </div>
-      <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:900px">
-        <div><b>Tester l’overlay</b><div class="muted" style="font-size:13px">Anime les deux aperçus pendant 15 secondes.</div></div>
-        <button class="btn" id="hudTest">Tester l’affichage</button>
-      </div>
+      <p class="muted" style="font-size:13px;max-width:900px">Chaque test anime uniquement l’aperçu correspondant pendant 15 secondes.</p>
       <div class="panel" style="margin-top:18px;max-width:900px;border-style:dashed">
         <h2>Important : le mode d'affichage du jeu</h2>
         <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p>
@@ -1371,7 +1370,8 @@ function renderHudPage(){
   document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on;
   for (const profile of ['truck', 'bus']) {
     const options = hudSt[profile];
-    document.querySelectorAll(`[data-hud-profile="${profile}"] [data-hstyle]`).forEach(b => b.classList.toggle('on', b.dataset.hstyle === options.style));
+    const style = HUD_SELECTABLE_STYLES.includes(options.style) ? options.style : 'bandeau';
+    document.querySelectorAll(`[data-hud-profile="${profile}"] [data-hstyle]`).forEach(b => b.classList.toggle('on', b.dataset.hstyle === style));
     document.querySelectorAll(`[data-hud-profile="${profile}"] [data-hpos]`).forEach(b => b.classList.toggle('on', b.dataset.hpos === options.position));
     document.querySelectorAll(`[data-hud-profile="${profile}"] [data-hlogo]`).forEach(b => b.classList.toggle('on', (b.dataset.hlogo === '1') === (options.logo !== false)));
     document.querySelectorAll(`[data-hud-profile="${profile}"] [data-hop]`).forEach(b => b.classList.toggle('on', Number(b.dataset.hop) === Number(options.opacity)));
@@ -1393,23 +1393,41 @@ document.querySelectorAll('[data-hud-profile] [data-hpos]').forEach(b => b.oncli
 document.querySelectorAll('[data-hud-profile] [data-hlogo]').forEach(b => b.onclick = () => hudSave({ opt: { logo: b.dataset.hlogo === '1' } }, b.closest('[data-hud-profile]').dataset.hudProfile));
 document.querySelectorAll('[data-hud-profile] [data-hop]').forEach(b => b.onclick = () => hudSave({ opt: { opacity: Number(b.dataset.hop) } }, b.closest('[data-hud-profile]').dataset.hudProfile));
 document.querySelectorAll('[data-hud-profile] [data-hscale]').forEach(b => b.onclick = () => hudSave({ opt: { scale: Number(b.dataset.hscale) } }, b.closest('[data-hud-profile]').dataset.hudProfile));
-// Test : l'aperçu roule 15 s (vitesse et progression de la livraison)
-document.getElementById('hudTest').onclick = () => {
-  clearInterval(hudDemo); const t0 = Date.now(); let loaded = 12, over = 0;
-  const btn = document.getElementById('hudTest'); btn.textContent = 'Test en cours…';
-  setText('hudStageTagTruck', 'TEST EN COURS'); setText('hudStageTagBus', 'TEST EN COURS');
+// Teste un seul profil à la fois pour garder les aperçus indépendants.
+function stopHudTest() {
+  if (!hudDemo) return;
+  clearInterval(hudDemo); hudDemo = null;
+  for (const [profile, label] of [['truck', 'camion'], ['bus', 'bus']]) {
+    const btn = document.getElementById(profile === 'truck' ? 'hudTestTruck' : 'hudTestBus');
+    btn.disabled = false;
+    btn.textContent = `Tester le HUD ${label}`;
+  }
+  hudPreview();
+}
+function startHudTest(profile) {
+  stopHudTest();
+  const isTruck = profile === 'truck';
+  const button = document.getElementById(isTruck ? 'hudTestTruck' : 'hudTestBus');
+  const tag = isTruck ? 'hudStageTagTruck' : 'hudStageTagBus';
+  const t0 = Date.now(); let loaded = 12, over = 0;
+  button.disabled = true;
+  button.textContent = `Test ${isTruck ? 'camion' : 'bus'} en cours…`;
+  setText(tag, `TEST ${isTruck ? 'CAMION' : 'BUS'} EN COURS`);
   hudDemo = setInterval(() => {
     const t = (Date.now() - t0) / 1000;
-    if (t > 15) { clearInterval(hudDemo); hudDemo = null; btn.textContent = 'Tester l’affichage'; hudPreview(); return; }
+    if (t > 15) { stopHudTest(); return; }
     const kmh = t < 4 ? t * 22 : t < 8 ? 88 + Math.sin(t * 2) * 3 : t < 12 ? 88 + (t - 8) * 6 : 112 - (t - 12) * 8;
     loaded += kmh / 3600 * 0.2 * 40; if (kmh > 100) over += kmh / 3600 * 0.2 * 40 * 3;
     const pct = over / loaded * 100, remaining = Math.max(0, 214000 - loaded * 1000);
     hudPreview({ connected: false, live: { speed: kmh / 3.6, speedLimit: (t < 8 ? 90 : 110) / 3.6, navDistance: remaining,
-        navTime: remaining / 20, localScale: 19, gameTime: 1400 + Math.floor(t / 3), job: { 'delivery.time': 1460 } },
+        navTime: remaining / 20, localScale: 19, gameTime: 1400 + Math.floor(t / 3), restStop: 60, fuelRange: 300, fuel: 40,
+        truck: { 'fuel.capacity': 100 }, job: { 'delivery.time': 1460 } },
       job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000, loaded, mode: pct > 5 ? 'course' : 'réel', overPct: pct },
-      today: { loaded: 126 + loaded, empty: 18 }, thresholds: { limit: 100, pct: 5 } });
+      today: { loaded: 126 + loaded, empty: 18 }, thresholds: { limit: 100, pct: 5 } }, profile);
   }, 200);
-};
+}
+document.getElementById('hudTestTruck').onclick = () => startHudTest('truck');
+document.getElementById('hudTestBus').onclick = () => startHudTest('bus');
 if (window.tel) window.tel.getSettings().then(st => {
   hudSt.on = !!(st.modules && st.modules.hud);
   for (const profile of ['truck', 'bus']) Object.assign(hudSt[profile], st.hud && st.hud[profile] || {});
