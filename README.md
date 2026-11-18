@@ -1,3 +1,9 @@
+## Préversion 0.12.14-beta.1 — profil de carrière et HUD car
+
+Cette préversion permet de tester les changements du PR #22. Dans **Réglages**, le profil camion ou car / bus reste actif hors mission et ne bascule plus automatiquement sur camion lors d’une mission poids lourd. Un service car détecté par le jeu active toujours le profil car / bus. Le HUD car met davantage en avant la vitesse et la navigation GPS.
+
+Il s’agit d’une préversion à installer manuellement depuis cette page GitHub. Elle n’est pas distribuée par la mise à jour automatique de l’application.
+
 ## Version 0.12.13 — détection et HUD car
 
 La sélection du HUD camion ou bus / car utilise désormais une seule détection partagée entre l’application et l’overlay. Les données de mission du jeu sont prioritaires, avec le profil chauffeur en secours lorsqu’aucune mission n’est active. Le HUD car s’ajuste à son contenu au lieu de s’étirer sur presque toute la fenêtre; la page des réglages indique aussi le profil détecté.
