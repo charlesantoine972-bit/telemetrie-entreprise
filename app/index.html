@@ -2193,15 +2193,19 @@ function renderRoadmap(sn){
   const money = n => Number.isFinite(n) ? fmt(Math.round(n)) + ' ' + currency : '—';
   const liters = n => Number.isFinite(n) ? Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' L' : '—';
   const dateTime = n => Number.isFinite(n) ? new Date(n).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}) : '—';
+  const missionDescription = j && j.missionType === 'bus'
+    ? (j.busMarket === 'tourist_job' ? 'Circuit touristique en autocar' : 'Mission en autocar')
+    : j ? `${j.cargo || 'Marchandise inconnue'}${j.mass ? ' · ' + (j.mass/1000).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' t' : ''}` : '';
   const routeMission = document.getElementById('routeMission');
   routeMission.innerHTML = j ? `
     <div class="between" style="gap:12px;flex-wrap:wrap"><span class="lbl" style="color:var(--ok)">MISSION EN COURS · ${escM(j.game === 'ats' ? 'ATS' : 'ETS2')}</span><span class="muted">${dateTime(j.started)}</span></div>
-    <div style="font-size:clamp(24px,4vw,36px);font-weight:800">${escM(j.from || 'Départ inconnu')} <span style="color:var(--accent)">→</span> ${escM(j.to || 'Arrivée inconnue')}</div>
-    <div class="soft">${escM(j.cargo || 'Marchandise inconnue')}${j.mass ? ' · ' + (j.mass/1000).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' t' : ''}</div>
+    <div style="font-size:clamp(24px,4vw,36px);font-weight:800">${escM(j.from || '—')} <span style="color:var(--accent)">→</span> ${escM(j.to || '—')}</div>
+    <div class="soft">${escM(missionDescription)}</div>
     <div class="kv">
       <div class="k"><span>Véhicule</span><span>${escM(j.truck || '—')}</span></div>
+      ${j.missionType === 'bus' ? `<div class="k"><span>Prochain arrêt${j.stageCount ? ` · étape ${j.stageCurrent + 1}/${j.stageCount}` : ''}</span><span>${escM(j.nextStop || '—')}</span></div>` : ''}
       <div class="k"><span>Distance parcourue</span><span>${km(j.distance)}</span></div>
-      <div class="k"><span>Distance restante · GPS</span><span>${Number.isFinite(live.navDistance) && live.navDistance >= 0 ? km(live.navDistance/1000) : '—'}</span></div>
+      <div class="k"><span>${j.missionType === 'bus' ? 'Distance GPS jusqu’au prochain arrêt' : 'Distance restante · GPS'}</span><span>${Number.isFinite(live.navDistance) && live.navDistance >= 0 ? km(live.navDistance/1000) : '—'}</span></div>
       <div class="k"><span>Revenu prévu</span><span>${money(j.income)}</span></div>
     </div>` : `<div><h2 style="margin:0 0 6px">Aucune mission en cours</h2><span class="soft">${sn.connected ? 'Les détails de ta prochaine mission apparaîtront ici dès que le jeu la transmettra.' : 'Lance ETS2 ou ATS avec le plugin pour suivre ta prochaine mission en direct.'}</span></div>`;
   const currentFuel = Number.isFinite(live.fuel) ? liters(live.fuel) : '—';
