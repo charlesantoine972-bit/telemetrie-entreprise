@@ -100,7 +100,7 @@ test('Telemetry ignores fuel increases caused by switching vehicles', () => {
   assert.equal(telemetry.current.fuelAdded, 5);
 });
 
-test('vehicle mode prioritizes mission telemetry and falls back to the saved profile', () => {
+test('vehicle mode follows the selected career profile instead of switching on truck missions', () => {
   const telemetry = createTelemetry();
   telemetry.getSettings = () => ({
     vehicleType: 'car',
@@ -117,6 +117,13 @@ test('vehicle mode prioritizes mission telemetry and falls back to the saved pro
   telemetry.live = { busJob: null, job: { 'delivery.time': 100 } };
   telemetry.lastPacket = Date.now();
   snapshot = telemetry.snapshot();
+  assert.equal(snapshot.vehicleType, 'car');
+  assert.equal(snapshot.thresholds.limit, 110);
+
+  telemetry.getSettings = () => ({ vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5 });
+  telemetry.live = { job: { 'delivery.time': 100 } };
+  telemetry.lastPacket = Date.now();
+  snapshot = telemetry.snapshot();
   assert.equal(snapshot.vehicleType, 'camion');
   assert.equal(snapshot.thresholds.limit, 100);
 
@@ -129,5 +136,5 @@ test('vehicle mode prioritizes mission telemetry and falls back to the saved pro
   telemetry.lastPacket = 0;
   snapshot = telemetry.snapshot();
   assert.equal(snapshot.connected, false);
-  assert.equal(snapshot.vehicleType, 'car');
+  assert.equal(snapshot.vehicleType, 'camion');
 });

@@ -92,11 +92,10 @@ test('les réglages bus/car ne proposent que la taille et l’opacité', () => {
   assert.deepEqual(controls, ['scale', 'opacity']);
 });
 
-test('la détection du véhicule pour l’overlay est affichée comme active et verrouillée', () => {
+test('le profil de carrière actif est indiqué dans les réglages HUD', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
-  assert.match(html, /Détection automatique du véhicule/);
-  assert.match(html, /id="hudVehicleDetection"[^>]*checked disabled[^>]*role="switch"/);
-  assert.match(html, /Les missions car ou camion détectées par le jeu sont prioritaires/);
+  assert.match(html, /Profil actif en jeu/);
+  assert.match(html, /ne change pas à la sélection d’une mission camion/);
   assert.match(html, /id="hudVehicleDetected"[^>]*role="status"/);
   const coachCss = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud-coach.css'), 'utf8');
   assert.match(coachCss, /\.hud\.hud-coach\{[^}]*width:fit-content!important/);
@@ -222,7 +221,7 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   assert.equal(value('fuelRange').hidden, true);
   assert.equal(root.querySelector('[data-h="coachClock"]').textContent, '--:--');
 });
-test('le HUD autocar affiche les mesures reçues et laisse les horaires de ligne inconnus', () => {
+test('le HUD autocar met la vitesse en avant et affiche les mesures GPS reçues', () => {
   const createNode = () => {
     const node = {
       textContent: '', title: '', dataset: {}, style: {}, children: [], attributes: {},
@@ -268,15 +267,12 @@ test('le HUD autocar affiche les mesures reçues et laisse les horaires de ligne
     }
   });
   const value = key => panel.querySelector(`[data-c="${key}"]`).textContent;
-  assert.equal(value('line'), '—');
-  assert.equal(value('stops'), '—');
-  assert.equal(value('stop'), '—');
-  assert.equal(value('delay'), '—');
-  assert.equal(value('satisfaction'), '—');
   assert.equal(value('clock'), '01:04');
   assert.equal(value('distance'), '12,3 km');
   assert.equal(value('speed'), '72 km/h');
   assert.equal(value('limit'), '90 km/h');
+  assert.equal(value('game'), '0 h 05');
+  assert.match(value('arrival'), /^\d{2}:\d{2}$/);
   assert.equal(value('fuelRange'), '320 km');
   assert.equal(value('restStop'), '1 h 00');
   context.hudCoach(root, { connected: true, vehicleType: 'car', live: { job: null } });
