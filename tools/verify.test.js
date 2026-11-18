@@ -79,15 +79,29 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
   assert.equal(truckUpdated.bus.opacity, 60);
 });
 
-test('les réglages bus/car ne proposent que la taille et l’opacité', () => {
+test('les styles HUD inachevés sont indisponibles et les tests camion/bus sont séparés', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const truckStart = html.indexOf('<h2>1. Affichage camion</h2>');
+  const truckEnd = html.indexOf('<h2>2. Affichage bus / car</h2>', truckStart);
+  assert.ok(truckStart >= 0 && truckEnd > truckStart);
+  const truckSection = html.slice(truckStart, truckEnd);
+  for (const style of ['compact', 'tableau', 'minimal']) {
+    assert.match(truckSection, new RegExp(`<button data-hstyle="${style}" disabled`));
+  }
+  for (const style of ['bandeau', 'navigation']) {
+    assert.match(truckSection, new RegExp(`<button data-hstyle="${style}"`));
+    assert.doesNotMatch(truckSection, new RegExp(`<button data-hstyle="${style}" disabled`));
+  }
+  assert.match(truckSection, /id="hudTestTruck">Tester le HUD camion/);
+
   const start = html.indexOf('<h2>2. Affichage bus / car</h2>');
-  const end = html.indexOf('<b>Tester l’overlay</b>', start);
+  const end = html.indexOf('Chaque test anime uniquement l’aperçu correspondant', start);
   assert.ok(start >= 0 && end > start);
   const section = html.slice(start, end);
   assert.match(section, /Taille bus \/ car/);
   assert.match(section, /Opacité bus \/ car/);
   assert.doesNotMatch(section, /Style bus \/ car|Position bus \/ car|Logo bus \/ car/);
+  assert.match(section, /id="hudTestBus">Tester le HUD bus/);
   const controls = [...section.matchAll(/data-hud-profile="bus" data-hud-control="([^"]+)"/g)].map(match => match[1]);
   assert.deepEqual(controls, ['scale', 'opacity']);
 });
@@ -115,11 +129,13 @@ test('la taille de chaque aperçu HUD applique son échelle sans changer la posi
       return match && nodes.get(match[1]);
     }
   };
-  const context = { HUD_STYLES: { bandeau: 'Bandeau', navigation: 'Navigation' }, hudMission() {}, hudCoach() {} };
+  const context = { HUD_STYLES: { bandeau: 'Bandeau', compact: 'Compact', navigation: 'Navigation' }, HUD_SELECTABLE_STYLES: ['bandeau', 'navigation'], hudMission() {}, hudCoach() {} };
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud-render.js'), 'utf8'), context);
   context.hudRender(root, { options: { style: 'navigation', scale: 80, position: 'bas' }, live: {}, today: {} });
   assert.equal(root.style.transform, 'scale(0.8)');
   assert.equal(root.style.transformOrigin, 'bottom center');
+  context.hudRender(root, { options: { style: 'compact' }, live: {}, today: {} });
+  assert.equal(root.className, 'hud s-bandeau');
 });
 
 test('les seuils kilométriques sont bornés et entiers', () => {
