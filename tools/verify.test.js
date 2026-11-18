@@ -96,7 +96,11 @@ test('la détection du véhicule pour l’overlay est affichée comme active et 
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
   assert.match(html, /Détection automatique du véhicule/);
   assert.match(html, /id="hudVehicleDetection"[^>]*checked disabled[^>]*role="switch"/);
-  assert.match(html, /profil camion ou bus \/ car selon le véhicule détecté en jeu/);
+  assert.match(html, /Les missions car ou camion détectées par le jeu sont prioritaires/);
+  assert.match(html, /id="hudVehicleDetected"[^>]*role="status"/);
+  const coachCss = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud-coach.css'), 'utf8');
+  assert.match(coachCss, /\.hud\.hud-coach\{[^}]*width:fit-content!important/);
+  assert.doesNotMatch(coachCss, /width:min\(1080px/);
 });
 
 test('la taille de chaque aperçu HUD applique son échelle sans changer la position', () => {
@@ -181,7 +185,7 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   const context = { document: { createElement: tag => new Element(tag) }, TCHMission: require('../app/mission-time') };
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../app/hud-mission.js'), 'utf8'), context);
   context.hudMission(root, {
-    connected: true, options: { style: 'navigation' }, vehicleType: 'car',
+    connected: true, options: { style: 'navigation' }, vehicleType: 'camion',
     live: { navDistance: 85600, navTime: 3600, localScale: 20, gameTime: 1000, job: { 'delivery.time': 1100 } },
     job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
   });
@@ -196,7 +200,7 @@ test('le HUD Navigation privilégie la livraison, le chargement et le GPS', () =
   assert.equal(value('game').hidden, true);
 
   context.hudMission(root, {
-    connected: true, options: { style: 'navigation' }, vehicleType: 'camion',
+    connected: true, options: { style: 'navigation' }, vehicleType: 'car',
     live: { navDistance: 2200, navTime: 300, localScale: 20, gameTime: 1000, odometer: 223872.7, fuelRange: 320, busJob: {}, job: { 'delivery.time': 1100 } },
     job: { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000 }
   });
@@ -256,6 +260,7 @@ test('le HUD autocar affiche les mesures reçues et laisse les horaires de ligne
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../app/hud-coach.js'), 'utf8'), context);
   context.hudCoach(root, {
     connected: true,
+    vehicleType: 'car',
     live: {
       busJob: {}, speed: 20, speedLimit: 25, navDistance: 12345, navTime: 300,
       localScale: 20, gameTime: 64, odometer: 1200, fuel: 40, fuelRange: 320,

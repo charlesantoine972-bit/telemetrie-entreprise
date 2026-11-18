@@ -14,7 +14,7 @@ function hudMission(root, d) {
   }
   const set = (key, text, show = true) => { const e = panel.querySelector('[data-mission="' + key + '"]'); e.hidden = !show; e.querySelector('b').textContent = text; };
   const live = d.live, t = TCHMission.calculate(live), fmt = TCHMission.duration;
-  const coach = !!(live && live.busJob) || (!(live && live.job) && d.vehicleType === 'car');
+  const coach = d.vehicleType === 'car';
   const navigation = root.classList.contains('s-navigation');
   root.classList.toggle('is-coach', coach);
   root.classList.toggle('is-truck', !coach);
