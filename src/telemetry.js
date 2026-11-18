@@ -9,7 +9,35 @@ const PORT = 47311;
 const MAX_TICK_KM = 0.5; // au-delà : saut (ferry, train, changement de camion) -> non compté
 // Carte : un point de tracé tous les TRAIL_STEP mètres ; au-delà de TRAIL_JUMP, on coupe le trait (ferry, train…)
 const TRAIL_STEP = 150, JOB_STEP = 400, TRAIL_JUMP = 3000, TRAIL_MAX = 20000, JOB_PATH_MAX = 300;
+const BUS_JOB_COMPLETION_GRACE_MS = 60000; // bus_job.completed peut arriver après l’arrivée au dernier arrêt
 const gameKey = (g) => g === 'ats' ? 'ats' : 'ets2';
+
+function indexedValue(attributes, name, index) {
+  const value = attributes && attributes[name];
+  if (value && typeof value === 'object') return value[String(index)] ?? value[index] ?? null;
+  return index === 0 ? value ?? null : null;
+}
+
+function busMission(attributes) {
+  if (!attributes) return null;
+  const count = Number(attributes['bus.stages.count']);
+  if (!Number.isInteger(count) || count < 1) return null;
+  const lastStage = count - 1;
+  const stageCurrent = Math.max(0, Math.min(lastStage, Number(attributes['bus.stages.current']) || 0));
+  const from = indexedValue(attributes, 'source_stop.name', 0);
+  const to = indexedValue(attributes, 'destination_stop.name', lastStage);
+  const market = attributes['bus_job.market'] || '';
+  const fromId = indexedValue(attributes, 'source_stop.id', 0);
+  const toId = indexedValue(attributes, 'destination_stop.id', lastStage);
+  const id = attributes.bus_job_id;
+  const key = `bus|${id || [market, fromId || from, toId || to, attributes.income || ''].join('|')}`;
+  return {
+    key, missionType: 'bus', busMarket: market, stageCount: count, stageCurrent,
+    from, to, nextStop: indexedValue(attributes, 'destination_stop.name', stageCurrent),
+    fromId, toId, income: Number(attributes.income) || 0,
+    planned: Number(attributes['planned_distance.km']) || 0
+  };
+}
 
 // Garde au plus `max` points (les coupures `null` sont conservées)
 function downsample(pts, max) {
@@ -106,30 +134,39 @@ class Telemetry extends EventEmitter {
     this.live = s;
     const kmh = s.speed * 3.6;
 
-    // Mission : début / fin détectés via la configuration "job"
-    const jobKey = s.job ? `${s.job['source.city']}|${s.job['destination.city']}|${s.job['cargo']}|${s.job['income']}` : null;
+    // bus_job fournit les étapes d’autocar ; job fournit les livraisons camion.
+    const activeMission = busMission(s.busJob) || (s.job ? {
+      key: `${s.job['source.city']}|${s.job['destination.city']}|${s.job['cargo']}|${s.job['income']}`,
+      missionType: 'truck',
+      from: s.job['source.city'], fromCompany: s.job['source.company'],
+      to: s.job['destination.city'], toCompany: s.job['destination.company'],
+      cargo: s.job.cargo, mass: s.job['cargo.mass'] || 0, income: s.job.income || 0,
+      planned: s.job['planned_distance.km'] || 0,
+      fromId: s.job['source.city.id'] || null, toId: s.job['destination.city.id'] || null
+    } : null);
+    const jobKey = activeMission ? activeMission.key : null;
     if (!jobKey) this.finishedKey = null;
     if (jobKey && jobKey !== this.finishedKey && (!this.current || this.current.key !== jobKey)) {
       if (this.current) this.finishJob('interrompue');
       this.current = {
         key: jobKey, started: Date.now(),
-        from: s.job['source.city'], fromCompany: s.job['source.company'],
-        to: s.job['destination.city'], toCompany: s.job['destination.company'],
-        cargo: s.job['cargo'], mass: s.job['cargo.mass'] || 0, income: s.job['income'] || 0,
-        planned: s.job['planned_distance.km'] || 0,
+        ...activeMission,
         loaded: 0, empty: 0, over: 0, maxSpeed: 0,
         fuelUsed: 0, fuelAdded: 0, fuelStops: [], expenses: 0, expenseItems: [],
         truck: s.truck ? `${s.truck.brand || ''} ${s.truck.name || ''}`.trim() : '',
         game: gameKey(s.game),
-        fromId: s.job['source.city.id'] || null, toId: s.job['destination.city.id'] || null,
         path: []
       };
+    } else if (jobKey && this.current && this.current.key === jobKey && activeMission.missionType === 'bus') {
+      this.current.nextStop = activeMission.nextStop;
+      this.current.stageCurrent = activeMission.stageCurrent;
+      this.current.stageCount = activeMission.stageCount;
     } else if (!jobKey && this.current && !this.pendingFinish) {
       // Ancienne version du jeu sans évènement de livraison : on clôture quand la mission disparaît
       this.pendingFinish = setTimeout(() => {
         this.pendingFinish = null;
-        if (this.current && !(this.live && this.live.job)) this.finishJob('terminée');
-      }, 2000);
+        if (this.current && !(this.live && (this.live.job || this.live.busJob))) this.finishJob('terminée');
+      }, this.current.missionType === 'bus' ? BUS_JOB_COMPLETION_GRACE_MS : 2000);
     }
 
     // Kilomètres
@@ -220,8 +257,8 @@ class Telemetry extends EventEmitter {
   onGameplay(e) {
     this.lastEvent = { id: e.id, at: Date.now(), data: e.data };
     const t = this.data.totals;
-    if (e.id === 'job.delivered') this.finishJob('livrée', e.data);
-    else if (e.id === 'job.cancelled') {
+    if (e.id === 'job.delivered' || e.id === 'bus_job.completed') this.finishJob('livrée', e.data);
+    else if (e.id === 'job.cancelled' || e.id === 'bus_job.cancelled') {
       this.recordExpense('annulation', e.data && e.data['cancel.penalty']);
       this.finishJob('annulée', e.data);
     } else if (e.id === 'player.fined') {
@@ -247,6 +284,8 @@ class Telemetry extends EventEmitter {
   finishJob(status, info, silent) {
     const j = this.current;
     if (!j) return;
+    clearTimeout(this.pendingFinish);
+    this.pendingFinish = null;
     this.current = null;
     this.finishedKey = j.key; // évite de recompter la même mission si le jeu la renvoie juste après la livraison
     const dist = j.loaded + j.empty;

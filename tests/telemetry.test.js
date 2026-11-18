@@ -84,6 +84,52 @@ test('Telemetry records trip fuel and game-reported expenses on the mission', ()
   assert.equal(telemetry.data.totals.fuelUsed, 1);
 });
 
+test('Telemetry reads bus mission endpoints and advances the next stop', () => {
+  const telemetry = createTelemetry();
+  telemetry.save = () => {};
+  const busJob = (stageCurrent) => ({
+    bus_job_id: 'route-42',
+    'bus_job.market': 'company_job',
+    'bus.stages.count': 2,
+    'bus.stages.current': stageCurrent,
+    income: 7200,
+    'planned_distance.km': 510,
+    'source_stop.name': { '0': 'Bratislava', '1': 'Košice' },
+    'source_stop.id': { '0': 'bratislava', '1': 'kosice' },
+    'destination_stop.name': { '0': 'Košice', '1': 'Ostrava' },
+    'destination_stop.id': { '0': 'kosice', '1': 'ostrava' }
+  });
+  const state = (route) => telemetry.onState({
+    speed: 0, paused: false, odometer: 1, x: 0, z: 0,
+    job: null, busJob: route, trailerConnected: false, fuel: 80,
+    truck: { brand: 'Volvo', name: '9700' }, game: 'ets2'
+  });
+
+  state(busJob(0));
+  telemetry.lastPacket = Date.now();
+  let mission = telemetry.snapshot().job;
+  assert.equal(mission.missionType, 'bus');
+  assert.equal(mission.from, 'Bratislava');
+  assert.equal(mission.to, 'Ostrava');
+  assert.equal(mission.nextStop, 'Košice');
+
+  state(busJob(1));
+  mission = telemetry.snapshot().job;
+  assert.equal(mission.from, 'Bratislava');
+  assert.equal(mission.to, 'Ostrava');
+  assert.equal(mission.nextStop, 'Ostrava');
+  assert.equal(mission.stageCurrent, 1);
+
+  state(null);
+  assert.ok(telemetry.pendingFinish);
+  telemetry.onGameplay({ id: 'bus_job.completed', data: { revenue: 7200 } });
+  assert.equal(telemetry.current, null);
+  assert.equal(telemetry.pendingFinish, null);
+  assert.equal(telemetry.data.jobs[0].from, 'Bratislava');
+  assert.equal(telemetry.data.jobs[0].to, 'Ostrava');
+  assert.equal(telemetry.data.jobs[0].revenue, 7200);
+});
+
 test('Telemetry ignores fuel increases caused by switching vehicles', () => {
   const telemetry = createTelemetry();
   telemetry.save = () => {};
