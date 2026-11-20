@@ -10,6 +10,7 @@ const carte = require('./src/map');
 const gameContent = require('./src/game-content');
 const steam = require('./src/steam');
 const { DiscordPresence } = require('./src/discord-presence');
+const coach = require('./src/coach');
 let contentPending = null;
 let atelier;
 let discordPresence;
@@ -45,7 +46,7 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, coachVehicles: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
@@ -206,7 +207,13 @@ function setupIpc() {
   });
   ipcMain.handle('telemetry:capabilities', () => {
     const sn = telemetry.snapshot(), l = sn.live;
-    return { connected: sn.connected, plugin: l && l.plugin, localScale: !!(l && l.localScale > 0), busJob: !!(l && l.busJob), busFields: l && l.busJob ? Object.keys(l.busJob) : [], busFieldsDocumented: false };
+    const truck = l && l.truck || null;
+    return { connected: sn.connected, plugin: l && l.plugin, localScale: !!(l && l.localScale > 0), busJob: !!(l && l.busJob), busFields: l && l.busJob ? Object.keys(l.busJob) : [], busFieldsDocumented: false,
+      // Diagnostic car : ce que le jeu envoie vraiment (le SDK ne documente pas encore bus_job).
+      vehicleType: sn.vehicleType, coachVehicle: telemetry.isCoach(l), vehicleId: truck && truck.id || null,
+      vehicleName: truck ? `${truck.brand || ''} ${truck.name || ''}`.trim() : '',
+      busJobFields: coach.fieldList(l && l.busJob), truckFields: coach.fieldList(truck),
+      otherConfigs: Object.keys(telemetry.configs || {}), mandatoryBreak: !!(l && 'mandatoryBreak' in l), coach: sn.coach };
   });
   ipcMain.handle('snapshot', () => telemetry.snapshot());
   ipcMain.handle('hud:test', () => { hudTestUntil = Date.now() + 10000; syncHud(); return true; });
@@ -395,6 +402,12 @@ if (!app.requestSingleInstanceLock()) {
       ? path.join(process.resourcesPath, 'tools', 'decrypt_truck.exe')
       : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
     atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);
+    // Car vu en service mais pas reconnu par son nom : on le mémorise pour les prochaines fois.
+    telemetry.on('coachVehicle', (id) => {
+      if ((settings.coachVehicles || []).includes(id)) return;
+      settings.coachVehicles = [...(settings.coachVehicles || []), id].slice(-40);
+      try { saveSettings(); } catch (e) { console.error('Réglages :', e.message); }
+    });
     telemetry.start();
     setInterval(() => {
       if (discordPresence && telemetry) discordPresence.update(telemetry.snapshot()).catch((e) => console.error('Discord Rich Presence :', e.message));

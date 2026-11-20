@@ -25,7 +25,7 @@
 #include "common/scssdk_telemetry_trailer_common_channels.h"
 #include "common/scssdk_telemetry_job_common_channels.h"
 
-#define PLUGIN_VERSION "1.2.0"
+#define PLUGIN_VERSION "1.3.0"
 static const unsigned short APP_PORT = 47311;
 
 // ---------------------------------------------------------------- état
@@ -42,13 +42,15 @@ struct Telemetry {
     float fuelRange = 0;        // km
     float cargoDamage = 0;      // 0..1
     unsigned gameTime = 0;      // minutes depuis le début
-    int restStop = 0;           // minutes avant la pause obligatoire
+    int restStop = 0;           // minutes avant le repos (fatigue)
+    int mandatoryBreak = 0;     // minutes avant la pause obligatoire (SDK 1.16, ETS2 1.60+)
     bool trailerConnected = false;
     bool engine = false;
     bool parkingBrake = false;
 } t;
 
 static bool paused = true;
+static bool hasMandatoryBreak = false; // canal présent dans cette version du jeu
 static std::string gameId;
 static unsigned gameVersion = 0;
 static std::string truckJson = "null";
@@ -129,8 +131,9 @@ static void sendState() {
         t.cargoDamage, t.gameTime, t.restStop,
         t.trailerConnected ? "true" : "false", t.engine ? "true" : "false", t.parkingBrake ? "true" : "false");
     std::string msg = b;
-    char scale[80]; snprintf(scale, sizeof scale, "\"localScale\":%.4f,", t.localScale);
+    char scale[120]; snprintf(scale, sizeof scale, "\"localScale\":%.4f,", t.localScale);
     msg += scale;
+    if (hasMandatoryBreak) { snprintf(scale, sizeof scale, "\"mandatoryBreak\":%d,", t.mandatoryBreak); msg += scale; }
     msg += "\"busJob\":" + busJobJson + ",";
     msg += "\"truck\":" + truckJson + ",\"trailer\":" + trailerJson + ",\"job\":" + jobJson + "}";
     sendRaw(msg);
@@ -180,7 +183,8 @@ SCSAPI_VOID on_configuration(const scs_event_t, const void *const event_info, co
     if (id == SCS_TELEMETRY_CONFIG_truck) truckJson = attrs;
     else if (id == SCS_TELEMETRY_CONFIG_job) jobJson = attrs;
     else if (id == "trailer.0" || id == SCS_TELEMETRY_CONFIG_trailer) trailerJson = attrs;
-    else return;
+    // Les autres configurations (car_job, nouveautés du jeu…) sont transmises telles quelles :
+    // l'application les affiche dans son diagnostic sans les interpréter.
     sendRaw("{\"type\":\"config\",\"id\":" + esc(id.c_str()) + ",\"data\":" + attrs + "}");
     sendState();
 }
@@ -261,6 +265,8 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     ch(SCS_TELEMETRY_CHANNEL_game_time, N, SCS_VALUE_TYPE_u32, F, store_u32, &t.gameTime);
     ch(SCS_TELEMETRY_CHANNEL_next_rest_stop, N, SCS_VALUE_TYPE_s32, F, store_s32, &t.restStop);
     // Remorque : nouveau nom (multi-remorques) puis ancien nom pour les vieilles versions du jeu
+    // Pause obligatoire des conducteurs (SDK 1.16) : absente des anciennes versions, sans conséquence.
+    hasMandatoryBreak = ch(SCS_TELEMETRY_CHANNEL_next_mandatory_break, N, SCS_VALUE_TYPE_s32, F, store_s32, &t.mandatoryBreak) == SCS_RESULT_ok;
     if (ch("trailer.0.connected", N, SCS_VALUE_TYPE_bool, F, store_bool, &t.trailerConnected) != SCS_RESULT_ok)
         ch(SCS_TELEMETRY_TRAILER_CHANNEL_connected, N, SCS_VALUE_TYPE_bool, F, store_bool, &t.trailerConnected);
 

@@ -557,14 +557,14 @@
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>Bandeau / HUD</h1>
-      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Les réglages du camion et du bus sont indépendants. Le profil de carrière choisi dans Réglages détermine l’affichage actif ; un service car détecté par le jeu sélectionne aussi le profil bus / car.</p>
+      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Les réglages du camion et du bus sont indépendants. Le bandeau car s’affiche tout seul dès que tu conduis un car, avec ou sans service ; sinon, le profil de carrière choisi dans Réglages décide.</p>
       <div class="panel" style="display:flex;flex-direction:column;gap:0;max-width:900px;margin-bottom:18px">
         <div class="optrow" style="border-top:none;padding-top:0"><div><b>Activer l’overlay</b><div class="muted">Interrupteur commun aux affichages camion et bus. Également disponible dans le menu, à côté de « Bandeau / HUD ».</div></div>
           <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Activer l’overlay"><span></span></label></div>
       </div>
       <div class="panel" style="max-width:900px;margin-bottom:18px">
         <div class="optrow" style="border:0;padding:0">
-          <div><b>Profil actif en jeu</b><div class="muted">Le profil choisi dans Réglages reste actif hors mission et ne change pas à la sélection d’une mission camion.</div></div>
+          <div><b>Profil actif en jeu</b><div class="muted">Le bandeau car s’affiche dès que tu montes dans un car (modèle reconnu, ou car déjà utilisé pour un service). Sinon, le profil choisi dans Réglages reste actif et ne change pas à la sélection d’une mission camion.</div></div>
           <span id="hudVehicleDetected" class="muted" role="status">En attente du jeu</span>
         </div>
       </div>
@@ -593,7 +593,7 @@
       </div>
       <div class="panel" style="max-width:900px;margin-bottom:18px">
         <h2>2. Affichage bus / car</h2>
-        <p class="muted" style="font-size:13px">Utilisé lorsque le profil Car / bus est actif ou qu’un service car est détecté ; ses réglages n’affectent pas le camion.</p>
+        <p class="muted" style="font-size:13px">Utilisé dès que tu conduis un car, ou quand le profil Car / bus est actif ; ses réglages n’affectent pas le camion.</p>
         <div class="panel" id="hudStageBus" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:220px;padding:26px;margin:12px 0;overflow:hidden;background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
           <span id="hudStageTagBus" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU BUS / CAR</span>
           <div class="hud s-navigation" data-hud data-hud-preview="bus">
@@ -609,6 +609,12 @@
         <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" id="hudTestBus">Tester le HUD bus</button></div>
       </div>
       <p class="muted" style="font-size:13px;max-width:900px">Chaque test anime uniquement l’aperçu correspondant pendant 15 secondes.</p>
+      <details class="panel" id="coachDiag" style="margin-top:18px;max-width:900px">
+        <summary style="cursor:pointer;font-weight:700">Données car reçues du jeu</summary>
+        <p class="muted" style="font-size:13px;line-height:1.6">SCS n’a pas encore documenté les informations d’un service car. L’appli reconnaît les noms les plus probables ; cette liste montre ce que le jeu envoie vraiment. Si une case du bandeau reste vide pendant un service, copie la liste et envoie-la pour compléter la correspondance.</p>
+        <div id="coachDiagBody" class="muted" style="font-size:13px">En attente du jeu.</div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px"><span class="muted" id="coachDiagMsg" style="font-size:13px;align-self:center"></span><button class="btn" id="coachDiagCopy">Copier la liste</button></div>
+      </details>
       <div class="panel" style="margin-top:18px;max-width:900px;border-style:dashed">
         <h2>Important : le mode d'affichage du jeu</h2>
         <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p>
@@ -766,7 +772,7 @@
             <div class="between"><span>À vide</span><b id="dEmpty">0 km</b></div>
           </div>
           <div class="panel" style="display:flex;flex-direction:column;gap:10px">
-            <span class="muted">Camion</span>
+            <span class="muted" id="tKind">Camion</span>
             <b id="tName" style="font-size:16px">–</b>
             <div class="between"><span>Carburant</span><b id="tFuel">–</b></div>
             <div class="between"><span>Autonomie</span><b id="tRange">–</b></div>
@@ -1366,6 +1372,35 @@ function hudPreview(d, profile){
   if (!hudDemo) setText(profile === 'bus' ? 'hudStageTagBus' : 'hudStageTagTruck',
     source.connected ? 'APERÇU · DONNÉES DU JEU' : isBus ? 'APERÇU BUS / CAR · EXEMPLE' : 'APERÇU CAMION · EXEMPLE');
 }
+// Diagnostic : champs bus_job et véhicule reçus du plugin
+let coachDiagText = '';
+async function renderCoachDiag(){
+  const box = document.getElementById('coachDiag');
+  if (!box || !box.open || !window.tel || !window.tel.telemetryCapabilities) return;
+  const c = await window.tel.telemetryCapabilities();
+  const body = document.getElementById('coachDiagBody');
+  if (!c.connected) { body.textContent = 'En attente du jeu.'; coachDiagText = ''; return; }
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+  const rows = list => list.length ? `<table style="width:100%;border-collapse:collapse;font-size:12px">${list.map(f => `<tr><td style="padding:3px 8px 3px 0;white-space:nowrap;vertical-align:top"><code>${esc(f.name)}</code></td><td style="padding:3px 0;word-break:break-word">${esc(f.value)}</td></tr>`).join('')}</table>` : '<p class="muted">Rien reçu.</p>';
+  const co = c.coach || {};
+  const found = [['Ligne', co.lineNumber], ['Terminus', co.lineName], ['Prochain arrêt', co.nextStop], ['Avance / retard (min)', co.scheduleMarginMinutes], ['Passagers', co.passengers], ['Places', co.capacity], ['Temp. extérieure', co.outsideTemp], ['Temp. cabine', co.cabinTemp]];
+  body.innerHTML = `<p style="margin:6px 0"><b>Véhicule :</b> ${esc(c.vehicleName || '—')} <code>${esc(c.vehicleId || '')}</code> · ${c.coachVehicle ? 'reconnu comme car' : 'non reconnu comme car'} · profil affiché : ${c.vehicleType === 'car' ? 'bus / car' : 'camion'} · plugin ${esc(c.plugin || '?')}${c.mandatoryBreak ? ' · pause obligatoire reçue' : ''}</p>
+    <p style="margin:6px 0"><b>Lu par l’appli :</b> ${found.map(([k, v]) => `${k} : ${v == null || v === '' ? '<span class="muted">—</span>' : esc(v)}`).join(' · ')}</p>
+    <h3 style="margin:12px 0 4px;font-size:14px">Service car (bus_job)${c.busJob ? '' : ' : aucun service en cours'}</h3>${rows(c.busJobFields || [])}
+    <h3 style="margin:12px 0 4px;font-size:14px">Véhicule (truck)</h3>${rows(c.truckFields || [])}
+    ${(c.otherConfigs || []).length ? `<p style="margin:10px 0 0">Autres données reçues : ${c.otherConfigs.map(esc).join(', ')}</p>` : ''}`;
+  coachDiagText = [`Véhicule : ${c.vehicleName} (${c.vehicleId || '?'}) — car reconnu : ${c.coachVehicle ? 'oui' : 'non'} — plugin ${c.plugin}`,
+    'bus_job :', ...(c.busJobFields || []).map(f => `  ${f.name} = ${f.value}`), 'truck :', ...(c.truckFields || []).map(f => `  ${f.name} = ${f.value}`),
+    'autres : ' + (c.otherConfigs || []).join(', ')].join('\n');
+}
+document.getElementById('coachDiag').addEventListener('toggle', renderCoachDiag);
+document.getElementById('coachDiagCopy').onclick = async () => {
+  await renderCoachDiag();
+  if (!coachDiagText) { setText('coachDiagMsg', 'Lance le jeu d’abord.'); return; }
+  try { await navigator.clipboard.writeText(coachDiagText); setText('coachDiagMsg', 'Copié ✓'); }
+  catch { setText('coachDiagMsg', 'Copie impossible.'); }
+  setTimeout(() => setText('coachDiagMsg', ''), 2500);
+};
 function renderHudPage(){
   document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on;
   for (const profile of ['truck', 'bus']) {
@@ -2123,6 +2158,7 @@ function renderLive(sn){
     const limEl = document.getElementById('lLimit');
     limEl.style.visibility = lim > 0 ? 'visible' : 'hidden'; setText('lLimit', lim || '');
     document.getElementById('lSpeed').style.color = kmh > th.limit ? 'var(--race)' : '';
+    setText('tKind', sn.vehicleType === 'car' ? 'Car' : 'Camion');
     setText('tName', L.truck ? `${L.truck.brand || ''} ${L.truck.name || ''}`.trim() : '–');
     setText('tFuel', L.fuel ? Math.round(L.fuel) + ' L' : '–');
     setText('tRange', L.fuelRange ? km(L.fuelRange) : '–');
@@ -2140,7 +2176,10 @@ function renderLive(sn){
     const race = j.mode === 'course';
     modeEl.className = 'mode ' + (race ? 'race' : 'real'); setText('lMode', race ? 'COURSE' : 'RÉEL');
     setText('jRoute', `${j.from || '?'} → ${j.to || '?'}`);
-    setText('jCargo', `${j.cargo || 'Marchandise'} · ${j.mass ? (j.mass/1000).toFixed(1).replace('.',',') + ' t' : ''}${j.income ? ' · ' + fmt(j.income) + ' €' : ''}`);
+    const isBus = j.missionType === 'bus';
+    setText('jCargo', isBus
+      ? [j.lineNumber ? 'Ligne ' + j.lineNumber : 'Service car', j.nextStop ? 'prochain arrêt ' + j.nextStop : '', j.income ? fmt(j.income) + ' €' : ''].filter(Boolean).join(' · ')
+      : [j.cargo || 'Marchandise', j.mass ? (j.mass/1000).toFixed(1).replace('.',',') + ' t' : '', j.income ? fmt(j.income) + ' €' : ''].filter(Boolean).join(' · '));
     const left = L && L.navDistance ? L.navDistance / 1000 : null;
     setText('jLeft', left != null ? km(left) : '–');
     setText('jTime', L && L.navTime ? dur(L.navTime / 60) : '–');
@@ -2150,8 +2189,9 @@ function renderLive(sn){
     document.getElementById('jOver').style.color = race ? 'var(--race)' : '';
     const total = j.planned || (left != null ? j.distance + left : 0);
     document.getElementById('jProg').style.width = total ? Math.min(100, Math.round(j.distance / total * 100)) + '%' : '0%';
-    setText('jState', L && L.trailerConnected ? 'CHARGÉ' : 'À VIDE');
-    document.getElementById('jState').style.color = L && L.trailerConnected ? 'var(--loaded)' : 'var(--empty)';
+    const charged = isBus ? !!(L && L.busJob) : !!(L && L.trailerConnected);
+    setText('jState', isBus ? (charged ? 'EN SERVICE' : 'HORS SERVICE') : charged ? 'CHARGÉ' : 'À VIDE');
+    document.getElementById('jState').style.color = charged ? 'var(--loaded)' : 'var(--empty)';
   } else {
     modeEl.className = 'mode real'; setText('lMode', 'RÉEL'); setText('jState', '');
   }
@@ -2422,7 +2462,7 @@ if (HAS_APP){
     renderPlugin(r.status, r.ok ? 'Dossier ajouté.' : (r.error || ''));
   };
   window.tel.pluginStatus().then(l => renderPlugin(l));
-  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'hud') document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
+  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'hud') { document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; renderCoachDiag(); } if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
   document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {

@@ -2,6 +2,13 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.13.0', date: '2026-11-20', titre: 'Nouveau bandeau car', notes: [
+    ['nouveau', 'Bandeau car redessiné : numéro et nom de ligne, arrêt en cours, heure du jeu à la seconde, vitesse, limitation, prochain arrêt, avance ou retard sur l’horaire, distance, odomètre, passagers, pause obligatoire et carburant.'],
+    ['nouveau', 'Le bandeau car s’affiche dès que tu montes dans un car (Scania Touring, Volvo 9700, MAN Lion’s Coach…), même sans service ; un car utilisé pour un service est mémorisé.'],
+    ['nouveau', 'Page HUD → « Données car reçues du jeu » : liste de ce que le jeu envoie pendant un service, à copier.'],
+    ['ameliore', 'Plugin 1.3.0 (SDK SCS 1.16) : pause obligatoire des conducteurs et transmission complète des données de service car.'],
+    ['corrige', 'Les kilomètres d’un service car comptent comme « chargés » ; la Télémétrie affiche « EN SERVICE », la ligne et le prochain arrêt au lieu de « Marchandise · · ».'],
+  ]},
   { version: '0.12.12', date: '2026-11-18', titre: 'Détection auto et réglages bus simplifiés', notes: [
     ['ameliore', 'Les réglages bus / car ne conservent que la taille et l’opacité.'],
     ['ameliore', 'La page HUD indique la détection automatique du véhicule, activée et verrouillée ; l’overlay choisit le profil camion ou bus / car selon le véhicule en jeu.'],
