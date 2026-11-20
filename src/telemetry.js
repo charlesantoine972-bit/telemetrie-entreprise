@@ -130,6 +130,13 @@ class Telemetry extends EventEmitter {
     if (s.gameTime !== this.clockMinute) { this.clockMinute = s.gameTime; this.clockAt = now; }
     // Véhicule : distance depuis la montée à bord, et apprentissage des cars vus en service.
     const vehicleId = s.truck && (s.truck.id || `${s.truck.brand || ''} ${s.truck.name || ''}`.trim());
+    // Avancée sur l'étape de car en cours : distance GPS au début de l'étape → distance restante.
+    if (s.busJob && Number.isFinite(s.navDistance) && s.navDistance > 0) {
+      const b = coach.parseBusJob(s.busJob);
+      const key = b ? `${b.id || b.from}|${b.stageCurrent}` : null;
+      if (key !== this.stageKey || !(s.navDistance <= this.stageStartNav)) { this.stageKey = key; this.stageStartNav = s.navDistance; }
+      this.stageProgress = this.stageStartNav > 0 ? 1 - s.navDistance / this.stageStartNav : null;
+    } else if (!s.busJob) { this.stageKey = null; this.stageProgress = null; }
     if (vehicleId !== this.vehicleId) { this.vehicleId = vehicleId; this.boardedOdo = Number.isFinite(s.odometer) ? s.odometer : null; }
     if (s.busJob && s.truck && typeof s.truck.id === 'string' && s.truck.id && !(this.getSettings().coachVehicles || []).includes(s.truck.id)
         && !coach.isCoachVehicle(s.truck)) this.emit('coachVehicle', s.truck.id);
@@ -328,7 +335,7 @@ class Telemetry extends EventEmitter {
       const scale = s.localScale > 0 ? s.localScale : null;
       const clockSeconds = scale && !s.paused && this.clockAt ? Math.min(59, Math.floor((Date.now() - this.clockAt) / 1000 * scale)) : null;
       const boardedKm = Number.isFinite(this.boardedOdo) && Number.isFinite(s.odometer) ? Math.max(0, s.odometer - this.boardedOdo) : null;
-      coachInfo = coach.describeCoach(s, job, { clockSeconds, boardedKm });
+      coachInfo = coach.describeCoach(s, job, { clockSeconds, boardedKm, stageProgress: this.stageProgress });
     }
     return {
       connected, socketError: this.socketError || null,

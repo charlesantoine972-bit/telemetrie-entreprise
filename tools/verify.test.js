@@ -387,6 +387,28 @@ test('le car est reconnu dès la montée à bord, avec ou sans service', () => {
   assert.deepEqual(learned, ['vehicle.mod.x_2026']);
 });
 
+test('frise de ligne : arrêts dans l’ordre et avancée sur l’étape', () => {
+  const coach = require('../src/coach');
+  const busJob = { 'bus.stages.count': 5, 'bus.stages.current': 2,
+    'source_stop.name': { 0: 'Valencia', 1: 'Requena', 2: 'Motilla', 3: 'Tarancón', 4: 'Arganda' },
+    'destination_stop.name': { 0: 'Requena', 1: 'Motilla', 2: 'Tarancón', 3: 'Arganda', 4: 'Madrid' } };
+  const d = coach.describeCoach({ busJob }, null, { stageProgress: 0.25 });
+  assert.deepEqual(d.route.stops, ['Valencia', 'Requena', 'Motilla', 'Tarancón', 'Arganda', 'Madrid']);
+  assert.equal(d.route.next, 3, 'prochain arrêt = Tarancón');
+  assert.equal(d.route.progress, 0.25);
+  assert.equal(coach.describeCoach({ busJob: { 'bus.stages.count': 1, 'destination_stop.name': 'Gare' } }, null).route, null, 'un seul nom : pas de frise');
+
+  const { Telemetry } = require('../src/telemetry');
+  const t = new Telemetry(fs.mkdtempSync(path.join(os.tmpdir(), 'tch-route-')), () => ({ vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, coachVehicles: [] }));
+  t.lastPacket = Date.now();
+  const st = (nav, current) => ({ speed: 20, odometer: 100, gameTime: 600, navDistance: nav, truck: { id: 'vehicle.scania.touring' }, busJob: { ...busJob, 'bus.stages.current': current } });
+  t.onState(st(20000, 2)); t.onState(st(15000, 2));
+  assert.ok(Math.abs(t.snapshot().coach.route.progress - 0.25) < 1e-9);
+  t.onState(st(30000, 3));
+  assert.equal(t.snapshot().coach.route.progress, 0, 'nouvelle étape : on repart de l’arrêt');
+  assert.equal(t.snapshot().coach.route.next, 4);
+});
+
 test('lecture tolérante d’un service car et kilomètres en service', () => {
   const coach = require('../src/coach');
   const b = coach.parseBusJob({

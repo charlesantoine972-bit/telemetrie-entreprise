@@ -81,6 +81,8 @@ function parseBusJob(attrs) {
     market: text(attrs['bus_job.market']) || null,
     stageCount: count || 1, stageCurrent: current,
     from: stop(srcName, 0), to: stop(destName, last), nextStop: stop(destName, current),
+    // Tous les arrêts dans l'ordre : départ, puis l'arrivée de chaque étape.
+    stops: [stop(srcName, 0), ...Array.from({ length: last + 1 }, (_, i) => stop(destName, i))],
     fromId: stopId('source_stop.id', 0), toId: stopId('destination_stop.id', last),
     lineNumber: lineNo ? text(String(at(lineNo.value, 0) ?? '')) : null,
     lineName: lineName ? text(String(at(lineName.value, 0) ?? '')) : null,
@@ -122,6 +124,12 @@ function describeCoach(live, job, extra = {}) {
     lineName: bus && (bus.lineName || bus.to),
     nextStop: bus && bus.nextStop,
     stage: bus ? { current: bus.stageCurrent + 1, count: bus.stageCount } : null,
+    // Frise de ligne : arrêts, indice du prochain arrêt et avancée sur l'étape en cours (0 → 1).
+    route: bus && bus.stops.filter(Boolean).length >= 2 ? {
+      stops: bus.stops.map((name, i) => name || (i === 0 ? 'Départ' : 'Arrêt ' + i)),
+      next: bus.stageCurrent + 1,
+      progress: valid(extra.stageProgress) ? Math.max(0, Math.min(1, extra.stageProgress)) : null
+    } : null,
     // Avance (+) ou retard (−) prévu à l'arrivée, en minutes de jeu.
     scheduleMarginMinutes: valid(schedule) && eta != null ? Math.round(schedule - eta) : null,
     passengers: bus && bus.passengers,

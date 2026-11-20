@@ -3,8 +3,9 @@
 // Les données viennent de d.coach (calculé dans l'appli à partir du plugin, voir src/coach.js).
 // Une information que le jeu ne fournit pas est masquée : rien n'est inventé.
 const COACH_PREVIEW = {
-  inService: true, lineNumber: '42', lineName: 'Lyon Perrache', nextStop: 'Grenoble – Gare routière',
-  stage: { current: 2, count: 5 }, scheduleMarginMinutes: -9, passengers: 31, capacity: 57,
+  inService: true, lineNumber: '42', lineName: 'Madrid – Estación Sur', nextStop: 'Tarancón',
+  stage: { current: 3, count: 5 },
+  route: { stops: ['Valencia', 'Requena', 'Motilla del Palancar', 'Tarancón', 'Arganda del Rey', 'Madrid – Estación Sur'], next: 3, progress: 0.45 }, scheduleMarginMinutes: -9, passengers: 31, capacity: 57,
   outsideTemp: null, cabinTemp: null, fuelPct: 78, distanceKm: 12.4, clockSeconds: 38, mandatoryBreak: null
 };
 const COACH_ICONS = {
@@ -35,6 +36,7 @@ function hudCoach(root, d) {
         <span class="coach-stop"><i class="coach-ico coach-ico-pin">${COACH_ICONS.pin}</i><b data-c="nextStop">—</b></span>
         <span class="coach-timer" data-c="timerBox"><i class="coach-ico">${COACH_ICONS.timer}</i><b data-c="timer">—</b></span>
       </div>
+      <div class="coach-route" data-c="route" aria-label="Arrêts de la ligne"></div>
       <div class="coach-bottom">
         <span data-c="distanceBox">Distance <b data-c="distance">—</b></span>
         <span>Odomètre <b data-c="odometer">—</b></span>
@@ -52,6 +54,8 @@ function hudCoach(root, d) {
   const ok = v => typeof v === 'number' && Number.isFinite(v);
   const n = (v, digits = 0) => v.toLocaleString('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits });
   const two = v => String(v).padStart(2, '0');
+
+  coachRoute(q('route'), c.route);
 
   // Ligne et terminus
   set('lineNo', c.lineNumber || ''); show('lineNo', !!c.lineNumber);
@@ -110,4 +114,34 @@ function hudCoach(root, d) {
   set('fuel', pct != null ? n(pct) + ' %' : ok(live.fuel) ? n(live.fuel) + ' L' : '—');
   q('fuelBar').style.width = (pct == null ? 0 : pct) + '%';
   q('fuelBar').classList.toggle('low', pct != null && pct < 15);
+}
+
+// Frise de ligne : tous les arrêts en raccourci, arrêts passés en bleu, prochain arrêt qui clignote,
+// et le car qui avance sur l'étape en cours (distance GPS restante).
+function coachRoute(box, route) {
+  const ok = !!(route && Array.isArray(route.stops) && route.stops.length >= 2);
+  box.hidden = !ok;
+  if (!ok) { box.dataset.key = ''; return; }
+  const n = route.stops.length, last = n - 1;
+  const next = Math.max(1, Math.min(last, route.next | 0));
+  const key = route.stops.join('|');
+  if (box.dataset.key !== key) {
+    box.dataset.key = key;
+    const esc = v => String(v).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+    box.innerHTML = '<div class="cr-track"><i class="cr-done"></i></div>' +
+      route.stops.map((name, i) => `<span class="cr-stop" style="left:${(i / last * 100).toFixed(3)}%" title="${esc(name)}"><i></i><em>${esc(name)}</em></span>`).join('') +
+      '<span class="cr-bus" aria-hidden="true"><svg viewBox="0 0 20 12"><rect x="1" y="1" width="18" height="8.5" rx="2.2"/><path d="M4 3.6h3.4M9 3.6h3.4M14 3.6h2.6"/><circle cx="5.3" cy="10" r="1.4"/><circle cx="14.7" cy="10" r="1.4"/></svg></span>';
+  }
+  const progress = typeof route.progress === 'number' && Number.isFinite(route.progress) ? route.progress : 0;
+  const pos = (next - 1 + Math.max(0, Math.min(1, progress))) / last * 100;
+  box.querySelector('.cr-done').style.width = pos + '%';
+  box.querySelector('.cr-bus').style.left = pos + '%';
+  box.querySelectorAll('.cr-stop').forEach((el, i) => {
+    el.classList.toggle('passed', i < next);
+    el.classList.toggle('next', i === next);
+    el.classList.toggle('first', i === 0);
+    el.classList.toggle('terminus', i === last);
+    // Noms affichés : prochain arrêt, terminus et départ, sans chevauchement.
+    el.classList.toggle('named', i === next || (i === last && next < last - 1) || (i === 0 && next > 1));
+  });
 }
