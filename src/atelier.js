@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { SaveEditor, TRUCK_SKILLS, COACH_SKILLS } = require('./save-editor');
+const Tools = require('./save-tools');
 
 const GAMES = {
   ets2: { name: 'Euro Truck Simulator 2', folder: 'Euro Truck Simulator 2', exe: 'eurotrucks2.exe' },
@@ -29,8 +30,15 @@ class Atelier {
   saveApply(id, slot, edits) {
     const r = this.resolve(id);
     if (this.isRunning(r.game)) throw new Error(`Ferme ${GAMES[r.game].name} avant de modifier une sauvegarde.`);
-    const allowed = ['profileName', 'companyName', 'money', 'xp', 'busXp', 'skills', 'coachSkills', 'visitAllCities', 'discoverBusStops', 'repairAll', 'refuelAll'];
-    const clean = {}; for (const k of allowed) if (edits && edits[k] != null) clean[k] = edits[k];
+    const allowed = ['profileName', 'companyName', 'money', 'xp', 'busXp', 'skills', 'coachSkills', 'visitAllCities', 'discoverBusStops', 'repairAll', 'refuelAll', ...Tools.TOOL_KEYS];
+    const clean = {}; for (const k of allowed) if (edits && edits[k] != null && edits[k] !== false) clean[k] = edits[k];
+    // Téléportation : l'interface envoie le numéro de la position ; on relit cams.txt ici
+    if (clean.teleport != null) {
+      const cams = this.cams(r.game).positions;
+      const cam = cams[Number(clean.teleport)];
+      if (!cam) throw new Error('Position introuvable : enregistre-la en jeu avec Alt+F12 (mode développeur activé).');
+      clean.teleport = cam;
+    }
     if (!Object.keys(clean).length) throw new Error('Aucune modification demandée.');
     const backupName = this.backup(id, 'Avant modification (Truck Tools)');
     const report = this.editor.apply(r.dir, slot, clean);
@@ -219,6 +227,48 @@ class Atelier {
     if (!fs.existsSync(r.store)) throw new Error('Aucune copie à effacer.');
     fs.rmSync(r.store, { recursive: true, force: true });
     return true;
+  }
+
+  // ---------- Téléportation : positions enregistrées en jeu avec Alt+F12 (fichier cams.txt)
+  cams(game) {
+    if (!GAMES[game]) throw new Error('Jeu inconnu.');
+    const file = path.join(this.gameDir(game), 'cams.txt');
+    let txt = ''; let modified = 0;
+    try { txt = fs.readFileSync(file, 'utf8'); modified = fs.statSync(file).mtimeMs; } catch { return { found: false, positions: [], modified: 0 }; }
+    return { found: true, positions: Tools.parseCams(txt), modified };
+  }
+
+  // ---------- Copier les réglages (commandes, graphismes, options) d'un profil vers un autre, même entre ETS2 et ATS
+  copyConfig(fromId, toId, files) {
+    const a = this.resolve(fromId), b = this.resolve(toId);
+    if (fromId === toId) throw new Error('Choisis deux profils différents.');
+    for (const g of new Set([a.game, b.game])) if (this.isRunning(g)) throw new Error(`Ferme ${GAMES[g].name} avant de copier des réglages.`);
+    const ALLOWED = { controls: 'controls.sii', config: 'config.cfg', local: 'config_local.cfg' };
+    const list = (Array.isArray(files) && files.length ? files : Object.keys(ALLOWED)).filter(k => ALLOWED[k]).map(k => ALLOWED[k]);
+    if (!list.length) throw new Error('Aucun fichier choisi.');
+    const present = list.filter(f => fs.existsSync(path.join(a.dir, f)));
+    if (!present.length) throw new Error('Le profil source n\'a aucun de ces fichiers de réglages.');
+    this.backup(toId, 'Avant copie des réglages');
+    for (const f of present) fs.copyFileSync(path.join(a.dir, f), path.join(b.dir, f));
+    return { copied: present };
+  }
+
+  // ---------- Convoi : nombre de places (config.cfg, g_max_convoy_size)
+  convoyState(game) {
+    let txt; try { txt = fs.readFileSync(this.configPath(game), 'utf8'); } catch { return { found: false, size: null }; }
+    const m = txt.match(/^\s*uset\s+g_max_convoy_size\s+"?(\d+)"?/m);
+    return { found: true, size: m ? Number(m[1]) : null };
+  }
+  setConvoy(game, big) {
+    if (this.isRunning(game)) throw new Error(`Ferme ${GAMES[game].name} d'abord : le jeu réécrit ce réglage en quittant.`);
+    const file = this.configPath(game);
+    let txt = fs.readFileSync(file, 'utf8');
+    fs.copyFileSync(file, file + '.avant-truck-coach-hub');
+    const v = big ? 128 : 8;
+    const re = /^(\s*uset\s+g_max_convoy_size\s+)"?\d+"?/m;
+    txt = re.test(txt) ? txt.replace(re, `$1"${v}"`) : txt + `\nuset g_max_convoy_size "${v}"`;
+    fs.writeFileSync(file, txt);
+    return this.convoyState(game);
   }
 
   // ---------- Console de développement (config.cfg)

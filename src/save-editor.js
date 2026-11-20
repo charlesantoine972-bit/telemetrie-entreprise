@@ -5,6 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { execFileSync, execFile } = require('child_process');
+const Tools = require('./save-tools');
 
 const TRUCK_SKILLS = [
   { key: 'adr', label: 'ADR (matières dangereuses)', max: 63, adr: true },
@@ -237,7 +238,7 @@ class SaveEditor {
     // Flotte
     const trucks = refs(player, 'trucks'), trailers = refs(player, 'trailers'), drivers = refs(player, 'drivers');
     const garages = B.unitBlocks(text, 'garage').map(b => text.slice(b.start, b.end)).filter(g => Number(B.get(g, 'status')) > 0).length;
-    const myTruck = B.get(player, 'my_truck') || B.get(player, 'assigned_truck');
+    const myTruck = Tools.current(text).truck || B.get(player, 'my_truck') || B.get(player, 'assigned_truck');
 
     // État des véhicules du joueur
     const worn = []; let worst = 0;
@@ -246,12 +247,12 @@ class SaveEditor {
       const w = Math.max(0, ...['engine_wear', 'transmission_wear', 'cabin_wear', 'chassis_wear'].map(k => B.float(B.get(b, k))));
       worst = Math.max(worst, w); if (w >= 0.5) worn.push(id);
     }
-    if (worn.length) add('warn', `${worn.length} camion(s) très usé(s) (jusqu'à ${Math.round(worst * 100)} %).`, 'at-repar');
+    if (worn.length) add('warn', `${worn.length} camion(s) très usé(s) (jusqu'à ${Math.round(worst * 100)} %).`, 'at-camion');
     let fuel = null;
     if (!isNull(myTruck)) { const b = unitBody(myTruck); if (b) fuel = B.float(B.get(b, 'fuel_relative')); }
     if (fuel != null && fuel < 0.1) add('warn', `Ton camion est presque à sec (${Math.round(fuel * 100)} % de carburant).`, 'at-camion');
     const cargo = B.unitBlocks(text, 'trailer').map(b => B.float(B.get(text.slice(b.start, b.end), 'cargo_damage'))).filter(v => v > 0.2).length;
-    if (cargo) add('warn', `${cargo} remorque(s) avec une cargaison abîmée à plus de 20 %.`, 'at-repar');
+    if (cargo) add('warn', `${cargo} remorque(s) avec une cargaison abîmée à plus de 20 %.`, 'at-remorque');
 
     // Cohérence : références vers des blocs qui n'existent pas (signe de sauvegarde abîmée)
     const broken = [...trucks, ...trailers, ...drivers, ...loans.filter(l => l.missing).map(l => l.id)].filter(id => !ids.has(id)).length
@@ -288,9 +289,10 @@ class SaveEditor {
     const fuel = vehicles.map(v => SaveEditor.float(SaveEditor.get(v, 'fuel_relative')));
     let names = { profileName: '', companyName: '' };
     try { names = this.profileNames(path.join(slotDir, '..', '..')); } catch {}
+    let tools = null; try { tools = Tools.overview(text); } catch { tools = null; }
     let bilan = null; try { bilan = SaveEditor.bilan(text); } catch (e) { bilan = { level: 'bad', alerts: [{ level: 'bad', text: 'Bilan impossible : ' + e.message }] }; }
     return {
-      ...names, bilan,
+      ...names, bilan, tools,
       money: Number(SaveEditor.get(bank, 'money_account')) || 0,
       xp: Number(SaveEditor.get(eco, 'experience_points')) || 0,
       busXp: SaveEditor.get(eco, 'bus_experience_points') == null ? null : Number(SaveEditor.get(eco, 'bus_experience_points')),
@@ -358,6 +360,7 @@ class SaveEditor {
       if (e.repairAll) report.push('réparation');
       if (e.refuelAll) report.push('plein de carburant');
     }
+    text = Tools.applyTools(text, e, report);
     return { text, report };
   }
 

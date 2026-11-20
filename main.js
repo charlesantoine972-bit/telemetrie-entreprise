@@ -314,6 +314,10 @@ function setupIpc() {
   ipcMain.handle('atelier:slots', safe((id) => atelier.saveSlots(id)));
   ipcMain.handle('atelier:summary', safe((id, slot) => atelier.saveSummary(id, slot)));
   ipcMain.handle('atelier:apply', safe((id, slot, edits) => atelier.saveApply(id, slot, edits)));
+  ipcMain.handle('atelier:cams', safe((game) => atelier.cams(game)));
+  ipcMain.handle('atelier:copyConfig', safe((from, to, files) => atelier.copyConfig(from, to, files)));
+  ipcMain.handle('atelier:convoy', safe((game) => atelier.convoyState(game)));
+  ipcMain.handle('atelier:setConvoy', safe((game, big) => atelier.setConvoy(game, !!big)));
   ipcMain.handle('atelier:setConsole', safe((game, on) => atelier.setConsole(game, !!on)));
   ipcMain.handle('update:status', () => ({ ...updateState, current: app.getVersion() }));
   ipcMain.handle('update:check', async () => {

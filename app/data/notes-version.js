@@ -2,6 +2,13 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.13.21', date: '2026-11-20', titre: 'Truck Tools : camions, remorques et garages', notes: [
+    ['nouveau', 'Truck Tools se présente en cartes d’outils, comme l’original : Remorques, Camions, Profil, Coach Tools et Jeu, avec ton camion et ta remorque attelée en haut de page.'],
+    ['nouveau', 'Camions : réparer (le tien ou toute la flotte), carburant jusqu’au réservoir géant, kilométrage, plaque personnalisée, changer de camion sans garage, téléportation (Alt+F12).'],
+    ['nouveau', 'Remorques : poids de la cargaison (doubles et triples comprises), poids à vide, autoriser partout, réparer, plaque, changer de remorque.'],
+    ['nouveau', 'Profil : toutes les villes, concessionnaires, agences de recrutement, achat des garages libres, copie des réglages entre profils (même ATS → ETS2).'],
+    ['nouveau', 'Jeu : convois à 128 places.'],
+  ]},
   { version: '0.13.20', date: '2026-11-20', titre: 'Nouveau bandeau car et Truck Tools', notes: [
     ['nouveau', 'Bandeau car redessiné : numéro et nom de ligne, arrêt en cours, heure du jeu à la seconde, vitesse, limitation, prochain arrêt, avance ou retard sur l’horaire, distance, odomètre, passagers, pause obligatoire et carburant.'],
     ['nouveau', 'Le bandeau car s’affiche dès que tu montes dans un car (Scania Touring, Volvo 9700, MAN Lion’s Coach…), même sans service ; un car utilisé pour un service est mémorisé.'],

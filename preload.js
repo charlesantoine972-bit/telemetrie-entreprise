@@ -49,6 +49,10 @@ contextBridge.exposeInMainWorld('tel', {
     slots: (id) => ipcRenderer.invoke('atelier:slots', id),
     summary: (id, slot) => ipcRenderer.invoke('atelier:summary', id, slot),
     apply: (id, slot, edits) => ipcRenderer.invoke('atelier:apply', id, slot, edits),
-    setConsole: (game, on) => ipcRenderer.invoke('atelier:setConsole', game, on)
+    setConsole: (game, on) => ipcRenderer.invoke('atelier:setConsole', game, on),
+    cams: (game) => ipcRenderer.invoke('atelier:cams', game),
+    copyConfig: (from, to, files) => ipcRenderer.invoke('atelier:copyConfig', from, to, files),
+    convoy: (game) => ipcRenderer.invoke('atelier:convoy', game),
+    setConvoy: (game, big) => ipcRenderer.invoke('atelier:setConvoy', game, big)
   }
 });
