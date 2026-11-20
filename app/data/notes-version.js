@@ -2,8 +2,8 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
-  { version: '0.13.21', date: '2026-11-20', titre: 'Frise de ligne du car', notes: [
-    ['nouveau', 'Bandeau car : frise de la ligne en raccourci, avec tous les arrêts du service, le prochain arrêt qui clignote et le car qui avance au fil de l’étape.'],
+  { version: '0.13.21', date: '2026-11-20', titre: 'Étape en cours dans le bandeau car', notes: [
+    ['nouveau', 'Bandeau car : à la place du nom de ligne, l’étape en cours en raccourci (« Barcelone ● 🚌 ○ Madrid ») ; le petit car avance jusqu’au prochain arrêt, puis le segment passe à l’étape suivante.'],
   ]},
   { version: '0.13.20', date: '2026-11-20', titre: 'Nouveau bandeau car et Truck Tools', notes: [
     ['nouveau', 'Bandeau car redessiné : numéro et nom de ligne, arrêt en cours, heure du jeu à la seconde, vitesse, limitation, prochain arrêt, avance ou retard sur l’horaire, distance, odomètre, passagers, pause obligatoire et carburant.'],

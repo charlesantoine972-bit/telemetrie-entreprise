@@ -26,6 +26,7 @@ function hudCoach(root, d) {
       <div class="coach-top">
         <span class="coach-line" data-c="lineNo"></span>
         <span class="coach-line-name" data-c="lineName">—</span>
+        <span class="coach-leg" data-c="route" aria-label="Étape en cours"></span>
         <span class="coach-stage" data-c="stage" title="Arrêt en cours / nombre d’arrêts"></span>
         <span class="coach-sep"></span>
         <span class="coach-time"><i class="coach-ico coach-ico-blue">${COACH_ICONS.clock}</i><b data-c="clock">--:--</b></span>
@@ -36,7 +37,6 @@ function hudCoach(root, d) {
         <span class="coach-stop"><i class="coach-ico coach-ico-pin">${COACH_ICONS.pin}</i><b data-c="nextStop">—</b></span>
         <span class="coach-timer" data-c="timerBox"><i class="coach-ico">${COACH_ICONS.timer}</i><b data-c="timer">—</b></span>
       </div>
-      <div class="coach-route" data-c="route" aria-label="Arrêts de la ligne"></div>
       <div class="coach-bottom">
         <span data-c="distanceBox">Distance <b data-c="distance">—</b></span>
         <span>Odomètre <b data-c="odometer">—</b></span>
@@ -55,7 +55,9 @@ function hudCoach(root, d) {
   const n = (v, digits = 0) => v.toLocaleString('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits });
   const two = v => String(v).padStart(2, '0');
 
+  // Étape en cours (« Barcelone ●━🚌━○ Madrid ») à la place du nom de ligne quand le service la donne.
   coachRoute(q('route'), c.route);
+  show('lineName', !(c.route && c.route.stops && c.route.stops.length >= 2));
 
   // Ligne et terminus
   set('lineNo', c.lineNumber || ''); show('lineNo', !!c.lineNumber);
@@ -116,32 +118,27 @@ function hudCoach(root, d) {
   q('fuelBar').classList.toggle('low', pct != null && pct < 15);
 }
 
-// Frise de ligne : tous les arrêts en raccourci, arrêts passés en bleu, prochain arrêt qui clignote,
-// et le car qui avance sur l'étape en cours (distance GPS restante).
+// Étape en cours, en raccourci : arrêt quitté ●━━🚌━━○ prochain arrêt.
+// C'est un repère visuel, pas une carte : le petit car glisse sur le segment au fil de l'étape
+// (distance GPS restante) et, à chaque arrêt, le segment passe à l'étape suivante.
 function coachRoute(box, route) {
   const ok = !!(route && Array.isArray(route.stops) && route.stops.length >= 2);
   box.hidden = !ok;
   if (!ok) { box.dataset.key = ''; return; }
-  const n = route.stops.length, last = n - 1;
+  const last = route.stops.length - 1;
   const next = Math.max(1, Math.min(last, route.next | 0));
-  const key = route.stops.join('|');
+  const from = route.stops[next - 1], to = route.stops[next];
+  const key = next + '|' + from + '|' + to;
+  const esc = v => String(v).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
   if (box.dataset.key !== key) {
+    const fresh = !!box.dataset.key; // vraie arrivée à un arrêt (pas le premier affichage)
     box.dataset.key = key;
-    const esc = v => String(v).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
-    box.innerHTML = '<div class="cr-track"><i class="cr-done"></i></div>' +
-      route.stops.map((name, i) => `<span class="cr-stop" style="left:${(i / last * 100).toFixed(3)}%" title="${esc(name)}"><i></i><em>${esc(name)}</em></span>`).join('') +
-      '<span class="cr-bus" aria-hidden="true"><svg viewBox="0 0 20 12"><rect x="1" y="1" width="18" height="8.5" rx="2.2"/><path d="M4 3.6h3.4M9 3.6h3.4M14 3.6h2.6"/><circle cx="5.3" cy="10" r="1.4"/><circle cx="14.7" cy="10" r="1.4"/></svg></span>';
+    box.innerHTML = `<b class="cl-from">${esc(from)}</b><span class="cl-seg"><i class="cl-dot cl-a"></i><i class="cl-track"><i class="cl-done"></i></i><i class="cl-bus"><svg viewBox="0 0 20 12" aria-hidden="true"><rect x="1" y="1" width="18" height="8.5" rx="2.2"/><path d="M4 3.6h3.4M9 3.6h3.4M14 3.6h2.6"/><circle cx="5.3" cy="10" r="1.4"/><circle cx="14.7" cy="10" r="1.4"/></svg></i><i class="cl-dot cl-b${next === last ? ' cl-end' : ''}"></i></span><b class="cl-to">${esc(to)}</b>`;
+    box.title = `Étape ${next}/${last} : ${from} → ${to}` + (next < last ? ` · terminus ${route.stops[last]}` : ' · terminus');
+    if (fresh) { box.classList.remove('cl-new'); void box.offsetWidth; box.classList.add('cl-new'); }
   }
-  const progress = typeof route.progress === 'number' && Number.isFinite(route.progress) ? route.progress : 0;
-  const pos = (next - 1 + Math.max(0, Math.min(1, progress))) / last * 100;
-  box.querySelector('.cr-done').style.width = pos + '%';
-  box.querySelector('.cr-bus').style.left = pos + '%';
-  box.querySelectorAll('.cr-stop').forEach((el, i) => {
-    el.classList.toggle('passed', i < next);
-    el.classList.toggle('next', i === next);
-    el.classList.toggle('first', i === 0);
-    el.classList.toggle('terminus', i === last);
-    // Noms affichés : prochain arrêt, terminus et départ, sans chevauchement.
-    el.classList.toggle('named', i === next || (i === last && next < last - 1) || (i === 0 && next > 1));
-  });
+  const p = typeof route.progress === 'number' && Number.isFinite(route.progress) ? Math.max(0, Math.min(1, route.progress)) : 0;
+  const pct = (p * 100).toFixed(1) + '%';
+  box.querySelector('.cl-done').style.width = pct;
+  box.querySelector('.cl-bus').style.left = `calc(${p.toFixed(3)} * (100% - 17px))`; // le car reste entre les deux points
 }
