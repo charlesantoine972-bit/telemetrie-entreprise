@@ -2483,14 +2483,6 @@ function renderLive(sn){
 }
 
 let lastJobsSig = '';
-// Montants par jeu : € pour ETS2, $ pour ATS (jamais additionnés). Anciennes données : total en €.
-function moneyByGame(t, key){
-  const m = t.money || {}, parts = [];
-  if (m.ets2 && m.ets2[key]) parts.push(fmt(Math.round(m.ets2[key])) + ' €');
-  if (m.ats && m.ats[key]) parts.push(fmt(Math.round(m.ats[key])) + ' $');
-  if (!parts.length) return fmt(Math.round(t[key] || 0)) + ' €';
-  return parts.join(' · ');
-}
 function renderHistory(sn){
   const t = sn.totals;
   const cards = [
@@ -2588,6 +2580,15 @@ function renderRoadmap(sn){
       </div>
     </details>`;
   }).join('') : '<span class="soft">Aucune mission terminée enregistrée.</span>';
+}
+
+// Montants par jeu : € pour ETS2, $ pour ATS (jamais additionnés). Anciennes données : total en €.
+function moneyByGame(t, key){
+  const m = t.money || {}, parts = [];
+  if (m.ets2 && m.ets2[key]) parts.push(fmt(Math.round(m.ets2[key])) + ' €');
+  if (m.ats && m.ats[key]) parts.push(fmt(Math.round(m.ats[key])) + ' $');
+  if (!parts.length) return fmt(Math.round(t[key] || 0)) + ' €';
+  return parts.join(' · ');
 }
 
 function renderPlugin(list, msg){
