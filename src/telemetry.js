@@ -64,7 +64,7 @@ class Telemetry extends EventEmitter {
   }
 
   load() {
-    const empty = { totals: { loaded: 0, empty: 0, real: 0, race: 0, deliveries: 0, cancelled: 0, revenue: 0, fuelUsed: 0, fuelAdded: 0, fines: 0, finesAmount: 0 }, days: {}, jobs: [] };
+    const empty = { totals: { loaded: 0, empty: 0, real: 0, race: 0, deliveries: 0, cancelled: 0, revenue: 0, fuelUsed: 0, fuelAdded: 0, fines: 0, finesAmount: 0, expenses: 0, money: {} }, days: {}, jobs: [] };
     try {
       const d = JSON.parse(fs.readFileSync(this.file, 'utf8'));
       return { ...empty, ...d, totals: { ...empty.totals, ...(d.totals || {}) } };
@@ -205,7 +205,7 @@ class Telemetry extends EventEmitter {
         this.data.totals.fuelUsed += -delta;
         if (this.current) this.current.fuelUsed += -delta;
         this.dirty = true;
-      } else if (delta > 0.05) {
+      } else if (delta > 0.05 && !s.paused && kmh < 5) {
         this.data.totals.fuelAdded += delta;
         if (this.current) {
           this.current.fuelAdded += delta;
@@ -273,8 +273,18 @@ class Telemetry extends EventEmitter {
     this.emit('event', this.lastEvent);
   }
 
+  // Argent par jeu (ETS2 en €, ATS en $) : on ne mélange jamais les deux devises
+  moneyFor(game) {
+    const t = this.data.totals; t.money ||= {};
+    const g = game || (this.current && this.current.game) || gameKey(this.live && this.live.game) || 'ets2';
+    return (t.money[g] ||= { revenue: 0, expenses: 0 });
+  }
+
   recordExpense(type, amount) {
     if (!Number.isFinite(amount) || amount <= 0) return;
+    this.data.totals.expenses = (this.data.totals.expenses || 0) + amount;
+    this.moneyFor().expenses += amount;
+    this.dirty = true;
     if (this.current) {
       this.current.expenses += amount;
       this.current.expenseItems.push({ type, amount, at: Date.now() });
@@ -294,7 +304,7 @@ class Telemetry extends EventEmitter {
     const race = overPct > this.thresholds().pct;
     const t = this.data.totals;
     t[race ? 'race' : 'real'] += dist;
-    if (status === 'livrée') { t.deliveries++; t.revenue += (info && info.revenue) || j.income || 0; }
+    if (status === 'livrée') { const rev = (info && info.revenue) || j.income || 0; t.deliveries++; t.revenue += rev; this.moneyFor(j.game).revenue += rev; }
     if (status === 'annulée') t.cancelled++;
     const entry = {
       ...j, key: undefined, path: downsample(j.path || [], JOB_PATH_MAX), status, ended: Date.now(), distance: dist, overPct, mode: race ? 'course' : 'réel',

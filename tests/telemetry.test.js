@@ -82,6 +82,23 @@ test('Telemetry records trip fuel and game-reported expenses on the mission', ()
   assert.deepEqual(trip.expenseItems.map(item => item.type), ['péage', 'ferry', 'amende']);
   assert.equal(telemetry.data.totals.fuelAdded, 25);
   assert.equal(telemetry.data.totals.fuelUsed, 1);
+  assert.equal(telemetry.data.totals.expenses, 1450);
+  assert.deepEqual(telemetry.data.totals.money.ets2, { revenue: 12000, expenses: 1450 });
+});
+
+test('Telemetry counts expenses outside a mission and ignores fuel jumps while paused or moving', () => {
+  const telemetry = createTelemetry();
+  telemetry.save = () => {};
+  const truck = { brand: 'Scania', name: 'S 650' };
+  const state = (fuel, extra = {}) => telemetry.onState({ speed: 0, paused: false, odometer: 1, x: 0, z: 0, job: null, trailerConnected: false, fuel, truck, game: 'ats', ...extra });
+  state(100);
+  state(400, { paused: true });   // chargement d'une sauvegarde
+  state(500, { speed: 20 });      // téléportation / saut en roulant
+  state(520);                     // vrai plein, à l'arrêt
+  telemetry.onGameplay({ id: 'player.tollgate.paid', data: { 'pay.amount': 30 } });
+  assert.equal(telemetry.data.totals.fuelAdded, 20);
+  assert.equal(telemetry.data.totals.expenses, 30);
+  assert.deepEqual(telemetry.data.totals.money.ats, { revenue: 0, expenses: 30 });
 });
 
 test('Telemetry reads bus mission endpoints and advances the next stop', () => {

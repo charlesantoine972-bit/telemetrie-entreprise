@@ -2,6 +2,13 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.13.22', date: '2026-11-20', titre: 'Barre flottante, dépenses totales et HUD', notes: [
+    ['ameliore', 'Truck & Coach Tools : le choix du profil et de la sauvegarde est une barre flottante en bas de l’écran, commune à toutes les pages.'],
+    ['nouveau', 'Ma carrière et Feuille de route : total de tout ce que tu as dépensé (péages, ferries, trains, amendes, annulations), même hors mission.'],
+    ['corrige', 'Les euros (ETS2) et les dollars (ATS) ne sont plus additionnés : revenus et dépenses sont affichés par jeu.'],
+    ['corrige', 'Charger une sauvegarde ou se téléporter ne compte plus un faux plein de carburant.'],
+    ['ameliore', '« Bandeau / HUD » s’appelle maintenant « HUD ». « Données car reçues du jeu » passe dans Options → Informations générales d’utilisation.'],
+  ]},
   { version: '0.13.21', date: '2026-11-20', titre: 'Truck Tools : camions, remorques et garages', notes: [
     ['nouveau', 'Truck Tools se présente en cartes d’outils, comme l’original : Remorques, Camions, Profil, Coach Tools et Jeu, avec ton camion et ta remorque attelée en haut de page.'],
     ['nouveau', 'Camions : réparer (le tien ou toute la flotte), carburant jusqu’au réservoir géant, kilométrage (compteur, trajet et journal), plaque personnalisée, changer de camion sans garage, téléportation (Alt+F12), moteur et boîte (pièces des camions du même modèle de ta flotte), retirer le badge.'],
