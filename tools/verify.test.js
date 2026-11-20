@@ -328,22 +328,101 @@ test('le HUD autocar met la vitesse en avant et affiche les mesures GPS reçues'
     vehicleType: 'car',
     live: {
       busJob: {}, speed: 20, speedLimit: 25, navDistance: 12345, navTime: 300,
-      localScale: 20, gameTime: 64, odometer: 1200, fuel: 40, fuelRange: 320,
-      restStop: 60, truck: { 'fuel.capacity': 100 }
-    }
+      localScale: 20, gameTime: 64, odometer: 1200.44, fuel: 40, fuelRange: 320,
+      restStop: 600, truck: { 'fuel.capacity': 100 }
+    },
+    coach: { inService: true, lineNumber: '232', lineName: 'Datteln Busbahnhof', nextStop: 'OER - Berliner Platz',
+      stage: { current: 2, count: 4 }, scheduleMarginMinutes: -9, passengers: 0, capacity: 82,
+      outsideTemp: null, cabinTemp: null, fuelPct: 40, distanceKm: 0, clockSeconds: 38, mandatoryBreak: 45 }
   });
   const value = key => panel.querySelector(`[data-c="${key}"]`).textContent;
-  assert.equal(value('clock'), '01:04');
-  assert.equal(value('distance'), '12,3 km');
-  assert.equal(value('speed'), '72 km/h');
-  assert.equal(value('limit'), '90 km/h');
-  assert.equal(value('game'), '0 h 05');
-  assert.match(value('arrival'), /^\d{2}:\d{2}$/);
-  assert.equal(value('fuelRange'), '320 km');
-  assert.equal(value('restStop'), '1 h 00');
+  const hidden = key => panel.querySelector(`[data-c="${key}"]`).hidden === true;
+  assert.equal(value('lineNo'), '232');
+  assert.equal(value('lineName'), 'Datteln Busbahnhof');
+  assert.equal(value('stage'), '2/4');
+  assert.equal(value('clock'), '01:04:38');
+  assert.equal(value('speed'), '72');
+  assert.equal(value('limit'), '90');
+  assert.equal(value('nextStop'), 'OER - Berliner Platz');
+  assert.equal(value('timer'), '−9 min');
+  assert.equal(panel.querySelector('[data-c="timerBox"]').classes.has('late'), true);
+  assert.equal(value('distance'), '0,0 km');
+  assert.equal(value('odometer'), '1 200,4 km'.replace(' ', (1200).toLocaleString('fr-FR').charAt(1)));
+  assert.equal(value('pax'), '0/82');
+  assert.equal(hidden('tempBox'), true, 'le SDK ne donne pas de température : case masquée');
+  assert.equal(value('break'), '0 h 45');
+  assert.equal(value('fuel'), '40 %');
+  // Hors service : pas de ligne, prochain point GPS et temps restant
+  context.hudCoach(root, { connected: true, vehicleType: 'car', live: { speed: 0, navDistance: 5000, navTime: 600, gameTime: 600 }, coach: { inService: false } });
+  assert.equal(hidden('lineNo'), true);
+  assert.equal(value('lineName'), 'Hors service');
+  assert.equal(value('nextStop'), 'GPS · 5,0 km');
+  assert.equal(value('timer'), '10 min');
+  assert.equal(hidden('paxBox'), true);
   context.hudCoach(root, { connected: true, vehicleType: 'car', live: { job: null } });
   assert.equal(root.classes.has('hud-coach'), true);
 });
+
+test('le car est reconnu dès la montée à bord, avec ou sans service', () => {
+  const coach = require('../src/coach');
+  for (const id of ['vehicle.scania.touring', 'vehicle.volvo.9700dd', 'vehicle.man.lions_coach', 'vehicle.setra.s516hd'])
+    assert.equal(coach.isCoachVehicle({ id }), true, id);
+  for (const id of ['vehicle.scania.s_2016', 'vehicle.volvo.fh16_2012', 'vehicle.daf.xf', 'vehicle.man.tgx', 'vehicle.mercedes.actros2014'])
+    assert.equal(coach.isCoachVehicle({ id }), false, id);
+  assert.equal(coach.isCoachVehicle({ id: 'vehicle.mod.inconnu' }, ['vehicle.mod.inconnu']), true, 'car mémorisé après un service');
+
+  const { Telemetry } = require('../src/telemetry');
+  const t = new Telemetry(fs.mkdtempSync(path.join(os.tmpdir(), 'tch-coach-')), () => ({ vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, coachVehicles: [] }));
+  const learned = [];
+  t.on('coachVehicle', id => learned.push(id));
+  t.lastPacket = Date.now();
+  t.onState({ speed: 10, odometer: 100, gameTime: 600, localScale: 19, truck: { id: 'vehicle.scania.touring', brand: 'Scania', name: 'Touring' } });
+  let sn = t.snapshot();
+  assert.equal(sn.vehicleType, 'car', 'sans mission');
+  assert.equal(sn.thresholds.limit, 110);
+  assert.equal(sn.coach.inService, false);
+  t.onState({ speed: 10, odometer: 100.3, gameTime: 600, localScale: 19, truck: { id: 'vehicle.volvo.fh16_2012', brand: 'Volvo', name: 'FH16' } });
+  assert.equal(t.snapshot().vehicleType, 'camion', 'retour au camion');
+  t.onState({ speed: 10, odometer: 50, gameTime: 601, truck: { id: 'vehicle.mod.x_2026' }, busJob: { 'bus.stages.count': 2, 'destination_stop.name': { 0: 'A', 1: 'B' } } });
+  assert.deepEqual(learned, ['vehicle.mod.x_2026']);
+});
+
+test('lecture tolérante d’un service car et kilomètres en service', () => {
+  const coach = require('../src/coach');
+  const b = coach.parseBusJob({
+    bus_job_id: 'x1', 'bus.stages.count': 3, 'bus.stages.current': 1,
+    'source_stop.name': { 0: 'Datteln Busbahnhof', 1: 'B', 2: 'C' }, 'destination_stop.name': { 0: 'B', 1: 'OER - Berliner Platz', 2: 'Recklinghausen' },
+    'line.number': '232', 'line.name': 'Datteln Busbahnhof', 'passengers.count': { 0: 12, 1: 30 }, 'passengers.capacity': 82,
+    'destination_stop.arrival_time': { 0: 590, 1: 640, 2: 700 }
+  });
+  assert.equal(b.nextStop, 'OER - Berliner Platz');
+  assert.equal(b.to, 'Recklinghausen');
+  assert.equal(b.lineNumber, '232');
+  assert.equal(b.passengers, 30);
+  assert.equal(b.capacity, 82);
+  assert.equal(b.scheduleGameMinutes, 640);
+  assert.equal(coach.parseBusJob({}), null);
+  assert.equal(coach.parseBusJob(null), null);
+  // Champs inconnus : rien n'est inventé
+  const minimal = coach.parseBusJob({ 'bus.stages.count': 1, 'destination_stop.name': 'Gare' });
+  assert.equal(minimal.lineNumber, null); assert.equal(minimal.passengers, null); assert.equal(minimal.nextStop, 'Gare');
+  const d = coach.describeCoach({ gameTime: 600, navTime: 1800, navDistance: 9000, fuel: 150, truck: { 'fuel.capacity': 300 },
+    busJob: { 'bus.stages.count': 1, 'destination_stop.name': 'Gare', 'delivery.time': 640 } }, null, {});
+  assert.equal(d.scheduleMarginMinutes, 10, 'arrivée prévue 10 min avant l’horaire');
+  assert.equal(d.fuelPct, 50);
+  assert.equal(d.lineName, 'Gare', 'terminus à défaut de nom de ligne');
+  assert.equal(d.outsideTemp, null);
+
+  const { Telemetry } = require('../src/telemetry');
+  const t = new Telemetry(fs.mkdtempSync(path.join(os.tmpdir(), 'tch-coach-')), () => ({ vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, coachVehicles: [] }));
+  t.lastPacket = Date.now();
+  const st = odo => ({ speed: 20, odometer: odo, gameTime: 600, truck: { id: 'vehicle.scania.touring' }, busJob: { 'bus.stages.count': 2, 'destination_stop.name': { 0: 'A', 1: 'B' } } });
+  t.onState(st(100)); t.onState(st(100.2)); t.onState(st(100.4));
+  assert.ok(t.snapshot().job.loaded > 0.39, 'km en service comptés comme chargés');
+  assert.equal(t.snapshot().job.empty, 0);
+  assert.ok(Math.abs(t.snapshot().coach.distanceKm - 0.4) < 1e-9);
+});
+
 test('lecture des archives sans modification, DLC présents distincts de leur activation', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-test-'));
   try {

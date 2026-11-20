@@ -81,7 +81,7 @@ class DiscordPresence {
           this.client = null;
         }
         try { await client.destroy(); } catch {}
-        return { ok: false, error: `Connexion Discord impossible : ${error.message}` };
+        return { ok: false, error: /could not connect|ENOENT|ECONNREFUSED|connection closed/i.test(error.message || '') ? 'Discord n’est pas lancé sur cet ordinateur. Ouvre l’application Discord puis relance le test.' : `Connexion Discord impossible : ${error.message}` };
       })
       .finally(() => { if (this.connecting === connecting) this.connecting = null; });
     this.connecting = connecting;

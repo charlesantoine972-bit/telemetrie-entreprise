@@ -4,6 +4,7 @@ const dgram = require('dgram');
 const fs = require('fs');
 const path = require('path');
 const { EventEmitter } = require('events');
+const coach = require('./coach');
 
 const PORT = 47311;
 const MAX_TICK_KM = 0.5; // au-delà : saut (ferry, train, changement de camion) -> non compté
@@ -12,30 +13,16 @@ const TRAIL_STEP = 150, JOB_STEP = 400, TRAIL_JUMP = 3000, TRAIL_MAX = 20000, JO
 const BUS_JOB_COMPLETION_GRACE_MS = 60000; // bus_job.completed peut arriver après l’arrivée au dernier arrêt
 const gameKey = (g) => g === 'ats' ? 'ats' : 'ets2';
 
-function indexedValue(attributes, name, index) {
-  const value = attributes && attributes[name];
-  if (value && typeof value === 'object') return value[String(index)] ?? value[index] ?? null;
-  return index === 0 ? value ?? null : null;
-}
 
+// Mission car : lecture tolérante de bus_job (voir src/coach.js).
 function busMission(attributes) {
-  if (!attributes) return null;
-  const count = Number(attributes['bus.stages.count']);
-  if (!Number.isInteger(count) || count < 1) return null;
-  const lastStage = count - 1;
-  const stageCurrent = Math.max(0, Math.min(lastStage, Number(attributes['bus.stages.current']) || 0));
-  const from = indexedValue(attributes, 'source_stop.name', 0);
-  const to = indexedValue(attributes, 'destination_stop.name', lastStage);
-  const market = attributes['bus_job.market'] || '';
-  const fromId = indexedValue(attributes, 'source_stop.id', 0);
-  const toId = indexedValue(attributes, 'destination_stop.id', lastStage);
-  const id = attributes.bus_job_id;
-  const key = `bus|${id || [market, fromId || from, toId || to, attributes.income || ''].join('|')}`;
+  const b = coach.parseBusJob(attributes);
+  if (!b) return null;
+  const key = `bus|${b.id || [b.market || '', b.fromId || b.from, b.toId || b.to, b.income || ''].join('|')}`;
   return {
-    key, missionType: 'bus', busMarket: market, stageCount: count, stageCurrent,
-    from, to, nextStop: indexedValue(attributes, 'destination_stop.name', stageCurrent),
-    fromId, toId, income: Number(attributes.income) || 0,
-    planned: Number(attributes['planned_distance.km']) || 0
+    key, missionType: 'bus', busMarket: b.market || '', stageCount: b.stageCount, stageCurrent: b.stageCurrent,
+    from: b.from, to: b.to, nextStop: b.nextStop, fromId: b.fromId, toId: b.toId,
+    lineNumber: b.lineNumber, lineName: b.lineName, income: b.income, planned: b.planned
   };
 }
 
@@ -102,6 +89,7 @@ class Telemetry extends EventEmitter {
       this.lastPacket = Date.now();
       if (msg.type === 'state') this.onState(msg);
       else if (msg.type === 'gameplay') this.onGameplay(msg);
+      else if (msg.type === 'config' && typeof msg.id === 'string') (this.configs ||= {})[msg.id] = msg.data; // diagnostic
       else if (msg.type === 'shutdown') { this.live = null; this.lastOdo = null; this.lastFuel = null; this.lastTruck = null; this.lastFuelGame = null; }
     });
     this.sock.on('error', (e) => { this.socketError = e.message; });
@@ -119,8 +107,13 @@ class Telemetry extends EventEmitter {
   vehicleType(live = this.live, connected = Date.now() - this.lastPacket < 3000) {
     const savedType = this.getSettings().vehicleType;
     if (!connected || !live) return savedType;
-    if (live.busJob) return 'car';
+    // Car reconnu dès qu'on monte à bord (modèle du véhicule), avec ou sans service en cours.
+    if (live.busJob || this.isCoach(live)) return 'car';
     return savedType === 'car' ? 'car' : 'camion';
+  }
+
+  isCoach(live = this.live) {
+    return !!(live && coach.isCoachVehicle(live.truck, this.getSettings().coachVehicles || []));
   }
 
   thresholds(live = this.live, connected = Date.now() - this.lastPacket < 3000) {
@@ -132,6 +125,14 @@ class Telemetry extends EventEmitter {
   onState(s) {
     this.live = s;
     const kmh = s.speed * 3.6;
+    const now = Date.now();
+    // Horloge : le jeu ne donne que les minutes ; on note quand la minute change pour estimer les secondes.
+    if (s.gameTime !== this.clockMinute) { this.clockMinute = s.gameTime; this.clockAt = now; }
+    // Véhicule : distance depuis la montée à bord, et apprentissage des cars vus en service.
+    const vehicleId = s.truck && (s.truck.id || `${s.truck.brand || ''} ${s.truck.name || ''}`.trim());
+    if (vehicleId !== this.vehicleId) { this.vehicleId = vehicleId; this.boardedOdo = Number.isFinite(s.odometer) ? s.odometer : null; }
+    if (s.busJob && s.truck && typeof s.truck.id === 'string' && s.truck.id && !(this.getSettings().coachVehicles || []).includes(s.truck.id)
+        && !coach.isCoachVehicle(s.truck)) this.emit('coachVehicle', s.truck.id);
 
     // bus_job fournit les étapes d’autocar ; job fournit les livraisons camion.
     const activeMission = busMission(s.busJob) || (s.job ? {
@@ -174,7 +175,8 @@ class Telemetry extends EventEmitter {
       const d = s.odometer - this.lastOdo;
       this.lastOdo = s.odometer;
       if (d > 0 && d < MAX_TICK_KM) {
-        const loaded = !!(s.job && s.trailerConnected);
+        // Car : les km en service (passagers à bord) comptent comme « chargés ».
+        const loaded = !!(s.job && s.trailerConnected) || !!(this.current && this.current.missionType === 'bus' && s.busJob);
         const k = loaded ? 'loaded' : 'empty';
         this.data.totals[k] += d;
         this.session[k] += d;
@@ -228,7 +230,7 @@ class Telemetry extends EventEmitter {
     if (s.paused || !Number.isFinite(x) || !Number.isFinite(z)) return;
     const g = gameKey(s.game);
     if (this.trailGame !== g) { this.trail = []; this.trailGame = g; }
-    const loaded = s.job && s.trailerConnected ? 1 : 0;
+    const loaded = (s.job && s.trailerConnected) || s.busJob ? 1 : 0;
     const add = (list, step) => {
       const p = [Math.round(x), Math.round(z), loaded];
       const tail = list[list.length - 1];
@@ -321,9 +323,16 @@ class Telemetry extends EventEmitter {
       const overPct = dist > 0 ? (this.current.over / dist) * 100 : 0;
       job = { ...this.current, key: undefined, path: undefined, distance: dist, overPct, mode: overPct > th.pct ? 'course' : 'réel' };
     }
+    let coachInfo = null;
+    if (s && vehicleType === 'car') {
+      const scale = s.localScale > 0 ? s.localScale : null;
+      const clockSeconds = scale && !s.paused && this.clockAt ? Math.min(59, Math.floor((Date.now() - this.clockAt) / 1000 * scale)) : null;
+      const boardedKm = Number.isFinite(this.boardedOdo) && Number.isFinite(s.odometer) ? Math.max(0, s.odometer - this.boardedOdo) : null;
+      coachInfo = coach.describeCoach(s, job, { clockSeconds, boardedKm });
+    }
     return {
       connected, socketError: this.socketError || null,
-      live: s, job, thresholds: th, vehicleType,
+      live: s, job, thresholds: th, vehicleType, coach: coachInfo,
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },
