@@ -162,10 +162,62 @@ class Atelier {
     if (!/^[0-9_-]+$/.test(backupName)) throw new Error('Sauvegarde inconnue.');
     const src = path.join(r.store, backupName);
     if (!fs.existsSync(src)) throw new Error('Sauvegarde introuvable.');
-    this.backup(id, 'Avant restauration');           // filet de sécurité
+    if (fs.existsSync(r.dir)) this.backup(id, 'Avant restauration');   // filet de sécurité (sauf profil supprimé)
     fs.rmSync(r.dir, { recursive: true, force: true });
     fs.cpSync(src, r.dir, { recursive: true });
     fs.rmSync(path.join(r.dir, '.etiquette'), { force: true });
+    return true;
+  }
+
+  // ---------- Suppression
+  // Supprime une copie faite par le Hub (ne touche pas au profil du jeu).
+  deleteBackup(id, backupName) {
+    const r = this.resolve(id);
+    if (!/^[0-9_-]+$/.test(String(backupName))) throw new Error('Sauvegarde inconnue.');
+    const dir = path.join(r.store, backupName);
+    if (!fs.existsSync(dir)) throw new Error('Sauvegarde introuvable.');
+    fs.rmSync(dir, { recursive: true, force: true });
+    try { if (!fs.readdirSync(r.store).length) fs.rmdirSync(r.store); } catch {}
+    return true;
+  }
+
+  // Supprime un profil du jeu. Une copie « Avant suppression » est gardée dans les sauvegardes du Hub :
+  // le profil apparaît alors dans « Profils supprimés » et peut être restauré.
+  deleteProfile(id) {
+    const r = this.resolve(id);
+    if (this.isRunning(r.game)) throw new Error(`Ferme ${GAMES[r.game].name} avant de supprimer un profil.`);
+    if (r.kind === 'steam_profiles') throw new Error('Ce profil est synchronisé par Steam Cloud : supprime-le depuis le jeu (choix du profil), sinon Steam risque de le remettre.');
+    if (!fs.existsSync(r.dir)) throw new Error('Dossier du profil introuvable.');
+    const backupName = this.backup(id, 'Avant suppression');
+    fs.rmSync(r.dir, { recursive: true, force: true });
+    return { backupName };
+  }
+
+  // Profils supprimés dont il reste des copies dans les sauvegardes du Hub.
+  deletedProfiles() {
+    const out = [];
+    for (const game of Object.keys(GAMES)) for (const kind of PROFILE_DIRS) {
+      let entries = []; try { entries = fs.readdirSync(path.join(this.backups, game, kind), { withFileTypes: true }).filter(e => e.isDirectory()); } catch { continue; }
+      for (const e of entries) {
+        const id = `${game}/${kind}/${e.name}`;
+        let r; try { r = this.resolve(id); } catch { continue; }
+        if (fs.existsSync(r.dir)) continue;
+        const backups = this.listBackups(id);
+        if (!backups.length) continue;
+        let name = Atelier.decodeName(e.name);
+        try { const head = fs.readFileSync(path.join(r.store, backups[0].name, 'profile.sii'), 'utf8'); if (head.startsWith('SiiNunit')) { const m = head.match(/^ profile_name: (.*)$/m); if (m) name = SaveEditor.decStr(m[1]) || name; } } catch {}
+        out.push({ id, game, gameName: GAMES[game].name, kind, folder: e.name, name, cloud: kind === 'steam_profiles', backups });
+      }
+    }
+    return out.sort((a, b) => b.backups[0].name.localeCompare(a.backups[0].name));
+  }
+
+  // Efface toutes les copies d'un profil déjà supprimé (définitif).
+  purgeDeleted(id) {
+    const r = this.resolve(id);
+    if (fs.existsSync(r.dir)) throw new Error('Ce profil existe encore : supprime d\'abord le profil.');
+    if (!fs.existsSync(r.store)) throw new Error('Aucune copie à effacer.');
+    fs.rmSync(r.store, { recursive: true, force: true });
     return true;
   }
 

@@ -297,6 +297,10 @@ function setupIpc() {
   ipcMain.handle('atelier:analyze', safe((id) => atelier.analyze(id)));
   ipcMain.handle('atelier:backup', safe((id) => atelier.backup(id)));
   ipcMain.handle('atelier:restore', safe((id, name) => atelier.restore(id, name)));
+  ipcMain.handle('atelier:deleteBackup', safe((id, name) => atelier.deleteBackup(id, name)));
+  ipcMain.handle('atelier:deleteProfile', safe((id) => atelier.deleteProfile(id)));
+  ipcMain.handle('atelier:deletedProfiles', safe(() => atelier.deletedProfiles()));
+  ipcMain.handle('atelier:purgeDeleted', safe((id) => atelier.purgeDeleted(id)));
   ipcMain.handle('atelier:openBackups', safe(async () => { fs.mkdirSync(atelier.backups, { recursive: true }); await shell.openPath(atelier.backups); return true; }));
   ipcMain.handle('atelier:console', safe((game) => atelier.consoleState(game)));
   ipcMain.handle('atelier:editorInfo', safe(() => atelier.editorInfo()));

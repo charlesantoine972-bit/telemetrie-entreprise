@@ -342,6 +342,9 @@
   .steps{margin:0;padding-left:20px;line-height:1.9;color:var(--soft)}
   .btn{height:42px;padding:0 16px;border-radius:10px;border:1px solid var(--ctl);background:var(--panel);color:var(--text);font-weight:600;font-size:14px}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .btn.danger{color:var(--race);border-color:color-mix(in srgb,var(--race) 55%,var(--ctl))}
+  .btn.danger:disabled{opacity:.45;cursor:not-allowed}
+  .btn.danger:hover:not(:disabled){background:color-mix(in srgb,var(--race) 14%,var(--panel))}
   .field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--soft)}
   .field input,.field select{height:40px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
   table.jobs{width:100%;border-collapse:collapse;font-size:13px}
@@ -466,6 +469,7 @@
       </div>
       <div class="muted" style="font-size:13px;margin-bottom:12px" id="atMsg"></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px" id="atProfiles"></div>
+      <div id="atDeleted"></div>
     </section>
     <section id="v-at-profil" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK TOOLS</div><h1>Profil</h1>
@@ -1260,6 +1264,7 @@ async function analyzeProfile(id){
   if (r.ok) announce(r.data.bad ? `Analyse terminée : ${r.data.bad} fichier(s) corrompu(s).` : r.data.warn ? `Analyse terminée : ${r.data.warn} élément(s) à vérifier.` : 'Analyse terminée : tout est sain.');
   renderSaves();
 }
+const bkRows = (p, list) => list.map(b => `<div class="bk"><span class="grow">${bkLabel(b.name)}${b.label ? ' · <span class="muted">' + escM(b.label) + '</span>' : ''}</span><button class="btn" style="height:30px;font-size:12px" data-rs="${escM(p.id)}" data-rn="${escM(b.name)}" data-pn="${escM(p.name)}">Restaurer</button><button class="btn danger" style="height:30px;font-size:12px" data-delb="${escM(p.id)}" data-rn="${escM(b.name)}" aria-label="Supprimer la sauvegarde du ${bkLabel(b.name)}">Supprimer</button></div>`).join('');
 const bkLabel = n => { const m = n.match(/^(\d{4})-(\d\d)-(\d\d)_(\d\d)-(\d\d)/); return m ? `${m[3]}/${m[2]}/${m[1]} ${m[4]}:${m[5]}` : n; };
 async function renderSaves(msg){
   const box = document.getElementById('atProfiles');
@@ -1274,8 +1279,9 @@ async function renderSaves(msg){
       <div class="between" style="align-items:flex-start;flex-wrap:wrap"><div style="min-width:160px;flex:1"><b style="font-size:16px">${escM(p.name)}</b><div class="muted" style="font-size:12px;margin-top:2px">${p.game === 'ets2' ? 'ETS2' : 'ATS'}${p.cloud ? ' · Steam Cloud' : ''} · modifié le ${fmtDate(p.modified)}</div></div>
         <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" style="height:36px" data-an="${escM(p.id)}"${atAnalyzing.has(p.id) ? ' disabled' : ''} title="Vérifie si les sauvegardes de ce profil sont corrompues (ne modifie rien)">Analyser</button><button class="btn" style="height:36px" data-dup="${escM(p.id)}" data-pn="${escM(p.name)}" title="Crée un second profil identique pour faire des tests sans toucher à l'original">Dupliquer</button><button class="btn primary" style="height:36px" data-bk="${escM(p.id)}">Sauvegarder</button></div></div>
       ${analysisHtml(p.id)}
-      ${p.backups.length ? p.backups.slice(0, 3).map(b => `<div class="bk"><span class="grow">${bkLabel(b.name)}${b.label ? ' · <span class="muted">' + escM(b.label) + '</span>' : ''}</span><button class="btn" style="height:30px;font-size:12px" data-rs="${escM(p.id)}" data-rn="${escM(b.name)}" data-pn="${escM(p.name)}">Restaurer</button></div>`).join('') + (p.backups.length > 3 ? `<span class="muted" style="font-size:12px">+ ${p.backups.length - 3} plus ancienne(s)</span>` : '')
+      ${p.backups.length ? bkRows(p, p.backups.slice(0, 3)) + (p.backups.length > 3 ? `<details><summary class="muted" style="font-size:12px;cursor:pointer">+ ${p.backups.length - 3} plus ancienne(s)</summary><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">${bkRows(p, p.backups.slice(3))}</div></details>` : '')
         : '<span class="muted" style="font-size:13px">Aucune sauvegarde pour l\'instant.</span>'}
+      <div style="display:flex;justify-content:flex-end"><button class="btn danger" style="height:30px;font-size:12px" data-delp="${escM(p.id)}" data-pn="${escM(p.name)}"${p.cloud ? ' disabled title="Profil Steam Cloud : supprime-le depuis le jeu, sinon Steam risque de le remettre"' : ' title="Supprime ce profil du jeu (une copie est gardée pour pouvoir le récupérer)"'}>Supprimer le profil</button></div>
     </div>`).join('')
     : '<div class="empty" style="grid-column:1/-1">Aucun profil trouvé dans Documents\\Euro Truck Simulator 2 ou American Truck Simulator.<br>Lance le jeu une fois et crée un profil, puis clique sur « Actualiser ».</div>';
   box.querySelectorAll('[data-an]').forEach(b => b.onclick = () => analyzeProfile(b.dataset.an));
@@ -1283,7 +1289,7 @@ async function renderSaves(msg){
     const def = (b.dataset.pn + ' (copie)').slice(0, 30);
     const ok = await ask('Dupliquer ce profil ?', `Crée un second profil, identique à <b>${escM(b.dataset.pn)}</b> (sauvegardes, argent, camions…), que tu pourras choisir dans le jeu pour faire des tests. L'original n'est pas modifié.
       <label class="field" style="margin-top:12px">Nom de la copie<input id="dupName" maxlength="30" value="${escM(def)}"></label>
-      <div class="muted" style="font-size:12px;margin-top:6px">La copie est rangée dans tes profils locaux (pas dans le Steam Cloud). Tu pourras la supprimer depuis le jeu, dans le choix du profil.</div>`, 'Dupliquer');
+      <div class="muted" style="font-size:12px;margin-top:6px">La copie est rangée dans tes profils locaux (pas dans le Steam Cloud). Tu pourras la supprimer ici avec « Supprimer le profil ».</div>`, 'Dupliquer');
     if (!ok) return;
     const name = (document.getElementById('dupName').value || '').trim();
     b.disabled = true;
@@ -1297,6 +1303,51 @@ async function renderSaves(msg){
     if (!ok) return;
     const x = await window.tel.atelier.restore(b.dataset.rs, b.dataset.rn);
     renderSaves(x.ok ? 'Profil restauré ✓' : x.error);
+  });
+  box.querySelectorAll('[data-delb]').forEach(b => b.onclick = async () => {
+    const ok = await ask('Supprimer cette sauvegarde ?', `La copie du <b>${bkLabel(b.dataset.rn)}</b> sera effacée définitivement.<br>Ton profil dans le jeu n'est pas touché.`, 'Supprimer');
+    if (!ok) return;
+    const x = await window.tel.atelier.deleteBackup(b.dataset.delb, b.dataset.rn);
+    renderSaves(x.ok ? 'Sauvegarde supprimée ✓' : x.error);
+  });
+  box.querySelectorAll('[data-delp]').forEach(b => b.onclick = async () => {
+    const ok = await ask('Supprimer ce profil ?', `Le profil <b>${escM(b.dataset.pn)}</b> sera retiré du jeu, avec toutes ses sauvegardes en jeu.<br>Une copie est gardée par le Hub : tu pourras le récupérer plus bas, dans « Profils supprimés ».`, 'Supprimer le profil');
+    if (!ok) return;
+    b.disabled = true;
+    const x = await window.tel.atelier.deleteProfile(b.dataset.delp);
+    if (x.ok) { delete atAnalysis[b.dataset.delp]; announce('Profil supprimé : ' + b.dataset.pn); }
+    renderSaves(x.ok ? `Profil « ${b.dataset.pn} » supprimé ✓ Tu peux encore le récupérer dans « Profils supprimés ».` : x.error);
+  });
+  renderDeleted();
+}
+async function renderDeleted(){
+  const box = document.getElementById('atDeleted');
+  const r = await window.tel.atelier.deletedProfiles();
+  if (!r.ok || !r.data.length) { box.innerHTML = ''; return; }
+  box.innerHTML = `<h2 style="font-size:16px;margin:24px 0 4px">Profils supprimés</h2>
+    <div class="muted" style="font-size:13px;margin-bottom:12px">Ces profils n'existent plus dans le jeu, mais le Hub en a gardé des copies. « Restaurer » les remet dans le jeu.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px">${r.data.map(p => `<div class="panel prof">
+      <div class="between" style="align-items:flex-start;flex-wrap:wrap"><div style="min-width:160px;flex:1"><b style="font-size:16px">${escM(p.name)}</b><div class="muted" style="font-size:12px;margin-top:2px">${p.game === 'ets2' ? 'ETS2' : 'ATS'}${p.cloud ? ' · Steam Cloud' : ''} · ${p.backups.length} copie${p.backups.length > 1 ? 's' : ''}</div></div>
+        <button class="btn danger" style="height:36px" data-purge="${escM(p.id)}" data-pn="${escM(p.name)}">Effacer définitivement</button></div>
+      ${bkRows(p, p.backups.slice(0, 3))}${p.backups.length > 3 ? `<details><summary class="muted" style="font-size:12px;cursor:pointer">+ ${p.backups.length - 3} plus ancienne(s)</summary><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">${bkRows(p, p.backups.slice(3))}</div></details>` : ''}
+    </div>`).join('')}</div>`;
+  box.querySelectorAll('[data-rs]').forEach(b => b.onclick = async () => {
+    const ok = await ask('Récupérer ce profil ?', `Le profil <b>${escM(b.dataset.pn)}</b> va revenir dans le jeu, dans son état du <b>${bkLabel(b.dataset.rn)}</b>.`, 'Restaurer');
+    if (!ok) return;
+    const x = await window.tel.atelier.restore(b.dataset.rs, b.dataset.rn);
+    renderSaves(x.ok ? `Profil « ${b.dataset.pn} » récupéré ✓` : x.error);
+  });
+  box.querySelectorAll('[data-delb]').forEach(b => b.onclick = async () => {
+    const ok = await ask('Supprimer cette sauvegarde ?', `La copie du <b>${bkLabel(b.dataset.rn)}</b> sera effacée définitivement.`, 'Supprimer');
+    if (!ok) return;
+    const x = await window.tel.atelier.deleteBackup(b.dataset.delb, b.dataset.rn);
+    renderSaves(x.ok ? 'Sauvegarde supprimée ✓' : x.error);
+  });
+  box.querySelectorAll('[data-purge]').forEach(b => b.onclick = async () => {
+    const ok = await ask('Effacer définitivement ?', `Toutes les copies du profil <b>${escM(b.dataset.pn)}</b> seront effacées. <b>Tu ne pourras plus le récupérer.</b>`, 'Effacer définitivement');
+    if (!ok) return;
+    const x = await window.tel.atelier.purgeDeleted(b.dataset.purge);
+    renderSaves(x.ok ? `Profil « ${b.dataset.pn} » effacé définitivement.` : x.error);
   });
 }
 document.getElementById('atRefresh').onclick = () => renderSaves();
@@ -1639,6 +1690,7 @@ function renderMkItem(id){
 document.getElementById('mkBack').onclick = () => go(mkFrom);
 const MK_FEATURED = ['tablette', 'gps'];
 const MK_NEWS = [
+  { d: '20/11/2026', t: 'Truck Tools : supprimer une sauvegarde ou un profil', x: 'Dans Truck Tools → Sauvegardes, chaque copie faite par le Hub a un bouton « Supprimer », et chaque profil un bouton « Supprimer le profil ». Un profil supprimé reste récupérable dans « Profils supprimés » tant que tu n\'effaces pas ses copies.' },
   { d: '17/11/2026', t: 'Truck Tools : dupliquer un profil et bilan du profil', x: 'Dans Truck Tools → Sauvegardes, « Dupliquer » crée une copie de ton profil pour faire des tests sans risque. Dans Truck Tools → Profil, un bilan en lecture seule montre tes finances, ta flotte et les problèmes à corriger.' },
   { d: '17/11/2026', t: 'Truck Tools : analyse des sauvegardes', x: 'Dans Truck Tools → Sauvegardes, le bouton « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues (fichier vide, tronqué, illisible…) sans rien modifier.' },
   { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Apparence, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
