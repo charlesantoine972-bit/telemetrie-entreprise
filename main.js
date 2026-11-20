@@ -152,7 +152,7 @@ function createWindow() {
    Visible seulement quand le jeu envoie des données (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
-const HUD_W = 980, HUD_H = 440;
+const HUD_W = 1440, HUD_H = 440; // assez large pour le Bandeau en taille « Grand » (fenêtre transparente, traversée par la souris)
 function activeHudOptions(live = telemetry && telemetry.live, vehicleType = telemetry ? telemetry.vehicleType(live) : settings.vehicleType) {
   const profile = vehicleType === 'car' ? 'bus' : 'truck';
   return settings.hud && settings.hud[profile] || DEFAULTS.hud[profile];

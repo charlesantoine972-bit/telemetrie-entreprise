@@ -2214,7 +2214,7 @@ function renderLive(sn){
     setText('tName', L.truck ? `${L.truck.brand || ''} ${L.truck.name || ''}`.trim() : '–');
     setText('tFuel', L.fuel ? Math.round(L.fuel) + ' L' : '–');
     setText('tRange', L.fuelRange ? km(L.fuelRange) : '–');
-    setText('tRest', L.restStop > 0 ? dur(L.restStop) : '–');
+    setText('tRest', Number.isFinite(L.restStop) ? (L.restStop > 0 ? dur(L.restStop) : 'maintenant') : '–');
     const gt = L.gameTime; setText('tClock', gt ? `${DAYS[Math.floor(gt/1440)%7]} ${String(Math.floor(gt/60)%24).padStart(2,'0')}:${String(gt%60).padStart(2,'0')}` : '–');
   } else {
     setText('lSpeed', '–'); document.getElementById('lLimit').style.visibility = 'hidden';
@@ -2474,9 +2474,11 @@ if (HAS_APP){
       refreshPseudo();
       setText('saveMsg', 'Enregistré ✓'); setTimeout(() => setText('saveMsg', ''), 2000);
     } catch (error) {
-      setText('saveMsg', error.message || 'Enregistrement impossible.');
+      setText('saveMsg', cleanError(error, 'Enregistrement impossible.'));
     }
   };
+  // Messages d'erreur sans le préfixe technique d'Electron (« Error invoking remote method … »).
+  function cleanError(error, fallback) { return String((error && error.message) || fallback).replace(/^Error invoking remote method '[^']*': (\w*Error: )?/, '') || fallback; }
   document.getElementById('btnSteamTest').onclick = async () => {
     const status = document.getElementById('steamStatus');
     status.textContent = 'Vérification Steam…';
@@ -2488,7 +2490,7 @@ if (HAS_APP){
       const profile = await window.tel.steamProfile();
       document.getElementById('steamApiKey').value = '';
       status.textContent = `${profile.name} — ` + profile.games.map(g => `${g.name} : ${g.owned ? `possédé, ${g.playtimeHours} h` : 'non détecté'}`).join(' · ');
-    } catch (error) { status.textContent = error.message || 'Connexion Steam impossible.'; }
+    } catch (error) { status.textContent = cleanError(error, 'Connexion Steam impossible.'); }
   };
   document.getElementById('btnSteamClear').onclick = async () => {
     const status = document.getElementById('steamStatus');
@@ -2496,7 +2498,7 @@ if (HAS_APP){
       await window.tel.clearSteamApiKey();
       document.getElementById('steamApiKey').value = '';
       status.textContent = 'Clé Steam effacée.';
-    } catch (error) { status.textContent = error.message || 'Impossible d’effacer la clé.'; }
+    } catch (error) { status.textContent = cleanError(error, 'Impossible d’effacer la clé.'); }
   };
   document.getElementById('btnDiscordTest').onclick = async () => {
     const status = document.getElementById('discordStatus');
@@ -2506,7 +2508,7 @@ if (HAS_APP){
       await window.tel.setSettings({ discordClientId: clientId });
       const result = await window.tel.testDiscordPresence(clientId);
       status.textContent = result.ok ? result.message : result.error;
-    } catch (error) { status.textContent = error.message || 'Connexion Discord impossible.'; }
+    } catch (error) { status.textContent = cleanError(error, 'Connexion Discord impossible.'); }
   };
   document.getElementById('btnInstall').onclick = async () => renderPlugin(await window.tel.installPlugin(), 'Vérification terminée.');
   document.getElementById('btnChoose').onclick = async () => {

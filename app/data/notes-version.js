@@ -2,16 +2,32 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
-  { version: '0.13.0', date: '2026-11-20', titre: 'Nouveau bandeau car', notes: [
+  { version: '0.13.20', date: '2026-11-20', titre: 'Nouveau bandeau car et Truck Tools', notes: [
     ['nouveau', 'Bandeau car redessiné : numéro et nom de ligne, arrêt en cours, heure du jeu à la seconde, vitesse, limitation, prochain arrêt, avance ou retard sur l’horaire, distance, odomètre, passagers, pause obligatoire et carburant.'],
     ['nouveau', 'Le bandeau car s’affiche dès que tu montes dans un car (Scania Touring, Volvo 9700, MAN Lion’s Coach…), même sans service ; un car utilisé pour un service est mémorisé.'],
     ['nouveau', 'Page HUD → « Données car reçues du jeu » : liste de ce que le jeu envoie pendant un service, à copier.'],
     ['ameliore', 'Plugin 1.3.0 (SDK SCS 1.16) : pause obligatoire des conducteurs et transmission complète des données de service car.'],
+    ['nouveau', 'Truck Tools : supprimer une sauvegarde faite par le Hub, ou un profil local (jeu fermé, copie « Avant suppression » gardée).'],
+    ['nouveau', 'Truck Tools : section « Profils supprimés » pour restaurer ou effacer définitivement.'],
     ['corrige', 'Les kilomètres d’un service car comptent comme « chargés » ; la Télémétrie affiche « EN SERVICE », la ligne et le prochain arrêt au lieu de « Marchandise · · ».'],
+    ['corrige', 'Le Bandeau camion en taille « Grand » n’est plus coupé sur les côtés.'],
+    ['corrige', 'Messages Steam et Discord plus clairs, en français (Discord non lancé, identifiant invalide).'],
+    ['corrige', 'La pause obligatoire due tout de suite affiche « maintenant » au lieu de « – ».'],
+  ]},
+  { version: '0.12.15', date: '2026-11-18', titre: 'Frais détaillés par trajet', notes: [
+    ['nouveau', 'Feuille de route : péages, amendes, ferries et carburant détaillés pour chaque trajet.'],
+  ]},
+  { version: '0.12.14', date: '2026-11-18', titre: 'HUD lié au profil de carrière', notes: [
+    ['nouveau', 'Feuille de route : vraies destinations des services car.'],
+    ['ameliore', 'Le profil choisi dans Réglages (camion ou car) décide du HUD et reste actif d’une mission à l’autre.'],
+    ['ameliore', 'Styles du HUD simplifiés : Bandeau et Navigation.'],
+  ]},
+  { version: '0.12.13', date: '2026-11-18', titre: 'Correctif détection du véhicule', notes: [
+    ['corrige', 'Détection camion / car et taille du HUD car corrigées.'],
   ]},
   { version: '0.12.12', date: '2026-11-18', titre: 'Détection auto et réglages bus simplifiés', notes: [
     ['ameliore', 'Les réglages bus / car ne conservent que la taille et l’opacité.'],
-    ['ameliore', 'La page HUD indique la détection automatique du véhicule, activée et verrouillée ; l’overlay choisit le profil camion ou bus / car selon le véhicule en jeu.'],
+    ['ameliore', 'La page HUD indique le profil actif ; l’overlay choisit le profil camion ou bus / car selon le profil de carrière et le service en cours.'],
   ]},
   { version: '0.12.11', date: '2026-11-18', titre: 'Feuille de route et HUD indépendants', notes: [
     ['nouveau', 'Entreprise : feuille de route avec départ, arrivée, carburant ajouté ou consommé et dépenses signalées par le jeu.'],

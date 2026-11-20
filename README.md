@@ -1,4 +1,4 @@
-## Version 0.13.0 — nouveau bandeau car
+## Version 0.13.20 — nouveau bandeau car et Truck Tools
 
 Le bandeau car reprend la présentation d’un afficheur de ligne : numéro et nom de ligne, arrêt en cours, heure du jeu (secondes estimées entre deux minutes de jeu), vitesse, limitation, prochain arrêt, avance ou retard sur l’horaire, puis distance, odomètre, passagers, pause obligatoire et carburant. Il s’affiche dès que le joueur conduit un car (modèle reconnu dans `src/coach.js`, ou car déjà utilisé pour un service et mémorisé dans `coachVehicles`), avec ou sans service.
 

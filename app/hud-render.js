@@ -26,6 +26,9 @@ function hudRender(root, d){
   if (j) q('km').textContent = fmt(j.loaded, 1) + ' km chargés';
   hudMission(root, d);
   hudCoach(root, d);
+  // Ne jamais couper le bandeau : si l'écran est trop étroit pour la taille choisie, on réduit.
+  const room = (typeof window !== 'undefined' && window.innerWidth || 0) - 16, wide = (root.offsetWidth || 0) * scale / 100;
+  if (room > 0 && wide > room) root.style.transform = `scale(${(room / root.offsetWidth).toFixed(3)})`;
   q('today').textContent = fmt((d.today && (d.today.loaded + d.today.empty)) || 0, 0) + ' km';
 }
 
