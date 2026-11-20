@@ -1726,6 +1726,8 @@ const TI = { // icônes (trait), dessinées pour l'appli
   copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   truck: '<path d="M2 16V7a1 1 0 0 1 1-1h10v10"/><path d="M13 9h4.5l3.5 4v3h-2"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M8.3 17.5h6.4M2 16h2.7"/>',
   trailer: '<rect x="2" y="5" width="15" height="10" rx="1"/><path d="M17 12h5"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="11" cy="17.5" r="1.8"/>',
+  engine: '<rect x="5" y="8" width="12" height="9" rx="1"/><path d="M9 8V5h4v3M17 11h2l2-2v8l-2-2h-2M5 12H3M3 10v4"/>',
+  badge: '<circle cx="12" cy="12" r="7"/><path d="M9 12l2 2 4-4"/><path d="M4 4l16 16"/>',
   convoy: '<path d="M1.5 15V9h7v6"/><path d="M8.5 11h2l1.5 2v2"/><path d="M13 15V9h7v6"/><path d="M20 11h1.5l1 2v2"/><circle cx="4" cy="16.5" r="1.2"/><circle cx="9.5" cy="16.5" r="1.2"/><circle cx="15.5" cy="16.5" r="1.2"/><circle cx="21" cy="16.5" r="1.2"/>'
 };
 const tIcon = (k, sz = 24) => `<svg aria-hidden="true" focusable="false" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${TI[k] || ''}</svg>`;
@@ -1785,6 +1787,20 @@ const TOOLS = {
     form: S => `<label class="field">Camion<select id="ptSel">${S.tools.trucks.filter(t => !t.current).map(t => `<option value="${escM(t.id)}">${escM(vName(t))} · ${escM(t.plate || 'sans plaque')} · ${escM(cityName(t.garage))}</option>`).join('')}</select></label>
       <div class="muted" style="font-size:12px;margin-top:8px">Ton chauffeur échange sa place avec celui du camion choisi, et ton QG devient la ville de son garage.</div>`,
     collect: () => { const s = document.querySelector('#modalBody #ptSel'); return { e: { playerTruck: s.value }, list: ['Nouveau camion : ' + s.options[s.selectedIndex].text] }; } },
+  truckParts: { page: 'at-camion', icon: 'engine', title: 'Moteur et boîte', desc: 'Monte le moteur ou la boîte d\'un autre camion du même modèle de ta flotte.',
+    meta: S => S.tools.parts && S.tools.parts.engine ? `Moteur : <b>${escM(S.tools.parts.names[S.tools.parts.engine] || '–')}</b>` : '',
+    off: S => !S.tools.parts ? 'Aucun camion attribué' : (S.tools.parts.engines.length < 2 && S.tools.parts.transmissions.length < 2) ? 'Aucun autre camion du même modèle dans ta flotte' : '',
+    form: S => { const P = S.tools.parts; const sel = (id, list, cur) => `<select id="${id}">${list.map(x => `<option value="${escM(x)}" ${x === cur ? 'selected' : ''}>${escM(P.names[x])}${x === cur ? ' (actuel)' : ''}</option>`).join('')}</select>`;
+      return `<label class="field">Moteur${sel('peE', P.engines, P.engine)}</label><label class="field" style="margin-top:12px">Boîte de vitesses${sel('peT', P.transmissions, P.transmission)}</label>
+      <div class="muted" style="font-size:12px;margin-top:8px">Seules les pièces déjà montées sur un camion du même modèle de ta flotte sont proposées : elles sont sûres pour ce camion.</div>`; },
+    collect: () => { const P = atSel.summary.tools.parts, e = {}, list = [];
+      if (mv('peE') && mv('peE') !== P.engine) { e.truckEngine = mv('peE'); list.push('Moteur : ' + P.names[e.truckEngine]); }
+      if (mv('peT') && mv('peT') !== P.transmission) { e.truckTransmission = mv('peT'); list.push('Boîte : ' + P.names[e.truckTransmission]); }
+      if (!list.length) throw new Error('Aucun changement de pièce.'); return { e, list }; } },
+  removeBadge: { page: 'at-camion', icon: 'badge', title: 'Retirer le badge', desc: 'Enlève le logo de marque de la calandre de ton camion.',
+    off: S => !S.tools.parts ? 'Aucun camion attribué' : !S.tools.parts.badge ? 'Pas de badge sur ce camion' : '',
+    form: () => '<p style="margin:0">Le badge (logo de marque) est retiré de ton camion. Tu pourras en remettre un chez un concessionnaire ou à l\'atelier.</p>',
+    collect: () => ({ e: { removeBadge: true }, list: ['Badge retiré'] }) },
   teleport: { page: 'at-camion', icon: 'pin', title: 'Téléportation', desc: 'Déplace ton camion (et sa remorque) à un endroit repéré en jeu.',
     async prepare(){ const g = (atSel.profiles.find(x => x.id === atSel.profileId) || {}).game; const r = await window.tel.atelier.cams(g); return r.ok ? r.data : { found: false, positions: [] }; },
     form: (S, cams) => cams.positions.length
@@ -1795,11 +1811,12 @@ const TOOLS = {
 
   /* ----- Remorques ----- */
   cargoMass: { page: 'at-remorque', icon: 'weight', title: 'Poids de la cargaison', desc: 'Allège ou alourdis le chargement, y compris en double et triple remorque.',
-    meta: S => S.tools.attached ? `Actuel : <b>${S.tools.attached.cargoMass.map(m => nf(m) + ' kg').join(' + ')}</b>` : '', off: S => S.tools.attached ? '' : 'Aucune remorque attelée',
-    form: S => `<label class="field">Poids par remorque (kg)<input id="cmV" type="number" min="0" max="200000" step="100" value="${S.tools.attached.cargoMass[0]}"></label>
+    meta: S => S.tools.attached ? `Actuel : <b>${S.tools.attached.cargoMass.map(m => nf(m) + ' kg').join(' + ')}</b>` : '',
+    form: S => radio('cmW', [['attached', 'Remorque attelée', S.tools.attached ? 'Celle que tu tires' : 'Aucune remorque attelée'], ['all', 'Toutes les remorques chargées', 'Missions disponibles et remorques de la sauvegarde']], S.tools.attached ? 'attached' : 'all') +
+      `<label class="field" style="margin-top:12px">Poids par remorque (kg)<input id="cmV" type="number" min="0" max="200000" step="100" value="${S.tools.attached ? S.tools.attached.cargoMass[0] : 20000}"></label>
       <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap">${[[0, 'Vide'], [1000, '1 t'], [20000, '20 t'], [40000, '40 t']].map(([v, l]) => `<button type="button" class="btn" onclick="document.getElementById('cmV').value=${v}">${l}</button>`).join('')}</div>
-      ${S.tools.attached.parts > 1 ? `<label class="row" style="gap:10px;margin-top:12px;font-size:14px"><input type="checkbox" id="cmS" checked> Appliquer aussi aux ${S.tools.attached.parts - 1} autre(s) remorque(s) de l'attelage</label>` : ''}`,
-    collect: () => ({ e: { cargoMass: { mass: Number(mv('cmV')), slaves: mv('cmS') !== false } }, list: ['Cargaison à ' + nf(mv('cmV')) + ' kg par remorque'] }) },
+      ${S.tools.attached && S.tools.attached.parts > 1 ? `<label class="row" style="gap:10px;margin-top:12px;font-size:14px"><input type="checkbox" id="cmS" checked> Appliquer aussi aux ${S.tools.attached.parts - 1} autre(s) remorque(s) de l'attelage</label>` : ''}`,
+    collect: () => ({ e: { cargoMass: { mass: Number(mv('cmV')), slaves: mv('cmS') !== false, everywhere: rval('cmW') === 'all' } }, list: ['Cargaison à ' + nf(mv('cmV')) + ' kg ' + (rval('cmW') === 'all' ? 'sur toutes les remorques chargées' : 'par remorque attelée')] }) },
   trailerDefMass: { page: 'at-remorque', icon: 'scale', title: 'Poids à vide', desc: 'Change le poids de la caisse et du châssis de la remorque attelée.',
     meta: S => S.tools.attached && S.tools.attached.bodyMass != null ? `Caisse ${nf(S.tools.attached.bodyMass)} kg · châssis ${nf(S.tools.attached.chassisMass)} kg` : '',
     off: S => !S.tools.attached ? 'Aucune remorque attelée' : S.tools.attached.bodyMass == null ? 'Non disponible pour cette remorque' : '',

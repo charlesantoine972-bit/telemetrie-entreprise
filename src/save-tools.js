@@ -251,9 +251,14 @@ function setTruckKm(text, km) {
   km = Math.round(Number(km));
   if (!Number.isFinite(km) || km < 0 || km > 9999999) throw new Error('Kilométrage invalide (0 à 9 999 999).');
   const u = unit(text, current(text).truck); if (!u) throw new Error('Aucun camion attribué à ton chauffeur.');
-  let b = u.body; for (const k of ['odometer', 'integrity_odometer']) if (has(b, k)) b = set(b, k, km);
+  let b = u.body; for (const k of ['odometer', 'integrity_odometer', 'trip_distance_km']) if (has(b, k)) b = set(b, k, km);
   if (has(b, 'odometer_float_part')) b = set(b, 'odometer_float_part', 0);
-  return { text: patch(text, [{ ...u, body: b }]) };
+  const changes = [{ ...u, body: b }];
+  // Journal de rentabilité du camion (même rang que le camion dans player.trucks) : distance cumulée
+  const p = player(text), idx = arr(p.body, 'trucks').indexOf(current(text).truck);
+  const log = idx >= 0 ? unit(text, arr(p.body, 'truck_profit_logs')[idx]) : null;
+  if (log) { let lb = log.body; if (has(lb, 'acc_distance_on_job')) lb = set(lb, 'acc_distance_on_job', km); if (has(lb, 'acc_distance_free')) lb = set(lb, 'acc_distance_free', 0); changes.push({ ...log, body: lb }); }
+  return { text: patch(text, changes) };
 }
 
 // Plaque : texte (8 caractères max conseillés) + couleur facultative, le pays d'origine est conservé.
@@ -320,11 +325,54 @@ function setPlayerTrailer(text, newId) {
   return { text: patch(text, changes) };
 }
 
+// ---------- Accessoires du camion actuel (badge, moteur, boîte de vitesses)
+function accessories(text, vehicle) {
+  return arr(vehicle.body, 'accessories').map(id => { const a = unit(text, id); return a ? { id, unit: a, path: (get(a.body, 'data_path') || '').replace(/"/g, '') } : null; }).filter(Boolean);
+}
+const partName = p => (p.split('/').pop() || '').replace(/\.sii$/, '').replace(/_/g, ' ').toUpperCase();
+// Moteurs et boîtes disponibles : ceux déjà montés sur un camion du même modèle dans ta flotte
+function partsInfo(text) {
+  const cur = unit(text, current(text).truck); if (!cur) return null;
+  const model = modelOf(text, cur).code; if (!model) return null;
+  const pick = (v, kind) => (accessories(text, v).find(a => a.path.includes(`/${kind}/`)) || {}).path || null;
+  const engines = new Set(), gearboxes = new Set();
+  for (const id of arr(player(text).body, 'trucks')) {
+    const v = unit(text, id); if (!v || modelOf(text, v).code !== model) continue;
+    const e = pick(v, 'engine'), g = pick(v, 'transmission'); if (e) engines.add(e); if (g) gearboxes.add(g);
+  }
+  const badge = accessories(text, cur).some(a => a.path.split('/').includes('badge'));
+  return { model, engine: pick(cur, 'engine'), transmission: pick(cur, 'transmission'), engines: [...engines].sort(), transmissions: [...gearboxes].sort(), badge,
+    names: Object.fromEntries([...engines, ...gearboxes].map(p => [p, partName(p)])) };
+}
+function setPart(text, kind, newPath) {
+  const info = partsInfo(text); if (!info) throw new Error('Aucun camion attribué à ton chauffeur.');
+  const list = kind === 'engine' ? info.engines : info.transmissions;
+  if (!list.includes(newPath)) throw new Error('Pièce non disponible pour ce modèle.');
+  const cur = unit(text, current(text).truck);
+  const acc = accessories(text, cur).find(a => a.path.includes(`/${kind}/`)); if (!acc) throw new Error('Pièce actuelle introuvable.');
+  return { text: patch(text, [{ ...acc.unit, body: set(acc.unit.body, 'data_path', `"${newPath}"`) }]) };
+}
+// Retire le badge (logo de marque) de la calandre : l'accessoire est enlevé de la liste du camion et son bloc supprimé
+function removeBadge(text) {
+  const cur = unit(text, current(text).truck); if (!cur) throw new Error('Aucun camion attribué à ton chauffeur.');
+  const badges = accessories(text, cur).filter(a => a.path.split('/').includes('badge'));
+  if (!badges.length) throw new Error('Ce camion n\'a pas de badge.');
+  const keep = arr(cur.body, 'accessories').filter(id => !badges.some(b => b.id === id));
+  const changes = [{ ...cur, body: setArr(cur.body, 'accessories', keep) }];
+  for (const b of badges) { let end = b.unit.end + 2; if (text[end] === '\n') end++; changes.push({ start: b.unit.start, end, body: '' }); }
+  return { text: patch(text, changes), count: badges.length };
+}
+
 // ---------- Remorque attelée
 // Poids de la cargaison (kg), sur la remorque et, si demandé, sur ses remorques esclaves (doubles, triples)
-function setCargoMass(text, mass, withSlaves = true) {
+function setCargoMass(text, mass, withSlaves = true, everywhere = false) {
   mass = Math.round(Number(mass));
   if (!Number.isFinite(mass) || mass < 0 || mass > 200000) throw new Error('Poids invalide (0 à 200 000 kg).');
+  if (everywhere) {
+    const all = units(text, 'trailer').filter(u => has(u.body, 'cargo_mass') && num(get(u.body, 'cargo_mass')) > 0);
+    if (!all.length) throw new Error('Aucune remorque chargée dans la sauvegarde.');
+    return { text: patch(text, all.map(u => ({ ...u, body: set(u.body, 'cargo_mass', mass) }))), count: all.length };
+  }
   const chain = trailerChain(text, current(text).trailer);
   if (!chain.length) throw new Error('Aucune remorque attelée.');
   const list = (withSlaves ? chain : chain.slice(0, 1)).filter(u => has(u.body, 'cargo_mass'));
@@ -391,7 +439,7 @@ function overview(text) {
   const eco = firstUnit(text, 'economy');
   return {
     trucks: trucks(text), trailers: trailers(text), attached: currentTrailerInfo(text),
-    garages: garagesSummary(text), cities: cities(text).length,
+    garages: garagesSummary(text), cities: cities(text).length, parts: partsInfo(text),
     dealers: eco ? arr(eco.body, 'unlocked_dealers').length : 0,
     recruitments: eco ? arr(eco.body, 'unlocked_recruitments').length : 0
   };
@@ -399,7 +447,7 @@ function overview(text) {
 
 // ---------- Application d'un lot de modifications (clés envoyées par l'interface)
 const TOOL_KEYS = ['truckRepair', 'trailerRepair', 'truckFuel', 'truckKm', 'truckPlate', 'trailerPlate', 'playerTruck', 'playerTrailer',
-  'cargoMass', 'trailerDefMass', 'unlockTrailer', 'garages', 'unlockDealers', 'unlockRecruitments', 'teleport'];
+  'cargoMass', 'trailerDefMass', 'unlockTrailer', 'garages', 'unlockDealers', 'unlockRecruitments', 'teleport', 'truckEngine', 'truckTransmission', 'removeBadge'];
 function applyTools(text, e, report) {
   const tgt = v => (v === 'current' ? 'current' : 'all');
   if (e.playerTruck) { const r = setPlayerTruck(text, String(e.playerTruck)); text = r.text; report.push('camion changé (QG : ' + r.city + ')'); }
@@ -410,7 +458,10 @@ function applyTools(text, e, report) {
   if (e.truckKm != null) { text = setTruckKm(text, e.truckKm).text; report.push('kilométrage'); }
   if (e.truckPlate) { text = setPlate(text, 'truck', e.truckPlate.text, e.truckPlate.color).text; report.push('plaque du camion'); }
   if (e.trailerPlate) { text = setPlate(text, 'trailer', e.trailerPlate.text, e.trailerPlate.color).text; report.push('plaque de la remorque'); }
-  if (e.cargoMass) { const r = setCargoMass(text, e.cargoMass.mass, e.cargoMass.slaves !== false); text = r.text; report.push(`poids de la cargaison (${r.count} remorque(s))`); }
+  if (e.truckEngine) { text = setPart(text, 'engine', String(e.truckEngine)).text; report.push('moteur'); }
+  if (e.truckTransmission) { text = setPart(text, 'transmission', String(e.truckTransmission)).text; report.push('boîte de vitesses'); }
+  if (e.removeBadge) { text = removeBadge(text).text; report.push('badge retiré'); }
+  if (e.cargoMass) { const r = setCargoMass(text, e.cargoMass.mass, e.cargoMass.slaves !== false, !!e.cargoMass.everywhere); text = r.text; report.push(`poids de la cargaison (${r.count} remorque(s))`); }
   if (e.trailerDefMass) { text = setTrailerDefMass(text, e.trailerDefMass.body, e.trailerDefMass.chassis).text; report.push('poids à vide de la remorque'); }
   if (e.unlockTrailer) { text = unlockTrailer(text).text; report.push('remorque autorisée partout'); }
   if (e.garages) { const r = buyGarages(text, e.garages); text = r.text; report.push(`${r.count} garage(s) acheté(s) ou agrandi(s)`); }
@@ -424,6 +475,6 @@ module.exports = {
   TOOL_KEYS, GARAGE_SIZES, applyTools, overview, parseCams,
   current, trucks, trailers, currentTrailerInfo, cities, garagesSummary,
   repairTrucks, repairTrailers, setFuel, setTruckKm, setPlate, setPlayerTruck, setPlayerTrailer,
-  setCargoMass, setTrailerDefMass, unlockTrailer, buyGarages, unlockList, teleport,
+  setCargoMass, setTrailerDefMass, partsInfo, setPart, removeBadge, unlockTrailer, buyGarages, unlockList, teleport,
   _internal: { unit, units, get, arr, setArr, num, decStr, encStr, plateValue }
 };

@@ -4,8 +4,8 @@
 window.NOTES_VERSION = [
   { version: '0.13.21', date: '2026-11-20', titre: 'Truck Tools : camions, remorques et garages', notes: [
     ['nouveau', 'Truck Tools se présente en cartes d’outils, comme l’original : Remorques, Camions, Profil, Coach Tools et Jeu, avec ton camion et ta remorque attelée en haut de page.'],
-    ['nouveau', 'Camions : réparer (le tien ou toute la flotte), carburant jusqu’au réservoir géant, kilométrage, plaque personnalisée, changer de camion sans garage, téléportation (Alt+F12).'],
-    ['nouveau', 'Remorques : poids de la cargaison (doubles et triples comprises), poids à vide, autoriser partout, réparer, plaque, changer de remorque.'],
+    ['nouveau', 'Camions : réparer (le tien ou toute la flotte), carburant jusqu’au réservoir géant, kilométrage (compteur, trajet et journal), plaque personnalisée, changer de camion sans garage, téléportation (Alt+F12), moteur et boîte (pièces des camions du même modèle de ta flotte), retirer le badge.'],
+    ['nouveau', 'Remorques : poids de la cargaison (attelage, doubles et triples, ou toutes les remorques chargées), poids à vide, autoriser partout, réparer, plaque, changer de remorque.'],
     ['nouveau', 'Profil : toutes les villes, concessionnaires, agences de recrutement, achat des garages libres, copie des réglages entre profils (même ATS → ETS2).'],
     ['nouveau', 'Jeu : convois à 128 places.'],
   ]},

@@ -36,9 +36,14 @@ player : _nameless.300 {
  hq_city: paris
  trailers: 1
  trailers[0]: _nameless.700
- trucks: 2
+ trucks: 3
  trucks[0]: _nameless.400
  trucks[1]: _nameless.500
+ trucks[2]: _nameless.600
+ truck_profit_logs: 3
+ truck_profit_logs[0]: _nameless.440
+ truck_profit_logs[1]: _nameless.540
+ truck_profit_logs[2]: _nameless.640
  drivers: 2
  drivers[0]: driver.player
  drivers[1]: driver.bob
@@ -53,8 +58,11 @@ player_vehicles : _nameless.900 {
  stored_trailer_attached: false
 }
 vehicle : _nameless.400 {
- accessories: 1
+ accessories: 4
  accessories[0]: _nameless.410
+ accessories[1]: _nameless.420
+ accessories[2]: _nameless.430
+ accessories[3]: _nameless.450
  engine_wear: &3e800000
  transmission_wear: 0.2
  cabin_wear: 0
@@ -66,9 +74,52 @@ vehicle : _nameless.400 {
  fuel_relative: 0.3
  odometer: 120000
  integrity_odometer: 120000
+ trip_distance_km: 300
 }
 vehicle_accessory : _nameless.410 {
  data_path: "/def/vehicle/truck/scania.s_2016/data.sii"
+}
+
+vehicle_addon_accessory : _nameless.420 {
+ data_path: "/def/vehicle/truck/scania.s_2016/accessory/badge/scania_v8.sii"
+}
+
+vehicle_accessory : _nameless.430 {
+ data_path: "/def/vehicle/truck/scania.s_2016/engine/dc13_500.sii"
+}
+vehicle_accessory : _nameless.450 {
+ data_path: "/def/vehicle/truck/scania.s_2016/transmission/grs905.sii"
+}
+profit_log : _nameless.440 {
+ acc_distance_free: 800
+ acc_distance_on_job: 119200
+}
+profit_log : _nameless.540 {
+ acc_distance_free: 0
+ acc_distance_on_job: 5000
+}
+profit_log : _nameless.640 {
+ acc_distance_free: 0
+ acc_distance_on_job: 0
+}
+vehicle : _nameless.600 {
+ accessories: 3
+ accessories[0]: _nameless.610
+ accessories[1]: _nameless.630
+ accessories[2]: _nameless.650
+ engine_wear: 0
+ license_plate: "SC 2|france"
+ fuel_relative: 1
+ odometer: 10
+}
+vehicle_accessory : _nameless.610 {
+ data_path: "/def/vehicle/truck/scania.s_2016/data.sii"
+}
+vehicle_accessory : _nameless.630 {
+ data_path: "/def/vehicle/truck/scania.s_2016/engine/dc16_770.sii"
+}
+vehicle_accessory : _nameless.650 {
+ data_path: "/def/vehicle/truck/scania.s_2016/transmission/grso926r.sii"
 }
 vehicle : _nameless.500 {
  accessories: 1
@@ -156,7 +207,7 @@ const valid = t => assert.deepStrictEqual(SaveEditor.checkText(t, ['economy', 'b
 
 test('lecture : camion, remorque attelée, flotte', () => {
   const o = T.overview(SAVE);
-  assert.strictEqual(o.trucks.length, 2);
+  assert.strictEqual(o.trucks.length, 3);
   const cur = o.trucks.find(t => t.current);
   assert.strictEqual(cur.id, '_nameless.400');
   assert.strictEqual(cur.brand, 'Scania'); assert.strictEqual(cur.plate, 'AB 123 CD'); assert.strictEqual(cur.garage, 'paris');
@@ -193,6 +244,10 @@ test('kilométrage et plaque (pays conservé, couleur en AABBGGRR)', () => {
   let t = T.setTruckKm(SAVE, 42).text;
   assert.strictEqual(get(body(t, '_nameless.400'), 'odometer'), '42');
   assert.strictEqual(get(body(t, '_nameless.400'), 'integrity_odometer'), '42');
+  assert.strictEqual(get(body(t, '_nameless.400'), 'trip_distance_km'), '42');
+  assert.strictEqual(get(body(t, '_nameless.440'), 'acc_distance_on_job'), '42');
+  assert.strictEqual(get(body(t, '_nameless.440'), 'acc_distance_free'), '0');
+  assert.strictEqual(get(body(t, '_nameless.540'), 'acc_distance_on_job'), '5000');
   t = T.setPlate(t, 'truck', 'TCH 01', '#ff8a3d').text; valid(t);
   assert.strictEqual(get(body(t, '_nameless.400'), 'license_plate'), '"<color value=ff3d8aff>TCH 01|france"');
   assert.throws(() => T.setPlate(SAVE, 'truck', 'a|b'));
@@ -262,4 +317,30 @@ test('lot complet via SaveEditor.applyToText', () => {
   const { text, report } = SaveEditor.applyToText(SAVE, { truckRepair: 'all', trailerRepair: 'all', truckFuel: { target: 'all', level: 1 }, cargoMass: { mass: 10000 }, unlockTrailer: true, garages: 6, unlockDealers: true });
   valid(text);
   assert.ok(report.length >= 7, report.join(', '));
+});
+
+test('moteur et boîte : pièces des camions du même modèle', () => {
+  const info = T.partsInfo(SAVE);
+  assert.strictEqual(info.model, 'scania.s_2016'); assert.strictEqual(info.badge, true);
+  assert.strictEqual(info.engines.length, 2); assert.strictEqual(info.transmissions.length, 2);
+  let t = T.setPart(SAVE, 'engine', '/def/vehicle/truck/scania.s_2016/engine/dc16_770.sii').text;
+  t = T.setPart(t, 'transmission', '/def/vehicle/truck/scania.s_2016/transmission/grso926r.sii').text; valid(t);
+  assert.strictEqual(get(body(t, '_nameless.430'), 'data_path'), '"/def/vehicle/truck/scania.s_2016/engine/dc16_770.sii"');
+  assert.strictEqual(get(body(t, '_nameless.450'), 'data_path'), '"/def/vehicle/truck/scania.s_2016/transmission/grso926r.sii"');
+  assert.throws(() => T.setPart(SAVE, 'engine', '/def/vehicle/truck/volvo.fh16_2012/engine/d16.sii'));
+});
+
+test('badge retiré : accessoire enlevé de la liste et bloc supprimé', () => {
+  const r = T.removeBadge(SAVE); valid(r.text);
+  assert.strictEqual(unit(r.text, '_nameless.420'), null);
+  assert.deepStrictEqual(arr(body(r.text, '_nameless.400'), 'accessories'), ['_nameless.410', '_nameless.430', '_nameless.450']);
+  assert.strictEqual(get(body(r.text, '_nameless.400'), 'accessories'), '3');
+  assert.strictEqual(T.partsInfo(r.text).badge, false);
+  assert.throws(() => T.removeBadge(r.text));
+});
+
+test('cargaison : toutes les remorques chargées de la sauvegarde', () => {
+  const r = T.setCargoMass(SAVE, 30000, true, true); valid(r.text);
+  assert.strictEqual(r.count, 2); // la remorque 700 est vide : non touchée
+  assert.strictEqual(get(body(r.text, '_nameless.700'), 'cargo_mass'), '0');
 });
