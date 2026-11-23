@@ -83,83 +83,43 @@ window.NOTES_VERSION = [
     ['ameliore', 'Nouvelles icônes dans le style de Windows 11, seuils kilométriques regroupés et vérifiés, touche Tab qui passe par tous les champs des fenêtres de confirmation.'],
     ['corrige', 'La trace GPS garde le point d’origine (0, 0) ; le raccourci Profil ne renvoie plus vers Options.'],
   ]},
-  { version: '0.11.0', date: '2026-11-17', titre: 'Accessibilité', notes: [
-    ['ameliore', 'Toute l\'appli respecte les règles d\'accessibilité WCAG 2.1 AA, dans tous les thèmes et les modes daltonisme.'],
-    ['ameliore', 'Une seule couleur pour les actions (boutons, sélection, interrupteurs) : plus lisible.'],
-    ['ameliore', 'Bordures plus visibles et texte jamais plus petit que 12 px.'],
-    ['nouveau', 'Navigation complète au clavier : lien « Aller au contenu », focus visible partout, fenêtres de confirmation fermables avec Échap.'],
-    ['nouveau', 'Meilleure prise en charge des lecteurs d\'écran.'],
-    ['nouveau', 'Le mode Contraste élevé et le réglage « réduire les animations » de Windows sont respectés.'],
+  { version: '0.11.0', date: '2026-11-17', titre: 'Apparence et accessibilité', notes: [
+    ['nouveau', 'Permet de choisir son thème : De base, Sombre, Clair ou Comme Windows.'],
+    ['nouveau', 'Permet de lire l’appli plus confortablement : couleurs adaptées au daltonisme, taille du texte réglable, contraste renforcé.'],
+    ['nouveau', 'Permet d’utiliser toute l’appli au clavier et avec un lecteur d’écran : focus visible partout, lien « Aller au contenu », fenêtres fermables avec Échap.'],
+    ['ameliore', 'Rend l’appli conforme aux règles d’accessibilité WCAG 2.1 AA dans tous les thèmes : une seule couleur pour les actions, bordures plus visibles, texte jamais sous 12 px.'],
+    ['ameliore', 'Respecte les réglages de Windows : mode Contraste élevé et « réduire les animations ».'],
   ]},
-  { version: '0.10.0', date: '2026-11-17', titre: 'Carte en direct', notes: [
-    ['nouveau', 'Page Carte : la vraie carte d\'ETS2 et d\'ATS, avec ton camion en direct, ta destination et le tracé de ta session (chargé / à vide).'],
-    ['nouveau', 'Les zones de carte déjà vues restent disponibles hors ligne.'],
-    ['ameliore', 'Menu plus épuré : les compteurs à côté des catégories ont été retirés.'],
+  { version: '0.10.0', date: '2026-11-17', titre: 'HUD et carte en direct', notes: [
+    ['nouveau', 'Permet d’afficher un bandeau par-dessus le jeu (HUD) : vitesse, limitation, mode réel ou course et distance restante, avec plusieurs styles à tester dans l’aperçu.'],
+    ['nouveau', 'Permet de suivre sa route sur la vraie carte d’ETS2 et d’ATS : ton camion en direct, ta destination et le tracé de ta session (chargé / à vide).'],
+    ['ameliore', 'Garde les zones de carte déjà vues pour les afficher hors ligne.'],
+    ['ameliore', 'Allège le menu (compteurs retirés) et permet de masquer ou d’afficher les pages encore en préparation.'],
   ]},
-  { version: '0.9.1', date: '2026-11-17', titre: 'Styles du HUD', notes: [
-    ['nouveau', 'Plusieurs styles pour le bandeau en jeu (HUD), à tester directement dans l\'aperçu.'],
-    ['nouveau', 'Option pour masquer ou afficher les pages encore en préparation.'],
+  { version: '0.8.0', date: '2026-11-17', titre: 'L’Atelier', notes: [
+    ['nouveau', 'Permet de sauvegarder et de restaurer ses profils ETS2 / ATS (outil expérimental, à activer dans Options).'],
+    ['nouveau', 'Permet de modifier son profil solo : profil, car, carte, carburant et réparation, avec des boutons « atteindre le niveau » pour le camion et le car.'],
+    ['nouveau', 'Permet de renommer son profil et son entreprise en jeu.'],
+    ['nouveau', 'Permet d’activer la console de développement du jeu, avec une copie de secours et des explications claires.'],
   ]},
-  { version: '0.9.0', date: '2026-11-17', titre: 'HUD en jeu', notes: [
-    ['nouveau', 'Le bandeau en jeu (HUD) fonctionne : vitesse, limitation, mode réel ou course, distance restante.'],
-    ['nouveau', 'Marketplace : page « À la une & news ».'],
-    ['nouveau', 'Marketplace : nouvelle catégorie Camions.'],
+  { version: '0.6.0', date: '2026-11-17', titre: 'Marketplace', notes: [
+    ['nouveau', 'Permet de trouver ses contenus : Découvrir, À la une & news, et les catégories Modules du Hub, Cars & bus et Camions.'],
+    ['nouveau', 'Permet de consulter la fiche de chaque contenu (aperçu, description, infos) et de revenir en arrière.'],
+    ['nouveau', 'Permet de gérer ses contenus installés et leurs mises à jour (Mes contenus, Mises à jour).'],
+    ['nouveau', 'Permet de préparer sa propre livrée (Créer une livrée).'],
   ]},
-  { version: '0.8.2', date: '2026-11-17', titre: 'Renommer son profil', notes: [
-    ['nouveau', 'Atelier : renommer ton profil et ton entreprise.'],
-  ]},
-  { version: '0.8.1', date: '2026-11-17', titre: 'Atteindre un niveau', notes: [
-    ['nouveau', 'Atelier : boutons « atteindre le niveau » pour le camion et le car.'],
-  ]},
-  { version: '0.8.0', date: '2026-11-17', titre: 'Apparence', notes: [
-    ['nouveau', 'Thèmes De base, Sombre, Clair et Comme Windows.'],
-    ['nouveau', 'Couleurs adaptées au daltonisme, taille du texte réglable et contraste renforcé.'],
-  ]},
-  { version: '0.7.0', date: '2026-11-17', titre: 'Atelier camion et car', notes: [
-    ['nouveau', 'Atelier : modification du profil, du car, de la carte, du carburant et réparation.'],
-    ['ameliore', 'Explications plus claires pour la console de développement.'],
-  ]},
-  { version: '0.6.1', date: '2026-11-17', titre: 'Fiches produit', notes: [
-    ['ameliore', 'Marketplace : « Voir l\'aperçu » ouvre une vraie fiche du mod (aperçu, description, infos) avec un bouton Retour.'],
-  ]},
-  { version: '0.6.0', date: '2026-11-17', titre: 'Arrivée de l’Atelier', notes: [
-    ['nouveau', 'Atelier (expérimental, à activer dans Options) : sauvegarder et restaurer tes profils ETS2 / ATS.'],
-    ['nouveau', 'Activation de la console de développement du jeu, avec copie de secours.'],
-    ['nouveau', 'Marketplace : page Créer une livrée.'],
-  ]},
-  { version: '0.5.2', date: '2026-11-17', titre: 'Ma VTC et Calendrier', notes: [
-    ['nouveau', 'Ma VTC en onglets : Missions, Convois, Défis & duels, Classement, Chauffeurs live.'],
-    ['nouveau', 'Nouvelle page Calendrier.'],
-    ['ameliore', 'Ton profil s\'affiche en haut à droite de l\'écran d\'accueil.'],
-    ['ameliore', 'Marketplace allégée : Modules du Hub et Cars & bus.'],
-  ]},
-  { version: '0.5.1', date: '2026-11-17', titre: 'Menu Entreprise', notes: [
-    ['ameliore', 'Menu Entreprise allégé : Missions, Convois et Défis regroupés dans Ma VTC.'],
-  ]},
-  { version: '0.5.0', date: '2026-11-17', titre: 'Truck & Coach Hub', notes: [
-    ['nouveau', 'Nouveau nom : Truck & Coach Hub (tes données sont conservées).'],
-    ['nouveau', 'Écran d\'accueil pour choisir entre la Marketplace et le Hub.'],
-    ['nouveau', 'Marketplace : Découvrir, Mes contenus, Mises à jour.'],
-    ['nouveau', 'Mises à jour téléchargées et installées directement dans l\'appli.'],
-    ['nouveau', 'Thème clair.'],
-  ]},
-  { version: '0.4.2', date: '2026-11-17', titre: 'Raccourcis', notes: [
-    ['nouveau', 'Options : raccourci vers HaulMP et bouton « Mettre à jour ».'],
-  ]},
-  { version: '0.4.1', date: '2026-11-17', titre: 'Modules complémentaires', notes: [
-    ['ameliore', 'Tablette et mini-GPS rangés dans les modules complémentaires.'],
-  ]},
-  { version: '0.4.0', date: '2026-11-17', titre: 'Page Accueil', notes: [
-    ['nouveau', 'Page Accueil : lancer ETS2 ou ATS via Steam, état du jeu et des mises à jour, guide.'],
-    ['nouveau', 'Menu rangé par catégories.'],
-  ]},
-  { version: '0.3.0', date: '2026-11-16', titre: 'Branchement au jeu', notes: [
-    ['nouveau', 'Plugin du jeu installé automatiquement dans ETS2 et ATS.'],
-    ['nouveau', 'Télémétrie en direct et comptage des km chargés / à vide.'],
-    ['nouveau', 'Historique de tes missions, en mode réel ou course.'],
+  { version: '0.4.0', date: '2026-11-17', titre: 'Truck & Coach Hub', notes: [
+    ['nouveau', 'L’appli devient Truck & Coach Hub (tes données sont conservées) et s’ouvre sur un écran pour choisir entre le Hub et la Marketplace.'],
+    ['nouveau', 'Permet de démarrer depuis la page Accueil : lancer ETS2 ou ATS via Steam, voir l’état du jeu et des mises à jour, suivre le guide.'],
+    ['nouveau', 'Range le menu par catégories : Général et Entreprise, avec Ma VTC en onglets (Missions, Convois, Défis & duels, Classement, Chauffeurs live) et le Calendrier, en préparation.'],
+    ['ameliore', 'Affiche ton profil en haut à droite de l’écran d’accueil.'],
+    ['ameliore', 'Range la tablette et le mini-GPS dans les modules complémentaires, et ajoute un raccourci vers HaulMP dans Options.'],
   ]},
   { version: '0.2.0', date: '2026-11-16', titre: 'Première version', notes: [
-    ['nouveau', 'Première version de l\'application, avec mises à jour automatiques.'],
+    ['nouveau', 'Permet de brancher l’appli au jeu : le plugin s’installe tout seul dans ETS2 et ATS.'],
+    ['nouveau', 'Permet de suivre sa conduite en direct et de compter ses kilomètres chargés et à vide.'],
+    ['nouveau', 'Permet de garder l’historique de ses missions, en mode réel ou course.'],
+    ['nouveau', 'Permet de recevoir les mises à jour, téléchargées et installées directement dans l’appli.'],
   ]},
 ];
 
