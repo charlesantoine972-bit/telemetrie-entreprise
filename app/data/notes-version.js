@@ -10,19 +10,20 @@ window.versionAffichee = function (v) {
   if (!m) return v;
   const n = Number(m[2]);
   // 0.13.20 → 0.13.27 = 0.12.0.3, puis une version affichée par version technique : 0.13.28 = 0.12.0.4, 0.13.29 = 0.12.0.5…
-  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : '0.12.0.' + (n - 24);
+  // 0.13.20 → 0.13.27 = 0.12.0.3 ; 0.13.28 = 0.12.0.4 ; 0.13.29 = 0.12.0.5 ;
+  // 0.13.30 → 0.13.32 = 0.12.0.7 (0.12.0.6 et 0.12.0.7 regroupées) ; ensuite 0.13.33 = 0.12.0.8, 0.13.34 = 0.12.0.9…
+  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : n <= 29 ? '0.12.0.' + (n - 24) : n <= 32 ? '0.12.0.7' : '0.12.0.' + (n - 25);
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
-  { version: '0.12.0.7', date: '2026-11-23', titre: 'Options dans le menu latéral', notes: [
-    ['ameliore', 'Dans Options, le menu latéral devient le menu des Options : Retour, puis Général, Conduite, Jeu & plugin, HUD, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos. La page n’affiche plus que les réglages de la catégorie choisie. Le ☰ et la réduction du menu restent disponibles.'],
-  ]},
-  { version: '0.12.0.6', date: '2026-11-23', titre: 'Repères de navigation, page HUD épurée, menu réglable', notes: [
+  { version: '0.12.0.7', date: '2026-11-23', titre: 'Repères de navigation, Options dans le menu, page HUD épurée', notes: [
     ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],
-    ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active dans le menu. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
-    ['ameliore', 'Page HUD épurée : l’interrupteur et les aperçus des bandeaux camion et car. Tous les réglages (infos affichées, taille, position, opacité, profil actif, mode d’affichage du jeu) sont dans la nouvelle catégorie Options → HUD, avec son propre interrupteur.'],
-    ['nouveau', 'Menu latéral réglable : attrape son bord droit et fais-le glisser pour l’élargir ou le rétrécir. Tout à gauche, il se réduit aux icônes. Double-clic sur le bord : taille normale. La largeur est mémorisée.'],
-    ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : les pages passent sur une colonne quand la place manque, et le menu se réduit tout seul sur une petite fenêtre. La fenêtre peut maintenant être plus petite (720 px de large), par exemple à côté du jeu.'],
+    ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
+    ['nouveau', 'Menu latéral réglable : glisse son bord droit pour l’élargir ou le rétrécir ; tout à gauche, il se réduit aux icônes. Double-clic sur le bord : taille normale. La largeur est mémorisée.'],
+    ['ameliore', 'Options dans le menu latéral : quand tu ouvres Options, le menu affiche Retour puis les catégories, et la page ne montre que la catégorie choisie. Le ☰ et la réduction du menu restent disponibles.'],
+    ['ameliore', 'Page HUD épurée : l’interrupteur et les aperçus des bandeaux camion et car. Tous les réglages sont dans la nouvelle catégorie Options → HUD, avec son propre interrupteur.'],
+    ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : pages sur une colonne quand la place manque, menu réduit tout seul sur une petite fenêtre, fenêtre utilisable dès 720 px de large.'],
+    ['ameliore', 'Notes de version réorganisées : les versions 0.2.0 à 0.11.0 sont regroupées en six versions par thème.'],
     ['corrige', 'Télémétrie : les onglets Camion et Car restent visibles même quand le jeu n’est pas lancé.'],
   ]},
   { version: '0.12.0.5', date: '2026-11-23', titre: 'Nouveau bandeau camion, menu des espaces et Télémétrie remise en ordre', notes: [
