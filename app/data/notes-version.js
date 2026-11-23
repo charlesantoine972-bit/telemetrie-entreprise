@@ -2,6 +2,12 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.13.25', date: '2026-11-23', titre: 'Télémétrie : plein, dégâts et ouverture automatique', notes: [
+    ['nouveau', 'Télémétrie → Plein : niveau du réservoir en % et en litres, litres à mettre pour faire le plein, autonomie, consommation moyenne et alerte réserve.'],
+    ['nouveau', 'Télémétrie → Dégâts : pourcentage de dégâts du camion ou du car (moteur, boîte, cabine, châssis, roues), de la remorque (châssis, roues, caisse) et de la marchandise.'],
+    ['nouveau', 'L’appli passe toute seule sur la Télémétrie dès que le jeu se connecte. Désactivable dans Options.'],
+    ['ameliore', 'Plugin du jeu 1.4.0 : envoie l’usure du véhicule et de la remorque et la consommation. Ferme le jeu avant d’ouvrir l’appli pour qu’elle installe le nouveau plugin.'],
+  ]},
   { version: '0.13.24', date: '2026-11-23', titre: 'Feuille de route : camion et car séparés', notes: [
     ['nouveau', 'Feuille de route → Trajets récents : onglets Camion et Car, avec pour chaque trajet les km, le statut (livré ou abandonné), les dépenses, le revenu et le solde.'],
     ['nouveau', 'Clique sur un trajet pour voir son parcours : de A à B pour le camion, chaque arrêt desservi pour le car, et l’endroit où la mission a été abandonnée (km parcourus, arrêt ou destination visée).'],

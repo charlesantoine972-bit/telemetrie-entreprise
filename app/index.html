@@ -329,6 +329,19 @@
   .bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line)}
   .bar .l{background:var(--loaded)} .bar .e{background:var(--empty);flex:1}
   .bar.thin{height:6px}
+  .tank{position:relative;height:18px;border-radius:999px;background:var(--line);overflow:hidden}
+  .tank>i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:999px;transition:width .4s}
+  .tank>u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--text);opacity:.45}
+  .tank.low>i{background:var(--race)} .tank.mid>i{background:var(--warn)}
+  .wear{display:flex;flex-direction:column;gap:9px}
+  .wear h3{margin:8px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;display:flex;justify-content:space-between}
+  .wear h3 b{color:var(--text);letter-spacing:0;text-transform:none;font-size:13px}
+  .wrow{display:grid;grid-template-columns:110px minmax(0,1fr) 62px;align-items:center;gap:10px;font-size:13px}
+  .wrow .wb{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+  .wrow .wb i{display:block;height:100%;border-radius:999px;background:var(--ok);transition:width .4s}
+  .wrow.mid .wb i{background:var(--warn)} .wrow.bad .wb i{background:var(--race)}
+  .wrow b{text-align:right;font-variant-numeric:tabular-nums}
+  .wrow.bad b{color:var(--race)}
   .big{font-size:34px;font-weight:700}
   .legend span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
   .grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
@@ -849,11 +862,27 @@
           <div class="panel" style="display:flex;flex-direction:column;gap:10px">
             <span class="muted" id="tKind">Camion</span>
             <b id="tName" style="font-size:16px">–</b>
-            <div class="between"><span>Carburant</span><b id="tFuel">–</b></div>
-            <div class="between"><span>Autonomie</span><b id="tRange">–</b></div>
             <div class="between"><span>Pause obligatoire dans</span><b id="tRest">–</b></div>
             <div class="between"><span>Heure du jeu</span><b id="tClock">–</b></div>
           </div>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:18px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <div class="panel" id="fuelPanel" style="display:flex;flex-direction:column;gap:12px">
+          <div class="between"><span class="muted">Plein</span><span class="lbl" id="fWarn"></span></div>
+          <div style="display:flex;align-items:baseline;gap:10px"><span class="big" id="fPct">–</span><span class="soft" id="fLiters"></span></div>
+          <div class="tank" id="fTank" role="meter" aria-label="Niveau du réservoir" aria-valuemin="0" aria-valuemax="100"><i id="fBar" style="width:0%"></i><u id="fRes" style="display:none"></u></div>
+          <div class="kv">
+            <div class="k"><span>Autonomie</span><span id="fRange">–</span></div>
+            <div class="k"><span>Pour faire le plein</span><span id="fToFill">–</span></div>
+            <div class="k"><span>Consommation</span><span id="fAvg">–</span></div>
+            <div class="k"><span>Réservoir</span><span id="fCap">–</span></div>
+          </div>
+          <div class="muted" id="fHint" style="font-size:12px"></div>
+        </div>
+        <div class="panel wear" id="wearPanel">
+          <div class="between"><span class="muted">Dégâts</span><span class="muted" style="font-size:12px">comme dans l'écran « Camion » du jeu</span></div>
+          <div id="wearBody" style="display:flex;flex-direction:column;gap:10px"><div class="soft">Les dégâts s'affichent quand le jeu est connecté.</div></div>
         </div>
       </div>
     </section>
@@ -986,6 +1015,11 @@
         <div class="optrow"><div><b>Réduire les animations</b><div class="muted">Supprime les effets de mouvement.</div></div>
           <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="motionSwitch" role="switch" aria-label="Réduire les animations"><span></span></label></div>
         <div class="cvdlegend" aria-hidden="true"><span><i style="background:var(--loaded)"></i>Km chargés</span><span><i style="background:var(--empty)"></i>Km à vide</span><span><i style="background:var(--ok)"></i>Réel</span><span><i style="background:var(--race)"></i>Course</span></div>
+      </div>
+      <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+        <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Ouvrir la télémétrie au lancement du jeu</h2>
+          <div class="muted" style="font-size:13px;line-height:1.6">Dès que le jeu se connecte, l'appli passe toute seule sur la page Télémétrie. La fenêtre ne passe pas devant le jeu : tu la retrouves prête en faisant Alt+Tab.</div></div>
+        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="autoTelSwitch" role="switch" aria-label="Ouvrir la télémétrie au lancement du jeu"><span></span></label>
       </div>
       <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
         <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Pages en préparation</h2>
@@ -1492,6 +1526,24 @@ function applySoon(show, save){
 document.getElementById('soonSwitch').onchange = (e) => applySoon(e.target.checked, true);
 applySoon(store.get('showSoon', false));
 if (window.tel) window.tel.getSettings().then(st => applySoon(!!st.showSoon));
+
+/* ---------- Télémétrie automatique au lancement du jeu ---------- */
+let autoTel = store.get('autoTelemetry', true);
+document.getElementById('autoTelSwitch').checked = autoTel;
+document.getElementById('autoTelSwitch').onchange = (e) => { autoTel = e.target.checked; store.set('autoTelemetry', autoTel); if (window.tel) window.tel.setSettings({ autoTelemetry: autoTel }); };
+if (window.tel) window.tel.getSettings().then(st => { if (typeof st.autoTelemetry === 'boolean') { autoTel = st.autoTelemetry; store.set('autoTelemetry', autoTel); document.getElementById('autoTelSwitch').checked = autoTel; } });
+let wasConnected = null; // null = premier relevé (l'appli s'ouvre alors que le jeu tourne peut-être déjà)
+function autoOpenTelemetry(connected){
+  const justStarted = connected && wasConnected !== true;
+  wasConnected = connected;
+  if (!justStarted || !autoTel || state.view === 'telemetrie') return;
+  // On ne coupe pas une action en cours : fenêtre de confirmation ouverte ou édition dans Truck / Coach Tools.
+  const modal = document.getElementById('modal');
+  if (modal && !modal.classList.contains('hidden')) return;
+  if (state.view && state.view.startsWith('at-')) return;
+  showLauncher(false);
+  go('telemetrie');
+}
 
 /* ---------- Bandeau / HUD ---------- */
 const HUD_PROFILE_DEFAULTS = {
@@ -2491,6 +2543,63 @@ const DAYS = ['Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.','Dim.'];
 function dur(min){ if (min == null || min < 0) return '–'; const h = Math.floor(min/60), m = Math.round(min%60); return h ? `${h} h ${String(m).padStart(2,'0')}` : `${m} min`; }
 function setText(id, v){ const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; }
 
+const pct1 = v => (v * 100).toFixed(v < 0.1 ? 1 : 0).replace('.', ',') + ' %';
+const litres = v => fmt(Math.round(v)) + ' L';
+function renderFuel(L, connected){
+  const cap = L && L.truck && Number(L.truck['fuel.capacity']) > 0 ? Number(L.truck['fuel.capacity']) : null;
+  const fuel = L && Number.isFinite(L.fuel) && L.fuel >= 0 ? L.fuel : null;
+  const tank = document.getElementById('fTank'), bar = document.getElementById('fBar'), res = document.getElementById('fRes');
+  if (!connected || fuel == null){
+    setText('fPct', '–'); setText('fLiters', ''); bar.style.width = '0%'; tank.className = 'tank'; res.style.display = 'none';
+    ['fRange','fToFill','fAvg','fCap'].forEach(id => setText(id, '–')); setText('fWarn', '');
+    setText('fHint', connected ? '' : 'Le niveau du réservoir s\'affiche quand le jeu est connecté.');
+    return;
+  }
+  const ratio = cap ? Math.max(0, Math.min(1, fuel / cap)) : null;
+  const factor = L.truck && Number(L.truck['fuel.warning.factor']) > 0 ? Number(L.truck['fuel.warning.factor']) : 0.15;
+  const low = !!L.fuelWarning || (ratio != null && ratio <= factor);
+  setText('fPct', ratio != null ? Math.round(ratio * 100) + ' %' : litres(fuel));
+  setText('fLiters', cap ? `${litres(fuel)} sur ${litres(cap)}` : '');
+  bar.style.width = ratio != null ? (ratio * 100).toFixed(1) + '%' : '0%';
+  tank.className = 'tank' + (low ? ' low' : ratio != null && ratio < 0.3 ? ' mid' : '');
+  tank.setAttribute('aria-valuenow', ratio != null ? Math.round(ratio * 100) : 0);
+  res.style.display = cap ? '' : 'none'; res.style.left = (factor * 100) + '%'; res.title = 'Seuil de réserve';
+  setText('fRange', L.fuelRange > 0 ? km(L.fuelRange) : '–');
+  setText('fToFill', cap ? (cap - fuel < 1 ? 'plein fait' : litres(cap - fuel)) : '–');
+  setText('fAvg', L.fuelAvg > 0 ? (L.fuelAvg * 100).toFixed(1).replace('.', ',') + ' L/100 km' : '–');
+  setText('fCap', cap ? litres(cap) : '–');
+  const w = document.getElementById('fWarn'); w.textContent = low ? 'RÉSERVE' : ''; w.style.color = low ? 'var(--race)' : '';
+  setText('fHint', low ? 'Niveau bas : pense à t\'arrêter à la prochaine station.' : cap ? '' : 'Le jeu n\'a pas encore transmis la capacité du réservoir.');
+}
+let wearSig = '';
+function renderWear(L, connected, vehicleType, job){
+  const box = document.getElementById('wearBody');
+  const W = connected && L && L.wear;
+  if (!W){
+    const msg = connected ? 'Mets à jour le plugin du jeu (Options → Plugin du jeu) pour afficher les dégâts.' : 'Les dégâts s\'affichent quand le jeu est connecté.';
+    if (wearSig !== msg){ wearSig = msg; box.innerHTML = `<div class="soft">${msg}</div>`; }
+    return;
+  }
+  const ok = v => Number.isFinite(v) && v >= 0;
+  const row = (label, v) => { if (!ok(v)) return ''; const c = v >= 0.3 ? 'bad' : v >= 0.1 ? 'mid' : '';
+    return `<div class="wrow ${c}"><span>${label}</span><div class="wb"><i style="width:${Math.min(100, v * 100).toFixed(1)}%"></i></div><b>${pct1(v)}</b></div>`; };
+  const avg = arr => { const v = arr.filter(ok); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+  const truckParts = [['Moteur', W.engine], ['Boîte de vitesses', W.transmission], ['Cabine', W.cabin], ['Châssis', W.chassis], ['Roues', W.wheels]];
+  const isCar = vehicleType === 'car';
+  let html = '';
+  const tAvg = avg(truckParts.map(p => p[1]));
+  html += `<h3>${isCar ? 'Car' : 'Camion'}${tAvg != null ? `<b>${pct1(tAvg)} en moyenne</b>` : ''}</h3>` + truckParts.map(p => row(p[0], p[1])).join('');
+  if (!isCar){
+    const trParts = [['Châssis', W.trailerChassis], ['Roues', W.trailerWheels], ['Caisse', W.trailerBody]];
+    if (L.trailerConnected){
+      const rAvg = avg(trParts.map(p => p[1]));
+      html += `<h3>Remorque${rAvg != null ? `<b>${pct1(rAvg)} en moyenne</b>` : ''}</h3>` + trParts.map(p => row(p[0], p[1])).join('');
+    } else html += '<h3>Remorque</h3><div class="soft" style="font-size:13px">Aucune remorque attelée.</div>';
+    if (job && job.missionType !== 'bus') html += '<h3>Marchandise</h3>' + row('Cargaison', Number(L.cargoDamage) || 0);
+  }
+  if (html !== wearSig){ wearSig = html; box.innerHTML = html; }
+}
+
 function renderLive(sn){
   const L = sn.live, chip = document.getElementById('connChip');
   const game = L && L.game === 'ats' ? 'American Truck Simulator' : 'Euro Truck Simulator 2';
@@ -2518,8 +2627,6 @@ function renderLive(sn){
     document.getElementById('lSpeed').style.color = kmh > th.limit ? 'var(--race)' : '';
     setText('tKind', sn.vehicleType === 'car' ? 'Car' : 'Camion');
     setText('tName', L.truck ? `${L.truck.brand || ''} ${L.truck.name || ''}`.trim() : '–');
-    setText('tFuel', L.fuel ? Math.round(L.fuel) + ' L' : '–');
-    setText('tRange', L.fuelRange ? km(L.fuelRange) : '–');
     setText('tRest', Number.isFinite(L.restStop) ? (L.restStop > 0 ? dur(L.restStop) : 'maintenant') : '–');
     const gt = L.gameTime; setText('tClock', gt ? `${DAYS[Math.floor(gt/1440)%7]} ${String(Math.floor(gt/60)%24).padStart(2,'0')}:${String(gt%60).padStart(2,'0')}` : '–');
   } else {
@@ -2553,6 +2660,9 @@ function renderLive(sn){
   } else {
     modeEl.className = 'mode real'; setText('lMode', 'RÉEL'); setText('jState', '');
   }
+
+  renderFuel(L, sn.connected);
+  renderWear(L, sn.connected, sn.vehicleType, j);
 
   const s = sn.session;
   setText('sLoaded', km(s.loaded)); setText('sEmpty', km(s.empty));
@@ -2903,7 +3013,7 @@ if (HAS_APP){
     renderPlugin(r.status, r.ok ? 'Dossier ajouté.' : (r.error || ''));
   };
   window.tel.pluginStatus().then(l => renderPlugin(l));
-  const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'hud') { document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
+  const poll = async () => { try { const sn = await window.tel.snapshot(); autoOpenTelemetry(!!sn.connected); renderLive(sn); if (state.view === 'hud') { document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
   document.getElementById('routeTabs').addEventListener('click', e => {
     const b = e.target.closest('button[data-rt]'); if (!b) return;

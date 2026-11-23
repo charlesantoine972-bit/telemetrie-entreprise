@@ -25,7 +25,7 @@
 #include "common/scssdk_telemetry_trailer_common_channels.h"
 #include "common/scssdk_telemetry_job_common_channels.h"
 
-#define PLUGIN_VERSION "1.3.0"
+#define PLUGIN_VERSION "1.4.0"
 static const unsigned short APP_PORT = 47311;
 
 // ---------------------------------------------------------------- état
@@ -41,6 +41,11 @@ struct Telemetry {
     float fuel = 0;             // L
     float fuelRange = 0;        // km
     float cargoDamage = 0;      // 0..1
+    float fuelAvg = 0;          // L/km (consommation moyenne)
+    bool fuelWarning = false;   // voyant réserve
+    // Usure / dégâts 0..1 (-1 = canal absent dans cette version du jeu)
+    float wEngine = -1, wTransmission = -1, wCabin = -1, wChassis = -1, wWheels = -1;
+    float wTrailerChassis = -1, wTrailerWheels = -1, wTrailerBody = -1;
     unsigned gameTime = 0;      // minutes depuis le début
     int restStop = 0;           // minutes avant le repos (fatigue)
     int mandatoryBreak = 0;     // minutes avant la pause obligatoire (SDK 1.16, ETS2 1.60+)
@@ -134,6 +139,14 @@ static void sendState() {
     char scale[120]; snprintf(scale, sizeof scale, "\"localScale\":%.4f,", t.localScale);
     msg += scale;
     if (hasMandatoryBreak) { snprintf(scale, sizeof scale, "\"mandatoryBreak\":%d,", t.mandatoryBreak); msg += scale; }
+    char wear[420];
+    snprintf(wear, sizeof wear,
+        "\"fuelAvg\":%.5f,\"fuelWarning\":%s,\"wear\":{\"engine\":%.4f,\"transmission\":%.4f,\"cabin\":%.4f,\"chassis\":%.4f,\"wheels\":%.4f,"
+        "\"trailerChassis\":%.4f,\"trailerWheels\":%.4f,\"trailerBody\":%.4f},",
+        t.fuelAvg, t.fuelWarning ? "true" : "false",
+        t.wEngine, t.wTransmission, t.wCabin, t.wChassis, t.wWheels,
+        t.wTrailerChassis, t.wTrailerWheels, t.wTrailerBody);
+    msg += wear;
     msg += "\"busJob\":" + busJobJson + ",";
     msg += "\"truck\":" + truckJson + ",\"trailer\":" + trailerJson + ",\"job\":" + jobJson + "}";
     sendRaw(msg);
@@ -269,6 +282,23 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     hasMandatoryBreak = ch(SCS_TELEMETRY_CHANNEL_next_mandatory_break, N, SCS_VALUE_TYPE_s32, F, store_s32, &t.mandatoryBreak) == SCS_RESULT_ok;
     if (ch("trailer.0.connected", N, SCS_VALUE_TYPE_bool, F, store_bool, &t.trailerConnected) != SCS_RESULT_ok)
         ch(SCS_TELEMETRY_TRAILER_CHANNEL_connected, N, SCS_VALUE_TYPE_bool, F, store_bool, &t.trailerConnected);
+
+    // Plein : consommation moyenne et voyant réserve
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_fuel_average_consumption, N, SCS_VALUE_TYPE_float, F, store_float, &t.fuelAvg);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_fuel_warning, N, SCS_VALUE_TYPE_bool, F, store_bool, &t.fuelWarning);
+    // Dégâts du véhicule (usure 0..1, comme dans l'écran « Camion » du jeu). Canal absent : reste à -1.
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_wear_engine, N, SCS_VALUE_TYPE_float, F, store_float, &t.wEngine);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_wear_transmission, N, SCS_VALUE_TYPE_float, F, store_float, &t.wTransmission);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_wear_cabin, N, SCS_VALUE_TYPE_float, F, store_float, &t.wCabin);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_wear_chassis, N, SCS_VALUE_TYPE_float, F, store_float, &t.wChassis);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_wear_wheels, N, SCS_VALUE_TYPE_float, F, store_float, &t.wWheels);
+    // Dégâts du matériel (remorque) : nom multi-remorques puis ancien nom
+    if (ch("trailer.0.wear.chassis", N, SCS_VALUE_TYPE_float, F, store_float, &t.wTrailerChassis) != SCS_RESULT_ok)
+        ch(SCS_TELEMETRY_TRAILER_CHANNEL_wear_chassis, N, SCS_VALUE_TYPE_float, F, store_float, &t.wTrailerChassis);
+    if (ch("trailer.0.wear.wheels", N, SCS_VALUE_TYPE_float, F, store_float, &t.wTrailerWheels) != SCS_RESULT_ok)
+        ch(SCS_TELEMETRY_TRAILER_CHANNEL_wear_wheels, N, SCS_VALUE_TYPE_float, F, store_float, &t.wTrailerWheels);
+    if (ch("trailer.0.wear.body", N, SCS_VALUE_TYPE_float, F, store_float, &t.wTrailerBody) != SCS_RESULT_ok)
+        ch(SCS_TELEMETRY_TRAILER_CHANNEL_wear_body, N, SCS_VALUE_TYPE_float, F, store_float, &t.wTrailerBody);
 
     if (gameLog) gameLog(SCS_LOG_TYPE_message, "[Telemetrie Entreprise] Plugin " PLUGIN_VERSION " charge.");
     return SCS_RESULT_ok;
