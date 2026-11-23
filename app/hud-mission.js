@@ -36,7 +36,8 @@ function hudMission(root, d) {
   set('fuelRange', hasFuelRange ? fuelRange.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' km' : '—',
     navigation && coach && hasFuelRange);
   panel.querySelector('[data-mission=odometer]').title = 'Kilométrage total du véhicule transmis par le jeu, y compris avant le lancement de l’application.';
-  const job = d.job;
+  // Trajet et marchandise : tels que le jeu les donne (mission en direct), sinon l’aperçu de test.
+  const job = d.mission && d.mission.type === 'truck' ? d.mission : d.mission ? null : d.job;
   set('route', coach ? 'Service car en cours' : job ? `${job.from || '…'} → ${job.to || '…'}` : 'Hors mission', !coach || hasJob);
   const mass = job && Number.isFinite(job.mass) && job.mass > 0
     ? ` · ${(job.mass / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} t` : '';

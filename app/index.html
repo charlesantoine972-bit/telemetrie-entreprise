@@ -862,13 +862,14 @@
               <div class="soft" id="jCargo"></div>
               <div class="trip" id="jTrip"></div>
               <div class="kv">
-                <div class="k"><span>Reste</span><span id="jLeft">–</span></div>
-                <div class="k"><span>Temps estimé</span><span id="jTime">–</span></div>
-                <div class="k"><span>Dégâts</span><span id="jDmg">–</span></div>
-                <div class="k"><span>Km chargé</span><span id="jLoaded" style="color:var(--loaded)">–</span></div>
-                <div class="k"><span>Km à vide</span><span id="jEmpty" style="color:var(--empty)">–</span></div>
-                <div class="k"><span>Au-dessus du seuil</span><span id="jOver">–</span></div>
+                <div class="k"><span>Reste (GPS du jeu)</span><span id="jLeft">–</span></div>
+                <div class="k"><span>Temps GPS</span><span id="jTime">–</span></div>
+                <div class="k"><span>Livraison avant</span><span id="jDeadline">–</span></div>
+                <div class="k"><span>Distance prévue</span><span id="jPlanned">–</span></div>
+                <div class="k"><span>Dégâts marchandise</span><span id="jDmg">–</span></div>
+                <div class="k"><span>Revenu</span><span id="jIncome">–</span></div>
               </div>
+              <div class="muted" id="jTrack" style="font-size:12px;line-height:1.5"></div>
             </div>
           </div>
           <div class="panel tel-bus" style="display:flex;flex-direction:column;gap:12px">
@@ -885,6 +886,7 @@
                 <div class="k"><span>Revenu prévu</span><span id="bIncome">–</span></div>
                 <div class="k"><span>Au-dessus du seuil</span><span id="bOver">–</span></div>
               </div>
+              <div class="muted" id="bTrack" style="font-size:12px;line-height:1.5"></div>
             </div>
           </div>
           <div class="panel tel-bus" style="display:flex;flex-direction:column;gap:14px">
@@ -2664,7 +2666,8 @@ function telAutoText(connected){
     : `Bascule automatique : ${telLastType === 'car' ? 'car' : 'camion'} détecté.`);
 }
 function renderTelTab(sn){
-  const type = sn.connected ? sn.vehicleType : telLastType;
+  // L’onglet suit la mission que le jeu signale ; sans mission, le véhicule détecté
+  const type = !sn.connected ? telLastType : sn.mission ? (sn.mission.type === 'bus' ? 'car' : 'camion') : sn.vehicleType;
   if (type !== telLastType){ telLastType = type; telManual = null; } // nouveau véhicule : on suit
   telLastConnected = sn.connected;
   applyTelTab(); telAutoText(sn.connected);
@@ -2673,50 +2676,56 @@ applyTelTab();
 
 const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 let tripSig = '';
-function renderTruckTrip(j, total, left){
-  const pct = total ? Math.min(100, Math.round(j.distance / total * 100)) : 0;
-  const html = `<div class="node"><b>${esc(j.from || '?')}</b><span>${esc(j.fromCompany || 'Départ')}</span></div>`
-    + `<div class="line" title="${pct} % du trajet"><i style="width:${pct}%"></i><u style="left:${pct}%"></u></div>`
-    + `<div class="node end"><b>${esc(j.to || '?')}</b><span>${esc(j.toCompany || 'Arrivée')}</span></div>`
-    + `<div class="muted" style="grid-column:1/-1;font-size:12px;display:flex;justify-content:space-between"><span>${km(j.distance)} parcourus</span><span>${left != null ? km(left) + ' restants' : ''}</span></div>`;
+function renderTruckTrip(m){
+  const p = m.progress, pct = p != null ? Math.round(p * 100) : null;
+  const html = `<div class="node"><b>${esc(m.from || '—')}</b><span>${esc(m.fromCompany || '')}</span></div>`
+    + `<div class="line"${pct != null ? ` title="${pct} % du trajet"` : ''}><i style="width:${pct || 0}%"></i>${pct != null ? `<u style="left:${pct}%"></u>` : ''}</div>`
+    + `<div class="node end"><b>${esc(m.to || '—')}</b><span>${esc(m.toCompany || '')}</span></div>`
+    + `<div class="muted" style="grid-column:1/-1;font-size:12px;display:flex;justify-content:space-between"><span>${pct != null ? pct + ' % du trajet' : 'Avancement inconnu (GPS du jeu sans itinéraire)'}</span><span>${m.remainingKm != null ? km(m.remainingKm) + ' restants' : ''}</span></div>`;
   if (html !== tripSig){ tripSig = html; document.getElementById('jTrip').innerHTML = html; }
 }
 
 let stopsSig = '';
 function renderBus(sn){
-  const j = sn.job && sn.job.missionType === 'bus' ? sn.job : null, c = sn.coach, L = sn.live;
-  document.getElementById('bNone').classList.toggle('hidden', !!j);
-  document.getElementById('bBox').classList.toggle('hidden', !j);
+  // Service car : uniquement ce que le jeu envoie (configuration « bus_job »)
+  const g = sn.mission && sn.mission.type === 'bus' ? sn.mission : null;
+  const j = g && g.tracked ? sn.job : null, c = sn.coach, L = sn.live;
+  document.getElementById('bNone').classList.toggle('hidden', !!g);
+  document.getElementById('bBox').classList.toggle('hidden', !g);
+  setText('bNone', sn.connected ? 'Aucun service car en cours dans le jeu.' : 'En attente du jeu.');
   const st = document.getElementById('bState');
-  st.textContent = j ? (L && L.busJob ? 'EN SERVICE' : 'HORS SERVICE') : ''; st.style.color = j && L && L.busJob ? 'var(--loaded)' : 'var(--empty)';
-  if (j){
-    setText('bLine', [j.lineNumber ? 'Ligne ' + j.lineNumber : 'Service car', j.lineName || j.to].filter(Boolean).join(' · '));
-    // Arrêts : départ et arrêts desservis (enregistrés), prochain arrêt, arrêts restants, terminus
-    const served = (j.stops || []).filter(x => x.kind === 'départ' || x.kind === 'arrêt');
-    const count = j.stageCount || 1, cur = j.stageCurrent || 0;
+  st.textContent = g ? 'EN SERVICE' : ''; st.style.color = 'var(--loaded)';
+  if (g){
+    setText('bLine', [g.lineNumber ? 'Ligne ' + g.lineNumber : 'Service car', g.lineName || g.to].filter(Boolean).join(' · '));
+    const count = g.stageCount || 1, cur = g.stageCurrent || 0;
     const rows = [];
-    const shown = served.length > 4 ? [served[0], { more: served.length - 3 }, ...served.slice(-2)] : served;
-    for (const x of shown){
-      if (x.more) { rows.push(`<div class="stop done"><i class="dot"></i><span style="text-align:left">… ${x.more} arrêt${x.more > 1 ? 's' : ''} desservi${x.more > 1 ? 's' : ''}</span><span></span></div>`); continue; }
-      const t = new Date(x.at); rows.push(`<div class="stop done"><i class="dot"></i><b>${esc(x.name || (x.kind === 'départ' ? 'Départ' : 'Arrêt'))}</b><span>${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} · ${km(x.km)}</span></div>`);
-    }
-    const left = L && L.navDistance ? L.navDistance / 1000 : null;
+    rows.push(`<div class="stop done"><i class="dot"></i><b>${esc(g.from || 'Départ')}</b><span>départ</span></div>`);
+    // Arrêts déjà desservis : noms notés par l’appli si elle a suivi le service, sinon leur nombre (donné par le jeu)
+    const served = j ? (j.stops || []).filter(x => x.kind === 'arrêt') : [];
+    if (served.length){
+      const shown = served.length > 3 ? [{ more: served.length - 2 }, ...served.slice(-2)] : served;
+      for (const x of shown){
+        if (x.more) { rows.push(`<div class="stop done"><i class="dot"></i><span style="text-align:left">… ${x.more} arrêt${x.more > 1 ? 's' : ''} desservi${x.more > 1 ? 's' : ''}</span><span></span></div>`); continue; }
+        const t = new Date(x.at); rows.push(`<div class="stop done"><i class="dot"></i><b>${esc(x.name || 'Arrêt')}</b><span>${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}</span></div>`);
+      }
+    } else if (cur > 0) rows.push(`<div class="stop done"><i class="dot"></i><span style="text-align:left">${cur} arrêt${cur > 1 ? 's' : ''} desservi${cur > 1 ? 's' : ''}</span><span></span></div>`);
+    const left = g.remainingKm;
     const isLast = cur >= count - 1;
-    rows.push(`<div class="stop next"><i class="dot"></i><b>${esc(j.nextStop || 'Prochain arrêt')}</b><span>${isLast ? 'terminus' : 'prochain arrêt'}${left != null ? ' · ' + km(left) : ''}</span></div>`);
+    rows.push(`<div class="stop next"><i class="dot"></i><b>${esc(g.nextStop || '—')}</b><span>${isLast ? 'terminus' : `arrêt ${cur + 1} sur ${count}`}${left != null ? ' · ' + km(left) : ''}</span></div>`);
     const between = count - cur - 2;
     if (between > 0) rows.push(`<div class="stop todo"><i class="dot"></i><span style="text-align:left">${between} autre${between > 1 ? 's' : ''} arrêt${between > 1 ? 's' : ''}</span><span></span></div>`);
-    if (!isLast && j.to && j.to !== j.nextStop) rows.push(`<div class="stop todo"><i class="dot"></i><b>${esc(j.to)}</b><span>terminus</span></div>`);
+    if (!isLast && g.to && g.to !== g.nextStop) rows.push(`<div class="stop todo"><i class="dot"></i><b>${esc(g.to)}</b><span>terminus</span></div>`);
     const html = rows.join('');
     if (html !== stopsSig){ stopsSig = html; document.getElementById('bStops').innerHTML = html; }
     setText('bLeft', left != null ? km(left) : '–');
-    setText('bTime', L && L.navTime ? dur(L.navTime / 60) : '–');
+    setText('bTime', g.remainingMin != null ? dur(g.remainingMin) : '–');
     const m = c && c.scheduleMarginMinutes;
     const sched = document.getElementById('bSched');
     sched.textContent = m == null ? '–' : m === 0 ? "à l'heure" : m > 0 ? `${dur(m)} d'avance` : `${dur(-m)} de retard`;
     sched.style.color = m == null ? '' : m < 0 ? 'var(--race)' : 'var(--ok)';
-    setText('bKm', km(j.loaded));
-    setText('bIncome', j.income ? fmt(j.income) + ' €' : '–');
-    setText('bOver', j.overPct.toFixed(1).replace('.', ',') + ' %');
+    setText('bKm', j ? km(j.loaded) : '–');
+    setText('bIncome', g.income ? fmt(g.income) + ' €' : '–');
+    setText('bOver', j ? j.overPct.toFixed(1).replace('.', ',') + ' %' : '–');
   }
   // Voyageurs
   const pax = c && Number.isFinite(c.passengers) ? c.passengers : null, cap = c && Number.isFinite(c.capacity) && c.capacity > 0 ? c.capacity : null;
@@ -2733,17 +2742,18 @@ function renderBus(sn){
     : sn.vehicleType !== 'car' ? 'Tu ne conduis pas de car en ce moment.'
     : [pax == null ? 'Le jeu n’envoie pas encore le nombre de voyageurs.' : '', sat == null ? 'Le jeu n’envoie pas encore la satisfaction : la force G et les à-coups montrent le confort de ta conduite.' : ''].filter(Boolean).join(' '));
   // Force G (lissée) : point dans le cercle, droite = virage à droite, haut = accélération
-  const g = sn.gforce, dot = document.getElementById('gDot');
+  const gf = sn.gforce, dot = document.getElementById('gDot');
   const f = v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(2).replace('.', ',') + ' G';
-  if (g){
-    const sc = 124, x = Math.max(-62, Math.min(62, g.lat * sc)), y = Math.max(-62, Math.min(62, -g.lon * sc));
+  if (gf){
+    const sc = 124, x = Math.max(-62, Math.min(62, gf.lat * sc)), y = Math.max(-62, Math.min(62, -gf.lon * sc));
     dot.setAttribute('cx', x.toFixed(1)); dot.setAttribute('cy', y.toFixed(1));
-    dot.setAttribute('fill', g.total >= 0.3 ? 'var(--race)' : g.total >= 0.18 ? 'var(--warn)' : 'var(--ok)');
-    setText('gNow', g.total.toFixed(2).replace('.', ',') + ' G');
-    setText('gLat', f(g.lat)); setText('gLon', f(g.lon));
+    dot.setAttribute('fill', gf.total >= 0.3 ? 'var(--race)' : gf.total >= 0.18 ? 'var(--warn)' : 'var(--ok)');
+    setText('gNow', gf.total.toFixed(2).replace('.', ',') + ' G');
+    setText('gLat', f(gf.lat)); setText('gLon', f(gf.lon));
   } else { dot.setAttribute('cx', 0); dot.setAttribute('cy', 0); dot.setAttribute('fill', 'var(--muted)'); ['gNow', 'gLat', 'gLon'].forEach(id => setText(id, '–')); }
   setText('gMax', j && j.gMax ? j.gMax.toFixed(2).replace('.', ',') + ' G' : '–');
   setText('gJolts', j ? String(j.jolts || 0) : '–');
+  setText('bTrack', g ? (j ? '' : 'L’appli n’a pas suivi ce service depuis son début : km en service, pic de G et à-coups ne sont pas connus.') : '');
 }
 
 let wearSig = '';
@@ -2770,7 +2780,7 @@ function renderWear(L, connected, vehicleType, job){
       const rAvg = avg(trParts.map(p => p[1]));
       html += `<h3>Remorque${rAvg != null ? `<b>${pct1(rAvg)} en moyenne</b>` : ''}</h3>` + trParts.map(p => row(p[0], p[1])).join('');
     } else html += '<h3>Remorque</h3><div class="soft" style="font-size:13px">Aucune remorque attelée.</div>';
-    if (job && job.missionType !== 'bus') html += '<h3>Marchandise</h3>' + row('Cargaison', Number(L.cargoDamage) || 0);
+    if (job && job.type === 'truck') html += '<h3>Marchandise</h3>' + row('Cargaison', Number(L.cargoDamage) || 0);
   }
   if (html !== wearSig){ wearSig = html; box.innerHTML = html; }
 }
@@ -2808,38 +2818,37 @@ function renderLive(sn){
     setText('lSpeed', '–'); document.getElementById('lLimit').style.visibility = 'hidden';
   }
 
-  const j = sn.job;
-  document.getElementById('jNone').classList.toggle('hidden', !!j);
-  document.getElementById('jBox').classList.toggle('hidden', !j);
+  // Mission camion : uniquement ce que le jeu envoie (configuration « job » du SDK)
+  const m = sn.mission && sn.mission.type === 'truck' ? sn.mission : null;
+  const tj = m && m.tracked ? sn.job : null; // compteurs de l’appli, seulement pour cette même mission
+  document.getElementById('jNone').classList.toggle('hidden', !!m);
+  document.getElementById('jBox').classList.toggle('hidden', !m);
+  setText('jNone', sn.connected ? 'Aucune livraison en cours dans le jeu.' : 'En attente du jeu.');
   const modeEl = document.getElementById('lMode');
-  if (j){
-    const race = j.mode === 'course';
-    modeEl.className = 'mode ' + (race ? 'race' : 'real'); setText('lMode', race ? 'COURSE' : 'RÉEL');
-    setText('jRoute', `${j.from || '?'} → ${j.to || '?'}`);
-    const isBus = j.missionType === 'bus';
-    setText('jCargo', isBus
-      ? [j.lineNumber ? 'Ligne ' + j.lineNumber : 'Service car', j.nextStop ? 'prochain arrêt ' + j.nextStop : '', j.income ? fmt(j.income) + ' €' : ''].filter(Boolean).join(' · ')
-      : [j.cargo || 'Marchandise', j.mass ? (j.mass/1000).toFixed(1).replace('.',',') + ' t' : '', j.income ? fmt(j.income) + ' €' : ''].filter(Boolean).join(' · '));
-    const left = L && L.navDistance ? L.navDistance / 1000 : null;
-    setText('jLeft', left != null ? km(left) : '–');
-    setText('jTime', L && L.navTime ? dur(L.navTime / 60) : '–');
-    setText('jDmg', L ? (L.cargoDamage * 100).toFixed(1).replace('.', ',') + ' %' : '–');
-    setText('jLoaded', km(j.loaded)); setText('jEmpty', km(j.empty));
-    setText('jOver', j.overPct.toFixed(1).replace('.', ',') + ' %');
-    document.getElementById('jOver').style.color = race ? 'var(--race)' : '';
-    const total = j.planned || (left != null ? j.distance + left : 0);
-    renderTruckTrip(j, total, left);
-    const charged = isBus ? !!(L && L.busJob) : !!(L && L.trailerConnected);
-    setText('jState', isBus ? (charged ? 'EN SERVICE' : 'HORS SERVICE') : charged ? 'CHARGÉ' : 'À VIDE');
-    document.getElementById('jState').style.color = charged ? 'var(--loaded)' : 'var(--empty)';
-  } else {
-    modeEl.className = 'mode real'; setText('lMode', 'RÉEL'); setText('jState', '');
-  }
+  const race = !!(tj && tj.mode === 'course');
+  modeEl.className = 'mode ' + (race ? 'race' : 'real'); setText('lMode', race ? 'COURSE' : 'RÉEL');
+  if (m){
+    setText('jRoute', `${m.from || '—'} → ${m.to || '—'}`);
+    setText('jCargo', [m.cargo, m.mass ? (m.mass / 1000).toFixed(1).replace('.', ',') + ' t' : '', m.special ? 'convoi exceptionnel' : ''].filter(Boolean).join(' · ') || '—');
+    setText('jLeft', m.remainingKm != null ? km(m.remainingKm) : '–');
+    setText('jTime', m.remainingMin != null ? dur(m.remainingMin) : '–');
+    const dl = m.deadline;
+    setText('jDeadline', dl != null && dl > 0 ? `${DAYS[Math.floor(dl / 1440) % 7]} ${String(Math.floor(dl / 60) % 24).padStart(2, '0')}:${String(dl % 60).padStart(2, '0')}` + (m.timeLeft != null ? (m.timeLeft >= 0 ? ` (${dur(m.timeLeft)})` : ` (${dur(-m.timeLeft)} de retard)`) : '') : '–');
+    document.getElementById('jDeadline').style.color = m.timeLeft != null && m.timeLeft < 0 ? 'var(--race)' : '';
+    setText('jPlanned', m.planned ? km(m.planned) : '–');
+    setText('jDmg', m.cargoDamage != null ? (m.cargoDamage * 100).toFixed(1).replace('.', ',') + ' %' : '–');
+    setText('jIncome', m.income ? fmt(m.income) + ' €' : '–');
+    renderTruckTrip(m);
+    setText('jTrack', tj ? `Suivi par l’appli depuis le début de la mission : ${km(tj.loaded)} chargé · ${km(tj.empty)} à vide · ${tj.overPct.toFixed(1).replace('.', ',')} % au-dessus du seuil.`
+      : 'L’appli n’a pas suivi cette mission depuis son début : seules les données du jeu sont affichées.');
+    setText('jState', m.loaded ? 'CHARGÉ' : 'À VIDE');
+    document.getElementById('jState').style.color = m.loaded ? 'var(--loaded)' : 'var(--empty)';
+  } else setText('jState', '');
 
   renderTelTab(sn);
   renderBus(sn);
   renderFuel(L, sn.connected);
-  renderWear(L, sn.connected, sn.vehicleType, j);
+  renderWear(L, sn.connected, sn.vehicleType, m);
 
   const s = sn.session;
   setText('sLoaded', km(s.loaded)); setText('sEmpty', km(s.empty));

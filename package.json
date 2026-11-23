@@ -1,6 +1,6 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.13.25",
+  "version": "0.13.26",
   "description": "Truck & Coach Hub - télémétrie, carrière, entreprise et mods pour ETS2 / ATS",
   "author": "charlesantoine972-bit",
   "main": "main.js",
@@ -56,7 +56,7 @@
       }
     ],
     "releaseInfo": {
-      "releaseName": "0.13.24.1 — Télémétrie camion / car, plein, dégâts, force G"
+      "releaseName": "0.13.24.2 — Télémétrie branchée sur la livraison du jeu"
     }
   },
   "dependencies": {

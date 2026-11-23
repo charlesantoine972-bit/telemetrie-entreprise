@@ -16,7 +16,8 @@ function hudRender(root, d){
   q('sp').classList.toggle('over', kmh > th.limit);
   const lim = Math.round((L.speedLimit || 0) * 3.6);
   q('lim').textContent = lim; q('lim').classList.toggle('off', !lim);
-  const j = d.job, m = q('mode');
+  // Compteurs de l’appli seulement s’ils concernent la mission affichée par le jeu
+  const j = d.mission && !d.mission.tracked ? null : d.job, m = q('mode');
   m.className = 'mode ' + (!j ? 'none' : j.mode === 'course' ? 'race' : 'real');
   m.textContent = !j ? 'SANS MISSION' : j.mode === 'course' ? 'COURSE · ' + fmt(j.overPct, 0) + ' %' : 'RÉEL';
   root.classList.toggle('race', !!j && j.mode === 'course');
