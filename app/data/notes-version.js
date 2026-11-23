@@ -14,6 +14,15 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.5', date: '2026-11-23', titre: 'Nouveau bandeau camion, menu des espaces et Télémétrie remise en ordre', notes: [
+    ['nouveau', 'Bandeau camion refait sur le modèle du bandeau car : mission, trajet, heure du jeu, rapport engagé, vitesse, limitation, régulateur, mode et dégâts du camion ; en dessous, route, heure limite de livraison, marchandise, carburant et pause. Chaque info s’active ou se masque dans la page HUD.'],
+    ['nouveau', 'Menu ☰ en haut à gauche : un panneau pour passer du Hub à la Marketplace ou à Truck & Coach Tools, ou revenir à l’écran d’accueil.'],
+    ['ameliore', 'Menu latéral réorganisé : ☰ et le bouton pour réduire le menu en haut, l’espace en cours juste en dessous, puis Options, et enfin le logo et la version en bas (un clic ramène à l’écran d’accueil).'],
+    ['ameliore', 'Télémétrie : colonnes alignées dans les onglets Camion et Car. Sans le jeu, la page n’affiche plus que l’attente et tes kilomètres, avec un lien vers Options → Jeu & plugin.'],
+    ['ameliore', 'Notes de version rangées dans Options → Mises à jour. Après chaque mise à jour, l’écran d’accueil montre une seule fois ce qui a changé.'],
+    ['corrige', 'Bandeau camion, bandeau car et Télémétrie lisent tous les mêmes données du jeu en direct : ce qui s’affiche est ce qui se passe en jeu.'],
+    ['ameliore', 'Plugin du jeu 1.5.0 : rapport engagé, régime moteur et régulateur. Ferme le jeu avant d’ouvrir l’appli pour qu’elle l’installe.'],
+  ]},
   { version: '0.12.0.4', date: '2026-11-23', titre: 'Nouvelles Options et menu rétractable', notes: [
     ['nouveau', 'Options rangées en catégories, comme les réglages d’un jeu : Général, Conduite, Jeu & plugin, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos.'],
     ['nouveau', 'Menu latéral rétractable : le bouton à côté du logo ne garde que les icônes, avec le nom au survol. Une pastille montre si le HUD est activé et si une mise à jour attend. Aussi dans Options → Général.'],

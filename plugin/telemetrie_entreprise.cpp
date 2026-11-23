@@ -25,7 +25,7 @@
 #include "common/scssdk_telemetry_trailer_common_channels.h"
 #include "common/scssdk_telemetry_job_common_channels.h"
 
-#define PLUGIN_VERSION "1.4.0"
+#define PLUGIN_VERSION "1.5.0"
 static const unsigned short APP_PORT = 47311;
 
 // ---------------------------------------------------------------- état
@@ -42,6 +42,9 @@ struct Telemetry {
     float fuelRange = 0;        // km
     float cargoDamage = 0;      // 0..1
     float ax = 0, ay = 0, az = 0; // accélération locale du véhicule (m/s², x droite, y haut, z arrière)
+    int gear = 0;               // rapport affiché au tableau de bord (0 = neutre, < 0 = marche arrière)
+    float rpm = 0;              // régime moteur
+    float cruise = 0;           // régulateur (m/s, 0 = désactivé)
     float fuelAvg = 0;          // L/km (consommation moyenne)
     bool fuelWarning = false;   // voyant réserve
     // Usure / dégâts 0..1 (-1 = canal absent dans cette version du jeu)
@@ -140,11 +143,11 @@ static void sendState() {
     char scale[120]; snprintf(scale, sizeof scale, "\"localScale\":%.4f,", t.localScale);
     msg += scale;
     if (hasMandatoryBreak) { snprintf(scale, sizeof scale, "\"mandatoryBreak\":%d,", t.mandatoryBreak); msg += scale; }
-    char wear[420];
+    char wear[480];
     snprintf(wear, sizeof wear,
-        "\"accel\":[%.3f,%.3f,%.3f],\"fuelAvg\":%.5f,\"fuelWarning\":%s,\"wear\":{\"engine\":%.4f,\"transmission\":%.4f,\"cabin\":%.4f,\"chassis\":%.4f,\"wheels\":%.4f,"
+        "\"accel\":[%.3f,%.3f,%.3f],\"gear\":%d,\"rpm\":%.0f,\"cruise\":%.3f,\"fuelAvg\":%.5f,\"fuelWarning\":%s,\"wear\":{\"engine\":%.4f,\"transmission\":%.4f,\"cabin\":%.4f,\"chassis\":%.4f,\"wheels\":%.4f,"
         "\"trailerChassis\":%.4f,\"trailerWheels\":%.4f,\"trailerBody\":%.4f},",
-        t.ax, t.ay, t.az, t.fuelAvg, t.fuelWarning ? "true" : "false",
+        t.ax, t.ay, t.az, t.gear, t.rpm, t.cruise, t.fuelAvg, t.fuelWarning ? "true" : "false",
         t.wEngine, t.wTransmission, t.wCabin, t.wChassis, t.wWheels,
         t.wTrailerChassis, t.wTrailerWheels, t.wTrailerBody);
     msg += wear;
@@ -291,6 +294,10 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
 
     // Force G (confort des passagers en car) : accélération dans le repère du véhicule
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_local_linear_acceleration, N, SCS_VALUE_TYPE_fvector, F, store_accel, nullptr);
+    // Conduite : rapport affiché, régime et régulateur
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_displayed_gear, N, SCS_VALUE_TYPE_s32, F, store_s32, &t.gear);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_engine_rpm, N, SCS_VALUE_TYPE_float, F, store_float, &t.rpm);
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_cruise_control, N, SCS_VALUE_TYPE_float, F, store_float, &t.cruise);
     // Plein : consommation moyenne et voyant réserve
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_fuel_average_consumption, N, SCS_VALUE_TYPE_float, F, store_float, &t.fuelAvg);
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_fuel_warning, N, SCS_VALUE_TYPE_bool, F, store_bool, &t.fuelWarning);

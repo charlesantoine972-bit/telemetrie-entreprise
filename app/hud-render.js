@@ -26,6 +26,7 @@ function hudRender(root, d){
   q('kKm').classList.toggle('off', !j);
   if (j) q('km').textContent = fmt(j.loaded, 1) + ' km chargés';
   hudMission(root, d);
+  hudTruck(root, d);
   hudCoach(root, d);
   // Ne jamais couper le bandeau : si l'écran est trop étroit pour la taille choisie, on réduit.
   const room = (typeof window !== 'undefined' && window.innerWidth || 0) - 16, wide = (root.offsetWidth || 0) * scale / 100;

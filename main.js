@@ -170,6 +170,7 @@ function hudData() {
     const t = Date.now() / 1000;
     sn.live = { speed: (88 + Math.sin(t) * 8) / 3.6, speedLimit: 90 / 3.6, odometer: 154320.5, navDistance: 214000, navTime: 10800, localScale: 19, gameTime: 1400, job: { 'delivery.time': 1460 } };
     sn.job = { from: 'Paris', to: 'Lyon', cargo: 'Électronique', mass: 18000, loaded: 38.4, mode: 'réel', overPct: 1.2 };
+    sn.truckPreview = true; // exemple du bandeau camion pendant le test
   }
   // Affiché seulement quand on joue vraiment : jeu au premier plan (pas d'Alt+Tab, pas le bureau),
   // pas en pause (menu Échap), et données fraîches (le jeu n'envoie plus rien quand il est réduit).
