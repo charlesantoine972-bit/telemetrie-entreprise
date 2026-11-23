@@ -1,5 +1,5 @@
 // Notes de version affichées en bas de l'écran d'accueil (la plus récente en premier).
-// À chaque nouvelle version : ajouter une entrée en haut de la liste et compléter versionAffichee().
+// À chaque nouvelle version : ajouter une entrée en haut de la liste (numéro affiché 0.12.0.x).
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 //
 // Numérotation : la mise à jour automatique exige un numéro technique x.y.z toujours plus haut
@@ -9,10 +9,18 @@ window.versionAffichee = function (v) {
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
   if (!m) return v;
   const n = Number(m[2]);
-  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : v;
+  // 0.13.20 → 0.13.27 = 0.12.0.3, puis une version affichée par version technique : 0.13.28 = 0.12.0.4, 0.13.29 = 0.12.0.5…
+  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : '0.12.0.' + (n - 24);
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.4', date: '2026-11-23', titre: 'Nouvelles Options et menu rétractable', notes: [
+    ['nouveau', 'Options rangées en catégories, comme les réglages d’un jeu : Général, Conduite, Jeu & plugin, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos.'],
+    ['nouveau', 'Menu latéral rétractable : le bouton à côté du logo ne garde que les icônes, avec le nom au survol. Une pastille montre si le HUD est activé et si une mise à jour attend. Aussi dans Options → Général.'],
+    ['nouveau', 'Bouton Options sur l’écran d’accueil.'],
+    ['ameliore', 'Truck Tools et Coach Tools s’appellent maintenant Truck & Coach Tools.'],
+    ['corrige', 'Options → Mises à jour affiche le bon numéro de version (0.12.0.x) au lieu du numéro technique.'],
+  ]},
   { version: '0.12.0.3', date: '2026-11-23', titre: 'Télémétrie camion et car, Feuille de route et Truck Tools complet', notes: [
     ['nouveau', 'Télémétrie : onglets Camion et Car qui suivent la mission en cours dans le jeu. L’appli s’ouvre toute seule sur la Télémétrie quand le jeu se lance (désactivable dans Options).'],
     ['nouveau', 'Télémétrie camion : la livraison telle que le jeu la donne (villes, entreprises, marchandise, revenu), avancement du trajet, distance GPS restante, heure limite de livraison et temps restant.'],

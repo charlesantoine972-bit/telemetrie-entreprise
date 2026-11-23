@@ -314,6 +314,60 @@
   .navbtn:hover{background:var(--hover);color:var(--text)}
   .navbtn.on{background:var(--accent-soft);color:var(--accent-strong);font-weight:600}
   .navbtn svg{flex:none}
+
+
+  /* ---------- Options : catégories façon réglages de jeu ---------- */
+  .opts{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:start;max-width:1180px}
+  .optnav{position:sticky;top:0;display:flex;flex-direction:column;gap:3px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px}
+  .optnav button{display:flex;align-items:center;gap:11px;height:42px;padding:0 12px;border:none;border-radius:10px;background:transparent;color:var(--soft);font-size:14px;font-weight:600;text-align:left}
+  .optnav button:hover{background:var(--hover);color:var(--text)}
+  .optnav button.on{background:var(--accent-soft);color:var(--accent-strong)}
+  .optnav button svg{flex:none}
+  .optcat{display:none;flex-direction:column;gap:16px} .optcat.on{display:flex}
+  .ochead h2{margin:0 0 4px;font-size:22px} .ochead p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;max-width:760px}
+  .optgroup{background:var(--panel);border:1px solid var(--line);border-radius:16px}
+  .optgroup>h3{margin:0;padding:14px 20px 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:14px 24px;padding:14px 20px;border-top:1px solid var(--line)}
+  .setrow.col{flex-direction:column;align-items:stretch}
+  .setrow.end{justify-content:flex-end;flex-wrap:wrap}
+  .setrow .lab{display:flex;flex-direction:column;gap:3px;max-width:560px;min-width:220px;flex:1}
+  .setrow .lab b{font-size:15px;font-weight:600} .setrow .lab span{font-size:13px;color:var(--muted);line-height:1.5}
+  .setrow .ctl{flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .setrow input[type=text],.setrow input[type=password],.setrow input[type=number],.setrow input:not([type]),.setrow select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
+  @media (max-width:900px){ .opts{grid-template-columns:1fr} .optnav{position:static;flex-direction:row;flex-wrap:wrap} }
+  /* ---------- Menu latéral rétractable ---------- */
+  .sidetop{display:flex;align-items:flex-start;gap:6px}
+  .sidetop #brandBtn{flex:1;min-width:0}
+  .navtoggle{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center}
+  .navtoggle:hover{background:var(--hover);color:var(--text)}
+  .sideswitch{flex-wrap:wrap}
+  .sideswitch button{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
+  .sideswitch button svg{display:none}
+  .sideswitch button.wide{flex-basis:100%}
+  .navbtn{position:relative}
+  .navdot{display:none;position:absolute;top:7px;left:24px;width:9px;height:9px;border-radius:50%;background:var(--muted);border:2px solid var(--nav)}
+  .navdot.on{background:var(--ok)}
+  .side{transition:width .18s ease}
+  [data-motion="reduit"] .side{transition:none}
+  [data-nav="mini"] .side{width:72px;padding:18px 10px 12px}
+  [data-nav="mini"] .sidetop{flex-direction:column;align-items:center;gap:8px}
+  [data-nav="mini"] #brandBtn{padding:0!important;justify-content:center}
+  [data-nav="mini"] #brandBtn>span:last-child{display:none!important}
+  [data-nav="mini"] .navtoggle .chev{transform:scaleX(-1);transform-origin:14.25px 12px}
+  [data-nav="mini"] .sideswitch{flex-direction:column;margin:4px 0 8px}
+  [data-nav="mini"] .sideswitch button{flex:none;height:38px;padding:0}
+  [data-nav="mini"] .sideswitch button svg{display:block}
+  [data-nav="mini"] .sideswitch button span{display:none}
+  [data-nav="mini"] .navcat{display:none}
+  [data-nav="mini"] .navgroup,[data-nav="mini"] .navgroup.closed{display:flex;padding-left:0}
+  [data-nav="mini"] .navgroup+.navcat+.navgroup{border-top:1px solid var(--line);margin-top:6px;padding-top:6px}
+  [data-nav="mini"] .navsec{display:none}
+  [data-nav="mini"] .navbtn{justify-content:center;padding:0;gap:0}
+  [data-nav="mini"] .navbtn>span,[data-nav="mini"] .navbtn .soon{display:none}
+  [data-nav="mini"] .navrow .switch{display:none}
+  [data-nav="mini"] .navdot{display:block}
+  [data-nav="mini"] .updbanner{display:none}
+  [data-nav="mini"] [data-view="reglages"].hasupd::after{content:"";position:absolute;top:7px;left:30px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--nav)}
   .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
     border:1px dashed var(--line);border-radius:12px}
   .main{flex:1;overflow:auto;padding:28px 32px}
@@ -483,10 +537,13 @@
   <header class="lhead">
     <div style="display:flex;align-items:center;gap:12px"><span class="logo">T&amp;C</span>
       <div style="display:flex;flex-direction:column"><b style="font-size:17px">Truck &amp; Coach Hub</b><span class="muted" style="font-size:12px" id="lVersion">Version</span></div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+    <button class="btn" id="launcherOptions" style="height:44px;display:flex;align-items:center;gap:8px;padding:0 16px"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 2.25q1.11.01 2.18.25c.32.07.55.33.59.65l.17 1.53a1.38 1.38 0 0 0 1.92 1.11l1.4-.61c.3-.13.64-.06.85.17a10 10 0 0 1 2.2 3.8c.1.3 0 .63-.26.82l-1.25.92a1.38 1.38 0 0 0 0 2.22l1.25.92c.26.19.36.52.27.82a10 10 0 0 1-2.2 3.8.75.75 0 0 1-.85.17l-1.4-.62a1.38 1.38 0 0 0-1.93 1.12l-.17 1.52a.75.75 0 0 1-.58.65 9.5 9.5 0 0 1-4.4 0 .75.75 0 0 1-.57-.65l-.17-1.52a1.38 1.38 0 0 0-1.93-1.11l-1.4.62a.75.75 0 0 1-.85-.18 10 10 0 0 1-2.2-3.8c-.1-.3 0-.63.26-.82l1.25-.92a1.38 1.38 0 0 0 0-2.22l-1.24-.92a.75.75 0 0 1-.28-.82 10 10 0 0 1 2.2-3.8c.23-.23.57-.3.86-.17l1.4.62c.4.17.86.15 1.25-.08.38-.22.63-.6.68-1.04l.17-1.53a.75.75 0 0 1 .58-.65q1.08-.24 2.2-.25m0 1.5q-.67 0-1.35.12l-.11.97a2.9 2.9 0 0 1-4.03 2.33l-.9-.4A8 8 0 0 0 4.29 9.1l.8.59a2.88 2.88 0 0 1 0 4.64l-.8.59a8 8 0 0 0 1.35 2.32l.9-.4a2.88 2.88 0 0 1 4.02 2.32l.1.99q1.35.22 2.7 0l.1-.99a2.88 2.88 0 0 1 4.02-2.32l.9.4a8 8 0 0 0 1.35-2.32l-.8-.59a2.88 2.88 0 0 1 0-4.64l.8-.59a8 8 0 0 0-1.35-2.32l-.9.4q-.55.24-1.15.24c-1.47 0-2.7-1.1-2.86-2.57l-.11-.97q-.68-.11-1.34-.12M12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5m0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5"/></svg>Options</button>
     <button id="profileChip" title="La page Profil est en préparation." aria-label="Profil, bientôt disponible" disabled style="all:unset;cursor:default;opacity:.72;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel)">
       <span id="pAvatar" style="width:36px;height:36px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">?</span>
       <span style="display:flex;flex-direction:column;line-height:1.3"><b id="pName" style="font-size:14px">Chauffeur</b><span class="muted" style="font-size:12px">Entreprise : aucune</span></span>
     </button>
+    </div>
   </header>
   <div class="lmain" role="region" aria-label="Choix de l'espace">
     <h1 style="margin:0;font-size:32px;font-weight:800;text-align:center">Que veux-tu ouvrir ?</h1>
@@ -507,7 +564,7 @@
       </button>
       <button class="lcard hidden" data-open="atelier" id="lcardAtelier" style="--c:var(--c-atelier)">
         <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M7 6.25V7H4.25C3.01 7 2 8 2 9.25v8.5C2 18.99 3 20 4.25 20h15.5c1.24 0 2.25-1.01 2.25-2.25v-8.5C22 8.01 21 7 19.75 7H17v-.75C17 5.01 16 4 14.75 4h-5.5C8.01 4 7 5.01 7 6.25m2.25-.75h5.5c.41 0 .75.34.75.75V7h-7v-.75c0-.41.34-.75.75-.75M7 8.5h12.75c.41 0 .75.34.75.75v2.25h-3v-.75a.75.75 0 0 0-1.5 0v.75H8v-.75a.75.75 0 0 0-1.5 0v.75h-3V9.25c0-.41.34-.75.75-.75zm9 4.5v1.25a.75.75 0 0 0 1.5 0V13h3v4.75c0 .41-.34.75-.75.75H4.25a.75.75 0 0 1-.75-.75V13h3v1.25a.75.75 0 0 0 1.5 0V13z"/></svg></span>
-          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">OUTILS AVANCÉS · SOLO</span><span class="ttl">Truck Tools &amp; Coach Tools</span></span></div>
+          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">OUTILS AVANCÉS · SOLO</span><span class="ttl">Truck &amp; Coach Tools</span></span></div>
         <span class="soft" style="font-size:15px;line-height:1.6">Gère tes profils, camions et carrières car dans ETS2 et ATS. Une sauvegarde de secours est créée avant chaque modification.</span>
         <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Profils trouvés</span><b id="lAtProfiles">–</b></span><span class="lstat"><span>Mode</span><b>Solo uniquement</b></span></span>
         <span class="go">Ouvrir les outils →</span>
@@ -532,11 +589,11 @@
 <div class="app">
   <a class="skip" href="#mainContent">Aller au contenu</a>
   <aside class="side" aria-label="Menu">
-    <button id="brandBtn" title="Revenir à l'écran de lancement" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:0 8px 6px">
+    <div class="sidetop"><button id="brandBtn" title="Revenir à l'écran de lancement" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:0 8px 6px">
       <span class="logo" style="width:34px;height:34px;font-size:12px">T&amp;C</span>
       <span style="display:flex;flex-direction:column;min-width:0"><span class="brand" style="padding:0;font-size:16px">Truck &amp; Coach Hub</span><span class="brand-sub" id="appVersion" style="padding:0">Version</span></span>
-    </button>
-    <div class="sideswitch" role="group" aria-label="Espace"><button data-side-btn="hub" class="on">Hub</button><button data-side-btn="market">Marketplace</button><button data-side-btn="atelier" class="hidden" id="sideBtnAtelier">Truck Tools</button></div>
+    </button><button class="navtoggle" id="navToggle" aria-label="Réduire le menu" title="Réduire le menu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9 4.5v15"/><path class="chev" d="M15.5 9.5 13 12l2.5 2.5"/></svg></button></div>
+    <div class="sideswitch" role="group" aria-label="Espace"><button data-side-btn="hub" class="on" title="Hub"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7.93 16.07a.75.75 0 1 1-1.06 1.06 7.25 7.25 0 0 1 6.8-12.19.75.75 0 1 1-.34 1.46 5.75 5.75 0 0 0-5.4 9.67m9.96-6.93c.39-.14.82.07.95.46a7.3 7.3 0 0 1-1.71 7.53.75.75 0 1 1-1.06-1.06 5.8 5.8 0 0 0 1.36-5.97.75.75 0 0 1 .46-.96m-2.01-2.47a.63.63 0 0 1 .96.76l-.13.25a355 355 0 0 1-3.02 5.67c-.12.2-.24.4-.32.5a1.88 1.88 0 0 1-2.94-2.33q.14-.16.41-.42l.68-.63a154 154 0 0 1 4.15-3.62zM22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 0 0-17 0"/></svg><span>Hub</span></button><button data-side-btn="market" title="Marketplace"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10.6 2.51c.9-.36 1.9-.36 2.8 0l7.5 3.04c.67.27 1.1.91 1.1 1.62v9.66c0 .71-.43 1.35-1.1 1.62l-7.5 3.04c-.9.37-1.9.37-2.8 0l-7.5-3.04c-.67-.27-1.1-.91-1.1-1.62V7.17c0-.7.43-1.35 1.1-1.62zm2.25 1.4a2.3 2.3 0 0 0-1.7 0l-1.9.77 7.52 2.93 2.67-1.03zm1.84 4.5L7.21 5.5 4.6 6.56 12 9.45zM3.5 16.83q0 .17.16.23l7.5 3.04.09.04v-9.38L3.5 7.75zm9.35 3.27 7.5-3.04q.14-.07.15-.23V7.77l-7.75 3v9.37z"/></svg><span>Marketplace</span></button><button data-side-btn="atelier" class="hidden wide" id="sideBtnAtelier" title="Truck &amp; Coach Tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 7.5a5.5 5.5 0 0 1 7.66-5.06.75.75 0 0 1 .24 1.22L16.3 6.25l1.44 1.44 2.59-2.59a.75.75 0 0 1 1.22.24 5.49 5.49 0 0 1-6.35 7.5l-8.3 8.32a2.87 2.87 0 1 1-4.07-4.06l8.31-8.31Q11 8.16 11 7.5m5.5-4a4 4 0 0 0-3.8 5.27c.1.27.03.57-.18.77L3.9 18.16a1.37 1.37 0 0 0 1.94 1.94l8.63-8.62c.2-.2.5-.27.76-.18a4 4 0 0 0 5.25-4.22l-1.85 1.85c-.48.48-1.28.48-1.76 0l-1.8-1.8a1.25 1.25 0 0 1 0-1.76l1.85-1.85z"/></svg><span>Truck &amp; Coach Tools</span></button></div>
     <nav class="navscroll" id="navHub" aria-label="Hub">
       <button class="navcat" data-cat="gen" aria-expanded="true"><span>Général</span><span class="arr">▾</span></button>
       <div class="navgroup" id="cat-gen">
@@ -551,7 +608,7 @@
         <button class="navbtn is-soon" data-view="vtc"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.25 3.5a.75.75 0 0 0-.75.75V20.5h2v-2.75c0-.69.56-1.25 1.25-1.25h6.5c.69 0 1.25.56 1.25 1.25v2.75h2v-8.75a.75.75 0 0 0-.75-.75h-2a.75.75 0 0 1-.75-.75v-6a.75.75 0 0 0-.75-.75zM9 18v2.5h2.25V18zm3.75 0v2.5H15V18zm6.5 4H4.75a.75.75 0 0 1-.75-.75v-17C4 3.01 5 2 6.25 2h8c1.24 0 2.25 1 2.25 2.25V9.5h1.25c1.24 0 2.25 1 2.25 2.25v9.5c0 .41-.34.75-.75.75M7.5 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0m1 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2m0-3.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2M12 5.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m0 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2m3.5 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2M12 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ma VTC</span><span class="soon">Bientôt</span></button>
         <button class="navbtn is-soon" data-view="calendrier"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.75 3C19.55 3 21 4.46 21 6.25v11.5c0 1.8-1.46 3.25-3.25 3.25H6.25A3.25 3.25 0 0 1 3 17.75V6.25C3 4.45 4.46 3 6.25 3zm1.75 5.5h-15v9.25c0 .97.78 1.75 1.75 1.75h11.5c.97 0 1.75-.78 1.75-1.75zm-11.75 6a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4.25 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m-4.25-4a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4.25 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4.25 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m1.5-6H6.25c-.97 0-1.75.78-1.75 1.75V7h15v-.75c0-.97-.78-1.75-1.75-1.75"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Calendrier</span><span class="soon">Bientôt</span></button>
         <button class="navbtn is-soon" data-view="infos"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m0 1.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17m0 7c.41 0 .75.34.75.75v5a.75.75 0 0 1-1.5 0v-5c0-.41.34-.75.75-.75M12 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Infos VTC</span><span class="soon">Bientôt</span></button>
-        <div class="navrow"><button class="navbtn" data-view="hud"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.75 8a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zM6 11.75c0-.41.34-.75.75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75M6.75 14a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5zm-2-10A2.75 2.75 0 0 0 2 6.75v10.5A2.75 2.75 0 0 0 4.75 20h14.5A2.75 2.75 0 0 0 22 17.25V6.75A2.75 2.75 0 0 0 19.25 4zM3.5 6.75c0-.69.56-1.25 1.25-1.25h14.5c.69 0 1.25.56 1.25 1.25v10.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25z"/></svg><span style="white-space:nowrap">HUD</span></button><label class="switch" title="Afficher le bandeau en jeu"><input type="checkbox" data-module="hud" id="hudOnNav" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
+        <div class="navrow"><button class="navbtn" data-view="hud"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.75 8a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zM6 11.75c0-.41.34-.75.75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75M6.75 14a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5zm-2-10A2.75 2.75 0 0 0 2 6.75v10.5A2.75 2.75 0 0 0 4.75 20h14.5A2.75 2.75 0 0 0 22 17.25V6.75A2.75 2.75 0 0 0 19.25 4zM3.5 6.75c0-.69.56-1.25 1.25-1.25h14.5c.69 0 1.25.56 1.25 1.25v10.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25z"/></svg><span style="white-space:nowrap">HUD</span><i class="navdot" id="hudNavDot" aria-hidden="true"></i></button><label class="switch" title="Afficher le bandeau en jeu"><input type="checkbox" data-module="hud" id="hudOnNav" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div>
       </div>
     </nav>
     <nav class="navscroll hidden" id="navMarket" aria-label="Marketplace">
@@ -565,7 +622,7 @@
       <button class="navbtn" data-view="mk-cat:trucks"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4.25 3C3.01 3 2 4 2 5.25v12c0 1.17.9 2.13 2.04 2.24a3 3 0 0 0 5.92.01h2.08a3 3 0 0 0 5.92 0h1.79c1.24 0 2.25-1 2.25-2.25v-5.41q0-.5-.22-.97l-1.7-3.58A2.3 2.3 0 0 0 18.05 6H16.5v-.75c0-1.24-1-2.25-2.25-2.25zm13.58 15a3 3 0 0 0-1.33-1.6v-3.9h4v3h-1.25a.75.75 0 1 0 0 1.5h1.25v.25c0 .41-.34.75-.75.75zM15 16a3 3 0 0 0-2.83 2H9.83a3 3 0 0 0-5.66 0 .75.75 0 0 1-.67-.75v-12c0-.41.34-.75.75-.75h10c.41 0 .75.34.75.75zm1.5-8.5h1.55q.47.02.68.43L20.18 11H16.5zM7 20.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m9.5-1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
       <button class="navbtn" data-view="mk-cat:cars"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 16a1 1 0 1 0 0-2 1 1 0 0 0 0 2m9-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0M10.75 5a.75.75 0 0 0 0 1.5h2.5a.75.75 0 0 0 0-1.5zm-3-3A3.75 3.75 0 0 0 4 5.75V9.5H2.75a.75.75 0 1 0 0 1.5H4v8.75c0 .97.78 1.75 1.75 1.75h1.5c.97 0 1.75-.78 1.75-1.75V18.5h6v1.25c0 .97.78 1.75 1.75 1.75h1.5c.97 0 1.75-.78 1.75-1.75V11h1.23a.75.75 0 0 0 0-1.5H20V5.75A3.75 3.75 0 0 0 16.25 2zM18.5 18.5v1.25q-.02.23-.25.25h-1.5a.25.25 0 0 1-.25-.25V18.5zm0-1.5h-13v-4h13zm-13 2.75V18.5h2v1.25c0 .14-.11.25-.25.25h-1.5a.25.25 0 0 1-.25-.25m0-14c0-1.24 1-2.25 2.25-2.25h8.5c1.24 0 2.25 1 2.25 2.25v5.75h-13z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cars & bus</span></button>
     </nav>
-    <nav class="navscroll hidden" id="navAtelier" aria-label="Truck Tools et Coach Tools">
+    <nav class="navscroll hidden" id="navAtelier" aria-label="Truck &amp; Coach Tools">
       <button class="navbtn" data-view="at-saves"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.75A2.75 2.75 0 0 1 5.75 3h9.96c.87 0 1.7.34 2.3.95L20.05 6c.6.6.95 1.43.95 2.3v9.96A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25zM5.75 4.5c-.69 0-1.25.56-1.25 1.25v12.5c0 .69.56 1.25 1.25 1.25H6v-5.25C6 13.01 7 12 8.25 12h7.5c1.24 0 2.25 1 2.25 2.25v5.25h.25c.69 0 1.25-.56 1.25-1.25V8.29c0-.47-.18-.91-.51-1.24L16.95 5q-.4-.4-.95-.49v2.73c0 1.24-1 2.25-2.25 2.25h-4.5C8.01 9.5 7 8.5 7 7.25V4.5zm10.75 15v-5.25a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0-.75.75v5.25zm-8-15v2.75c0 .41.34.75.75.75h4.5c.41 0 .75-.34.75-.75V4.5z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sauvegardes</span></button>
       <button class="navbtn" data-view="at-remorque"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="15" height="10" rx="1"/><path d="M17 12h5"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="11" cy="17.5" r="1.8"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Remorques</span></button>
       <button class="navbtn" data-view="at-camion"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.75 6a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75h5.5c.41 0 .75-.34.75-.75v-4.5a.75.75 0 0 0-.75-.75zm.75 4.5v-3h4v3zM6.75 3A2.75 2.75 0 0 0 4 5.75V20.5h-.25a.75.75 0 0 0 0 1.5h13.5a.75.75 0 0 0 0-1.5H17v-1.8q.57.3 1.25.3A2.75 2.75 0 0 0 21 16.25v-5.83c0-.6-.2-1.18-.55-1.65l-1.1-1.47a.75.75 0 0 0-1.2.9l1.1 1.47q.25.33.25.75v5.83a1.24 1.24 0 1 1-2.49 0V14.5l-.01-.12V5.75A2.75 2.75 0 0 0 14.25 3zm8.75 17.5h-10V5.75c0-.69.56-1.25 1.25-1.25h7.5c.7 0 1.25.56 1.25 1.25z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Camions</span></button>
@@ -580,7 +637,7 @@
   <main class="main" id="mainContent" tabindex="0">
     <!-- TRUCK TOOLS / COACH TOOLS -->
     <section id="v-at-saves" class="hidden">
-      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK TOOLS</div><h1>Sauvegardes de profils</h1>
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Sauvegardes de profils</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div class="statusrow" id="atGames" style="justify-content:flex-start"></div>
@@ -591,31 +648,31 @@
       <div id="atDeleted"></div>
     </section>
     <section id="v-at-profil" class="hidden">
-      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK TOOLS</div><h1>Profil</h1>
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Profil</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Consulte le bilan de ton profil (finances, flotte, problèmes éventuels), puis modifie si besoin l'argent, l'expérience et les compétences de ta carrière <b>camion</b>. Plus bas : carte, garages et réglages.</p>
       <div class="atbody" data-page="at-profil"></div>
     </section>
     <section id="v-at-coach" class="hidden">
-      <div class="lbl" style="color:var(--accent);margin-bottom:4px">COACH TOOLS</div><h1>Coach Tools</h1>
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Coach Tools</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">La carrière <b>car</b> du DLC Coaches : expérience, compétences (3 rangs chacune), arrêts de bus et entretien de tes cars. Les outils « Mon car » agissent sur le car que tu conduis.</p>
       <div class="atbody" data-page="at-coach"></div>
     </section>
     <section id="v-at-remorque" class="hidden">
-      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK TOOLS</div><h1>Remorques</h1>
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Remorques</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Agis sur la <b>remorque attelée</b> (poids, zones autorisées, plaque) ou sur toutes tes remorques. Choisis un outil, règle-le, puis applique.</p>
       <div class="atbody" data-page="at-remorque"></div>
     </section>
     <section id="v-at-camion" class="hidden">
-      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK TOOLS</div><h1>Camions</h1>
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Camions</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <p class="soft" style="margin:-4px 0 16px;font-size:14px;line-height:1.7;max-width:820px">Répare, ravitaille, change de camion ou téléporte-toi. Choisis un outil, règle-le, puis applique.</p>
       <div class="atbody" data-page="at-camion"></div>
     </section>
     <section id="v-at-jeu" class="hidden">
-      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK TOOLS</div><h1>Jeu</h1>
+      <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Jeu</h1>
       <div class="expbanner"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.14 3.7a3.25 3.25 0 0 1 5.72 0l6.74 12.5a3.25 3.25 0 0 1-2.86 4.8H5.25a3.25 3.25 0 0 1-2.86-4.8zm4.4.72a1.75 1.75 0 0 0-3.08 0L3.7 16.92a1.75 1.75 0 0 0 1.54 2.58h13.5a1.75 1.75 0 0 0 1.53-2.58zM12 15a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-7.5c.41 0 .75.34.75.75v4.5a.75.75 0 0 1-1.5 0v-4.5c0-.41.34-.75.75-.75"/></svg><span><b>Mode expérimental</b> · solo uniquement · une copie de secours est faite avant toute modification.</span></div>
       <div class="panel" style="display:flex;flex-direction:column;gap:14px;max-width:760px">
         <h2 style="margin:0">Console de développement</h2>
@@ -1005,68 +1062,46 @@
     <!-- RÉGLAGES -->
     <section id="v-reglages" class="hidden">
       <h1>Options</h1>
-      <details class="acc" id="gameProfileOptions" style="width:100%">
-        <summary>Configuration du jeu et du chauffeur</summary>
-        <div class="acc-in">
-          <div class="grid2">
-            <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-              <h2 style="margin:0">Plugin du jeu</h2>
-              <div id="pluginList" class="list"></div>
-              <div class="row" style="flex-wrap:wrap">
-                <button class="btn primary" id="btnInstall">Vérifier / réinstaller</button>
-                <button class="btn" id="btnChoose">Choisir le dossier du jeu…</button>
-              </div>
-              <div class="muted" style="font-size:13px" id="pluginMsg"></div>
-            </div>
-            <div class="panel" style="display:flex;flex-direction:column;gap:14px">
-              <h2 style="margin:0">Profil chauffeur</h2>
-              <label class="field">Ton pseudo de chauffeur
-                <input id="sPseudo" type="text" maxlength="32" placeholder="ex. James"></label>
-              <label class="field">Profil de carrière actif
-                <select id="sType"><option value="camion">Camion</option><option value="car">Car / bus</option></select></label>
-              <div class="muted" style="font-size:13px">Ce profil reste actif en jeu, même hors mission. Le plugin détecte aussi un service car ; accepter une mission camion ne change pas le profil.</div>
-              <details class="acc">
-                <summary>Règle des km réels / course</summary>
-                <div class="acc-in" style="display:flex;flex-direction:column;gap:14px">
-                  <div class="row" style="gap:14px">
-                    <label class="field grow">Seuil camion (km/h)<input id="sTruck" type="number" min="60" max="150" step="1" required></label>
-                    <label class="field grow">Seuil car (km/h)<input id="sCar" type="number" min="60" max="150" step="1" required></label>
-                  </div>
-                  <label class="field">Une mission passe en « course » si plus de … % de sa distance est au-dessus du seuil
-                    <input id="sPct" type="number" min="0" max="100" step="1" required></label>
-                </div>
-              </details>
-              <div class="row"><button class="btn primary" id="btnSave">Enregistrer</button><span class="muted" id="saveMsg" style="font-size:13px"></span></div>
-            </div>
-          </div>
+      <div class="opts">
+      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Affichage</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
+      <div class="optbody">
+      <div class="optcat" id="oc-general" role="tabpanel" aria-label="Général">
+        <div class="ochead"><h2>Général</h2><p>Comment l’appli se comporte au quotidien.</p></div>
+        <div class="optgroup"><h3>Démarrage</h3>
+          <div class="setrow"><div class="lab"><b>Ouvrir la Télémétrie au lancement du jeu</b><span>Dès que le jeu se connecte, l’appli passe sur la Télémétrie. Elle ne passe pas devant le jeu : tu la retrouves prête avec Alt+Tab.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="autoTelSwitch" role="switch" aria-label="Ouvrir la télémétrie au lancement du jeu"><span></span></label></div></div>
         </div>
-      </details>
-      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
-        <div><h2 style="margin:0">Steam et Discord</h2>
-          <div class="muted" style="font-size:13px;margin-top:5px">Steam lit le profil public et vérifie ETS2 / ATS. Discord affiche le jeu et l’état de conduite aux personnes qui voient ta Rich Presence ; aucun trajet ni cargo n’est partagé.</div></div>
-        <div class="grid2">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <b>Steam Web API</b>
-            <label class="field">SteamID64 (17 chiffres)<input id="steamId" inputmode="numeric" maxlength="17" placeholder="7656119…"></label>
-            <label class="field">Clé API Steam<input id="steamApiKey" type="password" autocomplete="off" placeholder="Laisser vide pour conserver la clé enregistrée"></label>
-            <div class="row"><button class="btn primary" id="btnSteamTest">Enregistrer la clé et vérifier Steam</button><button class="btn" id="btnSteamClear">Effacer la clé</button></div>
-            <div class="muted" id="steamStatus" style="font-size:13px" aria-live="polite"></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <b>Discord Rich Presence</b>
-            <label class="field">ID de l’application Discord (17 à 20 chiffres)<input id="discordClientId" inputmode="numeric" maxlength="20" placeholder="ID depuis le Discord Developer Portal"></label>
-            <div class="row"><button class="btn primary" id="btnDiscordTest">Enregistrer et tester Discord</button></div>
-            <div class="muted" id="discordStatus" style="font-size:13px" aria-live="polite"></div>
-          </div>
+        <div class="optgroup"><h3>Menu</h3>
+          <div class="setrow"><div class="lab"><b>Menu latéral réduit</b><span>N’affiche que les icônes dans le menu de gauche. Tu peux aussi le réduire ou l’agrandir avec le bouton à côté du logo.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="navMiniSwitch" role="switch" aria-label="Menu latéral réduit"><span></span></label></div></div>
+          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
         </div>
       </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:18px">
-        <div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0">Apparence et accessibilité</h2>
-          <div class="muted" style="font-size:13px">S'applique à tout le logiciel : Hub, Marketplace, Truck Tools, Coach Tools et Options.</div></div>
-        <div class="optrow"><div><b>Thème</b><div class="muted">« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc. « Comme Windows » : suit le mode clair/sombre et la couleur d'accent de Windows.</div></div>
-          <div class="seg" id="themeSeg"><button data-theme-btn="base">De base</button><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div></div>
-        <div class="optrow"><div><b>Couleur d'accent</b><div class="muted">Boutons, sélection et interrupteurs, dans tous les thèmes. La teinte est ajustée toute seule si elle manque de contraste avec le fond.</div></div>
-          <div class="swatches" id="accentSeg">
+      <div class="optcat" id="oc-conduite" role="tabpanel" aria-label="Conduite">
+        <div class="ochead"><h2>Conduite</h2><p>Ton profil de chauffeur et la règle qui classe une mission en « réel » ou « course ».</p></div>
+        <div class="optgroup"><h3>Chauffeur</h3>
+          <div class="setrow"><div class="lab"><b>Pseudo</b><span>Le nom affiché sur l’écran d’accueil.</span></div><div class="ctl"><input id="sPseudo" type="text" maxlength="32" placeholder="ex. James" aria-label="Pseudo de chauffeur" style="width:220px"></div></div>
+          <div class="setrow"><div class="lab"><b>Profil de carrière</b><span>Reste actif en jeu, même hors mission. Un service car est aussi détecté tout seul ; accepter une mission camion ne change pas le profil.</span></div><div class="ctl"><select id="sType" aria-label="Profil de carrière"><option value="camion">Camion</option><option value="car">Car / bus</option></select></div></div>
+        </div>
+        <div class="optgroup"><h3>Réel ou course</h3>
+          <div class="setrow"><div class="lab"><b>Seuil camion</b><span>Vitesse au-delà de laquelle un camion roule « vite ».</span></div><div class="ctl"><input id="sTruck" type="number" min="60" max="150" step="1" required aria-label="Seuil camion en km/h" style="width:90px"><span class="muted">km/h</span></div></div>
+          <div class="setrow"><div class="lab"><b>Seuil car</b><span>Même chose pour un car.</span></div><div class="ctl"><input id="sCar" type="number" min="60" max="150" step="1" required aria-label="Seuil car en km/h" style="width:90px"><span class="muted">km/h</span></div></div>
+          <div class="setrow"><div class="lab"><b>Part de la distance</b><span>Une mission passe en « course » si plus de ce pourcentage de sa distance est au-dessus du seuil.</span></div><div class="ctl"><input id="sPct" type="number" min="0" max="100" step="1" required aria-label="Pourcentage de course" style="width:90px"><span class="muted">%</span></div></div>
+          <div class="setrow end"><span class="muted" id="saveMsg" style="font-size:13px"></span><button class="btn primary" id="btnSave">Enregistrer</button></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-jeu" role="tabpanel" aria-label="Jeu &amp; plugin">
+        <div class="ochead"><h2>Jeu &amp; plugin</h2><p>Le petit programme installé dans ETS2 et ATS qui envoie les données à l’appli.</p></div>
+        <div class="optgroup"><h3>Plugin du jeu</h3>
+          <div class="setrow col"><div id="pluginList" class="list" style="width:100%"></div>
+            <div class="row" style="flex-wrap:wrap"><button class="btn primary" id="btnInstall">Vérifier / réinstaller</button><button class="btn" id="btnChoose">Choisir le dossier du jeu…</button></div>
+            <div class="muted" style="font-size:13px" id="pluginMsg"></div>
+            <div class="muted" style="font-size:13px">Ferme le jeu avant de réinstaller : il bloque le plugin tant qu’il tourne.</div></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-affichage" role="tabpanel" aria-label="Affichage">
+        <div class="ochead"><h2>Affichage</h2><p>L’apparence de tout le logiciel : Hub, Marketplace, Truck &amp; Coach Tools et Options.</p></div>
+        <div class="optgroup"><h3>Couleurs</h3>
+          <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Thème</b><span>« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc. « Comme Windows » : suit le mode et la couleur d’accent de Windows.</span></div><div class="ctl"><div class="seg" id="themeSeg"><button data-theme-btn="base">De base</button><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div></div></div>
+          <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Couleur d’accent</b><span>Boutons, sélection et interrupteurs. La teinte est ajustée si elle manque de contraste avec le fond.</span></div><div class="ctl"><div class="swatches" id="accentSeg">
             <button class="swatch" data-accent-btn="defaut" style="--sw:#FF8A3D" aria-label="Orange ambre (par défaut)" title="Orange ambre (par défaut)"></button>
             <button class="swatch" data-accent-btn="#4FD1A5" style="--sw:#4FD1A5" aria-label="Vert menthe" title="Vert menthe"></button>
             <button class="swatch" data-accent-btn="#3CC8D8" style="--sw:#3CC8D8" aria-label="Turquoise" title="Turquoise"></button>
@@ -1077,52 +1112,68 @@
             <button class="swatch" data-accent-btn="#E7B655" style="--sw:#E7B655" aria-label="Jaune" title="Jaune"></button>
             <label class="swatch wheel" id="accentWheel" title="Couleur personnalisée"><input type="color" id="accentPick" aria-label="Couleur personnalisée"></label>
             <button class="swatch win hidden" data-accent-btn="windows" id="accentWin" aria-label="Couleur de Windows" title="Couleur d'accent de Windows"><i></i>Windows</button>
-          </div></div>
-        <div class="optrow"><div><b>Vision des couleurs</b><div class="muted">Couleurs adaptées si tu distingues mal certaines couleurs (daltonisme). Les graphiques et les indicateurs changent de teintes.</div></div>
-          <div class="seg" id="visionSeg"><button data-vision-btn="normale">Standard</button><button data-vision-btn="rg">Rouge-vert</button><button data-vision-btn="by">Bleu-jaune</button></div></div>
-        <div class="optrow"><div><b>Taille du texte</b><div class="muted">Agrandit tout le logiciel.</div></div>
-          <div class="seg" id="zoomSeg"><button data-zoom-btn="100">Normale</button><button data-zoom-btn="115">Grande</button><button data-zoom-btn="130">Très grande</button></div></div>
-        <div class="optrow"><div><b>Contraste renforcé</b><div class="muted">Textes secondaires et bordures plus marqués.</div></div>
-          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="contrastSwitch" role="switch" aria-label="Contraste renforcé"><span></span></label></div>
-        <div class="optrow"><div><b>Réduire les animations</b><div class="muted">Supprime les effets de mouvement.</div></div>
-          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="motionSwitch" role="switch" aria-label="Réduire les animations"><span></span></label></div>
-        <div class="cvdlegend" aria-hidden="true"><span><i style="background:var(--loaded)"></i>Km chargés</span><span><i style="background:var(--empty)"></i>Km à vide</span><span><i style="background:var(--ok)"></i>Réel</span><span><i style="background:var(--race)"></i>Course</span></div>
-      </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-        <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Ouvrir la télémétrie au lancement du jeu</h2>
-          <div class="muted" style="font-size:13px;line-height:1.6">Dès que le jeu se connecte, l'appli passe toute seule sur la page Télémétrie. La fenêtre ne passe pas devant le jeu : tu la retrouves prête en faisant Alt+Tab.</div></div>
-        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="autoTelSwitch" role="switch" aria-label="Ouvrir la télémétrie au lancement du jeu"><span></span></label>
-      </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-        <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Pages en préparation</h2>
-          <div class="muted" style="font-size:13px;line-height:1.6">Affiche dans le menu les pages pas encore terminées (marquées « Bientôt ») : Ma VTC et ses onglets (Missions, Convois, Défis &amp; duels, Classement, Chauffeurs live), Calendrier, Infos VTC.</div></div>
-        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label>
-      </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-        <div style="display:flex;flex-direction:column;gap:4px;max-width:720px"><h2 style="margin:0">Outils avancés (expérimental)</h2>
-          <div class="muted" style="font-size:13px;line-height:1.6">Ajoute les espaces <b>Truck Tools</b> et <b>Coach Tools</b> pour gérer les profils solo et les véhicules. Désactivés, ils disparaissent de l'appli.</div></div>
-        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="atelierSwitch" role="switch" aria-label="Activer Truck Tools et Coach Tools"><span></span></label>
-      </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:12px">
-        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <h2 style="margin:0">Mises à jour</h2>
-            <div class="soft" style="font-size:14px">Version installée : <b id="updCurrent">–</b></div>
-            <div class="muted" style="font-size:13px" id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</div>
-          </div>
-          <button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button>
+          </div></div></div>
         </div>
-        <div class="progress hidden" id="updBar"><div></div></div>
+        <div class="optgroup"><h3>Texte</h3>
+          <div class="setrow"><div class="lab"><b>Taille du texte</b><span>Agrandit tout le logiciel.</span></div><div class="ctl"><div class="seg" id="zoomSeg"><button data-zoom-btn="100">Normale</button><button data-zoom-btn="115">Grande</button><button data-zoom-btn="130">Très grande</button></div></div></div>
+        </div>
       </div>
-      <div class="panel" style="margin-top:18px;display:flex;flex-direction:column;gap:12px" id="optInfos">
-        <div style="display:flex;flex-direction:column;gap:4px;max-width:760px"><h2 style="margin:0">Informations générales d’utilisation</h2>
-          <div class="muted" style="font-size:13px;line-height:1.6">Ce que l’appli reçoit du jeu et, bientôt, une fiche « comment ça marche » pour chaque fonction.</div></div>
-      <details class="acc" id="coachDiag" style="width:100%">
+      <div class="optcat" id="oc-acces" role="tabpanel" aria-label="Accessibilité">
+        <div class="ochead"><h2>Accessibilité</h2><p>Pour lire et utiliser l’appli plus confortablement.</p></div>
+        <div class="optgroup"><h3>Vision</h3>
+          <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Vision des couleurs</b><span>Couleurs adaptées si tu distingues mal certaines couleurs (daltonisme). Graphiques et indicateurs changent de teintes.</span></div><div class="ctl"><div class="seg" id="visionSeg"><button data-vision-btn="normale">Standard</button><button data-vision-btn="rg">Rouge-vert</button><button data-vision-btn="by">Bleu-jaune</button></div></div></div>
+          <div class="setrow"><div class="cvdlegend" aria-hidden="true"><span><i style="background:var(--loaded)"></i>Km chargés</span><span><i style="background:var(--empty)"></i>Km à vide</span><span><i style="background:var(--ok)"></i>Réel</span><span><i style="background:var(--race)"></i>Course</span></div></div>
+          <div class="setrow"><div class="lab"><b>Contraste renforcé</b><span>Textes secondaires et bordures plus marqués.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="contrastSwitch" role="switch" aria-label="Contraste renforcé"><span></span></label></div></div>
+        </div>
+        <div class="optgroup"><h3>Mouvement</h3>
+          <div class="setrow"><div class="lab"><b>Réduire les animations</b><span>Supprime les effets de mouvement.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="motionSwitch" role="switch" aria-label="Réduire les animations"><span></span></label></div></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-integrations" role="tabpanel" aria-label="Steam &amp; Discord">
+        <div class="ochead"><h2>Steam &amp; Discord</h2><p>Facultatif. Steam lit ton profil public et vérifie ETS2 / ATS. Discord montre le jeu et l’état de conduite à ceux qui voient ta Rich Presence ; aucun trajet ni cargo n’est partagé.</p></div>
+        <div class="optgroup"><h3>Steam</h3>
+          <div class="setrow"><div class="lab"><b>SteamID64</b><span>Ton identifiant Steam à 17 chiffres.</span></div><div class="ctl"><input id="steamId" inputmode="numeric" maxlength="17" placeholder="7656119…" aria-label="SteamID64" style="width:220px"></div></div>
+          <div class="setrow"><div class="lab"><b>Clé API Steam</b><span>Chiffrée et gardée sur cet ordinateur. Laisse vide pour conserver la clé enregistrée.</span></div><div class="ctl"><input id="steamApiKey" type="password" autocomplete="off" placeholder="Clé API Steam" aria-label="Clé API Steam" style="width:220px"></div></div>
+          <div class="setrow end"><span class="muted" id="steamStatus" style="font-size:13px" aria-live="polite"></span><button class="btn" id="btnSteamClear">Effacer la clé</button><button class="btn primary" id="btnSteamTest">Enregistrer et vérifier</button></div>
+        </div>
+        <div class="optgroup"><h3>Discord</h3>
+          <div class="setrow"><div class="lab"><b>ID de l’application Discord</b><span>De 17 à 20 chiffres, depuis le Discord Developer Portal.</span></div><div class="ctl"><input id="discordClientId" inputmode="numeric" maxlength="20" placeholder="ID de l’application" aria-label="ID de l’application Discord" style="width:220px"></div></div>
+          <div class="setrow end"><span class="muted" id="discordStatus" style="font-size:13px" aria-live="polite"></span><button class="btn primary" id="btnDiscordTest">Enregistrer et tester</button></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-tools" role="tabpanel" aria-label="Truck &amp; Coach Tools">
+        <div class="ochead"><h2>Truck &amp; Coach Tools</h2><p>Outils avancés pour modifier tes profils solo et tes véhicules (camions, remorques, cars).</p></div>
+        <div class="optgroup"><h3>Accès</h3>
+          <div class="setrow"><div class="lab"><b>Activer Truck &amp; Coach Tools</b><span>Ajoute l’espace Truck &amp; Coach Tools dans le menu et sur l’écran d’accueil. Désactivé, il disparaît de l’appli.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="atelierSwitch" role="switch" aria-label="Activer Truck & Coach Tools"><span></span></label></div></div>
+        </div>
+        <div class="optgroup"><h3>À savoir</h3>
+          <div class="setrow col"><ul class="muted" style="margin:0;padding-left:20px;font-size:13px;line-height:1.7">
+            <li>Le jeu doit être fermé pendant une modification.</li>
+            <li>Une copie de secours est faite avant chaque changement, avec un bouton « Restaurer ».</li>
+            <li>Les profils multijoueur ne sont jamais modifiés.</li></ul></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-maj" role="tabpanel" aria-label="Mises à jour">
+        <div class="ochead"><h2>Mises à jour</h2><p>L’appli vérifie toute seule au démarrage puis toutes les 30 minutes.</p></div>
+        <div class="optgroup"><h3>Version</h3>
+          <div class="setrow"><div class="lab"><b>Version installée : <span id="updCurrent">–</span></b><span id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</span></div><div class="ctl"><button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button></div></div>
+          <div class="setrow col" style="padding-top:0;border-top:none"><div class="progress hidden" id="updBar" style="width:100%"><div></div></div></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-aide" role="tabpanel" aria-label="Aide &amp; infos">
+        <div class="ochead"><h2>Aide &amp; infos</h2><p>Ce que l’appli reçoit du jeu et, bientôt, une fiche « comment ça marche » pour chaque fonction.</p></div>
+        <div class="optgroup" id="optInfos"><h3>Données du jeu</h3>
+          <div class="setrow col">
+      <details class="acc" id="coachDiag" style="width:100%;margin:0">
         <summary>Données car reçues du jeu</summary><div class="acc-in">
         <p class="muted" style="font-size:13px;line-height:1.6">SCS n’a pas encore documenté les informations d’un service car. L’appli reconnaît les noms les plus probables ; cette liste montre ce que le jeu envoie vraiment. Si une case du bandeau reste vide pendant un service, copie la liste et envoie-la pour compléter la correspondance.</p>
         <div id="coachDiagBody" class="muted" style="font-size:13px">En attente du jeu.</div>
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px"><span class="muted" id="coachDiagMsg" style="font-size:13px;align-self:center"></span><button class="btn" id="coachDiagCopy">Copier la liste</button></div>
       </div></details>
+          </div>
+        </div>
+      </div>
+      </div>
       </div>
     </section>
 
@@ -1287,10 +1338,10 @@ let state = { side:'hub', view:'accueil', metric:'total', period:'mois', profile
 const SOON = {
   _cartePerso: { t: 'Carte', d: "La vraie carte d'Euro Truck Simulator 2, avec ton camion en direct.", l: ['Ta position en direct sur la carte du jeu', 'Destination, distance et temps restants', 'Tracé de tes trajets terminés'], w: 'Prévu à l\'étape 1.3.' },
   _vtc: { t: 'Ma VTC', d: 'La vue d\'ensemble de ton entreprise.', l: ['Kilomètres et livraisons de toute l\'entreprise', 'Chauffeurs en ligne', 'Objectif collectif du mois', 'Événement du jour'], w: 'Prévu avec la partie en ligne (étape 2).' },
-  '_at-profil': { t: 'Profil', d: 'Modifier ton profil solo.', l: ['Argent du compte', 'Points d\'expérience et niveau', 'Ville du QG'], w: 'Prévu dans une prochaine version de Truck Tools. Une copie de secours sera faite avant chaque modification.' },
-  '_at-carte': { t: 'Carte', d: 'Découvrir la carte d\'un coup.', l: ['Marquer les villes comme visitées', 'Débloquer les concessionnaires', 'Débloquer les agences de recrutement'], w: 'Prévu dans une prochaine version de Truck Tools.' },
-  '_at-camion': { t: 'Camion & remorque', d: 'Ajuster ton camion et ta remorque.', l: ['Poids de la cargaison (simple et double remorque)', 'Carburant', 'Configuration du moteur'], w: 'Prévu dans une prochaine version de Truck Tools.' },
-  '_at-repar': { t: 'Réparation', d: 'Remettre ton matériel à neuf.', l: ['Usure du moteur et de la boîte', 'Cabine et châssis', 'Roues', 'Caisse de la remorque'], w: 'Prévu dans une prochaine version de Truck Tools.' },
+  '_at-profil': { t: 'Profil', d: 'Modifier ton profil solo.', l: ['Argent du compte', 'Points d\'expérience et niveau', 'Ville du QG'], w: 'Prévu dans une prochaine version de Truck & Coach Tools. Une copie de secours sera faite avant chaque modification.' },
+  '_at-carte': { t: 'Carte', d: 'Découvrir la carte d\'un coup.', l: ['Marquer les villes comme visitées', 'Débloquer les concessionnaires', 'Débloquer les agences de recrutement'], w: 'Prévu dans une prochaine version de Truck & Coach Tools.' },
+  '_at-camion': { t: 'Camion & remorque', d: 'Ajuster ton camion et ta remorque.', l: ['Poids de la cargaison (simple et double remorque)', 'Carburant', 'Configuration du moteur'], w: 'Prévu dans une prochaine version de Truck & Coach Tools.' },
+  '_at-repar': { t: 'Réparation', d: 'Remettre ton matériel à neuf.', l: ['Usure du moteur et de la boîte', 'Cabine et châssis', 'Roues', 'Caisse de la remorque'], w: 'Prévu dans une prochaine version de Truck & Coach Tools.' },
   calendrier: { t: 'Calendrier', d: 'Le calendrier de ton entreprise : convois, événements et rendez-vous du mois.', l: ['Vue du mois avec tous les événements', 'Détail d\'un événement : rendez-vous, départ, trajet, mods requis', 'Inscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   convois: { t: 'Convois & événements', d: 'Le calendrier des convois de ton entreprise, avec les inscriptions.', l: ['Calendrier du mois', 'Détail d\'un convoi : rendez-vous, départ, trajet', 'Inscription / désinscription en un clic', 'Rappel avant le départ'], w: 'Prévu avec la partie en ligne (étape 2).' },
   defis: { t: 'Défis & duels', d: 'Lance des défis à tes collègues et fixe-toi des objectifs.', l: ['Objectifs personnels (semaine / mois)', 'Duels entre chauffeurs (distance, gains, livraisons)', 'Défis entreprise contre entreprise', 'Célébrations des paliers atteints'], w: 'Prévu avec la partie en ligne (étape 2).' },
@@ -1341,6 +1392,44 @@ document.getElementById('brandBtn').onclick = () => showLauncher(true);
 document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(b.dataset.gotoView));
 
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
+
+/* ---------- Menu latéral rétractable (icônes seules) ---------- */
+function applyNavMini(mini, save){
+  const root = document.documentElement;
+  if (mini) root.dataset.nav = 'mini'; else delete root.dataset.nav;
+  root.style.setProperty('--navw', mini ? '72px' : '264px');
+  const t = document.getElementById('navToggle'), lab = mini ? 'Agrandir le menu' : 'Réduire le menu';
+  t.setAttribute('aria-label', lab); t.title = lab; t.setAttribute('aria-expanded', mini ? 'false' : 'true');
+  const sw = document.getElementById('navMiniSwitch'); if (sw) sw.checked = !!mini;
+  // Menu réduit : le nom de chaque page s’affiche au survol
+  document.querySelectorAll('.side .navbtn').forEach(b => {
+    const name = (b.querySelector('span') || b).textContent.trim();
+    if (mini) { b.title = name; b.setAttribute('aria-label', name); } else { b.removeAttribute('title'); b.removeAttribute('aria-label'); }
+  });
+  if (save) store.set('navMini', !!mini);
+}
+document.getElementById('navToggle').onclick = () => applyNavMini(document.documentElement.dataset.nav !== 'mini', true);
+document.getElementById('navMiniSwitch').onchange = (e) => applyNavMini(e.target.checked, true);
+applyNavMini(store.get('navMini', false));
+function syncHudDot(){ const on = document.getElementById('hudOnNav').checked, d = document.getElementById('hudNavDot'); d.classList.toggle('on', on); d.closest('.navbtn').dataset.state = on ? 'HUD activé' : 'HUD désactivé'; }
+
+/* ---------- Options : catégories ---------- */
+let optCat = store.get('optCat', 'general');
+function openOptCat(cat){
+  if (!document.getElementById('oc-' + cat)) cat = 'general';
+  optCat = cat; store.set('optCat', cat);
+  document.querySelectorAll('#optNav [data-oc]').forEach(b => { const on = b.dataset.oc === cat; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll('.optcat').forEach(c => c.classList.toggle('on', c.id === 'oc-' + cat));
+}
+document.getElementById('optNav').addEventListener('click', e => { const b = e.target.closest('[data-oc]'); if (b) { openOptCat(b.dataset.oc); document.querySelector('main').scrollTop = 0; } });
+document.getElementById('optNav').addEventListener('keydown', e => {
+  if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+  const bs = [...document.querySelectorAll('#optNav [data-oc]')], i = bs.findIndex(b => b.dataset.oc === optCat);
+  const n = bs[(i + (['ArrowDown', 'ArrowRight'].includes(e.key) ? 1 : bs.length - 1)) % bs.length];
+  e.preventDefault(); openOptCat(n.dataset.oc); n.focus();
+});
+openOptCat(optCat);
+document.getElementById('launcherOptions').onclick = () => { showLauncher(false); go('reglages'); };
 function go(view){
   state.view = view;
   const side = view === 'reglages' ? state.side : (view.startsWith('mk-') ? 'market' : view.startsWith('at-') ? 'atelier' : 'hub');
@@ -1428,7 +1517,7 @@ function applyAtelier(on){
 document.getElementById('atelierSwitch').onchange = async (e) => {
   const want = e.target.checked;
   if (want) {
-    const ok = await ask('Activer Truck Tools et Coach Tools ?', 'Ces outils gèrent les <b>profils solo</b> et les données de carrière camion/car.<ul style="margin:10px 0 0;padding-left:20px"><li>Le jeu doit être fermé pendant une modification.</li><li>Une copie de secours est faite avant chaque changement.</li><li>Les profils multijoueur ne doivent pas être modifiés.</li><li>Les trajets faits avec un profil modifié ne compteront pas dans le classement de l\'entreprise.</li></ul>', 'Activer');
+    const ok = await ask('Activer Truck & Coach Tools ?', 'Ces outils gèrent les <b>profils solo</b> et les données de carrière camion/car.<ul style="margin:10px 0 0;padding-left:20px"><li>Le jeu doit être fermé pendant une modification.</li><li>Une copie de secours est faite avant chaque changement.</li><li>Les profils multijoueur ne doivent pas être modifiés.</li><li>Les trajets faits avec un profil modifié ne compteront pas dans le classement de l\'entreprise.</li></ul>', 'Activer');
     if (!ok) { e.target.checked = false; return; }
   }
   applyAtelier(want);
@@ -1676,7 +1765,7 @@ document.getElementById('coachDiagCopy').onclick = async () => {
   setTimeout(() => setText('coachDiagMsg', ''), 2500);
 };
 function renderHudPage(){
-  document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on;
+  document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on; syncHudDot();
   for (const profile of ['truck', 'bus']) {
     const options = hudSt[profile];
     const style = HUD_SELECTABLE_STYLES.includes(options.style) ? options.style : 'bandeau';
@@ -1696,7 +1785,7 @@ function hudSave(patch, profile){
   if (window.tel) window.tel.setSettings(Object.assign({}, patch.on != null ? { modules: { hud: hudSt.on } } : {},
     profile && patch.opt ? { hud: { [profile]: hudSt[profile] } } : {}));
 }
-['hudOn', 'hudOnNav'].forEach(id => document.getElementById(id).onchange = (e) => hudSave({ on: e.target.checked }));
+['hudOn', 'hudOnNav'].forEach(id => document.getElementById(id).onchange = (e) => { document.getElementById('hudOnNav').checked = e.target.checked; syncHudDot(); hudSave({ on: e.target.checked }); });
 document.querySelectorAll('[data-hud-profile] [data-hstyle]').forEach(b => b.onclick = () => hudSave({ opt: { style: b.dataset.hstyle } }, b.closest('[data-hud-profile]').dataset.hudProfile));
 document.querySelectorAll('[data-hud-profile] [data-hpos]').forEach(b => b.onclick = () => hudSave({ opt: { position: b.dataset.hpos } }, b.closest('[data-hud-profile]').dataset.hudProfile));
 document.querySelectorAll('[data-hud-profile] [data-hlogo]').forEach(b => b.onclick = () => hudSave({ opt: { logo: b.dataset.hlogo === '1' } }, b.closest('[data-hud-profile]').dataset.hudProfile));
@@ -2155,15 +2244,15 @@ function renderMkItem(id){
 document.getElementById('mkBack').onclick = () => go(mkFrom);
 const MK_FEATURED = ['tablette', 'gps'];
 const MK_NEWS = [
-  { d: '20/11/2026', t: 'Truck Tools : supprimer une sauvegarde ou un profil', x: 'Dans Truck Tools → Sauvegardes, chaque copie faite par le Hub a un bouton « Supprimer », et chaque profil un bouton « Supprimer le profil ». Un profil supprimé reste récupérable dans « Profils supprimés » tant que tu n\'effaces pas ses copies.' },
-  { d: '17/11/2026', t: 'Truck Tools : dupliquer un profil et bilan du profil', x: 'Dans Truck Tools → Sauvegardes, « Dupliquer » crée une copie de ton profil pour faire des tests sans risque. Dans Truck Tools → Profil, un bilan en lecture seule montre tes finances, ta flotte et les problèmes à corriger.' },
-  { d: '17/11/2026', t: 'Truck Tools : analyse des sauvegardes', x: 'Dans Truck Tools → Sauvegardes, le bouton « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues (fichier vide, tronqué, illisible…) sans rien modifier.' },
-  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Apparence, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
+  { d: '20/11/2026', t: 'Truck & Coach Tools : supprimer une sauvegarde ou un profil', x: 'Dans Truck & Coach Tools → Sauvegardes, chaque copie faite par le Hub a un bouton « Supprimer », et chaque profil un bouton « Supprimer le profil ». Un profil supprimé reste récupérable dans « Profils supprimés » tant que tu n\'effaces pas ses copies.' },
+  { d: '17/11/2026', t: 'Truck & Coach Tools : dupliquer un profil et bilan du profil', x: 'Dans Truck & Coach Tools → Sauvegardes, « Dupliquer » crée une copie de ton profil pour faire des tests sans risque. Dans Truck & Coach Tools → Profil, un bilan en lecture seule montre tes finances, ta flotte et les problèmes à corriger.' },
+  { d: '17/11/2026', t: 'Truck & Coach Tools : analyse des sauvegardes', x: 'Dans Truck & Coach Tools → Sauvegardes, le bouton « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues (fichier vide, tronqué, illisible…) sans rien modifier.' },
+  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Affichage, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
   { d: '17/11/2026', t: 'HUD : seulement quand tu joues', x: 'Le bandeau se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit. Plugin du jeu mis à jour (1.1.0) : relance le jeu une fois.' },
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },
   { d: '17/11/2026', t: 'Accessibilité revue (WCAG 2.1 AA)', x: 'Navigation complète au clavier, lien « Aller au contenu », lecteurs d\'écran (NVDA, Narrateur), contrastes vérifiés dans tous les thèmes, mode Contraste élevé de Windows, une seule couleur d\'action.' },
   { d: '17/11/2026', t: 'Bandeau / HUD en jeu', x: 'Le bandeau par-dessus le jeu est disponible : vitesse, limitation, mode réel / course, distance restante. À activer dans Hub → Entreprise.' },
-  { d: '17/11/2026', t: 'Renommer son profil', x: 'Dans Truck Tools, change le nom de ton profil et de ton entreprise en jeu.' },
+  { d: '17/11/2026', t: 'Renommer son profil', x: 'Dans Truck & Coach Tools, change le nom de ton profil et de ton entreprise en jeu.' },
   { d: '17/11/2026', t: 'Thèmes et accessibilité', x: 'Thèmes De base, Sombre et Clair, couleurs adaptées au daltonisme, texte agrandi, contraste renforcé.' },
   { d: '17/11/2026', t: 'Coach Tools : carrière car (DLC Coaches)', x: 'XP et compétences car, arrêts de bus, réparation, plein et carte, directement sur tes sauvegardes solo.' },
   { d: '12/11/2026', t: 'Sortie du DLC Coaches', x: 'Les kilomètres en car sont comptés comme ceux en camion, avec leur propre seuil « course » (110 km/h par défaut).' }
@@ -2761,7 +2850,7 @@ function renderWear(L, connected, vehicleType, job){
   const box = document.getElementById('wearBody');
   const W = connected && L && L.wear;
   if (!W){
-    const msg = connected ? 'Mets à jour le plugin du jeu (Options → Plugin du jeu) pour afficher les dégâts.' : 'Les dégâts s\'affichent quand le jeu est connecté.';
+    const msg = connected ? 'Mets à jour le plugin du jeu (Options → Jeu &amp; plugin) pour afficher les dégâts.' : 'Les dégâts s\'affichent quand le jeu est connecté.';
     if (wearSig !== msg){ wearSig = msg; box.innerHTML = `<div class="soft">${msg}</div>`; }
     return;
   }
@@ -3086,6 +3175,7 @@ async function refreshUpdate(){
   // bannière dans le menu
   const ban = document.getElementById('updBanner'), show = ['available', 'downloading', 'ready', 'failed'].includes(u.state);
   ban.classList.toggle('hidden', !show);
+  document.querySelector('.side [data-view="reglages"]').classList.toggle('hasupd', show);
   if (show) {
     setText('updBannerText', u.state === 'downloading' ? `Téléchargement de la v${shownVer(u.version)}… ${u.progress || 0} %` : u.state === 'ready' ? `La v${shownVer(u.version)} est prête.` : u.state === 'failed' ? 'Téléchargement interrompu.' : `Mise à jour v${shownVer(u.version)} disponible.`);
     const bb = document.getElementById('updBannerBar'); bb.classList.toggle('hidden', u.state !== 'downloading'); bb.firstElementChild.style.width = (u.progress || 0) + '%';
@@ -3110,7 +3200,7 @@ async function doInstall(version){
   if (!ok) { installing = false; document.getElementById('installing').classList.add('hidden'); }
 }
 function renderUpdatePanel(u, extra){
-  setText('updCurrent', 'v' + u.current);
+  setText('updCurrent', 'v' + shownVer(u.current));
   const btn = document.getElementById('btnUpdate');
   const MSG = { dev: 'Mode test : les mises à jour ne sont actives que dans l\'appli installée.', checking: 'Recherche en cours…', none: 'Tu as la dernière version.',
     available: 'La version v' + shownVer(u.version) + ' est disponible. Elle s\'installe sans assistant Windows, puis l\'appli redémarre toute seule.',
