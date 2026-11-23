@@ -118,10 +118,19 @@ function maxWear(body, keys) {
 const plateText = v => { const s = decStr(v || ''); return s.split('|')[0].replace(/<[^>]*>/g, '').trim(); };
 const plateCountry = v => { const s = decStr(v || ''); const i = s.lastIndexOf('|'); return i < 0 ? '' : s.slice(i + 1); };
 
-function trucks(text) {
+// Flotte du joueur : key = 'trucks' (camions) ou 'buses' (cars du DLC Coaches)
+const KIND = { trucks: { one: 'camion', none: 'Aucun camion dans ta flotte.', notCur: 'Tu ne conduis pas un de tes camions en ce moment.' },
+  buses: { one: 'car', none: 'Aucun car dans ta flotte.', notCur: 'Tu ne conduis pas un de tes cars en ce moment.' } };
+// Véhicule actuel s'il fait partie de la liste demandée (sinon null)
+function currentOf(text, key) {
+  const id = current(text).truck, p = player(text);
+  return id && p && arr(p.body, key).includes(id) ? id : null;
+}
+function buses(text) { return trucks(text, 'buses'); }
+function trucks(text, key = 'trucks') {
   const p = player(text); if (!p) return [];
   const cur = current(text).truck;
-  return arr(p.body, 'trucks').filter(v => !isNull(v)).map(id => {
+  return arr(p.body, key).filter(v => !isNull(v)).map(id => {
     const v = unit(text, id); if (!v) return null;
     return { id, ...modelOf(text, v), plate: plateText(get(v.body, 'license_plate')), country: plateCountry(get(v.body, 'license_plate')),
       odometer: Math.round(num(get(v.body, 'odometer'))), fuel: num(get(v.body, 'fuel_relative')), wear: maxWear(v.body, WEAR_KEYS),
@@ -224,10 +233,10 @@ function repairBody(body) {
     .replace(/^( wheels_wear(?:_unfixable)?\[\d+\]: ).*$/gm, '$10')
     .replace(/^( cargo_damage: ).*$/gm, '$10');
 }
-function repairTrucks(text, target) {
-  const ids = target === 'current' ? [current(text).truck] : arr(player(text).body, 'trucks');
+function repairTrucks(text, target, key = 'trucks') {
+  const ids = target === 'current' ? [currentOf(text, key)] : arr(player(text).body, key);
   const list = ids.filter(v => !isNull(v)).map(id => unit(text, id)).filter(Boolean);
-  if (!list.length) throw new Error(target === 'current' ? 'Aucun camion attribué à ton chauffeur.' : 'Aucun camion dans ta flotte.');
+  if (!list.length) throw new Error(target === 'current' ? KIND[key].notCur : KIND[key].none);
   return { text: patch(text, list.map(u => ({ ...u, body: repairBody(u.body) }))), count: list.length };
 }
 function repairTrailers(text, target) {
@@ -237,25 +246,25 @@ function repairTrailers(text, target) {
   return { text: patch(text, list.map(u => ({ ...u, body: repairBody(u.body) }))), count: list.length };
 }
 // level : 0 à 1 = remplissage du réservoir ; au-delà (jusqu'à 10) = réservoir « géant » (carburant quasi infini)
-function setFuel(text, target, level) {
+function setFuel(text, target, level, key = 'trucks') {
   level = Math.min(10, Math.max(0, Number(level)));
   if (!Number.isFinite(level)) throw new Error('Niveau de carburant invalide.');
-  const ids = target === 'current' ? [current(text).truck] : arr(player(text).body, 'trucks');
+  const ids = target === 'current' ? [currentOf(text, key)] : arr(player(text).body, key);
   const list = ids.filter(v => !isNull(v)).map(id => unit(text, id)).filter(u => u && has(u.body, 'fuel_relative'));
-  if (!list.length) throw new Error('Aucun camion à ravitailler.');
+  if (!list.length) throw new Error(target === 'current' ? KIND[key].notCur : KIND[key].none);
   return { text: patch(text, list.map(u => ({ ...u, body: set(u.body, 'fuel_relative', fnum(level)) }))), count: list.length };
 }
 
 // ---------- Camion actuel
-function setTruckKm(text, km) {
+function setTruckKm(text, km, key = 'trucks') {
   km = Math.round(Number(km));
   if (!Number.isFinite(km) || km < 0 || km > 9999999) throw new Error('Kilométrage invalide (0 à 9 999 999).');
-  const u = unit(text, current(text).truck); if (!u) throw new Error('Aucun camion attribué à ton chauffeur.');
+  const u = unit(text, currentOf(text, key)); if (!u) throw new Error(KIND[key].notCur);
   let b = u.body; for (const k of ['odometer', 'integrity_odometer', 'trip_distance_km']) if (has(b, k)) b = set(b, k, km);
   if (has(b, 'odometer_float_part')) b = set(b, 'odometer_float_part', 0);
   const changes = [{ ...u, body: b }];
   // Journal de rentabilité du camion (même rang que le camion dans player.trucks) : distance cumulée
-  const p = player(text), idx = arr(p.body, 'trucks').indexOf(current(text).truck);
+  const p = player(text), idx = key === 'trucks' ? arr(p.body, 'trucks').indexOf(current(text).truck) : -1;
   const log = idx >= 0 ? unit(text, arr(p.body, 'truck_profit_logs')[idx]) : null;
   if (log) { let lb = log.body; if (has(lb, 'acc_distance_on_job')) lb = set(lb, 'acc_distance_on_job', km); if (has(lb, 'acc_distance_free')) lb = set(lb, 'acc_distance_free', 0); changes.push({ ...log, body: lb }); }
   return { text: patch(text, changes) };
@@ -273,8 +282,8 @@ function plateValue(oldValue, plate, color) {
   return encStr(country ? `${t}|${country}` : t);
 }
 function setPlate(text, kind, plate, color) {
-  const id = kind === 'trailer' ? current(text).trailer : current(text).truck;
-  const u = unit(text, id); if (!u || !has(u.body, 'license_plate')) throw new Error(kind === 'trailer' ? 'Aucune remorque attelée.' : 'Aucun camion attribué à ton chauffeur.');
+  const id = kind === 'trailer' ? current(text).trailer : currentOf(text, kind === 'bus' ? 'buses' : 'trucks');
+  const u = unit(text, id); if (!u || !has(u.body, 'license_plate')) throw new Error(kind === 'trailer' ? 'Aucune remorque attelée.' : KIND[kind === 'bus' ? 'buses' : 'trucks'].notCur);
   return { text: patch(text, [{ ...u, body: set(u.body, 'license_plate', plateValue(get(u.body, 'license_plate'), plate, color)) }]) };
 }
 
@@ -332,7 +341,7 @@ function accessories(text, vehicle) {
 const partName = p => (p.split('/').pop() || '').replace(/\.sii$/, '').replace(/_/g, ' ').toUpperCase();
 // Moteurs et boîtes disponibles : ceux déjà montés sur un camion du même modèle dans ta flotte
 function partsInfo(text) {
-  const cur = unit(text, current(text).truck); if (!cur) return null;
+  const cur = unit(text, currentOf(text, 'trucks')); if (!cur) return null;
   const model = modelOf(text, cur).code; if (!model) return null;
   const pick = (v, kind) => (accessories(text, v).find(a => a.path.includes(`/${kind}/`)) || {}).path || null;
   const engines = new Set(), gearboxes = new Set();
@@ -348,13 +357,13 @@ function setPart(text, kind, newPath) {
   const info = partsInfo(text); if (!info) throw new Error('Aucun camion attribué à ton chauffeur.');
   const list = kind === 'engine' ? info.engines : info.transmissions;
   if (!list.includes(newPath)) throw new Error('Pièce non disponible pour ce modèle.');
-  const cur = unit(text, current(text).truck);
+  const cur = unit(text, currentOf(text, 'trucks'));
   const acc = accessories(text, cur).find(a => a.path.includes(`/${kind}/`)); if (!acc) throw new Error('Pièce actuelle introuvable.');
   return { text: patch(text, [{ ...acc.unit, body: set(acc.unit.body, 'data_path', `"${newPath}"`) }]) };
 }
 // Retire le badge (logo de marque) de la calandre : l'accessoire est enlevé de la liste du camion et son bloc supprimé
 function removeBadge(text) {
-  const cur = unit(text, current(text).truck); if (!cur) throw new Error('Aucun camion attribué à ton chauffeur.');
+  const cur = unit(text, currentOf(text, 'trucks')); if (!cur) throw new Error('Aucun camion attribué à ton chauffeur.');
   const badges = accessories(text, cur).filter(a => a.path.split('/').includes('badge'));
   if (!badges.length) throw new Error('Ce camion n\'a pas de badge.');
   const keep = arr(cur.body, 'accessories').filter(id => !badges.some(b => b.id === id));
@@ -438,7 +447,7 @@ function teleport(text, cam) {
 function overview(text) {
   const eco = firstUnit(text, 'economy');
   return {
-    trucks: trucks(text), trailers: trailers(text), attached: currentTrailerInfo(text),
+    trucks: trucks(text), buses: buses(text), trailers: trailers(text), attached: currentTrailerInfo(text),
     garages: garagesSummary(text), cities: cities(text).length, parts: partsInfo(text),
     dealers: eco ? arr(eco.body, 'unlocked_dealers').length : 0,
     recruitments: eco ? arr(eco.body, 'unlocked_recruitments').length : 0
@@ -447,7 +456,7 @@ function overview(text) {
 
 // ---------- Application d'un lot de modifications (clés envoyées par l'interface)
 const TOOL_KEYS = ['truckRepair', 'trailerRepair', 'truckFuel', 'truckKm', 'truckPlate', 'trailerPlate', 'playerTruck', 'playerTrailer',
-  'cargoMass', 'trailerDefMass', 'unlockTrailer', 'garages', 'unlockDealers', 'unlockRecruitments', 'teleport', 'truckEngine', 'truckTransmission', 'removeBadge'];
+  'cargoMass', 'trailerDefMass', 'unlockTrailer', 'garages', 'unlockDealers', 'unlockRecruitments', 'teleport', 'truckEngine', 'truckTransmission', 'removeBadge', 'busRepair', 'busFuel', 'busKm', 'busPlate'];
 function applyTools(text, e, report) {
   const tgt = v => (v === 'current' ? 'current' : 'all');
   if (e.playerTruck) { const r = setPlayerTruck(text, String(e.playerTruck)); text = r.text; report.push('camion changé (QG : ' + r.city + ')'); }
@@ -458,6 +467,10 @@ function applyTools(text, e, report) {
   if (e.truckKm != null) { text = setTruckKm(text, e.truckKm).text; report.push('kilométrage'); }
   if (e.truckPlate) { text = setPlate(text, 'truck', e.truckPlate.text, e.truckPlate.color).text; report.push('plaque du camion'); }
   if (e.trailerPlate) { text = setPlate(text, 'trailer', e.trailerPlate.text, e.trailerPlate.color).text; report.push('plaque de la remorque'); }
+  if (e.busRepair) { const r = repairTrucks(text, tgt(e.busRepair), 'buses'); text = r.text; report.push(`réparation de ${r.count} car(s)`); }
+  if (e.busFuel) { const r = setFuel(text, tgt(e.busFuel.target), e.busFuel.level, 'buses'); text = r.text; report.push(`carburant de ${r.count} car(s)`); }
+  if (e.busKm != null) { text = setTruckKm(text, e.busKm, 'buses').text; report.push('kilométrage du car'); }
+  if (e.busPlate) { text = setPlate(text, 'bus', e.busPlate.text, e.busPlate.color).text; report.push('plaque du car'); }
   if (e.truckEngine) { text = setPart(text, 'engine', String(e.truckEngine)).text; report.push('moteur'); }
   if (e.truckTransmission) { text = setPart(text, 'transmission', String(e.truckTransmission)).text; report.push('boîte de vitesses'); }
   if (e.removeBadge) { text = removeBadge(text).text; report.push('badge retiré'); }
@@ -473,7 +486,7 @@ function applyTools(text, e, report) {
 
 module.exports = {
   TOOL_KEYS, GARAGE_SIZES, applyTools, overview, parseCams,
-  current, trucks, trailers, currentTrailerInfo, cities, garagesSummary,
+  current, currentOf, trucks, buses, trailers, currentTrailerInfo, cities, garagesSummary,
   repairTrucks, repairTrailers, setFuel, setTruckKm, setPlate, setPlayerTruck, setPlayerTrailer,
   setCargoMass, setTrailerDefMass, partsInfo, setPart, removeBadge, unlockTrailer, buyGarages, unlockList, teleport,
   _internal: { unit, units, get, arr, setArr, num, decStr, encStr, plateValue }

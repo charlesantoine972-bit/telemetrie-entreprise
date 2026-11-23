@@ -47,6 +47,8 @@ player : _nameless.300 {
  drivers: 2
  drivers[0]: driver.player
  drivers[1]: driver.bob
+ buses: 1
+ buses[0]: _nameless.960
  assigned_vehicles: _nameless.900
 }
 player_vehicles : _nameless.900 {
@@ -172,6 +174,19 @@ trailer_def : _nameless.850 {
  country_validity[0]: france
  country_validity[1]: germany
  source_name: "company.lyon"
+}
+vehicle : _nameless.960 {
+ accessories: 1
+ accessories[0]: _nameless.961
+ engine_wear: 0.6
+ chassis_wear: 0.3
+ license_plate: "BUS 7|hungary"
+ fuel_relative: 0.2
+ odometer: 50000
+ integrity_odometer: 50000
+}
+vehicle_accessory : _nameless.961 {
+ data_path: "/def/vehicle/bus/iveco.crossway/data.sii"
 }
 garage : garage.paris {
  vehicles: 1
@@ -343,4 +358,28 @@ test('cargaison : toutes les remorques chargées de la sauvegarde', () => {
   const r = T.setCargoMass(SAVE, 30000, true, true); valid(r.text);
   assert.strictEqual(r.count, 2); // la remorque 700 est vide : non touchée
   assert.strictEqual(get(body(r.text, '_nameless.700'), 'cargo_mass'), '0');
+});
+
+test('cars : liste, réparation, carburant, km et plaque sur le car conduit', () => {
+  const B = T.buses(SAVE);
+  assert.strictEqual(B.length, 1); assert.strictEqual(B[0].brand, 'Iveco'); assert.strictEqual(B[0].current, false);
+  // le joueur conduit un camion : les outils « mon car » refusent, « tous les cars » marchent
+  assert.throws(() => T.repairTrucks(SAVE, 'current', 'buses'), /ne conduis pas un de tes cars/);
+  let t = T.repairTrucks(SAVE, 'all', 'buses').text; valid(t);
+  assert.strictEqual(get(body(t, '_nameless.960'), 'engine_wear'), '0');
+  assert.strictEqual(get(body(t, '_nameless.400'), 'engine_wear'), '&3e800000'); // camions intacts
+  // le joueur passe au car
+  const onBus = SAVE.replace(' vehicle: _nameless.400', ' vehicle: _nameless.960');
+  assert.strictEqual(T.buses(onBus)[0].current, true);
+  t = T.setFuel(onBus, 'current', 1, 'buses').text;
+  t = T.setTruckKm(t, 0, 'buses').text;
+  t = T.setPlate(t, 'bus', 'LIGNE 259').text; valid(t);
+  const b = body(t, '_nameless.960');
+  assert.strictEqual(get(b, 'fuel_relative'), '1'); assert.strictEqual(get(b, 'odometer'), '0');
+  assert.strictEqual(get(b, 'license_plate'), '"LIGNE 259|hungary"');
+  // et les outils camion refusent alors de modifier le car
+  assert.throws(() => T.setTruckKm(onBus, 5), /ne conduis pas un de tes camions/);
+  assert.strictEqual(T.partsInfo(onBus), null);
+  const r = SaveEditor.applyToText(onBus, { busRepair: 'current', busFuel: { target: 'all', level: 1 }, busKm: 10, busPlate: { text: 'CAR 1' } });
+  valid(r.text); assert.strictEqual(r.report.length, 4);
 });
