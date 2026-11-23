@@ -192,7 +192,7 @@
     font-family:"Segoe UI",Inter,system-ui,sans-serif;}
   button{font-family:inherit;cursor:pointer}
   .app{display:flex;height:100vh}
-  .side{width:264px;flex:none;background:var(--nav);border-right:1px solid var(--line);
+  .side{width:var(--navw,264px);position:relative;flex:none;background:var(--nav);border-right:1px solid var(--line);
     display:flex;flex-direction:column;padding:18px 12px 12px;gap:4px}
   .navscroll.hidden{display:none}
   .navscroll{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
@@ -373,6 +373,34 @@
   [data-nav="mini"] .sidetop{flex-direction:column;gap:6px}
   [data-nav="mini"] .brandfoot{justify-content:center;padding:8px 0 2px}
   [data-nav="mini"] .brandfoot .bf-txt,[data-nav="mini"] .brandfoot .bf-home{display:none}
+
+  /* ---------- Menu redimensionnable ---------- */
+  .side-resize{position:absolute;top:0;right:-4px;width:8px;height:100%;cursor:col-resize;z-index:5;touch-action:none}
+  .side-resize::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:transparent;transition:background .15s}
+  .side-resize:hover::after,.side-resize:focus-visible::after,html.resizing .side-resize::after{background:var(--accent)}
+  .side-resize:focus-visible{outline:none}
+  html.resizing,html.resizing *{cursor:col-resize!important;user-select:none!important}
+  html.resizing .side{transition:none}
+  /* ---------- Responsive : la page s'adapte à la place disponible (fenêtre et largeur du menu) ---------- */
+  .main{container-type:inline-size;container-name:page}
+  @container page (max-width:980px){
+    .grid2,.telgrid{grid-template-columns:minmax(0,1fr)!important}
+    .opts{grid-template-columns:minmax(0,1fr)}
+    .optnav{position:static;flex-direction:row;flex-wrap:wrap}
+    .optnav button{height:38px}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .fuelkv,.telright .fuelkv{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    #v-telemetrie[data-conn="off"] .telright{grid-template-columns:minmax(0,1fr)}
+  }
+  @container page (max-width:680px){
+    .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .stats{grid-template-columns:minmax(0,1fr)!important}
+    .setrow{flex-wrap:wrap}
+    .setrow .lab{min-width:0}
+    .teltabs{flex-direction:column;align-items:flex-start}
+    .speed{font-size:64px}
+  }
+  @media (max-width:900px){ .main{padding:20px 18px} }
   /* ---------- Menu latéral rétractable ---------- */
   .sidetop{display:flex;align-items:flex-start;gap:6px}
   .sidetop #brandBtn{flex:1;min-width:0}
@@ -422,7 +450,7 @@
   .fuelkv{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .telright .fuelkv{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .telcol{display:flex;flex-direction:column;gap:14px;min-width:0}
-  #v-telemetrie[data-conn="off"] .tel-live,#v-telemetrie[data-conn="off"] .teltabs{display:none!important}
+  #v-telemetrie[data-conn="off"] .tel-live{display:none!important}
   #v-telemetrie[data-conn="off"] .telgrid{grid-template-columns:minmax(0,1fr)}
   #v-telemetrie[data-conn="off"] .tel-left{display:none}
   #v-telemetrie[data-conn="off"] .telright{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -650,6 +678,7 @@
 <div class="app">
   <a class="skip" href="#mainContent">Aller au contenu</a>
   <aside class="side" aria-label="Menu">
+    <div class="side-resize" id="sideResize" role="separator" aria-orientation="vertical" aria-label="Largeur du menu (glisser, flèches gauche / droite, double-clic pour revenir à la taille normale)" tabindex="0" title="Glisse pour régler la largeur du menu · double-clic : taille normale"></div>
     <div class="sidetop"><button class="navtoggle" id="spaceBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="spacePanel" aria-label="Changer d’espace" title="Changer d’espace"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button class="navtoggle" id="navToggle" aria-label="Réduire le menu" title="Réduire le menu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9 4.5v15"/><path class="chev" d="M15.5 9.5 13 12l2.5 2.5"/></svg></button></div>
     <div class="spacetitle" id="spaceTitle" aria-live="polite">HUB</div>
     <nav class="navscroll" id="navHub" aria-label="Hub">
@@ -1474,10 +1503,13 @@ document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
 
 /* ---------- Menu latéral rétractable (icônes seules) ---------- */
+const NAV_MIN = 200, NAV_MAX = 380, NAV_DEF = 264, NAV_SNAP = 150;
+let navWidth = Math.min(NAV_MAX, Math.max(NAV_MIN, Number(store.get('navWidth', NAV_DEF)) || NAV_DEF));
+let navAuto = false; // menu réduit automatiquement parce que la fenêtre est étroite
 function applyNavMini(mini, save){
   const root = document.documentElement;
   if (mini) root.dataset.nav = 'mini'; else delete root.dataset.nav;
-  root.style.setProperty('--navw', mini ? '72px' : '264px');
+  root.style.setProperty('--navw', mini ? '72px' : navWidth + 'px');
   const t = document.getElementById('navToggle'), lab = mini ? 'Agrandir le menu' : 'Réduire le menu';
   t.setAttribute('aria-label', lab); t.title = lab; t.setAttribute('aria-expanded', mini ? 'false' : 'true');
   const sw = document.getElementById('navMiniSwitch'); if (sw) sw.checked = !!mini;
@@ -1488,9 +1520,44 @@ function applyNavMini(mini, save){
   });
   if (save) store.set('navMini', !!mini);
 }
-document.getElementById('navToggle').onclick = () => applyNavMini(document.documentElement.dataset.nav !== 'mini', true);
+document.getElementById('navToggle').onclick = () => { navAuto = false; applyNavMini(document.documentElement.dataset.nav !== 'mini', true); };
 document.getElementById('navMiniSwitch').onchange = (e) => applyNavMini(e.target.checked, true);
 applyNavMini(store.get('navMini', false));
+function setNavWidth(w, save){
+  navWidth = Math.round(Math.min(NAV_MAX, Math.max(NAV_MIN, w)));
+  if (document.documentElement.dataset.nav !== 'mini') document.documentElement.style.setProperty('--navw', navWidth + 'px');
+  const h = document.getElementById('sideResize'); h.setAttribute('aria-valuenow', navWidth); h.setAttribute('aria-valuemin', NAV_MIN); h.setAttribute('aria-valuemax', NAV_MAX);
+  if (save) store.set('navWidth', navWidth);
+}
+setNavWidth(navWidth);
+(() => {
+  const h = document.getElementById('sideResize');
+  h.addEventListener('pointerdown', e => {
+    e.preventDefault(); h.setPointerCapture(e.pointerId); document.documentElement.classList.add('resizing');
+    const move = ev => {
+      const x = ev.clientX;
+      if (x < NAV_SNAP) { if (document.documentElement.dataset.nav !== 'mini') applyNavMini(true, true); }
+      else { if (document.documentElement.dataset.nav === 'mini') applyNavMini(false, true); setNavWidth(x); }
+    };
+    const up = () => { h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up); document.documentElement.classList.remove('resizing'); store.set('navWidth', navWidth); };
+    h.addEventListener('pointermove', move); h.addEventListener('pointerup', up);
+  });
+  h.addEventListener('dblclick', () => { applyNavMini(false, true); setNavWidth(NAV_DEF, true); });
+  h.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const mini = document.documentElement.dataset.nav === 'mini';
+    if (e.key === 'ArrowLeft') { if (!mini && navWidth <= NAV_MIN) applyNavMini(true, true); else if (!mini) setNavWidth(navWidth - 16, true); }
+    else { if (mini) applyNavMini(false, true); else setNavWidth(navWidth + 16, true); }
+  });
+})();
+// Petite fenêtre : menu réduit tout seul, puis remis comme avant quand la place revient
+function autoNav(){
+  const narrow = window.innerWidth < 900;
+  if (narrow && document.documentElement.dataset.nav !== 'mini') { navAuto = true; applyNavMini(true); }
+  else if (!narrow && navAuto) { navAuto = false; applyNavMini(store.get('navMini', false)); }
+}
+window.addEventListener('resize', autoNav); autoNav();
 function syncHudDot(){ const on = document.getElementById('hudOnNav').checked, d = document.getElementById('hudNavDot'); d.classList.toggle('on', on); d.closest('.navbtn').dataset.state = on ? 'HUD activé' : 'HUD désactivé'; }
 
 /* ---------- Options : catégories ---------- */

@@ -14,6 +14,11 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.6', date: '2026-11-23', titre: 'Menu à la bonne largeur et appli qui s’adapte à la fenêtre', notes: [
+    ['nouveau', 'Menu latéral réglable : attrape son bord droit et fais-le glisser pour l’élargir ou le rétrécir. Tout à gauche, il se réduit aux icônes. Double-clic sur le bord : taille normale. La largeur est mémorisée.'],
+    ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : les pages passent sur une colonne quand la place manque, et le menu se réduit tout seul sur une petite fenêtre. La fenêtre peut maintenant être plus petite (720 px de large), par exemple à côté du jeu.'],
+    ['corrige', 'Télémétrie : les onglets Camion et Car restent visibles même quand le jeu n’est pas lancé.'],
+  ]},
   { version: '0.12.0.5', date: '2026-11-23', titre: 'Nouveau bandeau camion, menu des espaces et Télémétrie remise en ordre', notes: [
     ['nouveau', 'Bandeau camion refait sur le modèle du bandeau car : mission, trajet, heure du jeu, rapport engagé, vitesse, limitation, régulateur, mode et dégâts du camion ; en dessous, route, heure limite de livraison, marchandise, carburant et pause. Chaque info s’active ou se masque dans la page HUD.'],
     ['nouveau', 'Menu ☰ en haut à gauche : un panneau pour passer du Hub à la Marketplace ou à Truck & Coach Tools, ou revenir à l’écran d’accueil.'],
