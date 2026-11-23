@@ -23,17 +23,18 @@ test('syntaxe de tous les scripts de production et des pages', () => {
   }
 });
 
-test('la feuille de route détaille les frais et le solde hors carburant', () => {
+test('la feuille de route sépare camion / car et détaille frais, revenu et solde', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
   const start = html.indexOf('function renderRoadmap(sn){');
   const end = html.indexOf('\nfunction renderPlugin(', start);
   assert.ok(start >= 0 && end > start);
-  const ids = ['routeConnection', 'routeMission', 'routeStats', 'routeExpenseTotal', 'routeExpenses', 'routeFuelStops', 'routeHistory'];
+  const ids = ['routeConnection', 'routeMission', 'routeStats', 'routeExpenseTotal', 'routeExpenses', 'routeFuelStops', 'routeHistory', 'routeCountTruck', 'routeCountBus'];
   const nodes = new Map(ids.map(id => [id, { innerHTML: '', textContent: '' }]));
   const context = {
     document: { getElementById: id => nodes.get(id) },
     fmt: value => String(value),
     km: value => `${value} km`,
+    dur: min => `${Math.round(min)} min`,
     escM: value => String(value == null ? '' : value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
   };
   vm.runInNewContext(html.slice(start, end), context);
@@ -59,18 +60,33 @@ test('la feuille de route détaille les frais et le solde hors carburant', () =>
   assert.match(nodes.get('routeStats').innerHTML, /Solde prévu hors carburant/);
   assert.match(nodes.get('routeStats').innerHTML, /10550 €/);
   const history = nodes.get('routeHistory').innerHTML;
-  assert.match(history, /Revenu 12000 €/);
-  assert.match(history, /Frais 1450 €/);
-  assert.match(history, /Solde hors carburant 10550 €/);
-  assert.match(history, /péage/);
-  assert.match(history, /200 €/);
-  assert.match(history, /ferry/);
-  assert.match(history, /450 €/);
-  assert.match(history, /amende/);
-  assert.match(history, /800 €/);
+  assert.match(history, /12000 €/);
+  assert.match(history, /1450 €/);
+  assert.match(history, /10550 €/);
+  assert.match(history, /Livré/);
+  for (const t of [/péage/, /200 €/, /ferry/, /450 €/, /amende/, /800 €/]) assert.match(history, t);
 
-  render(null, [{ ...finished, expenseItems: undefined }]);
-  assert.match(nodes.get('routeHistory').innerHTML, /détail de cette ancienne mission n’est pas disponible/);
+  render(null, [{ ...finished, ended: 5, expenseItems: undefined }]);
+  assert.match(nodes.get('routeHistory').innerHTML, /Détail non disponible pour cette ancienne mission/);
+
+  // Un service car abandonné : il n’apparaît pas dans l’onglet camion, mais les compteurs le voient.
+  const bus = {
+    missionType: 'bus', from: 'Lille', to: 'Rouen', nextStop: 'Amiens', stageCount: 3, stageCurrent: 1,
+    ended: 9, status: 'annulée', abandoned: true, game: 'ets2', distance: 60, revenue: 0, expenses: 300,
+    expenseItems: [{ type: 'annulation', amount: 300, at: 8 }],
+    stops: [{ kind: 'départ', name: 'Lille', at: 0, km: 0 }, { kind: 'arrêt', name: 'Arras', at: 4, km: 40 }, { kind: 'abandon', name: 'Amiens', at: 8, km: 60 }]
+  };
+  render(null, [bus, { ...finished, ended: 6 }]);
+  assert.equal(nodes.get('routeCountTruck').textContent, 1);
+  assert.equal(nodes.get('routeCountBus').textContent, 1);
+  assert.doesNotMatch(nodes.get('routeHistory').innerHTML, /Arras/);
+  context.routeTab = 'bus'; vm.runInContext("routeTab = 'bus'; routeSig = ''", context);
+  render(null, [bus, { ...finished, ended: 6 }]);
+  const busHtml = nodes.get('routeHistory').innerHTML;
+  assert.match(busHtml, /Arras/);
+  assert.match(busHtml, /Abandonné ici/);
+  assert.match(busHtml, /Terminus non atteint/);
+  assert.match(busHtml, /-300 €/);
 });
 
 test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => {
