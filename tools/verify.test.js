@@ -151,19 +151,15 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
   assert.equal(truckUpdated.bus.opacity, 60);
 });
 
-test('les styles HUD inachevés sont indisponibles et les tests camion/bus sont séparés', () => {
+test('bandeau camion sans styles inachevés, infos activables, tests camion/bus séparés', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
   const truckStart = html.indexOf('<h2>1. Affichage camion</h2>');
   const truckEnd = html.indexOf('<h2>2. Affichage bus / car</h2>', truckStart);
   assert.ok(truckStart >= 0 && truckEnd > truckStart);
   const truckSection = html.slice(truckStart, truckEnd);
-  for (const style of ['compact', 'tableau', 'minimal']) {
-    assert.match(truckSection, new RegExp(`<button data-hstyle="${style}" disabled`));
-  }
-  for (const style of ['bandeau', 'navigation']) {
-    assert.match(truckSection, new RegExp(`<button data-hstyle="${style}"`));
-    assert.doesNotMatch(truckSection, new RegExp(`<button data-hstyle="${style}" disabled`));
-  }
+  // Le bandeau camion n'a plus de styles : une seule présentation, avec des informations activables.
+  assert.doesNotMatch(truckSection, /data-hstyle=/);
+  assert.match(truckSection, /id="hudTruckBoxes"/);
   assert.match(truckSection, /id="hudTestTruck">Tester le HUD camion/);
 
   const start = html.indexOf('<h2>2. Affichage bus / car</h2>');
@@ -200,7 +196,7 @@ test('la taille de chaque aperçu HUD applique son échelle sans changer la posi
       return match && nodes.get(match[1]);
     }
   };
-  const context = { HUD_STYLES: { bandeau: 'Bandeau', compact: 'Compact', navigation: 'Navigation' }, HUD_SELECTABLE_STYLES: ['bandeau', 'navigation'], hudMission() {}, hudCoach() {} };
+  const context = { HUD_STYLES: { bandeau: 'Bandeau', compact: 'Compact', navigation: 'Navigation' }, HUD_SELECTABLE_STYLES: ['bandeau', 'navigation'], hudMission() {}, hudCoach() {}, hudTruck() {} };
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud-render.js'), 'utf8'), context);
   context.hudRender(root, { options: { style: 'navigation', scale: 80, position: 'bas' }, live: {}, today: {} });
   assert.equal(root.style.transform, 'scale(0.8)');
@@ -531,4 +527,40 @@ test('Discord : test de connexion puis effacement de la présence quand le jeu s
     ['clear']
   ]);
   await presence.disconnect();
+});
+
+test('bandeau camion : données du jeu, boîtes activables, rien d’inventé', () => {
+  const { hudTruck } = require(path.resolve(__dirname, '..', 'app', 'hud-truck.js'));
+  const el = () => ({ hidden: false, textContent: '', title: '', className: '', style: {}, classList: { s: new Set(), toggle(c, on) { on ? this.s.add(c) : this.s.delete(c); }, contains(c) { return this.s.has(c); } } });
+  const els = new Map();
+  const bottomKids = ['b-route', 'b-livraison', 'b-cargo', 'b-carburant', 'b-pause'];
+  const panel = { classList: el().classList, setAttribute() {}, querySelector(sel) {
+    const k = /data-t="(.+)"/.exec(sel)[1];
+    if (!els.has(k)) els.set(k, el());
+    const node = els.get(k);
+    if (k === 'bottom') node.children = bottomKids.map(b => panel.querySelector(`[data-t="${b}"]`));
+    return node;
+  } };
+  const root = { classList: { toggle() {} }, querySelector: () => panel };
+  const T = k => els.get(k).textContent, H = k => els.get(k).hidden;
+  hudTruck(root, { vehicleType: 'camion', options: { boxes: { pause: false } },
+    live: { speed: 25, speedLimit: 25, gameTime: 2 * 1440 + 14 * 60 + 5, gear: 12, cruise: 0, fuel: 700, truck: { 'fuel.capacity': 1400 }, mandatoryBreak: 300, wear: { engine: 0.02, wheels: 0.35 } },
+    mission: { type: 'truck', from: 'Paris', to: 'Prague', cargo: 'Pommes', mass: 20000, remainingKm: 521, remainingMin: 440, deadline: 3 * 1440 + 540, timeLeft: -30, loaded: true, cargoDamage: 0 } });
+  assert.equal(T('route'), 'Paris → Prague');
+  assert.equal(T('tag'), 'LIVRAISON');
+  assert.equal(T('clock'), '14:05');
+  assert.equal(T('gear'), '12');
+  assert.equal(H('cruise'), true);
+  assert.equal(T('left'), '521 km');
+  assert.equal(T('deadline'), 'Jeu. 09:00');
+  assert.match(T('timeLeft'), /de retard/);
+  assert.equal(T('fuel'), '50 %');
+  assert.equal(H('b-pause'), true);           // boîte désactivée dans les réglages
+  assert.equal(T('wear'), '35 %');
+  // Hors mission : pas de trajet ni de livraison inventés
+  hudTruck(root, { vehicleType: 'camion', live: { speed: 0, gameTime: 600 }, mission: null });
+  assert.equal(T('tag'), 'SANS MISSION');
+  assert.equal(H('route'), true);
+  assert.equal(H('b-livraison'), true);
+  assert.equal(H('b-cargo'), true);
 });

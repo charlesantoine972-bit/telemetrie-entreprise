@@ -423,15 +423,16 @@ class Telemetry extends EventEmitter {
       mission.tracked = !!(this.current && key && this.current.key === key);
     }
     let coachInfo = null;
+    const scale = s && s.localScale > 0 ? s.localScale : null;
+    // Secondes de l’horloge du jeu estimées entre deux minutes (le jeu n’envoie que les minutes)
+    const clockSeconds = s && scale && !s.paused && this.clockAt ? Math.min(59, Math.floor((Date.now() - this.clockAt) / 1000 * scale)) : null;
     if (s && vehicleType === 'car') {
-      const scale = s.localScale > 0 ? s.localScale : null;
-      const clockSeconds = scale && !s.paused && this.clockAt ? Math.min(59, Math.floor((Date.now() - this.clockAt) / 1000 * scale)) : null;
       const boardedKm = Number.isFinite(this.boardedOdo) && Number.isFinite(s.odometer) ? Math.max(0, s.odometer - this.boardedOdo) : null;
       coachInfo = coach.describeCoach(s, job, { clockSeconds, boardedKm });
     }
     return {
       connected, socketError: this.socketError || null,
-      live: s, job, mission, thresholds: th, vehicleType, coach: coachInfo, gforce: s ? this.g : null,
+      live: s, job, mission, clockSeconds, thresholds: th, vehicleType, coach: coachInfo, gforce: s ? this.g : null,
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },

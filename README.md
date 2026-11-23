@@ -1,3 +1,7 @@
+## Version 0.12.0.5 — bandeau camion, menu des espaces, Télémétrie
+
+Le bandeau camion (`app/hud-truck.js`, `app/hud-truck.css`) reprend la présentation du bandeau car et lit la mission du jeu (`gameMission()` dans `src/telemetry.js`) ; chaque boîte s’active dans `hud.truck.boxes`. Plugin 1.5.0 : `truck.displayed.gear`, `truck.engine.rpm`, `truck.cruise_control`. Menu : burger des espaces (`#spacePanel`), logo et version en pied de menu. Notes de version dans Options → Mises à jour, encart « Nouveautés » une fois par version (`tch.seenNotes`).
+
 ## Numérotation des versions
 
 Les versions techniques 0.12.0 → 0.13.27 (`package.json`) sont regroupées et affichées **0.12.0**, **0.12.0.1**, **0.12.0.2** et **0.12.0.3** (voir `versionAffichee()` dans `app/data/notes-version.js`). La mise à jour automatique compare le numéro technique, qui doit toujours augmenter (x.y.z) ; seul le numéro affiché suit la numérotation 0.12.0.x.
