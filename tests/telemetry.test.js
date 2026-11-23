@@ -201,3 +201,45 @@ test('vehicle mode follows the selected career profile instead of switching on t
   assert.equal(snapshot.connected, false);
   assert.equal(snapshot.vehicleType, 'camion');
 });
+
+test('Telemetry records bus stops served and where a mission was abandoned', () => {
+  const telemetry = createTelemetry();
+  telemetry.save = () => {};
+  const busJob = (stageCurrent) => ({
+    bus_job_id: 'line-7', 'bus.stages.count': 3, 'bus.stages.current': stageCurrent, income: 900,
+    'source_stop.name': { '0': 'Lille', '1': 'Arras', '2': 'Amiens' },
+    'destination_stop.name': { '0': 'Arras', '1': 'Amiens', '2': 'Rouen' }
+  });
+  let odo = 1;
+  const state = (route, km = 0) => { odo += km; telemetry.onState({
+    speed: 10, paused: false, odometer: odo, x: 0, z: 0,
+    job: null, busJob: route, trailerConnected: false, fuel: 80,
+    truck: { brand: 'Setra', name: 'S 516' }, game: 'ets2'
+  }); };
+
+  state(busJob(0));
+  for (let i = 0; i < 100; i++) state(busJob(0), 0.4);   // 40 km jusqu'à Arras
+  state(busJob(1));
+  for (let i = 0; i < 50; i++) state(busJob(1), 0.4);    // 20 km de plus
+  telemetry.onGameplay({ id: 'bus_job.cancelled', data: { 'cancel.penalty': 300 } });
+
+  const job = telemetry.data.jobs[0];
+  assert.equal(job.missionType, 'bus');
+  assert.equal(job.abandoned, true);
+  assert.equal(job.revenue, 0);
+  assert.equal(job.expenses, 300);
+  assert.deepEqual(job.stops.map(s => [s.kind, s.name]), [['départ', 'Lille'], ['arrêt', 'Arras'], ['abandon', 'Amiens']]);
+  assert.ok(Math.abs(job.stops[1].km - 40) < 0.5);
+  assert.ok(Math.abs(job.stops[2].km - 60) < 0.5);
+});
+
+test('Telemetry records a truck delivery from A to B', () => {
+  const telemetry = createTelemetry();
+  telemetry.save = () => {};
+  const mission = { 'source.city': 'Lille', 'source.company': 'Tradeaux', 'destination.city': 'Lyon', 'destination.company': 'Fle', cargo: 'Colis', income: 5000 };
+  telemetry.onState({ speed: 0, paused: false, odometer: 1, x: 0, z: 0, job: mission, trailerConnected: true, fuel: 50, truck: { brand: 'Volvo', name: 'FH' }, game: 'ets2' });
+  telemetry.onGameplay({ id: 'job.delivered', data: { revenue: 5200 } });
+  const job = telemetry.data.jobs[0];
+  assert.equal(job.abandoned, false);
+  assert.deepEqual(job.stops.map(s => [s.kind, s.name, s.company]), [['départ', 'Lille', 'Tradeaux'], ['arrivée', 'Lyon', 'Fle']]);
+});

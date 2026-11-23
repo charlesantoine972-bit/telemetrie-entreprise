@@ -155,9 +155,13 @@ class Telemetry extends EventEmitter {
         fuelUsed: 0, fuelAdded: 0, fuelStops: [], expenses: 0, expenseItems: [],
         truck: s.truck ? `${s.truck.brand || ''} ${s.truck.name || ''}`.trim() : '',
         game: gameKey(s.game),
-        path: []
+        path: [],
+        // Feuille de route : points de passage (départ, arrêts desservis, arrivée ou abandon)
+        stops: [{ kind: 'départ', name: activeMission.from || null, company: activeMission.fromCompany || null, at: Date.now(), km: 0 }]
       };
     } else if (jobKey && this.current && this.current.key === jobKey && activeMission.missionType === 'bus') {
+      // Le car est passé à l’étape suivante : l’arrêt visé jusqu’ici vient d’être desservi.
+      if (activeMission.stageCurrent > (this.current.stageCurrent || 0)) this.markStop('arrêt', this.current.nextStop);
       this.current.nextStop = activeMission.nextStop;
       this.current.stageCurrent = activeMission.stageCurrent;
       this.current.stageCount = activeMission.stageCount;
@@ -292,9 +296,21 @@ class Telemetry extends EventEmitter {
     }
   }
 
+  // Point de passage dans la feuille de route de la mission en cours
+  markStop(kind, name, company) {
+    const j = this.current;
+    if (!j) return;
+    j.stops ||= [];
+    j.stops.push({ kind, name: name || null, company: company || null, at: Date.now(), km: j.loaded + j.empty });
+    this.dirty = true;
+  }
+
   finishJob(status, info, silent) {
     const j = this.current;
     if (!j) return;
+    const abandoned = status === 'annulée' || status === 'interrompue';
+    if (!abandoned) this.markStop('arrivée', j.to, j.toCompany);
+    else this.markStop('abandon', j.missionType === 'bus' ? j.nextStop : j.to);
     clearTimeout(this.pendingFinish);
     this.pendingFinish = null;
     this.current = null;
@@ -312,7 +328,9 @@ class Telemetry extends EventEmitter {
       damage: info && info['cargo.damage'] != null ? info['cargo.damage'] : (this.live ? this.live.cargoDamage : 0),
       gameDistance: info && info['distance.km'] != null ? info['distance.km'] : null,
       fuelUsed: j.fuelUsed, fuelAdded: j.fuelAdded, fuelStops: j.fuelStops,
-      expenses: j.expenses, expenseItems: j.expenseItems
+      expenses: j.expenses, expenseItems: j.expenseItems,
+      abandoned,
+      stops: j.stops || []
     };
     this.data.jobs.unshift(entry);
     this.data.jobs = this.data.jobs.slice(0, 300);

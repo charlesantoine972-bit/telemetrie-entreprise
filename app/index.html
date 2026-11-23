@@ -381,6 +381,39 @@
   .navsec{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 12px 4px}
   .soon{margin-left:auto;font-size:12px;font-weight:700;color:var(--on-accent);background:var(--muted);padding:2px 7px;border-radius:999px;flex:none}
   .soon.prev{background:var(--empty)}
+  .rt-row{display:grid;grid-template-columns:110px minmax(180px,2.2fr) 80px 110px repeat(3,minmax(80px,1fr));gap:10px;align-items:center;font-size:13px}
+  .rt-head{padding:0 12px 8px 30px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .rt-item{border-top:1px solid var(--line)}
+  .rt-item>summary{list-style:none;cursor:pointer;padding:12px 12px 12px 0;display:flex;align-items:center;gap:10px;color:var(--text)}
+  .rt-item>summary::-webkit-details-marker{display:none}
+  .rt-item>summary .rt-arrow{width:20px;flex:none;color:var(--muted);transition:transform .15s}
+  .rt-item[open]>summary .rt-arrow{transform:rotate(90deg);color:var(--accent)}
+  .rt-item>summary .rt-row{flex:1;min-width:0}
+  .rt-item>summary:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .rt-num{text-align:right;font-variant-numeric:tabular-nums}
+  .rt-head span:nth-child(n+5),.rt-head span:nth-child(3){text-align:right}
+  .rt-n{display:inline-block;min-width:20px;margin-left:6px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,currentColor 15%,transparent);font-size:11px}
+  .rt-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px}
+  .rt-badge .d{width:8px;height:8px;border-radius:50%}
+  .rt-detail{display:grid;grid-template-columns:minmax(260px,1.3fr) minmax(220px,1fr);gap:24px;padding:4px 12px 18px 30px}
+  .rt-kv>div{display:flex!important;flex-direction:row!important;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--line)}
+  .rt-kv>div>*{font-size:13px!important;font-weight:500;line-height:1.4}
+  .rt-kv>div>span:first-child{color:var(--muted);flex:none} .rt-kv>div>span:last-child,.rt-kv>div>b{text-align:right;color:var(--text)}
+  .rt-kv>div>b{font-weight:800}
+  .rt-kv span span,.rt-kv .muted{color:var(--muted)!important;font-size:12px!important;font-weight:500}
+  .rt-detail .between>span,.rt-detail .between>b{font-size:13px}
+  .rt-tl{list-style:none;margin:0;padding:0;position:relative}
+  .rt-tl li{position:relative;padding:0 0 16px 26px}
+  .rt-tl li::before{content:'';position:absolute;left:6px;top:14px;bottom:-2px;width:2px;background:var(--loaded)}
+  .rt-tl li:last-child::before{display:none}
+  .rt-tl li.todo::before,.rt-tl li.cut::before{background:repeating-linear-gradient(var(--line) 0 4px,transparent 4px 8px)}
+  .rt-tl .pt{position:absolute;left:0;top:3px;width:14px;height:14px;border-radius:50%;box-sizing:border-box;border:3px solid var(--loaded);background:var(--panel)}
+  .rt-tl li.end .pt{background:var(--ok);border-color:var(--ok)}
+  .rt-tl li.cut .pt{background:var(--race);border-color:var(--race);border-radius:3px}
+  .rt-tl li.todo .pt{border-color:var(--line)}
+  .rt-tl li.todo{color:var(--muted)}
+  .rt-tl .seg-km{font-size:12px;color:var(--muted);margin-top:2px}
+  @media (max-width:900px){ .rt-row{grid-template-columns:1fr 1fr 1fr} .rt-head{display:none} .rt-detail{grid-template-columns:1fr} }
   .chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);vertical-align:middle;margin-left:10px}
   .chip .d{width:9px;height:9px;border-radius:50%}
   .speed{font-size:84px;font-weight:700;line-height:1;letter-spacing:-.02em}
@@ -854,7 +887,15 @@
         <div id="routeFuelStops" class="soft">Aucun plein détecté.</div>
       </div>
       <div class="panel">
-        <h2>Trajets récents</h2>
+        <div class="between" style="gap:12px;flex-wrap:wrap;margin-bottom:12px">
+          <h2 style="margin:0">Trajets récents</h2>
+          <div class="seg" id="routeTabs" role="group" aria-label="Type de trajet">
+            <button type="button" class="on" data-rt="truck" aria-pressed="true">Camion <span class="rt-n" id="routeCountTruck">0</span></button>
+            <button type="button" data-rt="bus" aria-pressed="false">Car <span class="rt-n" id="routeCountBus">0</span></button>
+          </div>
+        </div>
+        <p class="muted" id="routeTabHint" style="font-size:12px;margin:0 0 10px">Camion : une livraison d’un point A à un point B. Clique sur un trajet pour voir où il s’est terminé.</p>
+        <div class="rt-row rt-head" aria-hidden="true"><span>Date</span><span>Trajet</span><span>Km</span><span>Statut</span><span>Dépenses</span><span>Revenu</span><span>Solde</span></div>
         <div id="routeHistory" class="soft">Aucune mission enregistrée pour l’instant.</div>
       </div>
       <p class="muted" style="font-size:12px;line-height:1.6">Les litres ajoutés et consommés sont détectés depuis le niveau du réservoir. Le jeu ne transmet pas le prix du carburant : le total des dépenses comprend uniquement les montants réellement reçus (péages, ferries, trains, amendes et pénalités d’annulation).</p>
@@ -2586,38 +2627,108 @@ function renderRoadmap(sn){
   document.getElementById('routeFuelStops').innerHTML = fuelStops.length ? fuelStops.slice().reverse().map(stop =>
     `<div class="between" style="gap:12px;padding:8px 0;border-top:1px solid var(--line)"><span>Plein détecté · ${dateTime(stop.at)}</span><b>${liters(stop.liters)}</b></div>`
   ).join('') : '<span class="soft">Aucun plein détecté pour cette mission.</span>';
-  const jobs = Array.isArray(sn.jobs) ? sn.jobs.slice(0,10) : [];
-  document.getElementById('routeHistory').innerHTML = jobs.length ? jobs.map(entry => {
+  renderRouteHistory(Array.isArray(sn.jobs) ? sn.jobs : []);
+}
+
+// ---- Feuille de route : trajets récents séparés camion / car, avec le détail du parcours
+let routeTab = 'truck', routeSig = '';
+const routeOpen = new Set();
+function routeStatus(entry){
+  const st = entry.status || '';
+  if (st === 'annulée' || (entry.abandoned && st !== 'interrompue')) return { label: 'Abandonné', color: 'var(--race)', cut: true };
+  if (st === 'interrompue') return { label: 'Interrompu', color: 'var(--warn)', cut: true, note: 'Une autre mission a été prise avant la fin.' };
+  if (st === 'livrée') return { label: entry.missionType === 'bus' ? 'Terminé' : 'Livré', color: 'var(--ok)', cut: false };
+  return { label: 'Terminé', color: 'var(--ok)', cut: false };
+}
+function routeTimeline(entry, stat){
+  const hm = n => Number.isFinite(n) ? new Date(n).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : '';
+  const isBus = entry.missionType === 'bus';
+  let stops = Array.isArray(entry.stops) && entry.stops.length ? entry.stops.slice() : null;
+  if (!stops) { // ancienne mission : seuls le départ et la destination sont connus
+    stops = [{ kind: 'départ', name: entry.from, company: entry.fromCompany, at: entry.started, km: 0 }];
+    stops.push({ kind: stat.cut ? 'abandon' : 'arrivée', name: stat.cut && isBus ? entry.nextStop : entry.to, company: entry.toCompany, at: entry.ended, km: entry.distance });
+  }
+  const items = [];
+  stops.forEach((p, i) => {
+    const prev = stops[i - 1];
+    const leg = prev && Number.isFinite(p.km) && Number.isFinite(prev.km) ? Math.max(0, p.km - prev.km) : null;
+    const legTxt = leg != null ? `<div class="seg-km">+ ${km(leg)}${p.at && prev.at ? ' · ' + dur((p.at - prev.at) / 60000) : ''} depuis ${i === 1 ? 'le départ' : 'l’arrêt précédent'}</div>` : '';
+    const where = `${escM(p.name || '—')}${p.company ? ` <span class="muted">· ${escM(p.company)}</span>` : ''}`;
+    if (p.kind === 'départ') items.push(`<li><span class="pt"></span><b>${where}</b><div class="muted" style="font-size:12px">Départ ${hm(p.at)}</div></li>`);
+    else if (p.kind === 'arrêt') items.push(`<li><span class="pt"></span><b>${where}</b><div class="muted" style="font-size:12px">Arrêt desservi ${hm(p.at)} · ${km(p.km)} au compteur de la mission</div>${legTxt}</li>`);
+    else if (p.kind === 'arrivée') items.push(`<li class="end"><span class="pt"></span><b>${where}</b><div style="font-size:12px;color:var(--ok);font-weight:600">${isBus ? 'Terminus atteint' : 'Livré'} ${hm(p.at)} · ${km(p.km)} parcourus</div>${legTxt}</li>`);
+    else if (p.kind === 'abandon') {
+      const planned = !isBus && entry.planned ? ` sur ${km(entry.planned)} prévus` : '';
+      items.push(`<li class="cut"><span class="pt"></span><b style="color:var(--race)">${stat.label} ici</b><div class="muted" style="font-size:12px">${hm(p.at)} · après ${km(p.km)}${planned}${p.name ? `, en route vers ${escM(p.name)}` : ''}</div>${legTxt}${stat.note ? `<div class="muted" style="font-size:12px">${stat.note}</div>` : ''}</li>`);
+      if (isBus) {
+        const left = Number.isFinite(entry.stageCount) && Number.isFinite(entry.stageCurrent) ? entry.stageCount - entry.stageCurrent : 0;
+        if (p.name && p.name !== entry.to) items.push(`<li class="todo"><span class="pt"></span>${escM(p.name)}<div style="font-size:12px">Arrêt non desservi</div></li>`);
+        if (left > 2) items.push(`<li class="todo"><span class="pt"></span><span style="font-size:12px">+ ${left - 2} autre${left - 2 > 1 ? 's' : ''} arrêt${left - 2 > 1 ? 's' : ''} non desservi${left - 2 > 1 ? 's' : ''}</span></li>`);
+        if (entry.to) items.push(`<li class="todo"><span class="pt"></span>${escM(entry.to)}<div style="font-size:12px">Terminus non atteint</div></li>`);
+      } else if (entry.to) items.push(`<li class="todo"><span class="pt"></span>${escM(entry.to)}${entry.toCompany ? ` · ${escM(entry.toCompany)}` : ''}<div style="font-size:12px">Non livré</div></li>`);
+    }
+  });
+  return `<ol class="rt-tl">${items.join('')}</ol>`;
+}
+function renderRouteHistory(all){
+  const isBus = e => e.missionType === 'bus';
+  const truckJobs = all.filter(e => !isBus(e)), busJobs = all.filter(isBus);
+  document.getElementById('routeCountTruck').textContent = truckJobs.length;
+  document.getElementById('routeCountBus').textContent = busJobs.length;
+  const list = (routeTab === 'bus' ? busJobs : truckJobs).slice(0, 20);
+  const sig = routeTab + ':' + all.length + ':' + (all[0] ? all[0].ended : '');
+  if (sig === routeSig) return; routeSig = sig;
+  const box = document.getElementById('routeHistory');
+  if (!list.length) { box.innerHTML = `<span class="soft" style="display:block;padding:12px 0;border-top:1px solid var(--line)">${routeTab === 'bus' ? 'Aucun service en car terminé pour l’instant.' : 'Aucune livraison en camion terminée pour l’instant.'}</span>`; return; }
+  const dateTime = n => Number.isFinite(n) ? new Date(n).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}) : '—';
+  const liters = n => Number.isFinite(n) ? Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' L' : '—';
+  box.innerHTML = list.map(entry => {
     const unit = entry.game === 'ats' ? '$' : '€';
-    const tripMoney = value => Number.isFinite(value) ? fmt(Math.round(value)) + ' ' + unit : '—';
-    const expenseItems = Array.isArray(entry.expenseItems) ? entry.expenseItems : null;
+    const money = v => Number.isFinite(v) ? fmt(Math.round(v)) + ' ' + unit : '—';
+    const stat = routeStatus(entry);
     const expenses = Number.isFinite(entry.expenses) ? entry.expenses : null;
-    const revenue = Number.isFinite(entry.revenue) ? entry.revenue : null;
+    const revenue = Number.isFinite(entry.revenue) ? entry.revenue : (stat.cut ? 0 : null);
     const balance = expenses !== null && revenue !== null ? revenue - expenses : null;
-    const expenseDetails = expenseItems && expenseItems.length
-      ? expenseItems.slice().reverse().map(item =>
-        `<div class="between" style="gap:12px;padding:8px 0;border-top:1px solid var(--line)"><span>${escM(item.type || 'Frais')} · ${dateTime(item.at)}</span><b>${tripMoney(item.amount)}</b></div>`
-      ).join('')
-      : expenses === null
-        ? '<span class="soft">Le détail des frais n’est pas disponible pour cette mission.</span>'
-        : expenses > 0
-        ? '<span class="soft">Le total est enregistré, mais le détail de cette ancienne mission n’est pas disponible.</span>'
-        : '<span class="soft">Aucun frais reçu pour cette mission.</span>';
-    return `<details style="padding:12px 0;border-top:1px solid var(--line)">
-      <summary style="cursor:pointer">
-        <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between">
-          <div><b>${escM(entry.from || '—')} → ${escM(entry.to || '—')}</b><div class="muted" style="font-size:12px">${dateTime(entry.ended)} · ${escM(entry.status || '—')}</div></div>
-          <div class="soft" style="font-size:13px">${km(entry.distance)} · ${liters(entry.fuelAdded)} ajoutés · ${liters(entry.fuelUsed)} consommés</div>
-          <div class="soft" style="font-size:13px">Revenu ${tripMoney(revenue)} · Frais ${tripMoney(expenses)} · Solde hors carburant ${tripMoney(balance)}</div>
+    const bus = isBus(entry);
+    const title = bus && entry.lineNumber ? `<span class="muted">Ligne ${escM(entry.lineNumber)} · </span>` : '';
+    const sub = bus ? (entry.stageCount ? `${entry.stageCount} étape${entry.stageCount > 1 ? 's' : ''}` : 'Service car') : [entry.cargo || 'Marchandise', entry.mass ? (entry.mass/1000).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' t' : ''].filter(Boolean).join(' · ');
+    const items = Array.isArray(entry.expenseItems) ? entry.expenseItems : [];
+    const expenseRows = items.length
+      ? items.slice().reverse().map(it => `<div class="between" style="gap:12px;padding:6px 0;border-top:1px solid var(--line)"><span>${escM(it.type || 'Frais')} · ${dateTime(it.at)}</span><b>${money(it.amount)}</b></div>`).join('')
+      : `<div class="soft" style="padding:6px 0;border-top:1px solid var(--line)">${expenses ? 'Détail non disponible pour cette ancienne mission.' : 'Aucun frais reçu.'}</div>`;
+    const key = String(entry.ended);
+    return `<details class="rt-item" data-key="${key}"${routeOpen.has(key) ? ' open' : ''}>
+      <summary><span class="rt-arrow" aria-hidden="true">▸</span><div class="rt-row">
+        <span class="muted">${dateTime(entry.ended)}</span>
+        <span style="min-width:0"><b>${title}${escM(entry.from || '—')} → ${escM(entry.to || '—')}</b><div class="muted" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escM(sub)}</div></span>
+        <span class="rt-num">${km(entry.distance)}</span>
+        <span class="rt-badge" style="color:${stat.color}"><span class="d" style="background:${stat.color}"></span>${stat.label}</span>
+        <span class="rt-num">${money(expenses)}</span>
+        <span class="rt-num" style="font-weight:700">${money(revenue)}</span>
+        <span class="rt-num" style="color:${balance == null ? 'inherit' : balance < 0 ? 'var(--race)' : 'var(--ok)'}">${money(balance)}</span>
+      </div></summary>
+      <div class="rt-detail">
+        <div><div class="lbl" style="margin-bottom:10px">${bus ? 'PARCOURS ET ARRÊTS' : 'TRAJET'}</div>${routeTimeline(entry, stat)}</div>
+        <div>
+          <div class="lbl" style="margin-bottom:8px">BILAN</div>
+          <div class="rt-kv">
+            <div class="k"><span>Véhicule</span><span>${escM(entry.truck || '—')}</span></div>
+            <div class="k"><span>Km parcourus</span><span>${km(entry.distance)} <span class="muted">(${bus ? 'en service' : 'chargé'} ${km(entry.loaded)} · à vide ${km(entry.empty)})</span></span></div>
+            ${!bus && entry.planned ? `<div class="k"><span>Distance prévue</span><span>${km(entry.planned)}</span></div>` : ''}
+            <div class="k"><span>Carburant</span><span>${liters(entry.fuelUsed)} consommés · ${liters(entry.fuelAdded)} ajoutés</span></div>
+            ${Number.isFinite(entry.damage) ? `<div class="k"><span>Dégâts</span><span>${(entry.damage * 100).toFixed(1).replace('.', ',')} %</span></div>` : ''}
+            <div class="k"><span>Revenu</span><span>${money(revenue)}${stat.cut ? ' <span class="muted">(mission non terminée)</span>' : ''}</span></div>
+            <div class="k"><span>Dépenses</span><span>${money(expenses)}</span></div>
+            <div class="k"><span>Solde hors carburant</span><b>${money(balance)}</b></div>
+          </div>
+          <div class="muted" style="font-size:12px;margin:12px 0 2px">Dépenses du trajet${stat.cut ? ' (comptées même si abandonné)' : ''}</div>
+          ${expenseRows}
         </div>
-      </summary>
-      <div style="padding:10px 0 0 18px">
-        <div class="muted" style="font-size:12px;margin-bottom:4px">Détail des frais transmis par le jeu</div>
-        ${expenseDetails}
       </div>
     </details>`;
-  }).join('') : '<span class="soft">Aucune mission terminée enregistrée.</span>';
+  }).join('');
 }
+
 
 // Montants par jeu : € pour ETS2, $ pour ATS (jamais additionnés). Anciennes données : total en €.
 function moneyByGame(t, key){
@@ -2794,6 +2905,19 @@ if (HAS_APP){
   window.tel.pluginStatus().then(l => renderPlugin(l));
   const poll = async () => { try { const sn = await window.tel.snapshot(); renderLive(sn); if (state.view === 'hud') { document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
+  document.getElementById('routeTabs').addEventListener('click', e => {
+    const b = e.target.closest('button[data-rt]'); if (!b) return;
+    routeTab = b.dataset.rt; routeSig = '';
+    document.querySelectorAll('#routeTabs button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    document.getElementById('routeTabHint').textContent = routeTab === 'bus'
+      ? 'Car : un service peut avoir beaucoup d’arrêts. Clique sur un trajet pour voir chaque arrêt desservi et où le service s’est arrêté.'
+      : 'Camion : une livraison d’un point A à un point B. Clique sur un trajet pour voir où il s’est terminé.';
+    window.tel.snapshot().then(sn => renderRouteHistory(Array.isArray(sn.jobs) ? sn.jobs : []));
+  });
+  document.getElementById('routeHistory').addEventListener('toggle', e => {
+    const d = e.target; if (!d.classList || !d.classList.contains('rt-item')) return;
+    d.open ? routeOpen.add(d.dataset.key) : routeOpen.delete(d.dataset.key);
+  }, true);
   document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {
   renderPlugin([]);
