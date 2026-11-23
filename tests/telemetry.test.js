@@ -261,3 +261,34 @@ test('Force G : lissage, pic et à-coups comptés une fois par secousse pendant 
   telemetry.trackG({ speed: 0, paused: false }); // ancien plugin : pas d'accélération
   assert.equal(telemetry.g, null);
 });
+
+test('Télémétrie : la livraison affichée est celle du jeu, même si un ancien service car est resté', () => {
+  const telemetry = createTelemetry();
+  telemetry.lastPacket = Date.now();
+  telemetry.onState({
+    speed: 20, paused: false, odometer: 1000, x: 0, z: 0, fuel: 400, game: 'ets2', trailerConnected: true,
+    navDistance: 520000, navTime: 25000, gameTime: 3000, cargoDamage: 0.01,
+    truck: { id: 'vehicle.scania.s_2016', brand: 'Scania', name: 'S' },
+    busJob: { 'destination_stop.name': { 0: 'Farah' }, 'source_stop.name': { 0: 'Paris' }, 'bus.stages.count': 1 },
+    job: { 'source.city': 'Paris', 'source.company': 'Tradeaux', 'destination.city': 'Prague', 'destination.company': 'Posped',
+      cargo: 'Pommes', 'cargo.mass': 20000, income: 9800, 'planned_distance.km': 1040, 'delivery.time': 4200, 'is.cargo.loaded': true }
+  });
+  const sn = telemetry.snapshot();
+  assert.equal(sn.mission.type, 'truck');
+  assert.equal(sn.mission.from, 'Paris');
+  assert.equal(sn.mission.to, 'Prague');
+  assert.equal(sn.mission.toCompany, 'Posped');
+  assert.equal(Math.round(sn.mission.progress * 100), 50);   // 520 km restants sur 1 040 prévus
+  assert.equal(sn.mission.timeLeft, 1200);
+  assert.equal(sn.live.busJob, null);
+  assert.equal(sn.mission.tracked, true);
+  assert.equal(sn.job.to, 'Prague');
+});
+
+test('Télémétrie : sans livraison dans le jeu, rien n’est affiché', () => {
+  const { gameMission } = require('../src/telemetry');
+  assert.equal(gameMission({ job: null, busJob: null }), null);
+  const m = gameMission({ job: { 'destination.city': 'Prague' } });
+  assert.equal(m.from, null);
+  assert.equal(m.progress, null);
+});

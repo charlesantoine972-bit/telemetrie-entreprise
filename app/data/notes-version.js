@@ -2,8 +2,15 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 // Numéro affiché quand il diffère du numéro technique (la mise à jour automatique exige 3 chiffres x.y.z).
-window.VERSION_AFFICHEE = { '0.13.25': '0.13.24.1' };
+window.VERSION_AFFICHEE = { '0.13.25': '0.13.24.1', '0.13.26': '0.13.24.2' };
 window.NOTES_VERSION = [
+  { version: '0.13.24.2', date: '2026-11-23', titre: 'Télémétrie branchée sur la livraison du jeu', notes: [
+    ['corrige', 'Télémétrie : la mission affichée est celle que le jeu envoie en direct (villes, entreprises, marchandise, revenu). Un ancien service car resté en mémoire dans le jeu ne remplace plus ta livraison camion.'],
+    ['corrige', 'Avancement du trajet calculé avec les données du jeu (distance prévue et distance GPS restante) : juste même si l’appli a été ouverte en cours de livraison.'],
+    ['nouveau', 'Télémétrie camion : heure limite de livraison et temps restant, distance prévue, revenu de la mission.'],
+    ['corrige', 'Car : ligne, arrêts, prochain arrêt et terminus lus en direct dans le jeu ; les compteurs de l’appli ne s’affichent que si elle a suivi le service depuis son début.'],
+    ['corrige', 'Un camion pris pour un car par erreur est de nouveau reconnu comme camion dès qu’il tire une remorque. Le bandeau en jeu affiche aussi la livraison du jeu.'],
+  ]},
   { version: '0.13.24.1', date: '2026-11-23', titre: 'Télémétrie : camion et car, plein, dégâts et force G', notes: [
     ['nouveau', 'Télémétrie : onglets Camion et Car, avec bascule automatique sur le véhicule que tu conduis.'],
     ['nouveau', 'Télémétrie → Trajet : départ et arrivée du camion avec la progression ; pour le car, arrêts desservis, prochain arrêt, arrêts restants et terminus.'],

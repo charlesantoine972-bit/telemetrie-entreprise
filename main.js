@@ -411,6 +411,11 @@ if (!app.requestSingleInstanceLock()) {
       : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
     atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);
     // Car vu en service mais pas reconnu par son nom : on le mémorise pour les prochaines fois.
+    telemetry.on('notCoachVehicle', (id) => {
+      if (!(settings.coachVehicles || []).includes(id)) return;
+      settings.coachVehicles = settings.coachVehicles.filter(v => v !== id);
+      try { saveSettings(); } catch (e) { console.error('Réglages :', e.message); }
+    });
     telemetry.on('coachVehicle', (id) => {
       if ((settings.coachVehicles || []).includes(id)) return;
       settings.coachVehicles = [...(settings.coachVehicles || []), id].slice(-40);

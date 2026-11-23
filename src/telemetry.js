@@ -28,6 +28,42 @@ function busMission(attributes) {
   };
 }
 
+// Mission livrée par le jeu, telle quelle (aucun calcul de l’appli, aucun nom inventé).
+// Camion : configuration « job » du SDK. Car : configuration « bus_job ».
+const str = v => (typeof v === 'string' && v.trim()) ? v.trim() : null;
+const numv = v => (typeof v === 'number' && Number.isFinite(v)) ? v : null;
+function gameMission(s) {
+  if (!s) return null;
+  const navKm = numv(s.navDistance) != null && s.navDistance > 0 ? s.navDistance / 1000 : null;
+  const navMin = numv(s.navTime) != null && s.navTime > 0 ? s.navTime / 60 : null;
+  if (s.job) {
+    const j = s.job, planned = numv(j['planned_distance.km']);
+    const deadline = numv(j['delivery.time']);
+    const loaded = typeof j['is.cargo.loaded'] === 'boolean' ? j['is.cargo.loaded'] : !!s.trailerConnected;
+    return {
+      type: 'truck',
+      from: str(j['source.city']), fromCompany: str(j['source.company']),
+      to: str(j['destination.city']), toCompany: str(j['destination.company']),
+      cargo: str(j.cargo), mass: numv(j['cargo.mass']), units: numv(j['cargo.unit.count']),
+      income: numv(j.income), market: str(j['job.market']), special: j['special_job'] === true,
+      planned, remainingKm: navKm, remainingMin: navMin,
+      // Avancement d’après le jeu : distance prévue de la mission et distance GPS restante.
+      progress: planned > 0 && navKm != null ? Math.max(0, Math.min(1, 1 - navKm / planned)) : null,
+      deadline, timeLeft: deadline != null && numv(s.gameTime) != null ? deadline - s.gameTime : null,
+      loaded, cargoDamage: numv(s.cargoDamage)
+    };
+  }
+  const b = coach.parseBusJob(s.busJob);
+  if (!b) return null;
+  return {
+    type: 'bus',
+    from: b.from, to: b.to, nextStop: b.nextStop, lineNumber: b.lineNumber, lineName: b.lineName,
+    stageCount: b.stageCount, stageCurrent: b.stageCurrent, income: b.income || null,
+    planned: b.planned || null, remainingKm: navKm, remainingMin: navMin,
+    passengers: b.passengers, capacity: b.capacity
+  };
+}
+
 // Garde au plus `max` points (les coupures `null` sont conservées)
 function downsample(pts, max) {
   if (pts.length <= max) return pts;
@@ -127,6 +163,9 @@ class Telemetry extends EventEmitter {
 
   // ---------------------------------------------------------------- état reçu
   onState(s) {
+    // Une livraison camion en cours prime : le jeu peut laisser l’ancienne configuration bus_job
+    // remplie après un service car. On l’ignore alors, sinon l’ancien service s’afficherait à la place.
+    if (s.job && s.busJob) s.busJob = null;
     this.live = s;
     const kmh = s.speed * 3.6;
     const now = Date.now();
@@ -137,6 +176,9 @@ class Telemetry extends EventEmitter {
     if (vehicleId !== this.vehicleId) { this.vehicleId = vehicleId; this.boardedOdo = Number.isFinite(s.odometer) ? s.odometer : null; }
     if (s.busJob && s.truck && typeof s.truck.id === 'string' && s.truck.id && !(this.getSettings().coachVehicles || []).includes(s.truck.id)
         && !coach.isCoachVehicle(s.truck)) this.emit('coachVehicle', s.truck.id);
+    // Un véhicule mémorisé comme car par erreur (ancien bus_job resté rempli) qui tire une remorque est un camion.
+    if (s.job && s.trailerConnected && s.truck && typeof s.truck.id === 'string' && (this.getSettings().coachVehicles || []).includes(s.truck.id))
+      this.emit('notCoachVehicle', s.truck.id);
 
     // bus_job fournit les étapes d’autocar ; job fournit les livraisons camion.
     const activeMission = busMission(s.busJob) || (s.job ? {
@@ -373,6 +415,13 @@ class Telemetry extends EventEmitter {
       const overPct = dist > 0 ? (this.current.over / dist) * 100 : 0;
       job = { ...this.current, key: undefined, path: undefined, distance: dist, overPct, mode: overPct > th.pct ? 'course' : 'réel' };
     }
+    // Mission telle que le jeu la décrit en ce moment ; les compteurs de l’appli ne s’y ajoutent
+    // que si l’appli suit bien cette même mission.
+    const mission = gameMission(s);
+    if (mission && job) {
+      const key = (busMission(s.busJob) || {}).key || (s.job ? `${s.job['source.city']}|${s.job['destination.city']}|${s.job['cargo']}|${s.job['income']}` : null);
+      mission.tracked = !!(this.current && key && this.current.key === key);
+    }
     let coachInfo = null;
     if (s && vehicleType === 'car') {
       const scale = s.localScale > 0 ? s.localScale : null;
@@ -382,7 +431,7 @@ class Telemetry extends EventEmitter {
     }
     return {
       connected, socketError: this.socketError || null,
-      live: s, job, thresholds: th, vehicleType, coach: coachInfo, gforce: s ? this.g : null,
+      live: s, job, mission, thresholds: th, vehicleType, coach: coachInfo, gforce: s ? this.g : null,
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },
@@ -392,4 +441,4 @@ class Telemetry extends EventEmitter {
   }
 }
 
-module.exports = { Telemetry, PORT };
+module.exports = { Telemetry, PORT, gameMission };
