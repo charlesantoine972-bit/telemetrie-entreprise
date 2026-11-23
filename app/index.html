@@ -3110,7 +3110,7 @@ async function doInstall(version){
   if (!ok) { installing = false; document.getElementById('installing').classList.add('hidden'); }
 }
 function renderUpdatePanel(u, extra){
-  setText('updCurrent', 'v' + u.current);
+  setText('updCurrent', 'v' + shownVer(u.current));
   const btn = document.getElementById('btnUpdate');
   const MSG = { dev: 'Mode test : les mises à jour ne sont actives que dans l\'appli installée.', checking: 'Recherche en cours…', none: 'Tu as la dernière version.',
     available: 'La version v' + shownVer(u.version) + ' est disponible. Elle s\'installe sans assistant Windows, puis l\'appli redémarre toute seule.',
