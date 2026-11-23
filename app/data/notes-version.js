@@ -2,6 +2,11 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
+  { version: '0.13.23', date: '2026-11-23', titre: 'Illustrations et Coach Tools en cartes', notes: [
+    ['ameliore', 'Truck & Coach Tools : chaque carte a son illustration (réparation, carburant, plaque, garages, arrêts de bus…), aux couleurs de l’appli.'],
+    ['nouveau', 'Coach Tools passe en cartes, comme Truck Tools : expérience car, compétences, arrêts de bus, et pour tes cars : réparer, carburant, kilométrage, plaque.'],
+    ['ameliore', 'Les outils « Mon camion » ne touchent plus un car (et inversement) : chacun agit seulement sur le bon type de véhicule.'],
+  ]},
   { version: '0.13.22', date: '2026-11-20', titre: 'Barre flottante, dépenses totales et HUD', notes: [
     ['ameliore', 'Truck & Coach Tools : le choix du profil et de la sauvegarde est une barre flottante en bas de l’écran, commune à toutes les pages.'],
     ['nouveau', 'Ma carrière et Feuille de route : total de tout ce que tu as dépensé (péages, ferries, trains, amendes, annulations), même hors mission.'],
