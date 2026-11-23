@@ -14,7 +14,11 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
-  { version: '0.12.0.4', date: '2026-11-23', titre: 'Numéro de version dans les Options', notes: [
+  { version: '0.12.0.4', date: '2026-11-23', titre: 'Nouvelles Options et menu rétractable', notes: [
+    ['nouveau', 'Options rangées en catégories, comme les réglages d’un jeu : Général, Conduite, Jeu & plugin, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos.'],
+    ['nouveau', 'Menu latéral rétractable : le bouton à côté du logo ne garde que les icônes, avec le nom au survol. Une pastille montre si le HUD est activé et si une mise à jour attend. Aussi dans Options → Général.'],
+    ['nouveau', 'Bouton Options sur l’écran d’accueil.'],
+    ['ameliore', 'Truck Tools et Coach Tools s’appellent maintenant Truck & Coach Tools.'],
     ['corrige', 'Options → Mises à jour affiche le bon numéro de version (0.12.0.x) au lieu du numéro technique.'],
   ]},
   { version: '0.12.0.3', date: '2026-11-23', titre: 'Télémétrie camion et car, Feuille de route et Truck Tools complet', notes: [

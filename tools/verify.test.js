@@ -98,25 +98,31 @@ test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => 
   assert.doesNotMatch(html, /document\.getElementById\('profileChip'\)\.onclick\s*=/);
 });
 
-test('les seuils de kilométrage sont regroupés dans un sous-menu replié', () => {
+test('Options : catégories façon réglages de jeu, chaque réglage dans la bonne catégorie', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
-  const submenu = html.match(/<details class="acc">\s*<summary>Règle des km réels \/ course<\/summary>([\s\S]*?)<\/details>/);
-  assert.ok(submenu);
-  for (const id of ['sTruck', 'sCar', 'sPct']) assert.match(submenu[1], new RegExp(`id="${id}"`));
-  assert.ok(!/<details class="acc" open><summary>Règle des km réels \/ course/.test(html));
-  assert.ok(html.indexOf('id="btnSave"') > html.indexOf(submenu[0]));
+  const cat = (k) => { const m = html.match(new RegExp(`<div class="optcat" id="oc-${k}"[\\s\\S]*?(?=<div class="optcat" id="oc-|</section>)`)); assert.ok(m, k); return m[0]; };
+  const nav = html.match(/<nav class="optnav" id="optNav"[\s\S]*?<\/nav>/)[0];
+  for (const k of ['general', 'conduite', 'jeu', 'affichage', 'acces', 'integrations', 'tools', 'maj', 'aide']) {
+    assert.match(nav, new RegExp(`data-oc="${k}"`));
+    cat(k);
+  }
+  const conduite = cat('conduite');
+  for (const id of ['sPseudo', 'sType', 'sTruck', 'sCar', 'sPct', 'btnSave']) assert.match(conduite, new RegExp(`id="${id}"`));
+  assert.ok(conduite.indexOf('id="btnSave"') > conduite.indexOf('id="sPct"'));
+  for (const id of ['pluginList', 'btnInstall', 'btnChoose']) assert.match(cat('jeu'), new RegExp(`id="${id}"`));
+  for (const id of ['autoTelSwitch', 'navMiniSwitch', 'soonSwitch']) assert.match(cat('general'), new RegExp(`id="${id}"`));
+  assert.match(cat('tools'), /id="atelierSwitch"/);
+  assert.match(cat('maj'), /id="updCurrent"/);
+  assert.match(cat('aide'), /id="coachDiag"/);
 });
 
-test('Plugin du jeu et Profil chauffeur sont regroupés dans une sous-catégorie repliée', () => {
+test('menu latéral rétractable et bouton Options sur l’écran d’accueil', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
-  const start = html.indexOf('<details class="acc" id="gameProfileOptions"');
-  const end = html.indexOf('<h2 style="margin:0">Steam et Discord</h2>', start);
-  assert.ok(start >= 0 && end > start);
-  const group = html.slice(start, end);
-  assert.match(group, /<summary>Configuration du jeu et du chauffeur<\/summary>/);
-  assert.match(group, /<h2 style="margin:0">Plugin du jeu<\/h2>/);
-  assert.match(group, /<h2 style="margin:0">Profil chauffeur<\/h2>/);
-  assert.doesNotMatch(group.match(/^<details[^>]*>/)[0], /\bopen\b/);
+  assert.match(html, /id="navToggle"/);
+  assert.match(html, /\[data-nav="mini"\] \.side\{width:72px/);
+  assert.match(html, /id="hudNavDot"/);
+  assert.match(html.slice(html.indexOf('<div id="launcher">'), html.indexOf('<div class="lmain"')), /id="launcherOptions"/);
+  assert.doesNotMatch(html, />Truck Tools</);
 });
 
 test('les profils HUD camion et bus restent indépendants et migrent les anciens réglages', () => {
