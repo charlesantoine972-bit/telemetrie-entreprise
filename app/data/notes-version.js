@@ -14,7 +14,10 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
-  { version: '0.12.0.6', date: '2026-11-23', titre: 'Menu à la bonne largeur et appli qui s’adapte à la fenêtre', notes: [
+  { version: '0.12.0.6', date: '2026-11-23', titre: 'Repères de navigation, page HUD épurée, menu réglable', notes: [
+    ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],
+    ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active dans le menu. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
+    ['ameliore', 'Page HUD épurée : l’interrupteur et les aperçus des bandeaux camion et car. Tous les réglages (infos affichées, taille, position, opacité, profil actif, mode d’affichage du jeu) sont dans la nouvelle catégorie Options → HUD, avec son propre interrupteur.'],
     ['nouveau', 'Menu latéral réglable : attrape son bord droit et fais-le glisser pour l’élargir ou le rétrécir. Tout à gauche, il se réduit aux icônes. Double-clic sur le bord : taille normale. La largeur est mémorisée.'],
     ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : les pages passent sur une colonne quand la place manque, et le menu se réduit tout seul sur une petite fenêtre. La fenêtre peut maintenant être plus petite (720 px de large), par exemple à côté du jeu.'],
     ['corrige', 'Télémétrie : les onglets Camion et Car restent visibles même quand le jeu n’est pas lancé.'],
