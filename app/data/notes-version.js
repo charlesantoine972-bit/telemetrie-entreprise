@@ -2,17 +2,18 @@
 // À chaque nouvelle version : ajouter une entrée en haut de la liste.
 // type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
 window.NOTES_VERSION = [
-  { version: '0.13.25', date: '2026-11-23', titre: 'Télémétrie : plein, dégâts et ouverture automatique', notes: [
-    ['nouveau', 'Télémétrie → Plein : niveau du réservoir en % et en litres, litres à mettre pour faire le plein, autonomie, consommation moyenne et alerte réserve.'],
-    ['nouveau', 'Télémétrie → Dégâts : pourcentage de dégâts du camion ou du car (moteur, boîte, cabine, châssis, roues), de la remorque (châssis, roues, caisse) et de la marchandise.'],
-    ['nouveau', 'L’appli passe toute seule sur la Télémétrie dès que le jeu se connecte. Désactivable dans Options.'],
-    ['ameliore', 'Plugin du jeu 1.4.0 : envoie l’usure du véhicule et de la remorque et la consommation. Ferme le jeu avant d’ouvrir l’appli pour qu’elle installe le nouveau plugin.'],
-  ]},
-  { version: '0.13.24', date: '2026-11-23', titre: 'Feuille de route : camion et car séparés', notes: [
+  { version: '0.13.24', date: '2026-11-23', titre: 'Feuille de route et Télémétrie : camion et car séparés', notes: [
     ['nouveau', 'Feuille de route → Trajets récents : onglets Camion et Car, avec pour chaque trajet les km, le statut (livré ou abandonné), les dépenses, le revenu et le solde.'],
     ['nouveau', 'Clique sur un trajet pour voir son parcours : de A à B pour le camion, chaque arrêt desservi pour le car, et l’endroit où la mission a été abandonnée (km parcourus, arrêt ou destination visée).'],
     ['ameliore', 'Les dépenses d’un trajet abandonné (péages, amendes, pénalité d’annulation) restent comptées dans son bilan.'],
     ['corrige', 'Un trajet ouvert dans la Feuille de route ne se referme plus tout seul à chaque rafraîchissement.'],
+    ['nouveau', 'Télémétrie : onglets Camion et Car, avec bascule automatique sur le véhicule que tu conduis.'],
+    ['nouveau', 'Télémétrie → Trajet : départ et arrivée du camion avec la progression ; pour le car, arrêts desservis, prochain arrêt, arrêts restants et terminus.'],
+    ['nouveau', 'Télémétrie → Car : voyageurs à bord, satisfaction (quand le jeu l’envoie), force G en direct, pic et à-coups du service, avance ou retard sur l’horaire.'],
+    ['nouveau', 'Télémétrie → Plein : niveau du réservoir en % et en litres, litres pour faire le plein, autonomie, consommation moyenne et alerte réserve.'],
+    ['nouveau', 'Télémétrie → Dégâts : pourcentage de dégâts du camion ou du car (moteur, boîte, cabine, châssis, roues), de la remorque (châssis, roues, caisse) et de la marchandise.'],
+    ['nouveau', 'L’appli passe toute seule sur la Télémétrie dès que le jeu se connecte. Désactivable dans Options.'],
+    ['ameliore', 'Plugin du jeu 1.4.0 : envoie l’usure du véhicule et de la remorque, l’accélération (force G) et la consommation. Ferme le jeu avant d’ouvrir l’appli pour qu’elle installe le nouveau plugin.'],
   ]},
   { version: '0.13.23', date: '2026-11-23', titre: 'Illustrations et Coach Tools en cartes', notes: [
     ['ameliore', 'Truck & Coach Tools : chaque carte a son illustration (réparation, carburant, plaque, garages, arrêts de bus…), aux couleurs de l’appli.'],

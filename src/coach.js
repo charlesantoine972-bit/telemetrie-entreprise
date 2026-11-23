@@ -75,7 +75,9 @@ function parseBusJob(attrs) {
   const endTime = pick(attrs, ['delivery.time', /delivery\.time$/, /deadline/]);
   const schedule = num(stopTime, current) ?? num(stopTime) ?? num(endTime);
 
-  const used = [destName, srcName, countAttr, lineNo, lineName, onBoard, capacity, stopTime, endTime].filter(Boolean).map(f => f.name);
+  // Satisfaction / confort des voyageurs : nom non documenté, lu seulement si le jeu l’envoie.
+  const satisfaction = pick(attrs, [/satisf/, /comfort/, /happiness/, /(passengers?|bus)\.(rating|mood)$/, /^rating$/]);
+  const used = [destName, srcName, countAttr, lineNo, lineName, onBoard, capacity, stopTime, endTime, satisfaction].filter(Boolean).map(f => f.name);
   return {
     id: text(attrs.bus_job_id) || text(attrs['bus_job.id']) || null,
     market: text(attrs['bus_job.market']) || null,
@@ -86,6 +88,7 @@ function parseBusJob(attrs) {
     lineName: lineName ? text(String(at(lineName.value, 0) ?? '')) : null,
     passengers: num(onBoard, current) ?? num(onBoard),
     capacity: num(capacity),
+    satisfaction: num(satisfaction, current) ?? num(satisfaction),
     scheduleGameMinutes: schedule,
     income: num(pick(attrs, ['income'])) || 0,
     planned: num(pick(attrs, ['planned_distance.km'])) || 0,
@@ -126,6 +129,8 @@ function describeCoach(live, job, extra = {}) {
     scheduleMarginMinutes: valid(schedule) && eta != null ? Math.round(schedule - eta) : null,
     passengers: bus && bus.passengers,
     capacity: (bus && bus.capacity) ?? capacityTruck,
+    // 0..1 ou 0..100 selon le jeu : ramené en pourcentage
+    satisfactionPct: bus && valid(bus.satisfaction) ? Math.max(0, Math.min(100, bus.satisfaction <= 1 ? bus.satisfaction * 100 : bus.satisfaction)) : null,
     outsideTemp: temperature([live.busJob, live, truck], 'outside'),
     cabinTemp: temperature([live.busJob, live, truck], 'cabin'),
     fuelPct: valid(live.fuel) && fuelCap > 0 ? Math.max(0, Math.min(100, live.fuel / fuelCap * 100)) : null,

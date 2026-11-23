@@ -41,6 +41,7 @@ struct Telemetry {
     float fuel = 0;             // L
     float fuelRange = 0;        // km
     float cargoDamage = 0;      // 0..1
+    float ax = 0, ay = 0, az = 0; // accélération locale du véhicule (m/s², x droite, y haut, z arrière)
     float fuelAvg = 0;          // L/km (consommation moyenne)
     bool fuelWarning = false;   // voyant réserve
     // Usure / dégâts 0..1 (-1 = canal absent dans cette version du jeu)
@@ -141,9 +142,9 @@ static void sendState() {
     if (hasMandatoryBreak) { snprintf(scale, sizeof scale, "\"mandatoryBreak\":%d,", t.mandatoryBreak); msg += scale; }
     char wear[420];
     snprintf(wear, sizeof wear,
-        "\"fuelAvg\":%.5f,\"fuelWarning\":%s,\"wear\":{\"engine\":%.4f,\"transmission\":%.4f,\"cabin\":%.4f,\"chassis\":%.4f,\"wheels\":%.4f,"
+        "\"accel\":[%.3f,%.3f,%.3f],\"fuelAvg\":%.5f,\"fuelWarning\":%s,\"wear\":{\"engine\":%.4f,\"transmission\":%.4f,\"cabin\":%.4f,\"chassis\":%.4f,\"wheels\":%.4f,"
         "\"trailerChassis\":%.4f,\"trailerWheels\":%.4f,\"trailerBody\":%.4f},",
-        t.fuelAvg, t.fuelWarning ? "true" : "false",
+        t.ax, t.ay, t.az, t.fuelAvg, t.fuelWarning ? "true" : "false",
         t.wEngine, t.wTransmission, t.wCabin, t.wChassis, t.wWheels,
         t.wTrailerChassis, t.wTrailerWheels, t.wTrailerBody);
     msg += wear;
@@ -231,6 +232,11 @@ SCSAPI_VOID store_placement(const scs_string_t, const scs_u32_t, const scs_value
     t.heading = v->value_dplacement.orientation.heading;
 }
 
+SCSAPI_VOID store_accel(const scs_string_t, const scs_u32_t, const scs_value_t *const v, const scs_context_t) {
+    if (!v) { t.ax = t.ay = t.az = 0; return; }
+    t.ax = v->value_fvector.x; t.ay = v->value_fvector.y; t.az = v->value_fvector.z;
+}
+
 // ---------------------------------------------------------------- init / shutdown
 SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_init_params_t *const params) {
     if (version != SCS_TELEMETRY_VERSION_1_00 && version != SCS_TELEMETRY_VERSION_1_01) return SCS_RESULT_unsupported;
@@ -283,6 +289,8 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     if (ch("trailer.0.connected", N, SCS_VALUE_TYPE_bool, F, store_bool, &t.trailerConnected) != SCS_RESULT_ok)
         ch(SCS_TELEMETRY_TRAILER_CHANNEL_connected, N, SCS_VALUE_TYPE_bool, F, store_bool, &t.trailerConnected);
 
+    // Force G (confort des passagers en car) : accélération dans le repère du véhicule
+    ch(SCS_TELEMETRY_TRUCK_CHANNEL_local_linear_acceleration, N, SCS_VALUE_TYPE_fvector, F, store_accel, nullptr);
     // Plein : consommation moyenne et voyant réserve
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_fuel_average_consumption, N, SCS_VALUE_TYPE_float, F, store_float, &t.fuelAvg);
     ch(SCS_TELEMETRY_TRUCK_CHANNEL_fuel_warning, N, SCS_VALUE_TYPE_bool, F, store_bool, &t.fuelWarning);
