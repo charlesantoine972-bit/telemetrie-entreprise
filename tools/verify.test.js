@@ -151,27 +151,15 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
   assert.equal(truckUpdated.bus.opacity, 60);
 });
 
-test('bandeau camion sans styles inachevés, infos activables, tests camion/bus séparés', () => {
+test('page HUD épurée : activateur et aperçus ; réglages dans Options → HUD', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
-  const truckStart = html.indexOf('<h2>1. Affichage camion</h2>');
-  const truckEnd = html.indexOf('<h2>2. Affichage bus / car</h2>', truckStart);
-  assert.ok(truckStart >= 0 && truckEnd > truckStart);
-  const truckSection = html.slice(truckStart, truckEnd);
-  // Le bandeau camion n'a plus de styles : une seule présentation, avec des informations activables.
-  assert.doesNotMatch(truckSection, /data-hstyle=/);
-  assert.match(truckSection, /id="hudTruckBoxes"/);
-  assert.match(truckSection, /id="hudTestTruck">Tester le HUD camion/);
-
-  const start = html.indexOf('<h2>2. Affichage bus / car</h2>');
-  const end = html.indexOf('Chaque test anime uniquement l’aperçu correspondant', start);
-  assert.ok(start >= 0 && end > start);
-  const section = html.slice(start, end);
-  assert.match(section, /Taille bus \/ car/);
-  assert.match(section, /Opacité bus \/ car/);
-  assert.doesNotMatch(section, /Style bus \/ car|Position bus \/ car|Logo bus \/ car/);
-  assert.match(section, /id="hudTestBus">Tester le HUD bus/);
-  const controls = [...section.matchAll(/data-hud-profile="bus" data-hud-control="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(controls, ['scale', 'opacity']);
+  const hud = html.slice(html.indexOf('<section id="v-hud"'), html.indexOf('</section>', html.indexOf('<section id="v-hud"')));
+  for (const id of ['hudOn', 'hudTestTruck', 'hudTestBus', 'hudOpenOptions']) assert.match(hud, new RegExp(`id="${id}"`));
+  assert.match(hud, /data-hud-preview="truck"/); assert.match(hud, /data-hud-preview="bus"/);
+  assert.doesNotMatch(hud, /data-hud-control=|id="hudTruckBoxes"|data-hstyle=/);
+  const opt = html.match(/<div class="optcat" id="oc-hud"[\s\S]*?(?=<div class="optcat" id="oc-)/)[0];
+  for (const id of ['hudOnOpt', 'hudTruckBoxes']) assert.match(opt, new RegExp(`id="${id}"`));
+  for (const c of ['truck" data-hud-control="scale', 'truck" data-hud-control="position', 'truck" data-hud-control="opacity', 'bus" data-hud-control="scale', 'bus" data-hud-control="opacity']) assert.ok(opt.includes(`data-hud-profile="${c}"`), c);
 });
 
 test('le profil de carrière actif est indiqué dans les réglages HUD', () => {

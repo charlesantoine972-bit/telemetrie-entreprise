@@ -130,8 +130,8 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1280,
     height: 820,
-    minWidth: 1000,
-    minHeight: 680,
+    minWidth: 720,
+    minHeight: 560,
     backgroundColor: windowBackground(settings),
     title: 'Truck & Coach Hub',
     autoHideMenuBar: true,

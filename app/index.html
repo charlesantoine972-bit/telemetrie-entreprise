@@ -192,7 +192,7 @@
     font-family:"Segoe UI",Inter,system-ui,sans-serif;}
   button{font-family:inherit;cursor:pointer}
   .app{display:flex;height:100vh}
-  .side{width:264px;flex:none;background:var(--nav);border-right:1px solid var(--line);
+  .side{width:var(--navw,264px);position:relative;flex:none;background:var(--nav);border-right:1px solid var(--line);
     display:flex;flex-direction:column;padding:18px 12px 12px;gap:4px}
   .navscroll.hidden{display:none}
   .navscroll{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
@@ -373,6 +373,55 @@
   [data-nav="mini"] .sidetop{flex-direction:column;gap:6px}
   [data-nav="mini"] .brandfoot{justify-content:center;padding:8px 0 2px}
   [data-nav="mini"] .brandfoot .bf-txt,[data-nav="mini"] .brandfoot .bf-home{display:none}
+
+
+  /* ---------- Repères : barre de page collante, transitions, apparition au défilement ---------- */
+  .pagebar{position:sticky;top:calc(-1 * var(--mpy));z-index:20;margin:calc(-1 * var(--mpy)) calc(-1 * var(--mpx)) 12px;padding:12px var(--mpx) 8px;display:flex;align-items:center;gap:12px;min-height:22px;border-bottom:1px solid transparent;transition:background .25s,border-color .25s,box-shadow .25s,padding .25s}
+  .pb-crumb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden}
+  .pb-crumb i{font-style:normal;opacity:.55}
+  .pb-crumb .cur{color:var(--accent-strong)}
+  .pb-title{font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+  .main.scrolled .pagebar{background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);border-bottom-color:var(--line);box-shadow:0 8px 22px rgba(0,0,0,.2);padding-top:10px;padding-bottom:10px}
+  .main.scrolled .pb-title{opacity:1;transform:none}
+  .main.scrolled .pb-crumb .cur{color:var(--muted)}
+  main > section > .lbl:first-child{display:none}
+  .optnav{top:56px}
+  @keyframes pageIn{from{opacity:0;transform:translate3d(var(--dx,0px),8px,0)}to{opacity:1;transform:none}}
+  main > section.enter{animation:pageIn .28s cubic-bezier(.2,.7,.2,1) both}
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1);transition-delay:var(--rd,0s)}
+  .rv.in{opacity:1;transform:none}
+  .side .navbtn.on::before{content:"";position:absolute;left:-6px;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--accent);animation:navMark .25s ease both}
+  [data-nav="mini"] .side .navbtn.on::before{left:-10px}
+  @keyframes navMark{from{transform:scaleY(.2);opacity:0}to{transform:none;opacity:1}}
+  [data-motion="reduit"] .rv{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){ .rv{opacity:1;transform:none} }
+  /* ---------- Menu redimensionnable ---------- */
+  .side-resize{position:absolute;top:0;right:-4px;width:8px;height:100%;cursor:col-resize;z-index:5;touch-action:none}
+  .side-resize::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:transparent;transition:background .15s}
+  .side-resize:hover::after,.side-resize:focus-visible::after,html.resizing .side-resize::after{background:var(--accent)}
+  .side-resize:focus-visible{outline:none}
+  html.resizing,html.resizing *{cursor:col-resize!important;user-select:none!important}
+  html.resizing .side{transition:none}
+  /* ---------- Responsive : la page s'adapte à la place disponible (fenêtre et largeur du menu) ---------- */
+  .main{container-type:inline-size;container-name:page}
+  @container page (max-width:980px){
+    .grid2,.telgrid{grid-template-columns:minmax(0,1fr)!important}
+    .opts{grid-template-columns:minmax(0,1fr)}
+    .optnav{position:static;flex-direction:row;flex-wrap:wrap}
+    .optnav button{height:38px}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .fuelkv,.telright .fuelkv{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    #v-telemetrie[data-conn="off"] .telright{grid-template-columns:minmax(0,1fr)}
+  }
+  @container page (max-width:680px){
+    .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .stats{grid-template-columns:minmax(0,1fr)!important}
+    .setrow{flex-wrap:wrap}
+    .setrow .lab{min-width:0}
+    .teltabs{flex-direction:column;align-items:flex-start}
+    .speed{font-size:64px}
+  }
+  @media (max-width:900px){ .main{--mpy:20px;--mpx:18px} }
   /* ---------- Menu latéral rétractable ---------- */
   .sidetop{display:flex;align-items:flex-start;gap:6px}
   .sidetop #brandBtn{flex:1;min-width:0}
@@ -406,7 +455,7 @@
   [data-nav="mini"] [data-view="reglages"].hasupd::after{content:"";position:absolute;top:7px;left:30px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--nav)}
   .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
     border:1px dashed var(--line);border-radius:12px}
-  .main{flex:1;overflow:auto;padding:28px 32px}
+  .main{flex:1;overflow:auto;--mpy:28px;--mpx:32px;padding:var(--mpy) var(--mpx)}
   .demo{display:inline-block;font-size:12px;color:var(--bg);background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
   h1{margin:0 0 18px;font-size:30px}
   h2{margin:0 0 12px;font-size:18px}
@@ -422,7 +471,7 @@
   .fuelkv{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .telright .fuelkv{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .telcol{display:flex;flex-direction:column;gap:14px;min-width:0}
-  #v-telemetrie[data-conn="off"] .tel-live,#v-telemetrie[data-conn="off"] .teltabs{display:none!important}
+  #v-telemetrie[data-conn="off"] .tel-live{display:none!important}
   #v-telemetrie[data-conn="off"] .telgrid{grid-template-columns:minmax(0,1fr)}
   #v-telemetrie[data-conn="off"] .tel-left{display:none}
   #v-telemetrie[data-conn="off"] .telright{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -466,6 +515,11 @@
   .wrow.bad b{color:var(--race)}
   .big{font-size:34px;font-weight:700}
   .legend span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+  .hudbar{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .hudbar-l{display:flex;flex-direction:column;gap:3px;flex:1;min-width:220px} .hudbar-l b{font-size:16px} .hudbar-l span{font-size:13px}
+  .hudprev{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+  .hudcard{display:flex;flex-direction:column;gap:12px}
+  .hudcard>.panel{margin:0!important}
   .chips{display:flex;flex-wrap:wrap;gap:6px;max-width:520px}
   .chip-tg{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--soft);font-size:13px;font-weight:600}
   .chip-tg.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-strong)}
@@ -650,6 +704,7 @@
 <div class="app">
   <a class="skip" href="#mainContent">Aller au contenu</a>
   <aside class="side" aria-label="Menu">
+    <div class="side-resize" id="sideResize" role="separator" aria-orientation="vertical" aria-label="Largeur du menu (glisser, flèches gauche / droite, double-clic pour revenir à la taille normale)" tabindex="0" title="Glisse pour régler la largeur du menu · double-clic : taille normale"></div>
     <div class="sidetop"><button class="navtoggle" id="spaceBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="spacePanel" aria-label="Changer d’espace" title="Changer d’espace"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button class="navtoggle" id="navToggle" aria-label="Réduire le menu" title="Réduire le menu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9 4.5v15"/><path class="chev" d="M15.5 9.5 13 12l2.5 2.5"/></svg></button></div>
     <div class="spacetitle" id="spaceTitle" aria-live="polite">HUB</div>
     <nav class="navscroll" id="navHub" aria-label="Hub">
@@ -698,6 +753,7 @@
   </aside>
 
   <main class="main" id="mainContent" tabindex="0">
+    <div class="pagebar" id="pageBar" aria-hidden="true"><span class="pb-crumb" id="pbCrumb"></span><b class="pb-title" id="pbTitle"></b></div>
     <!-- TRUCK TOOLS / COACH TOOLS -->
     <section id="v-at-saves" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">TRUCK &amp; COACH TOOLS</div><h1>Sauvegardes de profils</h1>
@@ -794,20 +850,14 @@
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>HUD</h1>
-      <p class="soft" style="margin:-6px 0 18px;font-size:15px;max-width:820px;line-height:1.7">Les réglages du camion et du bus sont indépendants. Le bandeau car s’affiche tout seul dès que tu conduis un car, avec ou sans service ; sinon, le profil de carrière choisi dans Options → Conduite décide.</p>
-      <div class="panel" style="display:flex;flex-direction:column;gap:0;max-width:900px;margin-bottom:18px">
-        <div class="optrow" style="border-top:none;padding-top:0"><div><b>Activer l’overlay</b><div class="muted">Interrupteur commun aux affichages camion et bus. Également disponible dans le menu, à côté de « HUD ».</div></div>
-          <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Activer l’overlay"><span></span></label></div>
+      <div class="panel hudbar">
+        <div class="hudbar-l"><b>Afficher le bandeau en jeu</b><span class="muted" id="hudVehicleDetected" role="status">En attente du jeu</span></div>
+        <button class="btn" id="hudOpenOptions" style="display:flex;align-items:center;gap:8px"><svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg>Réglages du HUD</button>
+        <label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOn" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label>
       </div>
-      <div class="panel" style="max-width:900px;margin-bottom:18px">
-        <div class="optrow" style="border:0;padding:0">
-          <div><b>Profil actif en jeu</b><div class="muted">Le bandeau car s’affiche dès que tu montes dans un car (modèle reconnu, ou car déjà utilisé pour un service). Sinon, le profil choisi dans Options → Conduite reste actif et ne change pas à la sélection d’une mission camion.</div></div>
-          <span id="hudVehicleDetected" class="muted" role="status">En attente du jeu</span>
-        </div>
-      </div>
-      <div class="panel" style="max-width:900px;margin-bottom:18px">
-        <h2>1. Affichage camion</h2>
-        <p class="muted" style="font-size:13px">Même présentation que le bandeau car. Ligne du haut : mission, trajet, heure du jeu, rapport, vitesse, limitation, régulateur et mode. Ligne du bas : les infos choisies ci-dessous, lues en direct dans le jeu.</p>
+      <div class="hudprev">
+        <div class="panel hudcard">
+          <div class="between"><h2 style="margin:0">Bandeau camion</h2><button class="btn" id="hudTestTruck">Tester le HUD camion</button></div>
         <div class="panel" id="hudStageTruck" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:220px;padding:26px;margin:12px 0;overflow:hidden;background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
           <span id="hudStageTagTruck" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU CAMION</span>
           <div class="hud s-navigation" data-hud data-hud-preview="truck">
@@ -816,19 +866,9 @@
             <div class="rows"><div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div><div class="k" data-h="kKm">Mission<b data-h="km">–</b></div><div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div></div>
           </div>
         </div>
-        <div class="optrow"><div><b>Informations affichées</b><div class="muted">Comme sur Trucky : active seulement ce que tu veux voir. Les infos que le jeu n’envoie pas restent masquées.</div></div>
-          <div class="chips" id="hudTruckBoxes" role="group" aria-label="Informations du bandeau camion"></div></div>
-        <div class="optrow"><div><b>Taille camion</b><div class="muted">Réglage indépendant de la taille du bandeau.</div></div>
-          <div class="seg" data-hud-profile="truck" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div>
-        <div class="optrow"><div><b>Position camion</b><div class="muted">En haut au centre ou en bas de l’écran.</div></div>
-          <div class="seg" data-hud-profile="truck" data-hud-control="position"><button data-hpos="haut">En haut</button><button data-hpos="bas">En bas</button></div></div>
-        <div class="optrow"><div><b>Opacité camion</b><div class="muted">Règle la transparence du fond.</div></div>
-          <div class="seg" data-hud-profile="truck" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div>
-        <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" id="hudTestTruck">Tester le HUD camion</button></div>
-      </div>
-      <div class="panel" style="max-width:900px;margin-bottom:18px">
-        <h2>2. Affichage bus / car</h2>
-        <p class="muted" style="font-size:13px">Utilisé dès que tu conduis un car, ou quand le profil Car / bus est actif ; ses réglages n’affectent pas le camion.</p>
+        </div>
+        <div class="panel hudcard">
+          <div class="between"><h2 style="margin:0">Bandeau car</h2><button class="btn" id="hudTestBus">Tester le HUD bus</button></div>
         <div class="panel" id="hudStageBus" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:220px;padding:26px;margin:12px 0;overflow:hidden;background:linear-gradient(180deg,#5F7F99 0%,#9DB4C4 45%,#4E5A52 46%,#3C4640 100%)">
           <span id="hudStageTagBus" style="position:absolute;left:12px;top:10px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:999px">APERÇU BUS / CAR</span>
           <div class="hud s-navigation" data-hud data-hud-preview="bus">
@@ -837,16 +877,7 @@
             <div class="rows"><div class="k" data-h="kLeft">Reste<b data-h="left">–</b></div><div class="k" data-h="kKm">Mission<b data-h="km">–</b></div><div class="k" data-h="kToday">Aujourd'hui<b data-h="today">0 km</b></div></div>
           </div>
         </div>
-        <div class="optrow"><div><b>Taille bus / car</b><div class="muted">Réglage indépendant de la taille du bandeau.</div></div>
-          <div class="seg" data-hud-profile="bus" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div>
-        <div class="optrow"><div><b>Opacité bus / car</b><div class="muted">Règle la transparence du fond.</div></div>
-          <div class="seg" data-hud-profile="bus" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div>
-        <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" id="hudTestBus">Tester le HUD bus</button></div>
-      </div>
-      <p class="muted" style="font-size:13px;max-width:900px">Chaque test anime uniquement l’aperçu correspondant pendant 15 secondes.</p>
-      <div class="panel" style="margin-top:18px;max-width:900px;border-style:dashed">
-        <h2>Important : le mode d'affichage du jeu</h2>
-        <p class="soft" style="margin:0;font-size:14px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p>
+        </div>
       </div>
     </section>
     <section id="v-mk-item" class="hidden">
@@ -1122,7 +1153,7 @@
     <section id="v-reglages" class="hidden">
       <h1>Options</h1>
       <div class="opts">
-      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Affichage</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
+      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Affichage</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
       <div class="optbody">
       <div class="optcat" id="oc-general" role="tabpanel" aria-label="Général">
         <div class="ochead"><h2>Général</h2><p>Comment l’appli se comporte au quotidien.</p></div>
@@ -1154,6 +1185,26 @@
             <div class="row" style="flex-wrap:wrap"><button class="btn primary" id="btnInstall">Vérifier / réinstaller</button><button class="btn" id="btnChoose">Choisir le dossier du jeu…</button></div>
             <div class="muted" style="font-size:13px" id="pluginMsg"></div>
             <div class="muted" style="font-size:13px">Ferme le jeu avant de réinstaller : il bloque le plugin tant qu’il tourne.</div></div>
+        </div>
+      </div>
+      <div class="optcat" id="oc-hud" role="tabpanel" aria-label="HUD">
+        <div class="ochead"><h2>HUD</h2><p>Le bandeau affiché par-dessus le jeu. Les aperçus sont dans la page HUD du Hub.</p></div>
+        <div class="optgroup"><h3>Affichage</h3>
+          <div class="setrow"><div class="lab"><b>Afficher le bandeau en jeu</b><span>Interrupteur commun aux bandeaux camion et car. Aussi dans le menu, à côté de « HUD », et sur la page HUD.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="hudOnOpt" role="switch" aria-label="Afficher le bandeau en jeu"><span></span></label></div></div>
+          <div class="setrow"><div class="lab"><b>Profil actif en jeu</b><span>Le bandeau car s’affiche dès que tu montes dans un car (modèle reconnu, ou car déjà utilisé pour un service). Sinon, le profil choisi dans Options → Conduite reste actif et ne change pas à la sélection d’une mission camion.</span></div><div class="ctl"><span class="muted" id="hudVehicleDetectedOpt" role="status">En attente du jeu</span></div></div>
+        </div>
+        <div class="optgroup"><h3>Bandeau camion</h3>
+          <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Informations affichées</b><span>Comme sur Trucky : active seulement ce que tu veux voir. Les infos que le jeu n’envoie pas restent masquées.</span></div><div class="ctl"><div class="chips" id="hudTruckBoxes" role="group" aria-label="Informations du bandeau camion"></div></div></div>
+          <div class="setrow"><div class="lab"><b>Taille</b><span>Taille du bandeau camion.</span></div><div class="ctl"><div class="seg" data-hud-profile="truck" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div></div>
+          <div class="setrow"><div class="lab"><b>Position</b><span>En haut au centre ou en bas de l’écran.</span></div><div class="ctl"><div class="seg" data-hud-profile="truck" data-hud-control="position"><button data-hpos="haut">En haut</button><button data-hpos="bas">En bas</button></div></div></div>
+          <div class="setrow"><div class="lab"><b>Opacité</b><span>Transparence du fond.</span></div><div class="ctl"><div class="seg" data-hud-profile="truck" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div></div>
+        </div>
+        <div class="optgroup"><h3>Bandeau car</h3>
+          <div class="setrow"><div class="lab"><b>Taille</b><span>Taille du bandeau car, indépendante du camion.</span></div><div class="ctl"><div class="seg" data-hud-profile="bus" data-hud-control="scale"><button data-hscale="80">Petit</button><button data-hscale="100">Normal</button><button data-hscale="120">Grand</button></div></div></div>
+          <div class="setrow"><div class="lab"><b>Opacité</b><span>Transparence du fond.</span></div><div class="ctl"><div class="seg" data-hud-profile="bus" data-hud-control="opacity"><button data-hop="60">60 %</button><button data-hop="82">82 %</button><button data-hop="95">95 %</button></div></div></div>
+        </div>
+        <div class="optgroup"><h3>Mode d’affichage du jeu</h3>
+          <div class="setrow col"><p class="muted" style="margin:0;font-size:13px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p></div>
         </div>
       </div>
       <div class="optcat" id="oc-affichage" role="tabpanel" aria-label="Affichage">
@@ -1474,10 +1525,13 @@ document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(
 document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => go(b.dataset.view));
 
 /* ---------- Menu latéral rétractable (icônes seules) ---------- */
+const NAV_MIN = 200, NAV_MAX = 380, NAV_DEF = 264, NAV_SNAP = 150;
+let navWidth = Math.min(NAV_MAX, Math.max(NAV_MIN, Number(store.get('navWidth', NAV_DEF)) || NAV_DEF));
+let navAuto = false; // menu réduit automatiquement parce que la fenêtre est étroite
 function applyNavMini(mini, save){
   const root = document.documentElement;
   if (mini) root.dataset.nav = 'mini'; else delete root.dataset.nav;
-  root.style.setProperty('--navw', mini ? '72px' : '264px');
+  root.style.setProperty('--navw', mini ? '72px' : navWidth + 'px');
   const t = document.getElementById('navToggle'), lab = mini ? 'Agrandir le menu' : 'Réduire le menu';
   t.setAttribute('aria-label', lab); t.title = lab; t.setAttribute('aria-expanded', mini ? 'false' : 'true');
   const sw = document.getElementById('navMiniSwitch'); if (sw) sw.checked = !!mini;
@@ -1488,9 +1542,44 @@ function applyNavMini(mini, save){
   });
   if (save) store.set('navMini', !!mini);
 }
-document.getElementById('navToggle').onclick = () => applyNavMini(document.documentElement.dataset.nav !== 'mini', true);
+document.getElementById('navToggle').onclick = () => { navAuto = false; applyNavMini(document.documentElement.dataset.nav !== 'mini', true); };
 document.getElementById('navMiniSwitch').onchange = (e) => applyNavMini(e.target.checked, true);
 applyNavMini(store.get('navMini', false));
+function setNavWidth(w, save){
+  navWidth = Math.round(Math.min(NAV_MAX, Math.max(NAV_MIN, w)));
+  if (document.documentElement.dataset.nav !== 'mini') document.documentElement.style.setProperty('--navw', navWidth + 'px');
+  const h = document.getElementById('sideResize'); h.setAttribute('aria-valuenow', navWidth); h.setAttribute('aria-valuemin', NAV_MIN); h.setAttribute('aria-valuemax', NAV_MAX);
+  if (save) store.set('navWidth', navWidth);
+}
+setNavWidth(navWidth);
+(() => {
+  const h = document.getElementById('sideResize');
+  h.addEventListener('pointerdown', e => {
+    e.preventDefault(); h.setPointerCapture(e.pointerId); document.documentElement.classList.add('resizing');
+    const move = ev => {
+      const x = ev.clientX;
+      if (x < NAV_SNAP) { if (document.documentElement.dataset.nav !== 'mini') applyNavMini(true, true); }
+      else { if (document.documentElement.dataset.nav === 'mini') applyNavMini(false, true); setNavWidth(x); }
+    };
+    const up = () => { h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up); document.documentElement.classList.remove('resizing'); store.set('navWidth', navWidth); };
+    h.addEventListener('pointermove', move); h.addEventListener('pointerup', up);
+  });
+  h.addEventListener('dblclick', () => { applyNavMini(false, true); setNavWidth(NAV_DEF, true); });
+  h.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const mini = document.documentElement.dataset.nav === 'mini';
+    if (e.key === 'ArrowLeft') { if (!mini && navWidth <= NAV_MIN) applyNavMini(true, true); else if (!mini) setNavWidth(navWidth - 16, true); }
+    else { if (mini) applyNavMini(false, true); else setNavWidth(navWidth + 16, true); }
+  });
+})();
+// Petite fenêtre : menu réduit tout seul, puis remis comme avant quand la place revient
+function autoNav(){
+  const narrow = window.innerWidth < 900;
+  if (narrow && document.documentElement.dataset.nav !== 'mini') { navAuto = true; applyNavMini(true); }
+  else if (!narrow && navAuto) { navAuto = false; applyNavMini(store.get('navMini', false)); }
+}
+window.addEventListener('resize', autoNav); autoNav();
 function syncHudDot(){ const on = document.getElementById('hudOnNav').checked, d = document.getElementById('hudNavDot'); d.classList.toggle('on', on); d.closest('.navbtn').dataset.state = on ? 'HUD activé' : 'HUD désactivé'; }
 
 /* ---------- Options : catégories ---------- */
@@ -1500,6 +1589,8 @@ function openOptCat(cat){
   optCat = cat; store.set('optCat', cat);
   document.querySelectorAll('#optNav [data-oc]').forEach(b => { const on = b.dataset.oc === cat; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1; });
   document.querySelectorAll('.optcat').forEach(c => c.classList.toggle('on', c.id === 'oc-' + cat));
+  if (cat === 'hud') setTimeout(() => renderHudPage(), 0); // hudSt est prêt après le chargement
+  if (typeof state !== 'undefined' && state.view === 'reglages') setTimeout(() => { pageMarks('reglages'); }, 0);
 }
 document.getElementById('optNav').addEventListener('click', e => { const b = e.target.closest('[data-oc]'); if (b) { openOptCat(b.dataset.oc); document.querySelector('main').scrollTop = 0; } });
 document.getElementById('optNav').addEventListener('keydown', e => {
@@ -1510,6 +1601,7 @@ document.getElementById('optNav').addEventListener('keydown', e => {
 });
 openOptCat(optCat);
 document.getElementById('waitOpenPlugin').onclick = () => { openOptCat('jeu'); go('reglages'); };
+document.getElementById('hudOpenOptions').onclick = () => { openOptCat('hud'); go('reglages'); };
 document.getElementById('launcherOptions').onclick = () => { showLauncher(false); go('reglages'); };
 function go(view){
   state.view = view;
@@ -1546,10 +1638,60 @@ function go(view){
   if (AT_PAGES.includes(view)) atEnsure().then(() => renderAtPage(view));
   if (view === 'at-jeu') renderConsole();
   document.querySelector('main').scrollTop = 0;
+  pageMarks(view);
   document.querySelectorAll('.navbtn').forEach(b => { if (b.classList.contains('on')) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   const h = document.querySelector('main > section:not(.hidden) h1'); const title = h ? h.textContent.trim() : '';
   if (title) { document.title = title + ' · Truck & Coach Hub'; announce('Page ' + title); }
 }
+
+
+/* ---------- Repères de navigation ---------- */
+const reduceMotion = () => document.documentElement.dataset.motion === 'reduit' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SIDE_NAMES = { hub: 'Hub', market: 'Marketplace', atelier: 'Truck & Coach Tools' };
+let navIndex = -1;
+const revealObs = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); }
+}, { root: document.getElementById('mainContent'), rootMargin: '0px 0px -40px 0px' }) : null;
+function reveal(root){
+  if (!root || !revealObs || reduceMotion()) return;
+  const items = [...root.querySelectorAll('.panel, .optgroup, .stat, .lcard, .tcard')].filter(el => !el.parentElement.closest('.panel, .optgroup, .tcard') && el.offsetParent !== null);
+  const fold = document.getElementById('mainContent').clientHeight;
+  let k = 0;
+  for (const el of items) {
+    el.classList.remove('in'); el.classList.add('rv');
+    el.style.setProperty('--rd', el.getBoundingClientRect().top < fold ? Math.min(k++, 6) * 0.045 + 's' : '0s');
+    revealObs.observe(el);
+  }
+}
+function pageMarks(view){
+  const main = document.getElementById('mainContent');
+  const sec = main.querySelector(':scope > section:not(.hidden)');
+  // Fil d'Ariane : espace › catégorie (le nom de la page apparaît en haut quand on fait défiler)
+  const parts = [];
+  if (view === 'reglages') parts.push('Options');
+  else {
+    parts.push(SIDE_NAMES[state.side] || '');
+    const btn = document.querySelector(`.side .navscroll:not(.hidden) .navbtn.on`);
+    const grp = btn && btn.closest('.navgroup');
+    const cat = grp && grp.previousElementSibling && grp.previousElementSibling.matches('.navcat') ? grp.previousElementSibling.querySelector('span').textContent : '';
+    if (cat) parts.push(cat);
+  }
+  const clean = parts.filter(Boolean);
+  document.getElementById('pbCrumb').innerHTML = clean.map((p, i) => `<span class="${i === clean.length - 1 ? 'cur' : ''}">${escM(p)}</span>`).join('<i>›</i>');
+  const h = sec && sec.querySelector('h1');
+  const optCatName = view === 'reglages' ? ((document.querySelector('#optNav [data-oc].on span') || {}).textContent || '') : '';
+  setText('pbTitle', optCatName || (h ? h.textContent.replace(/\s+/g, ' ').trim().replace(/ (En attente du jeu|Euro Truck Simulator 2.*|American Truck Simulator.*)$/, '') : ''));
+  if (!sec) return;
+  // Transition : la page arrive du côté où se trouve son entrée dans le menu
+  const all = [...document.querySelectorAll('.side .navbtn[data-view]')];
+  const idx = all.findIndex(b => b.classList.contains('on'));
+  sec.style.setProperty('--dx', reduceMotion() || navIndex < 0 || idx === navIndex ? '0px' : idx > navIndex ? '18px' : '-18px');
+  navIndex = idx;
+  if (!reduceMotion()) { sec.classList.remove('enter'); void sec.offsetWidth; sec.classList.add('enter'); }
+  main.classList.remove('scrolled');
+  reveal(sec);
+}
+document.getElementById('mainContent').addEventListener('scroll', e => e.currentTarget.classList.toggle('scrolled', e.currentTarget.scrollTop > 48), { passive: true });
 
 /* ---------- Ma VTC : onglets Missions / Convois / Défis & duels ---------- */
 const VTC_TABS = [['missions', 'Missions'], ['convois', 'Convois'], ['defis', 'Défis & duels'], ['classement', 'Classement'], ['carte', 'Chauffeurs live']];
@@ -1847,7 +1989,7 @@ document.getElementById('coachDiagCopy').onclick = async () => {
   setTimeout(() => setText('coachDiagMsg', ''), 2500);
 };
 function renderHudPage(){
-  document.getElementById('hudOn').checked = hudSt.on; document.getElementById('hudOnNav').checked = hudSt.on; syncHudDot();
+  ['hudOn', 'hudOnNav', 'hudOnOpt'].forEach(id => { document.getElementById(id).checked = hudSt.on; }); syncHudDot();
   for (const profile of ['truck', 'bus']) {
     const options = hudSt[profile];
     const style = HUD_SELECTABLE_STYLES.includes(options.style) ? options.style : 'bandeau';
@@ -1871,7 +2013,7 @@ function hudSave(patch, profile){
   if (window.tel) window.tel.setSettings(Object.assign({}, patch.on != null ? { modules: { hud: hudSt.on } } : {},
     profile && patch.opt ? { hud: { [profile]: hudSt[profile] } } : {}));
 }
-['hudOn', 'hudOnNav'].forEach(id => document.getElementById(id).onchange = (e) => { document.getElementById('hudOnNav').checked = e.target.checked; syncHudDot(); hudSave({ on: e.target.checked }); });
+['hudOn', 'hudOnNav', 'hudOnOpt'].forEach(id => document.getElementById(id).onchange = (e) => { ['hudOn', 'hudOnNav', 'hudOnOpt'].forEach(o => { document.getElementById(o).checked = e.target.checked; }); syncHudDot(); hudSave({ on: e.target.checked }); });
 document.querySelectorAll('[data-hud-profile] [data-hstyle]').forEach(b => b.onclick = () => hudSave({ opt: { style: b.dataset.hstyle } }, b.closest('[data-hud-profile]').dataset.hudProfile));
 document.querySelectorAll('[data-hud-profile] [data-hpos]').forEach(b => b.onclick = () => hudSave({ opt: { position: b.dataset.hpos } }, b.closest('[data-hud-profile]').dataset.hudProfile));
 document.querySelectorAll('[data-hud-profile] [data-hlogo]').forEach(b => b.onclick = () => hudSave({ opt: { logo: b.dataset.hlogo === '1' } }, b.closest('[data-hud-profile]').dataset.hudProfile));
@@ -3386,7 +3528,7 @@ if (HAS_APP){
     renderPlugin(r.status, r.ok ? 'Dossier ajouté.' : (r.error || ''));
   };
   window.tel.pluginStatus().then(l => renderPlugin(l));
-  const poll = async () => { try { const sn = await window.tel.snapshot(); autoOpenTelemetry(!!sn.connected); renderLive(sn); if (state.view === 'hud') { document.getElementById('hudVehicleDetected').textContent = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
+  const poll = async () => { try { const sn = await window.tel.snapshot(); autoOpenTelemetry(!!sn.connected); renderLive(sn); if (state.view === 'hud' || state.view === 'reglages') { const t = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; setText('hudVehicleDetected', t); setText('hudVehicleDetectedOpt', t); } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
   document.getElementById('routeTabs').addEventListener('click', e => {
     const b = e.target.closest('button[data-rt]'); if (!b) return;
