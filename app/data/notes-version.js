@@ -14,6 +14,9 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.7', date: '2026-11-23', titre: 'Options dans le menu latéral', notes: [
+    ['ameliore', 'Dans Options, le menu latéral devient le menu des Options : Retour, puis Général, Conduite, Jeu & plugin, HUD, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos. La page n’affiche plus que les réglages de la catégorie choisie. Le ☰ et la réduction du menu restent disponibles.'],
+  ]},
   { version: '0.12.0.6', date: '2026-11-23', titre: 'Repères de navigation, page HUD épurée, menu réglable', notes: [
     ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],
     ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active dans le menu. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
