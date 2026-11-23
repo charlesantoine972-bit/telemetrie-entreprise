@@ -2609,7 +2609,7 @@ function tickTablet(){
 
 
 // Numéro de version montré à l'utilisateur (ex. 0.13.25 technique → 0.13.24.1 affiché)
-function shownVer(x){ return x && window.VERSION_AFFICHEE && window.VERSION_AFFICHEE[x] || x; }
+function shownVer(x){ return x && typeof window.versionAffichee === 'function' ? window.versionAffichee(x) : x; }
 /* =================== DONNÉES RÉELLES (plugin) =================== */
 const HAS_APP = !!window.tel;
 const km = n => (n == null ? '–' : (n < 10 ? n.toFixed(1).replace('.', ',') : fmt(Math.round(n))) + ' km');
@@ -3113,7 +3113,7 @@ function renderUpdatePanel(u, extra){
   setText('updCurrent', 'v' + u.current);
   const btn = document.getElementById('btnUpdate');
   const MSG = { dev: 'Mode test : les mises à jour ne sont actives que dans l\'appli installée.', checking: 'Recherche en cours…', none: 'Tu as la dernière version.',
-    available: 'La version v' + shownVer(u.version) + ' est disponible. Elle s\'installe sans assistant Windows, puis l\'appli se ferme sans redémarrer.',
+    available: 'La version v' + shownVer(u.version) + ' est disponible. Elle s\'installe sans assistant Windows, puis l\'appli redémarre toute seule.',
     downloading: 'Téléchargement de la v' + shownVer(u.version) + ' : ' + (u.progress || 0) + ' %', ready: 'La version v' + shownVer(u.version) + ' est prête à être installée.',
     error: 'Impossible de vérifier (pas de connexion ?).', failed: 'Le téléchargement s\'est interrompu. Réessaie.', idle: 'L\'appli vérifie toute seule au démarrage puis toutes les 30 minutes.' };
   setText('updMsg', extra || MSG[u.state] || MSG.idle);
