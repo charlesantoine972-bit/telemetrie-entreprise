@@ -243,3 +243,21 @@ test('Telemetry records a truck delivery from A to B', () => {
   assert.equal(job.abandoned, false);
   assert.deepEqual(job.stops.map(s => [s.kind, s.name, s.company]), [['départ', 'Lille', 'Tradeaux'], ['arrivée', 'Lyon', 'Fle']]);
 });
+
+test('Force G : lissage, pic et à-coups comptés une fois par secousse pendant un service', () => {
+  const telemetry = createTelemetry();
+  telemetry.current = { key: 'bus|x', missionType: 'bus', loaded: 0, empty: 0 };
+  const tick = (ax, az, speed = 20) => telemetry.trackG({ accel: [ax, 0, az], speed, paused: false });
+  for (let i = 0; i < 12; i++) tick(4.9, 0);      // virage franc (~0,5 G)
+  assert.ok(telemetry.g.lat > 0.45 && telemetry.g.lat <= 0.5);
+  for (let i = 0; i < 12; i++) tick(0, 0);        // retour au calme
+  for (let i = 0; i < 12; i++) tick(0, 3.9);      // freinage (~0,4 G, z vers l'arrière)
+  assert.ok(telemetry.g.lon < -0.35);
+  assert.equal(telemetry.current.jolts, 2);
+  assert.ok(telemetry.current.gMax >= 0.45);
+  for (let i = 0; i < 12; i++) tick(0, 0, 0);
+  for (let i = 0; i < 12; i++) tick(6, 0, 0);     // à l'arrêt : ignoré
+  assert.equal(telemetry.current.jolts, 2);
+  telemetry.trackG({ speed: 0, paused: false }); // ancien plugin : pas d'accélération
+  assert.equal(telemetry.g, null);
+});

@@ -11,6 +11,8 @@ const MAX_TICK_KM = 0.5; // au-delà : saut (ferry, train, changement de camion)
 // Carte : un point de tracé tous les TRAIL_STEP mètres ; au-delà de TRAIL_JUMP, on coupe le trait (ferry, train…)
 const TRAIL_STEP = 150, JOB_STEP = 400, TRAIL_JUMP = 3000, TRAIL_MAX = 20000, JOB_PATH_MAX = 300;
 const BUS_JOB_COMPLETION_GRACE_MS = 60000; // bus_job.completed peut arriver après l’arrivée au dernier arrêt
+// Force G : lissage (le plugin envoie ~10 valeurs/s) et seuils d’à-coup ressentis par les passagers
+const G = 9.81, G_SMOOTH = 0.35, JOLT_ON = 0.3, JOLT_OFF = 0.18;
 const gameKey = (g) => g === 'ats' ? 'ats' : 'ets2';
 
 
@@ -52,6 +54,8 @@ class Telemetry extends EventEmitter {
     this.getSettings = getSettings;
     this.data = this.load();
     this.live = null;         // dernier état reçu du plugin
+    this.g = null;            // force G lissée { lat, lon, total }
+    this.joltArmed = true;
     this.lastPacket = 0;
     this.lastOdo = null;
     this.lastFuel = null;
@@ -197,6 +201,7 @@ class Telemetry extends EventEmitter {
       }
     }
 
+    this.trackG(s);
     this.recordTrail(s);
 
     // Les niveaux reçus du jeu donnent le volume, mais pas le prix du plein.
@@ -296,6 +301,23 @@ class Telemetry extends EventEmitter {
     }
   }
 
+  // Force G horizontale (virages, freinages, accélérations) : valeur lissée, pic et à-coups par mission
+  trackG(s) {
+    const a = Array.isArray(s.accel) && s.accel.length === 3 && s.accel.every(Number.isFinite) ? s.accel : null;
+    if (!a) { this.g = null; return; }
+    if (s.paused) return;
+    const lat = a[0] / G, lon = -a[2] / G; // z pointe vers l’arrière du véhicule
+    const p = this.g || { lat, lon };
+    const sLat = p.lat + (lat - p.lat) * G_SMOOTH, sLon = p.lon + (lon - p.lon) * G_SMOOTH;
+    const total = Math.hypot(sLat, sLon);
+    this.g = { lat: sLat, lon: sLon, total };
+    const j = this.current;
+    if (!j || Math.abs(s.speed) < 0.5) return; // à l’arrêt : secousses de stationnement ignorées
+    j.gMax = Math.max(j.gMax || 0, total);
+    if (this.joltArmed && total >= JOLT_ON) { j.jolts = (j.jolts || 0) + 1; this.joltArmed = false; this.dirty = true; }
+    else if (!this.joltArmed && total < JOLT_OFF) this.joltArmed = true;
+  }
+
   // Point de passage dans la feuille de route de la mission en cours
   markStop(kind, name, company) {
     const j = this.current;
@@ -360,7 +382,7 @@ class Telemetry extends EventEmitter {
     }
     return {
       connected, socketError: this.socketError || null,
-      live: s, job, thresholds: th, vehicleType, coach: coachInfo,
+      live: s, job, thresholds: th, vehicleType, coach: coachInfo, gforce: s ? this.g : null,
       session: this.session,
       totals: this.data.totals,
       today: this.data.days[today()] || { loaded: 0, empty: 0 },
