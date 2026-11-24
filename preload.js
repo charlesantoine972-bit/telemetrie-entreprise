@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('tel', {
   getSettings: () => ipcRenderer.invoke('settings:get'),
   setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
   setGame: (game) => ipcRenderer.invoke('settings:game', game),
+  setGameKey: (game, key, value) => ipcRenderer.invoke('settings:gameKey', game, key, value),
   copyGameSettings: (from, to) => ipcRenderer.invoke('settings:copyGame', from, to),
   onSettingsChanged: (cb) => ipcRenderer.on('settings:changed', (_e, s) => cb(s)),
   steamNews: (game) => ipcRenderer.invoke('news:steam', game),

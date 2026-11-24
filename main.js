@@ -247,6 +247,7 @@ function setupIpc() {
   ipcMain.handle('settings:get', () => settings);
   // Réglages par jeu (bêta) : charger ceux d'ETS2 ou d'ATS, copier d'un jeu à l'autre
   ipcMain.handle('settings:game', (_e, game) => { if (gameSettings.switchGame(settings, game)) { saveSettings(); syncHud(); } return settings; });
+  ipcMain.handle('settings:gameKey', (_e, game, key, value) => { if (gameSettings.setGameKey(settings, game, key, value)) { saveSettings(); syncHud(); } return settings; });
   ipcMain.handle('settings:copyGame', (_e, from, to) => { if (gameSettings.copyGameSettings(settings, from, to)) { saveSettings(); syncHud(); } return settings; });
   // Page News : annonces officielles Steam d'ETS2 et d'ATS
   ipcMain.handle('news:steam', async (_e, game) => {
