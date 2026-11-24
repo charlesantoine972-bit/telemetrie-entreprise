@@ -11,6 +11,7 @@ module.exports = {
     shortcutName: 'Truck & Coach Hub (Bêta)',
     artifactName: 'Truck-and-Coach-Hub-Beta-Setup-${version}.exe'
   },
-  publish: base.publish.map(p => ({ ...p, releaseType: 'prerelease' })),
+  // canal « beta » : fichier beta.yml, lu seulement par la bêta (la version normale lit latest.yml)
+  publish: base.publish.map(p => ({ ...p, releaseType: 'prerelease', channel: 'beta' })),
   releaseInfo: { ...(base.releaseInfo || {}), releaseName: (base.releaseInfo && base.releaseInfo.releaseName ? base.releaseInfo.releaseName : 'Bêta') }
 };
