@@ -365,10 +365,14 @@
   html.in-space{--railw:0px}
   html.in-space .rail{display:none}
   .gamechip{display:none!important}
+  /* Settings ouvert depuis la barre : uniquement le menu des paramètres (pas de ☰, pas de pied de menu) */
+  html[data-rail="settings"] .sidetop,html[data-rail="settings"] .brandfoot,html[data-rail="settings"] .updbanner,html[data-rail="settings"] .side-resize{display:none!important}
+  html[data-rail="settings"] .spacetitle{padding-top:8px}
   /* ---------- Page Game ---------- */
   .lhead{border-bottom:0;padding:22px 32px 6px}
   .appname{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .appname b{font-size:22px;font-weight:800}
+  .betabadge{align-self:center;background:var(--accent);color:var(--on-accent);font-size:12px;font-weight:800;letter-spacing:.06em;border-radius:6px;padding:3px 8px}
   .lmain.games{justify-content:flex-start;align-items:stretch;gap:20px;padding:14px 32px 18px}
   .gamegrid{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;min-height:min(560px,62vh)}
   .gamecard{all:unset;cursor:pointer;position:relative;overflow:hidden;border-radius:24px;border:2px solid var(--line);min-height:340px;display:flex;align-items:flex-end;color:#fff;isolation:isolate;transition:border-color .2s,transform .2s,box-shadow .2s}
@@ -1622,7 +1626,7 @@ function setSide(side){
   document.getElementById('navAtelier').classList.toggle('hidden', inOpt || side !== 'atelier');
   document.getElementById('navOptions').classList.toggle('hidden', !inOpt);
   document.getElementById('navOptBtn').classList.toggle('hidden', inOpt);
-  setText('spaceTitle', inOpt ? 'OPTIONS' : ({ hub: 'HUB', market: 'MARKETPLACE', atelier: 'TRUCK & COACH TOOLS' }[side] || ''));
+  setText('spaceTitle', inOpt ? (typeof railTab !== 'undefined' && railTab === 'settings' ? 'SETTINGS' : 'OPTIONS') : ({ hub: 'HUB', market: 'MARKETPLACE', atelier: 'TRUCK & COACH TOOLS' }[side] || ''));
   document.querySelectorAll('.spacetile').forEach(t => { if (t.dataset.sideBtn === side) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current'); });
 }
 document.querySelectorAll('[data-side-btn]').forEach(b => b.onclick = () => { closeSpaces(); go(lastView[b.dataset.sideBtn]); });
@@ -1663,6 +1667,7 @@ const APP = { name: 'Truck & Coach Hub', logo: 'T&C' };
 document.querySelectorAll('[data-app-name]').forEach(e => { e.textContent = APP.name; });
 document.querySelectorAll('[data-app-logo]').forEach(e => { e.textContent = APP.logo; });
 document.title = APP.name;
+if (/-beta/i.test(new URLSearchParams(location.search).get('v') || '')) { document.title = APP.name + ' Bêta'; document.querySelectorAll('.appname b[data-app-name]').forEach(e => e.insertAdjacentHTML('afterend', '<span class="betabadge">BÊTA</span>')); }
 /* ---------- Barre globale ---------- */
 // Visible sur la page Game et les pages News, Map, Settings, Support ouvertes depuis la barre.
 // Dans les espaces (Hub, Marketplace, Truck & Coach Tools) : menu 0.12.0.7 seul.
@@ -1672,6 +1677,7 @@ function syncRailVisibility(){
 }
 const GAMES_UI = { ets2: { tag: 'ETS2', name: 'Euro Truck Simulator 2' }, ats: { tag: 'ATS', name: 'American Truck Simulator' } };
 let railTab = 'game';
+let settingsFrom = 'game';
 let activeGame = store.get('game', null);
 function setRail(t){
   railTab = t; document.documentElement.dataset.rail = t;
@@ -1712,6 +1718,7 @@ document.getElementById('rail').addEventListener('click', e => {
   const b = e.target.closest('.railbtn'); if (!b) return;
   if (typeof closeSpaces === 'function') closeSpaces();
   const t = b.dataset.rail;
+  const wasSel = !document.getElementById('launcher').classList.contains('hidden');
   if (t === 'game') {
     const onSel = !document.getElementById('launcher').classList.contains('hidden');
     if (onSel) return;
@@ -1722,7 +1729,7 @@ document.getElementById('rail').addEventListener('click', e => {
   showLauncher(false);
   if (t === 'news') go('mk-news', 'news');
   else if (t === 'map') go('cartePerso', 'map');
-  else if (t === 'settings') go('reglages', 'settings');
+  else if (t === 'settings') { settingsFrom = wasSel ? 'game' : railTab; go('reglages', 'settings'); }
   else if (t === 'support') go('support', 'support');
 });
 document.getElementById('rail').addEventListener('keydown', e => {
@@ -1830,7 +1837,15 @@ document.getElementById('optNav').addEventListener('keydown', e => {
     c.onclick = () => { openOptCat(c.dataset.oc); document.querySelector('main').scrollTop = 0; };
     nav.append(c);
   });
-  document.getElementById('optBack').onclick = () => go(lastView[state.side] || 'accueil');
+  document.getElementById('optBack').onclick = () => {
+    if (railTab === 'settings') {
+      if (settingsFrom === 'news') return go('mk-news', 'news');
+      if (settingsFrom === 'map') return go('cartePerso', 'map');
+      if (settingsFrom === 'support') return go('support', 'support');
+      return showLauncher(true);       // ouvert depuis la page Game
+    }
+    go(lastView[state.side] || 'accueil');
+  };
   applyNavMini(document.documentElement.dataset.nav === 'mini'); // infobulles des nouvelles entrées en menu réduit
 })();
 openOptCat(optCat);
@@ -1879,7 +1894,7 @@ function go(view, rail){
   document.querySelectorAll('.navbtn[data-view]').forEach(b => { if (b.classList.contains('on')) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   if (view === 'reglages') openOptCat(optCat);
   const h = document.querySelector('main > section:not(.hidden) h1'); const title = h ? h.textContent.trim() : '';
-  if (title) { document.title = title + ' · Truck & Coach Hub'; announce('Page ' + title); }
+  if (title) { document.title = title + ' · ' + APP.name + (/-beta/i.test(new URLSearchParams(location.search).get('v') || '') ? ' Bêta' : ''); announce('Page ' + title); }
 }
 
 
@@ -1908,7 +1923,7 @@ function pageMarks(view){
   const parts = [];
   const RAIL_NAMES = { news: 'News', map: 'Map', support: 'Support' };
   if (RAIL_NAMES[railTab]) parts.push(RAIL_NAMES[railTab]);
-  else if (view === 'reglages') parts.push('Options');
+  else if (view === 'reglages') parts.push(railTab === 'settings' ? 'Settings' : 'Options');
   else {
     parts.push(SIDE_NAMES[state.side] || '');
     const btn = document.querySelector(`.side .navscroll:not(.hidden) .navbtn.on`);
