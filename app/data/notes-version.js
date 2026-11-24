@@ -1,68 +1,77 @@
-// Notes de version affichées en bas de l'écran d'accueil (la plus récente en premier).
-// À chaque nouvelle version : ajouter une entrée en haut de la liste (numéro affiché 0.12.0.x).
-// type : 'nouveau' (ajout), 'ameliore' (amélioration), 'corrige' (correction de bug)
+// Notes de version (la plus récente en premier), affichées dans Options → Mises à jour.
+// Règle : une version = au moins un changement visible. Jamais de version « technique » seule.
+//
+// Rubriques (type de chaque note), affichées dans cet ordre :
+//   'nouveau'  : Nouveautés     — ce qui n'existait pas avant
+//   'ameliore' : Améliorations  — ce qui existait et marche mieux ou en fait plus
+//   'change'   : Changements    — déplacé, renommé ou retiré
+//   'corrige'  : Corrections    — un bug réglé
 //
 // Numérotation : la mise à jour automatique exige un numéro technique x.y.z toujours plus haut
-// (package.json). Les versions techniques 0.12.0 → 0.13.27 sont regroupées et affichées
-// 0.12.0, 0.12.0.1, 0.12.0.2 et 0.12.0.3.
+// (package.json). Le numéro affiché est calculé ici :
+//   0.12.0 → 0.12.5 = 0.12.0 ; 0.12.6 → 0.12.9 = 0.12.0.1 ; 0.12.10 → 0.12.15 = 0.12.0.2 ;
+//   0.13.0 → 0.13.27 = 0.12.0.3 ; 0.13.28 → 0.13.34 = 0.12.0.4 ; ensuite 0.13.35 = 0.12.0.5, 0.13.36 = 0.12.0.6…
+// Bêta : « 0.13.(n)-beta.k » est l'essai de la version 0.13.(n-1) → affichée « <version> bêta k ».
 window.versionAffichee = function (v) {
-  // Bêta : « 0.13.35-beta.1 » → numéro affiché de 0.13.35 + « bêta 1 »
-  const b = /^(\d+\.\d+\.\d+)-beta\.(\d+)$/.exec(v || '');
-  if (b) return window.versionAffichee(b[1]) + ' bêta ' + b[2];
+  const b = /^(\d+)\.(\d+)\.(\d+)-beta\.(\d+)$/.exec(v || '');
+  if (b) return window.versionAffichee(`${b[1]}.${b[2]}.${Number(b[3]) - 1}`) + ' bêta ' + b[4];
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
   if (!m) return v;
   const n = Number(m[2]);
-  // 0.13.20 → 0.13.27 = 0.12.0.3, puis une version affichée par version technique : 0.13.28 = 0.12.0.4, 0.13.29 = 0.12.0.5…
-  // 0.13.20 → 0.13.27 = 0.12.0.3 ; 0.13.28 = 0.12.0.4 ; 0.13.29 = 0.12.0.5 ;
-  // 0.13.30 → 0.13.32 = 0.12.0.7 (0.12.0.6 et 0.12.0.7 regroupées) ; ensuite 0.13.33 = 0.12.0.8, 0.13.34 = 0.12.0.9…
-  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : n <= 29 ? '0.12.0.' + (n - 24) : n <= 32 ? '0.12.0.7' : '0.12.0.' + (n - 25);
+  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : n <= 34 ? '0.12.0.4' : '0.12.0.' + (n - 30);
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
+
+window.NOTES_RUBRIQUES = [
+  ['nouveau', 'Nouveautés'],
+  ['ameliore', 'Améliorations'],
+  ['change', 'Changements'],
+  ['corrige', 'Corrections'],
+];
+
+// Version officielle
 window.NOTES_VERSION = [
-  { version: '0.12.0.9', date: '2026-11-24', titre: 'Retour à l’interface habituelle, nouvelle interface en bêta', notes: [
-    ['ameliore', 'L’appli reprend l’interface de la 0.12.0.7. La nouvelle entrée par le choix du jeu (Game, News, Map, Settings, Support) se teste dans Truck & Coach Hub Bêta, une appli séparée à installer à côté.'],
-    ['nouveau', 'Truck & Coach Hub Bêta : son propre installateur, son raccourci « Truck & Coach Hub (Bêta) » et ses propres réglages. Au premier lancement, elle reprend une copie de tes données ; la version normale n’est pas modifiée.'],
+  { version: '0.12.0.5', date: '2026-11-24', titre: 'Programme bêta et notes de version plus claires', notes: [
+    ['nouveau', 'Programme bêta, dans Options → Interface → Éléments visibles. Désactivé par défaut. Activé, il affiche les notes de la bêta et le lien pour installer Truck & Coach Hub Bêta, une appli séparée qui s’installe à côté de celle-ci. Il n’installe rien et ne change pas ta version.'],
+    ['ameliore', 'Notes de version rangées par rubriques : Nouveautés, Améliorations, Changements et Corrections.'],
+    ['change', 'Options → Affichage devient Interface, avec une section Éléments visibles : menu réduit, pages en préparation et Programme bêta.'],
+    ['change', 'Options → Mises à jour : ta version et le bouton de recherche en haut, les notes à lire en dessous.'],
+    ['change', 'Numéros de version simplifiés : toute la nouvelle interface est regroupée dans la 0.12.0.4. Si ton appli affichait 0.12.0.9, c’est normal de voir maintenant 0.12.0.5.'],
   ]},
-  { version: '0.12.0.7', date: '2026-11-23', titre: 'Repères de navigation, Options dans le menu, page HUD épurée', notes: [
-    ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],
-    ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
-    ['nouveau', 'Menu latéral réglable : glisse son bord droit pour l’élargir ou le rétrécir ; tout à gauche, il se réduit aux icônes. Double-clic sur le bord : taille normale. La largeur est mémorisée.'],
-    ['ameliore', 'Options dans le menu latéral : quand tu ouvres Options, le menu affiche Retour puis les catégories, et la page ne montre que la catégorie choisie. Le ☰ et la réduction du menu restent disponibles.'],
-    ['ameliore', 'Page HUD épurée : l’interrupteur et les aperçus des bandeaux camion et car. Tous les réglages sont dans la nouvelle catégorie Options → HUD, avec son propre interrupteur.'],
-    ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : pages sur une colonne quand la place manque, menu réduit tout seul sur une petite fenêtre, fenêtre utilisable dès 720 px de large.'],
-    ['ameliore', 'Notes de version réorganisées : les versions 0.2.0 à 0.11.0 sont regroupées en six versions par thème.'],
-    ['corrige', 'Télémétrie : les onglets Camion et Car restent visibles même quand le jeu n’est pas lancé.'],
-  ]},
-  { version: '0.12.0.5', date: '2026-11-23', titre: 'Nouveau bandeau camion, menu des espaces et Télémétrie remise en ordre', notes: [
-    ['nouveau', 'Bandeau camion refait sur le modèle du bandeau car : mission, trajet, heure du jeu, rapport engagé, vitesse, limitation, régulateur, mode et dégâts du camion ; en dessous, route, heure limite de livraison, marchandise, carburant et pause. Chaque info s’active ou se masque dans la page HUD.'],
-    ['nouveau', 'Menu ☰ en haut à gauche : un panneau pour passer du Hub à la Marketplace ou à Truck & Coach Tools, ou revenir à l’écran d’accueil.'],
-    ['ameliore', 'Menu latéral réorganisé : ☰ et le bouton pour réduire le menu en haut, l’espace en cours juste en dessous, puis Options, et enfin le logo et la version en bas (un clic ramène à l’écran d’accueil).'],
-    ['ameliore', 'Télémétrie : colonnes alignées dans les onglets Camion et Car. Sans le jeu, la page n’affiche plus que l’attente et tes kilomètres, avec un lien vers Options → Jeu & plugin.'],
-    ['ameliore', 'Notes de version rangées dans Options → Mises à jour. Après chaque mise à jour, l’écran d’accueil montre une seule fois ce qui a changé.'],
-    ['corrige', 'Bandeau camion, bandeau car et Télémétrie lisent tous les mêmes données du jeu en direct : ce qui s’affiche est ce qui se passe en jeu.'],
-    ['ameliore', 'Plugin du jeu 1.5.0 : rapport engagé, régime moteur et régulateur. Ferme le jeu avant d’ouvrir l’appli pour qu’elle l’installe.'],
-  ]},
-  { version: '0.12.0.4', date: '2026-11-23', titre: 'Nouvelles Options et menu rétractable', notes: [
-    ['nouveau', 'Options rangées en catégories, comme les réglages d’un jeu : Général, Conduite, Jeu & plugin, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos.'],
-    ['nouveau', 'Menu latéral rétractable : le bouton à côté du logo ne garde que les icônes, avec le nom au survol. Une pastille montre si le HUD est activé et si une mise à jour attend. Aussi dans Options → Général.'],
+  { version: '0.12.0.4', date: '2026-11-23', titre: 'Nouvelle interface : Options, menus, navigation et HUD camion', notes: [
+    ['nouveau', 'Options rangées en catégories, comme les réglages d’un jeu : Général, Conduite, Jeu & plugin, HUD, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos. Quand tu ouvres Options, le menu latéral affiche Retour puis les catégories.'],
+    ['nouveau', 'Menu ☰ en haut à gauche : passe du Hub à la Marketplace ou à Truck & Coach Tools, ou reviens à l’écran d’accueil.'],
+    ['nouveau', 'Bandeau camion refait sur le modèle du bandeau car : mission, trajet, heure du jeu, rapport engagé, vitesse, limitation, régulateur, mode et dégâts du camion ; en dessous, route, heure limite de livraison, marchandise, carburant et pause.'],
+    ['nouveau', 'Menu latéral réglable : glisse son bord pour l’élargir ou le rétrécir, ou réduis-le aux icônes (nom au survol, pastilles HUD et mise à jour). Double-clic sur le bord : taille normale.'],
+    ['nouveau', 'Repères : une barre en haut de chaque page indique où tu es (par exemple Hub › Entreprise) et reste en haut quand tu fais défiler.'],
+    ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu et un trait marque la page active. Elles se coupent avec Options → Accessibilité → Réduire les animations.'],
     ['nouveau', 'Bouton Options sur l’écran d’accueil.'],
-    ['ameliore', 'Truck Tools et Coach Tools s’appellent maintenant Truck & Coach Tools.'],
-    ['corrige', 'Options → Mises à jour affiche le bon numéro de version (0.12.0.x) au lieu du numéro technique.'],
+    ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : une seule colonne quand la place manque, menu réduit tout seul sur une petite fenêtre, utilisable dès 720 px de large.'],
+    ['ameliore', 'Télémétrie : colonnes alignées dans les onglets Camion et Car. Sans le jeu, la page affiche l’attente, tes kilomètres et un lien vers Options → Jeu & plugin.'],
+    ['ameliore', 'Plugin du jeu 1.5.0 : rapport engagé, régime moteur et régulateur. Ferme le jeu avant d’ouvrir l’appli pour qu’elle l’installe.'],
+    ['ameliore', 'Après chaque mise à jour, l’écran d’accueil montre une seule fois ce qui a changé.'],
+    ['change', 'Page HUD épurée : l’interrupteur et les aperçus des bandeaux camion et car. Tous les réglages sont dans Options → HUD.'],
+    ['change', 'Menu latéral réorganisé : ☰ et réduction du menu en haut, l’espace en cours, Options, puis le logo et la version en bas (un clic ramène à l’écran d’accueil).'],
+    ['change', 'Notes de version déplacées dans Options → Mises à jour.'],
+    ['corrige', 'Bandeau camion, bandeau car et Télémétrie lisent les mêmes données du jeu en direct : ce qui s’affiche est ce qui se passe en jeu.'],
+    ['corrige', 'Télémétrie : les onglets Camion et Car restent visibles même quand le jeu n’est pas lancé.'],
+    ['corrige', 'Options → Mises à jour affiche le numéro de version de l’appli, et non plus le numéro technique.'],
   ]},
-  { version: '0.12.0.3', date: '2026-11-23', titre: 'Télémétrie camion et car, Feuille de route et Truck Tools complet', notes: [
+  { version: '0.12.0.3', date: '2026-11-23', titre: 'Télémétrie camion et car, Feuille de route et Truck & Coach Tools', notes: [
     ['nouveau', 'Télémétrie : onglets Camion et Car qui suivent la mission en cours dans le jeu. L’appli s’ouvre toute seule sur la Télémétrie quand le jeu se lance (désactivable dans Options).'],
     ['nouveau', 'Télémétrie camion : la livraison telle que le jeu la donne (villes, entreprises, marchandise, revenu), avancement du trajet, distance GPS restante, heure limite de livraison et temps restant.'],
     ['nouveau', 'Télémétrie car : ligne, départ, arrêts desservis, prochain arrêt et terminus, avance ou retard sur l’horaire, voyageurs à bord, satisfaction (quand le jeu l’envoie), force G en direct, pic et à-coups du service.'],
     ['nouveau', 'Télémétrie : plein (niveau en % et en litres, litres pour faire le plein, autonomie, consommation, alerte réserve) et dégâts en % du véhicule, de la remorque et de la marchandise.'],
     ['nouveau', 'Feuille de route : trajets récents séparés Camion et Car. Clique sur un trajet pour voir son parcours, ses arrêts et l’endroit où il a été abandonné, avec km, dépenses, revenu et solde.'],
     ['nouveau', 'Ma carrière et Feuille de route : total de tes dépenses (péages, ferries, trains, amendes, annulations), même hors mission, en euros (ETS2) et en dollars (ATS) séparément.'],
-    ['nouveau', 'Bandeau car redessiné : numéro et nom de ligne, arrêt en cours, heure du jeu à la seconde, vitesse, limitation, prochain arrêt, avance ou retard, passagers, pause obligatoire et carburant. Il s’affiche dès que tu montes dans un car, même sans service.'],
     ['nouveau', 'Truck Tools en cartes d’outils. Camions : réparer, carburant, kilométrage, plaque, changer de camion, téléportation, moteur et boîte, retirer le badge. Remorques : poids de la cargaison, poids à vide, autoriser partout, réparer, plaque, changer de remorque.'],
     ['nouveau', 'Truck Tools → Profil : villes, concessionnaires, agences, achat des garages libres, copie des réglages entre profils. Jeu : convois à 128 places. Suppression et restauration de sauvegardes et de profils.'],
     ['nouveau', 'Coach Tools en cartes : expérience et compétences car, arrêts de bus, et pour tes cars : réparer, carburant, kilométrage, plaque. Chaque outil agit seulement sur le bon type de véhicule.'],
+    ['ameliore', 'Bandeau car redessiné : numéro et nom de ligne, arrêt en cours, heure du jeu à la seconde, vitesse, limitation, prochain arrêt, avance ou retard, passagers, pause obligatoire et carburant. Il s’affiche dès que tu montes dans un car, même sans service.'],
     ['ameliore', 'Truck & Coach Tools : une illustration par outil et une barre flottante commune pour choisir le profil et la sauvegarde.'],
     ['ameliore', 'Plugin du jeu 1.4.0 (SDK 1.16) : pause obligatoire, données de service car, usure du véhicule et de la remorque, accélération et consommation. Ferme le jeu avant d’ouvrir l’appli pour qu’elle l’installe.'],
-    ['ameliore', '« Bandeau / HUD » s’appelle maintenant « HUD ». « Données car reçues du jeu » est dans Options → Informations générales d’utilisation.'],
+    ['change', 'Truck Tools et Coach Tools s’appellent maintenant Truck & Coach Tools.'],
+    ['change', '« Bandeau / HUD » s’appelle maintenant « HUD ». « Données car reçues du jeu » est dans Options → Informations générales d’utilisation.'],
     ['corrige', 'Un ancien service car resté en mémoire dans le jeu ne remplace plus ta livraison camion, et un camion n’est plus pris pour un car.'],
     ['corrige', 'Les km d’un service car comptent comme « chargés ». Charger une sauvegarde ou se téléporter ne compte plus un faux plein.'],
     ['corrige', 'Bandeau camion « Grand » plus coupé sur les côtés, messages Steam et Discord en français, pause obligatoire due tout de suite affichée « maintenant ».'],
@@ -71,64 +80,86 @@ window.NOTES_VERSION = [
     ['nouveau', 'Entreprise → Feuille de route : départ, arrivée, carburant ajouté ou consommé, péages, amendes et ferries pour chaque trajet, et vraies destinations des services car.'],
     ['nouveau', 'Détection du véhicule : le profil de carrière choisi dans Options (camion ou car) décide du HUD et reste actif d’une mission à l’autre ; un service car en cours active le HUD car.'],
     ['ameliore', 'HUD camion et HUD car séparés : chacun a ses réglages et son aperçu, un seul interrupteur les active. La page HUD indique le profil actif.'],
-    ['ameliore', 'Styles du HUD simplifiés : Bandeau et Navigation. Le HUD car ne garde que la taille et l’opacité.'],
+    ['change', 'Styles du HUD simplifiés : Bandeau et Navigation. Le HUD car ne garde que la taille et l’opacité.'],
   ]},
   { version: '0.12.0.1', date: '2026-11-17', titre: 'HUD car, cartes DLC et mise à jour automatique', notes: [
     ['nouveau', 'HUD car : bandeau à deux lignes avec pastille de ligne, heure du jeu, vitesse, limitation, GPS et temps jusqu’au prochain arrêt, compteur, carburant, autonomie et pause obligatoire. Ce que le jeu n’envoie pas est affiché « — ».'],
     ['nouveau', 'Carte : import des tuiles générées avec TsMap pour les cartes DLC d’ETS2 et d’ATS.'],
     ['ameliore', 'Le HUD reconnaît les missions camion et car et adapte ce qu’il affiche.'],
-    ['ameliore', 'Options : « Plugin du jeu » et « Profil chauffeur » regroupés dans une section repliable.'],
     ['ameliore', 'Après l’installation d’une mise à jour, l’appli redémarre toute seule.'],
+    ['change', 'Options : « Plugin du jeu » et « Profil chauffeur » regroupés dans une section repliable.'],
   ]},
   { version: '0.12.0', date: '2026-11-17', titre: 'Truck & Coach Tools, nouvelle couleur et intégrations', notes: [
-    ['ameliore', 'L’Atelier devient Truck Tools et Coach Tools, avec sa propre présentation.'],
-    ['nouveau', 'Truck Tools : analyser les sauvegardes d’un profil, dupliquer un profil pour faire des tests, bilan du profil (banque, prêts, flotte, usure) avec les problèmes à corriger.'],
+    ['nouveau', 'Truck Tools : analyse des sauvegardes d’un profil, copie d’un profil pour faire des tests, bilan du profil (banque, prêts, flotte, usure) avec les problèmes à corriger.'],
     ['nouveau', 'HUD Navigation : livraison en cours, marchandise, distance GPS et temps estimés. C’est le style par défaut ; celui que tu avais choisi est conservé.'],
-    ['ameliore', 'Le HUD se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit.'],
     ['nouveau', 'Options → Steam et Discord : profil Steam, jeux ETS2 / ATS et présence Discord facultative.'],
-    ['nouveau', 'Options → Apparence : couleur d’accent au choix (pastilles, roue de couleurs ou couleur de Windows). L’orange ambre remplace le jaune et le bleu.'],
+    ['nouveau', 'Options → Apparence : couleur d’accent au choix (pastilles, roue de couleurs ou couleur de Windows).'],
     ['nouveau', 'Notes de version en bas de l’écran d’accueil, et diagnostic des fichiers du jeu et de la télémétrie.'],
+    ['ameliore', 'Le HUD se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit.'],
     ['ameliore', 'Nouvelles icônes dans le style de Windows 11, seuils kilométriques regroupés et vérifiés, touche Tab qui passe par tous les champs des fenêtres de confirmation.'],
+    ['change', 'L’Atelier devient Truck Tools et Coach Tools, avec sa propre présentation.'],
+    ['change', 'L’orange ambre remplace le jaune et le bleu comme couleur principale.'],
     ['corrige', 'La trace GPS garde le point d’origine (0, 0) ; le raccourci Profil ne renvoie plus vers Options.'],
   ]},
   { version: '0.11.0', date: '2026-11-17', titre: 'Apparence et accessibilité', notes: [
-    ['nouveau', 'Permet de choisir son thème : De base, Sombre, Clair ou Comme Windows.'],
-    ['nouveau', 'Permet de lire l’appli plus confortablement : couleurs adaptées au daltonisme, taille du texte réglable, contraste renforcé.'],
-    ['nouveau', 'Permet d’utiliser toute l’appli au clavier et avec un lecteur d’écran : focus visible partout, lien « Aller au contenu », fenêtres fermables avec Échap.'],
-    ['ameliore', 'Rend l’appli conforme aux règles d’accessibilité WCAG 2.1 AA dans tous les thèmes : une seule couleur pour les actions, bordures plus visibles, texte jamais sous 12 px.'],
-    ['ameliore', 'Respecte les réglages de Windows : mode Contraste élevé et « réduire les animations ».'],
+    ['nouveau', 'Choix du thème : De base, Sombre, Clair ou Comme Windows.'],
+    ['nouveau', 'Lecture plus confortable : couleurs adaptées au daltonisme, taille du texte réglable, contraste renforcé.'],
+    ['nouveau', 'Toute l’appli utilisable au clavier et avec un lecteur d’écran : focus visible partout, lien « Aller au contenu », fenêtres fermables avec Échap.'],
+    ['ameliore', 'Appli conforme aux règles d’accessibilité WCAG 2.1 AA dans tous les thèmes : une seule couleur pour les actions, bordures plus visibles, texte jamais sous 12 px.'],
+    ['ameliore', 'Les réglages de Windows sont respectés : mode Contraste élevé et « réduire les animations ».'],
   ]},
   { version: '0.10.0', date: '2026-11-17', titre: 'HUD et carte en direct', notes: [
-    ['nouveau', 'Permet d’afficher un bandeau par-dessus le jeu (HUD) : vitesse, limitation, mode réel ou course et distance restante, avec plusieurs styles à tester dans l’aperçu.'],
-    ['nouveau', 'Permet de suivre sa route sur la vraie carte d’ETS2 et d’ATS : ton camion en direct, ta destination et le tracé de ta session (chargé / à vide).'],
-    ['ameliore', 'Garde les zones de carte déjà vues pour les afficher hors ligne.'],
-    ['ameliore', 'Allège le menu (compteurs retirés) et permet de masquer ou d’afficher les pages encore en préparation.'],
+    ['nouveau', 'HUD : un bandeau par-dessus le jeu avec vitesse, limitation, mode réel ou course et distance restante, et plusieurs styles à tester dans l’aperçu.'],
+    ['nouveau', 'Carte en direct sur la vraie carte d’ETS2 et d’ATS : ton camion, ta destination et le tracé de ta session (chargé / à vide).'],
+    ['ameliore', 'Les zones de carte déjà vues restent disponibles hors ligne.'],
+    ['change', 'Menu allégé (compteurs retirés) ; les pages encore en préparation peuvent être masquées ou affichées.'],
   ]},
   { version: '0.8.0', date: '2026-11-17', titre: 'L’Atelier', notes: [
-    ['nouveau', 'Permet de sauvegarder et de restaurer ses profils ETS2 / ATS (outil expérimental, à activer dans Options).'],
-    ['nouveau', 'Permet de modifier son profil solo : profil, car, carte, carburant et réparation, avec des boutons « atteindre le niveau » pour le camion et le car.'],
-    ['nouveau', 'Permet de renommer son profil et son entreprise en jeu.'],
-    ['nouveau', 'Permet d’activer la console de développement du jeu, avec une copie de secours et des explications claires.'],
+    ['nouveau', 'Sauvegarde et restauration des profils ETS2 / ATS (outil expérimental, à activer dans Options).'],
+    ['nouveau', 'Modification du profil solo : profil, car, carte, carburant et réparation, avec des boutons « atteindre le niveau » pour le camion et le car.'],
+    ['nouveau', 'Renommer son profil et son entreprise en jeu.'],
+    ['nouveau', 'Activation de la console de développement du jeu, avec une copie de secours et des explications claires.'],
   ]},
   { version: '0.6.0', date: '2026-11-17', titre: 'Marketplace', notes: [
-    ['nouveau', 'Permet de trouver ses contenus : Découvrir, À la une & news, et les catégories Modules du Hub, Cars & bus et Camions.'],
-    ['nouveau', 'Permet de consulter la fiche de chaque contenu (aperçu, description, infos) et de revenir en arrière.'],
-    ['nouveau', 'Permet de gérer ses contenus installés et leurs mises à jour (Mes contenus, Mises à jour).'],
-    ['nouveau', 'Permet de préparer sa propre livrée (Créer une livrée).'],
+    ['nouveau', 'Marketplace : Découvrir, À la une & news, et les catégories Modules du Hub, Cars & bus et Camions.'],
+    ['nouveau', 'Une fiche pour chaque contenu (aperçu, description, infos), avec retour en arrière.'],
+    ['nouveau', 'Gestion des contenus installés et de leurs mises à jour (Mes contenus, Mises à jour).'],
+    ['nouveau', 'Préparation de ta propre livrée (Créer une livrée).'],
   ]},
   { version: '0.4.0', date: '2026-11-17', titre: 'Truck & Coach Hub', notes: [
-    ['nouveau', 'L’appli devient Truck & Coach Hub (tes données sont conservées) et s’ouvre sur un écran pour choisir entre le Hub et la Marketplace.'],
-    ['nouveau', 'Permet de démarrer depuis la page Accueil : lancer ETS2 ou ATS via Steam, voir l’état du jeu et des mises à jour, suivre le guide.'],
-    ['nouveau', 'Range le menu par catégories : Général et Entreprise, avec Ma VTC en onglets (Missions, Convois, Défis & duels, Classement, Chauffeurs live) et le Calendrier, en préparation.'],
-    ['ameliore', 'Affiche ton profil en haut à droite de l’écran d’accueil.'],
-    ['ameliore', 'Range la tablette et le mini-GPS dans les modules complémentaires, et ajoute un raccourci vers HaulMP dans Options.'],
+    ['nouveau', 'Démarrage depuis la page Accueil : lancer ETS2 ou ATS via Steam, voir l’état du jeu et des mises à jour, suivre le guide.'],
+    ['ameliore', 'Ton profil s’affiche en haut à droite de l’écran d’accueil.'],
+    ['change', 'L’appli devient Truck & Coach Hub (tes données sont conservées) et s’ouvre sur un écran pour choisir entre le Hub et la Marketplace.'],
+    ['change', 'Menu rangé par catégories : Général et Entreprise, avec Ma VTC en onglets (Missions, Convois, Défis & duels, Classement, Chauffeurs live) et le Calendrier, en préparation.'],
+    ['change', 'La tablette et le mini-GPS rejoignent les modules complémentaires ; un raccourci vers HaulMP est ajouté dans Options.'],
   ]},
   { version: '0.2.0', date: '2026-11-16', titre: 'Première version', notes: [
-    ['nouveau', 'Permet de brancher l’appli au jeu : le plugin s’installe tout seul dans ETS2 et ATS.'],
-    ['nouveau', 'Permet de suivre sa conduite en direct et de compter ses kilomètres chargés et à vide.'],
-    ['nouveau', 'Permet de garder l’historique de ses missions, en mode réel ou course.'],
-    ['nouveau', 'Permet de recevoir les mises à jour, téléchargées et installées directement dans l’appli.'],
+    ['nouveau', 'Branchement au jeu : le plugin s’installe tout seul dans ETS2 et ATS.'],
+    ['nouveau', 'Suivi de la conduite en direct et compteur des kilomètres chargés et à vide.'],
+    ['nouveau', 'Historique des missions, en mode réel ou course.'],
+    ['nouveau', 'Mises à jour téléchargées et installées directement dans l’appli.'],
   ]},
 ];
 
-
+// Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
+window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 1', date: '2026-11-24', titre: 'Paramètres par jeu, vraie page News et ATS', notes: [
+    ['nouveau', 'Paramètres sur deux niveaux. Paramètres généraux (bouton Settings de la barre) : Général, Interface, Accessibilité, Steam & Discord, Mises à jour, Aide. Paramètres ETS2 et Paramètres ATS, ouverts depuis le jeu choisi : Jeu & plugin, Profil & carrière, Conduite, HUD, Carte, Truck & Coach Tools.'],
+    ['nouveau', 'Bouton « Copier depuis l’autre jeu » dans les paramètres d’un jeu. Tes réglages actuels sont repris pour ETS2 et pour ATS.'],
+    ['nouveau', 'Vraie page News : les dernières actualités Steam d’Euro Truck Simulator 2 et d’American Truck Simulator, et les nouveautés de l’appli.'],
+    ['nouveau', 'American Truck Simulator : « Car » devient « Road Trip » (le DLC de transport de voyageurs d’ATS) et les unités sont américaines (miles, mph, gallons, dollars).'],
+    ['change', 'Revenir au menu principal referme tout : le menu ☰ et l’espace ouvert. Si une sauvegarde a des modifications non enregistrées, l’appli te demande avant.'],
+    ['change', 'La Marketplace est cachée en attendant d’être prête.'],
+    ['change', 'Comme dans la version officielle : Programme bêta (toujours activé ici), notes de version par rubriques et page Mises à jour réorganisée.'],
+  ]},
+  { version: '0.12.0.4 bêta 2', date: '2026-11-24', titre: 'Mises à jour de la bêta', notes: [
+    ['corrige', 'La bêta trouve maintenant ses propres mises à jour.'],
+  ]},
+  { version: '0.12.0.4 bêta 1', date: '2026-11-24', titre: 'Entrée par le choix du jeu', notes: [
+    ['nouveau', 'Truck & Coach Hub Bêta : une appli séparée, avec son propre installateur, son raccourci « Truck & Coach Hub (Bêta) » et ses propres réglages. Au premier lancement, elle reprend une copie de tes données ; la version officielle n’est pas modifiée.'],
+    ['nouveau', 'L’appli s’ouvre sur Game : Euro Truck Simulator 2 et American Truck Simulator en grands visuels pleine page, avec l’état du jeu et du plugin. Choisis ton jeu pour ouvrir le Hub, la Marketplace et Truck & Coach Tools.'],
+    ['nouveau', 'Une barre à gauche de l’écran d’accueil donne accès à Game, News, Map, Settings et Support. Dans les espaces, la mise en page reste celle de la version officielle.'],
+    ['nouveau', 'Settings ouvert depuis la barre : seulement le menu des paramètres (Retour, puis les catégories). Nouvelle page Support.'],
+    ['ameliore', 'La carte et le bouton « Lancer » de l’Accueil suivent le jeu choisi. Le logo en bas du menu ramène au choix du jeu.'],
+  ]},
+];
