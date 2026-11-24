@@ -102,7 +102,7 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
   const cat = (k) => { const m = html.match(new RegExp(`<div class="optcat" id="oc-${k}"[\\s\\S]*?(?=<div class="optcat" id="oc-|</section>)`)); assert.ok(m, k); return m[0]; };
   const nav = html.match(/<nav class="optnav" id="optNav"[\s\S]*?<\/nav>/)[0];
-  for (const k of ['general', 'conduite', 'jeu', 'affichage', 'acces', 'integrations', 'tools', 'maj', 'aide']) {
+  for (const k of ['general', 'conduite', 'jeu', 'affichage', 'acces', 'integrations', 'maj', 'aide']) {
     assert.match(nav, new RegExp(`data-oc="${k}"`));
     cat(k);
   }
@@ -115,7 +115,10 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
   for (const id of ['navMiniSwitch', 'soonSwitch', 'betaSwitch', 'betaDl']) assert.match(cat('affichage'), new RegExp(`id="${id}"`));
   assert.match(nav, /data-oc="affichage"[\s\S]*?<span>Interface<\/span>/);
   assert.match(cat('maj'), /id="notesSeg"/);
-  assert.match(cat('tools'), /id="atelierSwitch"/);
+  // bêta 4 : un interrupteur d'outils par jeu, dans Interface → Éléments visibles
+  assert.doesNotMatch(nav, /data-oc="tools"/);
+  for (const g of ['ets2', 'ats']) assert.match(cat('affichage'), new RegExp(`data-atg="${g}"`));
+  assert.match(cat('affichage'), /Truck &amp; Road Trip Tools/);
   assert.match(cat('maj'), /id="updCurrent"/);
   assert.match(cat('aide'), /id="coachDiag"/);
 });
@@ -636,9 +639,26 @@ test('bêta : News, Marketplace cachée, paramètres généraux / du jeu, retour
   assert.match(html, /<section id="v-news"/);
   assert.match(html, /if \(t === 'news'\) go\('news', 'news'\);/);
   assert.match(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/);
-  assert.match(html, /const OPT_GAME = \['jeu', 'conduite', 'hud', 'tools'\];/);
+  assert.match(html, /const OPT_GAME = \['jeu', 'conduite', 'hud'\];/);
   assert.match(html, /if \(on\) resetSpaces\(\);/);
   assert.match(html, /Quitter sans appliquer/);
   const pre = fs.readFileSync(path.resolve(__dirname, '..', 'preload.js'), 'utf8');
   for (const k of ['setGame', 'copyGameSettings', 'steamNews']) assert.match(pre, new RegExp(k + ':'));
+});
+
+test('bêta 4 : outils par jeu et carte du jeu dans son espace', () => {
+  const gs = require('../src/game-settings');
+  const st = { atelier: true, vehicleType: 'camion' };
+  gs.initGameSettings(st);
+  assert.equal(st.games.ats.atelier, true, 'reprend le réglage actuel');
+  assert.equal(gs.setGameKey(st, 'ats', 'atelier', false), true);
+  assert.equal(st.games.ats.atelier, false); assert.equal(st.atelier, true, 'ETS2 (jeu actif) inchangé');
+  assert.equal(gs.setGameKey(st, 'ets2', 'atelier', false), true); assert.equal(st.atelier, false);
+  assert.equal(gs.setGameKey(st, 'ats', 'units', 'metric'), false, 'seuls certains réglages se changent à distance');
+  gs.switchGame(st, 'ats'); gs.setGameKey(st, 'ats', 'atelier', true); gs.switchGame(st, 'ets2');
+  assert.equal(st.atelier, false); assert.equal(st.games.ats.atelier, true);
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /function mapLocked\(\)\{ return typeof railTab === 'undefined' \|\| railTab !== 'map'; \}/);
+  assert.match(html, /if \(mapLocked\(\)\) mapSetGame\(activeGame === 'ats' \? 'ats' : 'ets2'\);/);
+  assert.match(html, /function toolsName\(g\)\{ return \(g \|\| activeGame\) === 'ats' \? 'Truck & Road Trip Tools' : 'Truck & Coach Tools'; \}/);
 });

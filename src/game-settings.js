@@ -4,7 +4,9 @@
 // Changer de jeu (choix dans l'appli ou jeu détecté) range les réglages actifs dans leur jeu,
 // puis charge ceux de l'autre.
 const GAMES = ['ets2', 'ats'];
-const GAME_KEYS = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'hud', 'modules', 'units'];
+const GAME_KEYS = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'hud', 'modules', 'units', 'atelier'];
+// Réglages d'un jeu modifiables depuis les Paramètres généraux sans changer de jeu
+const GAME_KEYS_REMOTE = ['atelier'];
 const UNITS_DEFAULT = { ets2: 'metric', ats: 'imperial' };
 
 const clone = (v) => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)));
@@ -16,6 +18,7 @@ function initGameSettings(settings) {
   for (const g of GAMES) {
     if (!games[g] || typeof games[g] !== 'object') games[g] = { ...pick(settings), units: UNITS_DEFAULT[g] };
     if (!['metric', 'imperial'].includes(games[g].units)) games[g].units = UNITS_DEFAULT[g];
+    if (typeof games[g].atelier !== 'boolean') games[g].atelier = !!settings.atelier;   // bêta 4 : outils par jeu
   }
   settings.games = games;
   if (!GAMES.includes(settings.activeGame)) settings.activeGame = 'ets2';
@@ -51,4 +54,13 @@ function copyGameSettings(settings, from, to) {
   return true;
 }
 
-module.exports = { GAMES, GAME_KEYS, UNITS_DEFAULT, initGameSettings, rememberActive, switchGame, copyGameSettings };
+// Change un réglage d'un jeu précis (ex. Interface → Truck & Road Trip Tools pendant qu'ETS2 est choisi).
+function setGameKey(settings, game, key, value) {
+  if (!GAMES.includes(game) || !GAME_KEYS_REMOTE.includes(key) || !settings.games) return false;
+  const v = key === 'atelier' ? !!value : value;
+  settings.games[game] = { ...settings.games[game], [key]: v };
+  if (settings.activeGame === game) settings[key] = v;
+  return true;
+}
+
+module.exports = { GAMES, GAME_KEYS, setGameKey, UNITS_DEFAULT, initGameSettings, rememberActive, switchGame, copyGameSettings };

@@ -143,6 +143,12 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 4', date: '2026-11-24', titre: 'Une carte et des outils par jeu', notes: [
+    ['nouveau', 'Interface → Éléments visibles : un interrupteur pour Truck & Coach Tools (ETS2) et un autre pour Truck & Road Trip Tools (ATS). Chaque jeu affiche ses outils seulement s’ils sont activés pour lui.'],
+    ['change', 'Dans ATS, l’espace des outils s’appelle Truck & Road Trip Tools, du nom du DLC de voyageurs d’ATS. Il reste Truck & Coach Tools dans ETS2.'],
+    ['change', 'Dans l’espace d’un jeu, la Carte n’affiche et ne charge que la carte de ce jeu. Map, dans la barre de gauche de l’accueil, permet de passer de l’Europe à l’Amérique.'],
+    ['change', 'La catégorie Truck & Coach Tools disparaît des Paramètres ETS2 / ATS : l’interrupteur est maintenant dans les Paramètres généraux.'],
+  ]},
   { version: '0.12.0.5 bêta 3', date: '2026-11-24', titre: 'Paramètres par jeu, vraie page News et ATS', notes: [
     ['nouveau', 'Paramètres sur deux niveaux. Paramètres généraux (bouton Settings de la barre) : Général, Interface, Accessibilité, Steam & Discord, Mises à jour, Aide. Paramètres ETS2 et Paramètres ATS, ouverts avec le bouton Paramètres du jeu choisi : Jeu & plugin, Conduite (profil de carrière, unités, seuils), HUD, Truck & Coach Tools. Ils se chargent tout seuls quand ce jeu est lancé.'],
     ['nouveau', 'Bouton « Copier depuis l’autre jeu » dans les paramètres d’un jeu. Tes réglages actuels sont repris pour ETS2 et pour ATS.'],
