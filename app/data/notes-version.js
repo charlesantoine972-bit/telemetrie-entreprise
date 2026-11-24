@@ -6,6 +6,9 @@
 // (package.json). Les versions techniques 0.12.0 → 0.13.27 sont regroupées et affichées
 // 0.12.0, 0.12.0.1, 0.12.0.2 et 0.12.0.3.
 window.versionAffichee = function (v) {
+  // Bêta : « 0.13.35-beta.1 » → numéro affiché de 0.13.35 + « bêta 1 »
+  const b = /^(\d+\.\d+\.\d+)-beta\.(\d+)$/.exec(v || '');
+  if (b) return window.versionAffichee(b[1]) + ' bêta ' + b[2];
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
   if (!m) return v;
   const n = Number(m[2]);
@@ -16,6 +19,10 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.9', date: '2026-11-24', titre: 'Retour à l’interface habituelle, nouvelle interface en bêta', notes: [
+    ['ameliore', 'L’appli reprend l’interface de la 0.12.0.7. La nouvelle entrée par le choix du jeu (Game, News, Map, Settings, Support) se teste dans Truck & Coach Hub Bêta, une appli séparée à installer à côté.'],
+    ['nouveau', 'Truck & Coach Hub Bêta : son propre installateur, son raccourci « Truck & Coach Hub (Bêta) » et ses propres réglages. Au premier lancement, elle reprend une copie de tes données ; la version normale n’est pas modifiée.'],
+  ]},
   { version: '0.12.0.7', date: '2026-11-23', titre: 'Repères de navigation, Options dans le menu, page HUD épurée', notes: [
     ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],
     ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
