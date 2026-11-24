@@ -17,12 +17,20 @@ let discordPresence;
 carte.registerScheme();
 
 /* ---------- Dossier de données : garde l'historique malgré le changement de nom ---------- */
+// Version bêta (numéro « x.y.z-beta.n ») : appli séparée, installable à côté de la version normale.
+const IS_BETA = /-beta/i.test(app.getVersion());
 (function pinUserData() {
   const appData = app.getPath('appData');
-  const dir = path.join(appData, 'Truck and Coach Hub');
+  const stableDir = path.join(appData, 'Truck and Coach Hub');
+  const dir = IS_BETA ? path.join(appData, 'Truck and Coach Hub Beta') : stableDir;
   try {
     fs.mkdirSync(dir, { recursive: true });
-    for (const old of ['Telemetrie Entreprise', 'telemetrie-entreprise']) {
+    // La bêta démarre avec une copie de tes données et réglages de la version normale (sans les modifier)
+    if (IS_BETA) for (const f of ['donnees.json', 'reglages.json']) {
+      const src = path.join(stableDir, f), dst = path.join(dir, f);
+      if (!fs.existsSync(dst) && fs.existsSync(src)) fs.copyFileSync(src, dst);
+    }
+    if (!IS_BETA) for (const old of ['Telemetrie Entreprise', 'telemetrie-entreprise']) {
       for (const f of ['donnees.json', 'reglages.json']) {
         const src = path.join(appData, old, f), dst = path.join(dir, f);
         if (!fs.existsSync(dst) && fs.existsSync(src)) fs.copyFileSync(src, dst);
@@ -382,6 +390,8 @@ function setupIpc() {
 function setupUpdates() {
   if (!app.isPackaged) return;
   autoUpdater.autoDownload = false;
+  // La bêta suit les pré-versions « beta » ; la version normale ne voit que les versions publiées
+  if (IS_BETA) { autoUpdater.allowPrerelease = true; autoUpdater.channel = 'beta'; }
   autoUpdater.autoInstallOnAppQuit = false;
   autoUpdater.on('checking-for-update', () => { if (!['downloading', 'ready'].includes(updateState.state)) updateState = { state: 'checking', version: null }; });
   autoUpdater.on('update-not-available', () => { updateState = { state: 'none', version: null }; });

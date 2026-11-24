@@ -6,6 +6,9 @@
 // (package.json). Les versions techniques 0.12.0 → 0.13.27 sont regroupées et affichées
 // 0.12.0, 0.12.0.1, 0.12.0.2 et 0.12.0.3.
 window.versionAffichee = function (v) {
+  // Bêta : « 0.13.35-beta.1 » → numéro affiché de 0.13.35 + « bêta 1 »
+  const b = /^(\d+\.\d+\.\d+)-beta\.(\d+)$/.exec(v || '');
+  if (b) return window.versionAffichee(b[1]) + ' bêta ' + b[2];
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
   if (!m) return v;
   const n = Number(m[2]);
@@ -16,12 +19,9 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
-  { version: '0.12.0.8', date: '2026-11-24', titre: 'Nouvelle entrée : choisis ton jeu', notes: [
-    ['nouveau', 'L’appli s’ouvre sur Game : Euro Truck Simulator 2 et American Truck Simulator en grands visuels pleine page, avec l’état du jeu et du plugin. Choisis ton jeu pour ouvrir le Hub, la Marketplace et Truck & Coach Tools.'],
-    ['nouveau', 'Sur l’écran d’accueil, une barre à gauche donne accès à Game, News, Map, Settings et Support, même quand les pages en préparation sont masquées. Dans le Hub, la Marketplace et Truck & Coach Tools, la mise en page reste celle que tu connais.'],
-    ['nouveau', 'La carte et le bouton « Lancer » de l’Accueil suivent le jeu choisi. Le logo en bas du menu ramène au choix du jeu.'],
-    ['nouveau', 'Page Support : aide de l’appli, signalement d’un problème sur GitHub, version et notes de version.'],
-    ['ameliore', 'Le nom de l’appli n’est écrit qu’à un seul endroit, pour pouvoir le changer facilement.'],
+  { version: '0.12.0.9', date: '2026-11-24', titre: 'Retour à l’interface habituelle, nouvelle interface en bêta', notes: [
+    ['ameliore', 'L’appli reprend l’interface de la 0.12.0.7. La nouvelle entrée par le choix du jeu (Game, News, Map, Settings, Support) se teste dans Truck & Coach Hub Bêta, une appli séparée à installer à côté.'],
+    ['nouveau', 'Truck & Coach Hub Bêta : son propre installateur, son raccourci « Truck & Coach Hub (Bêta) » et ses propres réglages. Au premier lancement, elle reprend une copie de tes données ; la version normale n’est pas modifiée.'],
   ]},
   { version: '0.12.0.7', date: '2026-11-23', titre: 'Repères de navigation, Options dans le menu, page HUD épurée', notes: [
     ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],

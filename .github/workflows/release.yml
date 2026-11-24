@@ -5,7 +5,8 @@ name: Publier une version
 
 on:
   push:
-    branches: [main]
+    # main : version normale. beta : « Truck & Coach Hub Bêta », publiée en pré-version.
+    branches: [main, beta]
     paths: ['package.json']
   workflow_dispatch:
 
@@ -31,6 +32,6 @@ jobs:
           mkdir -p resources/tools
           cp rust-tools/bin/decrypt_truck.exe resources/tools/
           cp THIRD_PARTY_NOTICES.txt resources/tools/
-      - run: npm run release
+      - run: npm run ${{ github.ref_name == 'beta' && 'release:beta' || 'release' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

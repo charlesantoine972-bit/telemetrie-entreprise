@@ -1,6 +1,6 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.13.33",
+  "version": "0.13.34",
   "description": "Truck & Coach Hub - télémétrie, carrière, entreprise et mods pour ETS2 / ATS",
   "author": "charlesantoine972-bit",
   "main": "main.js",
@@ -12,7 +12,8 @@
     "dist": "electron-builder --win nsis --x64",
     "release": "electron-builder --win nsis --x64 --publish always",
     "simulateur": "node tools/simulateur.js",
-    "build-plugin": "sh plugin/build.sh"
+    "build-plugin": "sh plugin/build.sh",
+    "release:beta": "electron-builder --config electron-builder-beta.js --win nsis --x64 --publish always"
   },
   "build": {
     "appId": "fr.telemetrie.entreprise",
@@ -56,7 +57,7 @@
       }
     ],
     "releaseInfo": {
-      "releaseName": "0.12.0.8"
+      "releaseName": "0.12.0.9"
     }
   },
   "dependencies": {
