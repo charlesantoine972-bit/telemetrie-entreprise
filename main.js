@@ -13,6 +13,9 @@ const { DiscordPresence } = require('./src/discord-presence');
 const coach = require('./src/coach');
 const gameSettings = require('./src/game-settings');
 const { steamNews } = require('./src/steam-news');
+const acces = require('./src/acces/fournisseur');
+const accesVtc = require('./src/acces/vtc');
+const rangs = require('./src/acces/rangs');
 let contentPending = null;
 let atelier;
 let discordPresence;
@@ -249,6 +252,22 @@ function setupIpc() {
   ipcMain.handle('settings:game', (_e, game) => { if (gameSettings.switchGame(settings, game)) { saveSettings(); syncHud(); } return settings; });
   ipcMain.handle('settings:gameKey', (_e, game, key, value) => { if (gameSettings.setGameKey(settings, game, key, value)) { saveSettings(); syncHud(); } return settings; });
   ipcMain.handle('settings:copyGame', (_e, from, to) => { if (gameSettings.copyGameSettings(settings, from, to)) { saveSettings(); syncHud(); } return settings; });
+  // Accès, rangs et clés d'activation (préparation) : aperçu local tant que le serveur n'existe pas
+  let accesP = null;
+  const ap = () => accesP || (accesP = acces.createProvider({ dir: app.getPath('userData'), serverUrl: null, getSteamId: () => settings.steamId }));
+  const wrap = (fn) => async (_e, ...a) => { try { return { ok: true, value: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
+  ipcMain.handle('acces:info', () => ({ permissions: rangs.PERMISSIONS }));
+  ipcMain.handle('acces:session', wrap(() => ap().session()));
+  ipcMain.handle('acces:ranks', wrap(() => ap().ranks()));
+  ipcMain.handle('acces:saveRank', wrap((r) => ap().saveRank(r)));
+  ipcMain.handle('acces:deleteRank', wrap((id) => ap().deleteRank(id)));
+  ipcMain.handle('acces:keys', wrap(() => ap().keys()));
+  ipcMain.handle('acces:createKeys', wrap((n, g) => ap().createKeys(n, g)));
+  ipcMain.handle('acces:revokeKey', wrap((k) => ap().revokeKey(k)));
+  ipcMain.handle('acces:redeem', wrap((k) => ap().redeemKey(k)));
+  ipcMain.handle('acces:previewAs', wrap((id) => ap().previewAs(id)));
+  ipcMain.handle('acces:reset', wrap(() => ap().resetPreview()));
+  ipcMain.handle('acces:vtc', wrap(() => accesVtc.truckersmpVtc(settings.steamId)));
   // Page News : annonces officielles Steam d'ETS2 et d'ATS
   ipcMain.handle('news:steam', async (_e, game) => {
     try { return { ok: true, items: await steamNews(game) }; } catch (e) { return { ok: false, error: e.message }; }

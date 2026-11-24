@@ -662,3 +662,80 @@ test('bêta 4 : outils par jeu et carte du jeu dans son espace', () => {
   assert.match(html, /if \(mapLocked\(\)\) mapSetGame\(activeGame === 'ats' \? 'ats' : 'ets2'\);/);
   assert.match(html, /function toolsName\(g\)\{ return \(g \|\| activeGame\) === 'ats' \? 'Truck & Road Trip Tools' : 'Truck & Coach Tools'; \}/);
 });
+
+test('accès (préparation) : rangs, hiérarchie et permissions', () => {
+  const R = require('../src/acces/rangs');
+  const rank = id => R.SYSTEM_RANKS.find(r => r.id === id);
+  const fond = rank('fondateur'), admin = rank('admin'), test_ = rank('testeur');
+  assert.equal(R.permsOf(fond).length, R.PERM_IDS.length, 'le Fondateur a tout');
+  assert.ok(R.canAssign(fond, admin)); assert.ok(R.canAssign(admin, test_));
+  assert.ok(!R.canAssign(admin, admin), 'pas son propre niveau'); assert.ok(!R.canAssign(admin, fond)); assert.ok(!R.canAssign(test_, rank('membre')), 'il faut la permission');
+  assert.ok(!R.canEditRank(fond, admin), 'les rangs de base sont fixes');
+  let v = R.validateRank({ name: 'Chef de convoi', color: '#3B82F6', level: 40, perms: ['vtc.convois'] }, admin, R.SYSTEM_RANKS);
+  assert.equal(v.ok, false, 'admin n’a pas acces.rangs');
+  v = R.validateRank({ name: 'Chef de convoi', color: '#3B82F6', level: 40, perms: ['vtc.convois', 'inconnue'] }, fond, R.SYSTEM_RANKS);
+  assert.ok(v.ok); assert.deepEqual([...v.rank.perms], ['vtc.convois']); assert.equal(v.rank.id, 'chef-de-convoi'); assert.equal(v.rank.color, '#3b82f6');
+  assert.equal(R.validateRank({ name: 'X', color: '#000000', level: 10 }, fond, []).ok, false);
+  assert.equal(R.validateRank({ name: 'Trop haut', color: '#000000', level: 100 }, fond, []).ok, false);
+  assert.equal(R.validateRank({ name: 'administrateur', color: '#000000', level: 10 }, fond, R.SYSTEM_RANKS).ok, false, 'nom déjà pris');
+  const chef = { id: 'chef', name: 'Chef', level: 50, perms: ['acces.rangs', 'vtc.convois'] };
+  assert.equal(R.validateRank({ name: 'Adjoint', color: '#111111', level: 30, perms: ['vtc.gerer'] }, chef, []).ok, false, 'pas une permission qu’on n’a pas');
+  assert.equal(R.validateRank({ name: 'Adjoint', color: '#111111', level: 60 }, chef, []).ok, false, 'pas plus haut que soi');
+});
+
+test('accès (préparation) : clés d’activation', () => {
+  const K = require('../src/acces/cles');
+  const seen = new Set();
+  for (let i = 0; i < 200; i++) { const k = K.generateKey(); assert.match(k, /^TCH-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]$/); assert.ok(K.isWellFormed(k)); seen.add(k); }
+  assert.equal(seen.size, 200);
+  const k = K.generateKey();
+  assert.ok(K.isWellFormed(k.toLowerCase().replace(/-/g, ' ')), 'minuscules et espaces acceptés');
+  const body = k.slice(4, 18).replace(/-/g, '');
+  const wrong = k.slice(0, 4) + (body[0] === 'A' ? 'B' : 'A') + k.slice(5);
+  assert.equal(K.isWellFormed(wrong), false, 'une faute de frappe est repérée');
+  assert.equal(K.normalizeKey('n’importe quoi'), null);
+  assert.equal(K.validateGrant({}).ok, false);
+  assert.equal(K.validateGrant({ rank: 'testeur', maxUses: 0 }).ok, false);
+  assert.deepEqual({ ...K.validateGrant({ rank: 'testeur' }).grant }, { rank: 'testeur', perms: [], expiresAt: null, maxUses: 1 });
+});
+
+test('accès (préparation) : aperçu local (rangs, clés, activation)', async () => {
+  const os = require('node:os');
+  const { createProvider, Serveur } = require('../src/acces/fournisseur');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'acces-'));
+  const p = createProvider({ dir, getSteamId: () => '76561198000000000' });
+  let s = await p.session();
+  assert.equal(s.mode, 'apercu'); assert.equal(s.rankId, 'fondateur'); assert.equal(s.steamId, '76561198000000000');
+  await p.saveRank({ name: 'Chef de convoi', color: '#3b82f6', level: 40, perms: ['vtc.convois'] });
+  const [key] = await p.createKeys(1, { rank: 'testeur', maxUses: 1 });
+  await assert.rejects(() => p.createKeys(1, { rank: 'fondateur' }), /plus bas/);
+  await p.previewAs('membre');
+  await assert.rejects(() => p.keys(), /ne le permet pas/);
+  await assert.rejects(() => p.redeemKey('TCH-0000-0000-0000-0'), /mal écrite|inconnue/);
+  const r = await p.redeemKey(key.key.toLowerCase());
+  assert.equal(r.rank.id, 'testeur'); assert.ok(r.perms.includes('beta.acces'));
+  await assert.rejects(() => p.redeemKey(key.key), /déjà été utilisée/);
+  // relu depuis le disque
+  const p2 = createProvider({ dir });
+  assert.equal((await p2.session()).rankId, 'testeur');
+  assert.ok((await p2.ranks()).some(x => x.id === 'chef-de-convoi'));
+  await p2.resetPreview(); assert.equal((await p2.session()).rankId, 'fondateur');
+  await assert.rejects(() => new Serveur('https://exemple').session(), /n’existe pas encore/);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('accès (préparation) : VTC TruckersMP lue par SteamID', async () => {
+  const V = require('../src/acces/vtc');
+  const fake = (routes) => async (url) => { const b = routes[url]; return { ok: !!b, status: b ? 200 : 404, json: async () => b }; };
+  const api = 'https://api.truckersmp.com/v2';
+  const r = await V.truckersmpVtc('76561198000000001', fake({
+    [`${api}/player/76561198000000001`]: { error: false, response: { name: 'James', vtc: { id: 12, name: 'Atlantique Logistique', tag: 'ATL', inVTC: true, memberID: 99 } } },
+    [`${api}/vtc/12/member/99`]: { error: false, response: { role: 'Event Manager' } },
+  }));
+  assert.deepEqual(JSON.parse(JSON.stringify(r)), { found: true, vtc: { platform: 'truckersmp', vtcId: 12, name: 'Atlantique Logistique', tag: 'ATL', memberId: 99, player: 'James', role: 'Event Manager' } });
+  const none = await V.truckersmpVtc('76561198000000002', fake({ [`${api}/player/76561198000000002`]: { error: false, response: { vtc: { inVTC: false } } } }));
+  assert.equal(none.vtc, null);
+  assert.equal((await V.truckersmpVtc('76561198000000003', fake({}))).found, false);
+  await assert.rejects(() => V.truckersmpVtc('123'), /SteamID64/);
+  assert.equal(V.mapVtcRole(' event manager ', { 'Event Manager': 'chef-de-convoi' }), 'chef-de-convoi');
+});

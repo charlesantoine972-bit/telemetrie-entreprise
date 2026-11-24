@@ -736,6 +736,27 @@
   .optgamebar span.t{flex:1;min-width:240px;color:var(--soft)}
   .optgamebar.hidden{display:none}
   .navbtn.optmode{margin-top:auto;border-top:1px solid var(--line);border-radius:0;padding-top:12px}
+  /* ---------- Compte & accès (préparation) ---------- */
+  .accnote{margin:-4px 0 18px;padding:12px 16px;border:1px dashed var(--line);border-left:4px solid var(--race);border-radius:12px;background:var(--panel);font-size:14px;line-height:1.55;color:var(--soft)}
+  .rankpill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;font-weight:800;font-size:13px;border:1px solid var(--line);background:var(--bg2,var(--panel))}
+  .rankpill::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--rc,#94a3b8)}
+  .acclist{display:flex;flex-direction:column}
+  .accrow{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+  .accrow .grow{flex:1;min-width:200px} .accrow .muted{font-size:13px}
+  .accrow code{font-family:ui-monospace,Consolas,monospace;font-size:14px;letter-spacing:.04em}
+  .accrow.off{opacity:.55}
+  .accform{border-top:1px solid var(--line);padding:12px 18px} .accform>summary{cursor:pointer;font-weight:700;color:var(--accent-strong)}
+  .accgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:12px 18px}
+  .accform .accgrid{padding:12px 0}
+  .accgrid label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--soft)}
+  .accgrid small{font-weight:500;color:var(--muted)}
+  .accgrid input:not([type=color]),.accgrid select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit;font-weight:500;color-scheme:dark light}
+  .accgrid input[type=color]{height:38px;width:64px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);padding:3px;cursor:pointer}
+  .accperms input{accent-color:var(--accent);width:16px;height:16px;margin-top:1px}
+  .accperms{border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin:0}
+  .accperms legend{font-size:13px;font-weight:700;color:var(--soft);padding:0 6px}
+  .accperms label{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.4}
+  .acc-msg{margin:0;padding:0 18px 10px;font-size:13px} .setrow .acc-msg{padding:0}
   /* ---------- Page News ---------- */
   .newsgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
   .newscard{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);text-decoration:none;color:var(--text)}
@@ -1330,7 +1351,7 @@
       <h1>Options</h1>
       <div class="optgamebar hidden" id="optGameBar"><span class="gtag" id="optGameTag">ETS2</span><span class="t">Ces réglages ne concernent que <b id="optGameName">Euro Truck Simulator 2</b>. Ils se chargent tout seuls quand ce jeu est lancé.</span><button class="btn" id="optCopyGame">Copier depuis ATS</button></div>
       <div class="opts">
-      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Interface</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
+      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Interface</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="compte" role="tab" aria-controls="oc-compte"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M14.5 8.5l2 2"/></svg><span>Compte &amp; accès</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
       <div class="optbody">
       <div class="optcat" id="oc-general" role="tabpanel" aria-label="Général">
         <div class="ochead"><h2>Général</h2><p>Comment l’appli se comporte au quotidien.</p></div>
@@ -1434,6 +1455,45 @@
           <div class="setrow"><div class="lab"><b>ID de l’application Discord</b><span>De 17 à 20 chiffres, depuis le Discord Developer Portal.</span></div><div class="ctl"><input id="discordClientId" inputmode="numeric" maxlength="20" placeholder="ID de l’application" aria-label="ID de l’application Discord" style="width:220px"></div></div>
           <div class="setrow end"><span class="muted" id="discordStatus" style="font-size:13px" aria-live="polite"></span><button class="btn primary" id="btnDiscordTest">Enregistrer et tester</button></div>
         </div>
+      </div>
+      <div class="optcat" id="oc-compte" role="tabpanel" aria-label="Compte &amp; accès">
+        <div class="ochead"><h2>Compte &amp; accès</h2><p>Ton rang dans l’appli, tes clés d’activation et ta VTC. Les rangs donnent des accès en plus : versions bêta, outils expérimentaux, gestion de la VTC.</p></div>
+        <div class="accnote" role="note"><b>Aperçu.</b> Le serveur des comptes n’existe pas encore : tout reste sur ce PC, rien n’est partagé ni protégé. Tu es Fondateur pour pouvoir tout essayer.</div>
+        <div class="optgroup"><h3>Ton compte</h3>
+          <div class="setrow"><div class="lab"><b>Connexion Steam</b><span id="accSteam">Ton compte Steam servira à te reconnaître, sans mot de passe à créer.</span></div><div class="ctl"><button class="btn" disabled>Bientôt</button></div></div>
+          <div class="setrow"><div class="lab"><b>Ton rang</b><span id="accPerms">—</span></div><div class="ctl"><span class="rankpill" id="accRank">—</span></div></div>
+          <div class="setrow" id="accAsRow"><div class="lab"><b>Voir l’appli comme…</b><span>Aperçu seulement : prends un autre rang pour voir ce qu’il peut faire. « Effacer l’aperçu » te remet Fondateur.</span></div><div class="ctl"><select id="accAs" aria-label="Voir l’appli comme"></select></div></div>
+        </div>
+        <div class="optgroup"><h3>Clé d’activation</h3>
+          <div class="setrow"><div class="lab"><b>Activer une clé</b><span>Une clé reçue d’un fondateur ou d’un administrateur (accès testeur, bêta…). Format : TCH-XXXX-XXXX-XXXX-X.</span></div><div class="ctl"><input id="accKey" autocomplete="off" spellcheck="false" placeholder="TCH-XXXX-XXXX-XXXX-X" aria-label="Clé d’activation" style="width:230px;font-family:ui-monospace,Consolas,monospace"><button class="btn primary" id="accRedeem">Activer</button></div></div>
+          <p class="muted acc-msg" id="accKeyMsg" aria-live="polite"></p>
+        </div>
+        <div class="optgroup"><h3>Ma VTC</h3>
+          <div class="setrow"><div class="lab"><b>TruckersMP</b><span id="accVtc">Retrouve ta VTC et ton rôle grâce à ton SteamID64 (Options → Steam &amp; Discord). Trucky viendra ensuite ; HaulMP n’a pas encore d’API publique.</span></div><div class="ctl"><button class="btn" id="accVtcBtn">Chercher ma VTC</button></div></div>
+        </div>
+        <div class="optgroup hidden" id="accRanksGroup"><h3>Rangs</h3>
+          <div id="accRanks" class="acclist"></div>
+          <details class="accform" id="accRankForm"><summary>Créer un rang</summary>
+            <div class="accgrid">
+              <label>Nom<input id="arName" maxlength="24" placeholder="Ex. Chef de convoi"></label>
+              <label>Couleur<input id="arColor" type="color" value="#3b82f6"></label>
+              <label>Niveau<input id="arLevel" type="number" min="1" max="99" value="30"><small>Plus haut = plus de pouvoir. On ne gère que les rangs plus bas que le sien.</small></label>
+            </div>
+            <fieldset class="accperms" id="arPerms"><legend>Permissions</legend></fieldset>
+            <div class="setrow end"><span class="muted acc-msg" id="arMsg" aria-live="polite"></span><button class="btn primary" id="arSave">Enregistrer le rang</button></div>
+          </details>
+        </div>
+        <div class="optgroup hidden" id="accKeysGroup"><h3>Clés créées</h3>
+          <div class="accgrid">
+            <label>Nombre<input id="akCount" type="number" min="1" max="50" value="1"></label>
+            <label>Donne le rang<select id="akRank"></select></label>
+            <label>Utilisations<input id="akUses" type="number" min="1" max="1000" value="1"></label>
+            <label>Valable jusqu’au<input id="akExp" type="date"></label>
+          </div>
+          <div class="setrow end"><span class="muted acc-msg" id="akMsg" aria-live="polite"></span><button class="btn primary" id="akCreate">Créer les clés</button></div>
+          <div id="accKeys" class="acclist"></div>
+        </div>
+        <div class="setrow end"><button class="btn" id="accReset">Effacer l’aperçu</button></div>
       </div>
       <div class="optcat" id="oc-maj" role="tabpanel" aria-label="Mises à jour">
         <div class="ochead"><h2>Mises à jour</h2><p>L’appli vérifie toute seule au démarrage puis toutes les 30 minutes.</p></div>
@@ -1975,6 +2035,100 @@ function applyGameLabels(g){
   const hb = document.getElementById('hudTestBus'); if (hb) { hb.textContent = g === 'ats' ? 'Tester le HUD Road Trip' : 'Tester le HUD bus'; const h2 = hb.parentElement.querySelector('h2'); if (h2) h2.textContent = g === 'ats' ? 'Bandeau Road Trip' : 'Bandeau car'; }
   document.querySelectorAll('#oc-hud .optgroup > h3').forEach(h => { if (/^Bandeau (car|Road Trip)$/.test(h.textContent)) h.textContent = g === 'ats' ? 'Bandeau Road Trip' : 'Bandeau car'; });
 }
+
+/* ---------- Compte & accès (préparation : aperçu local, pas encore de serveur) ---------- */
+const accApi = () => (window.tel && window.tel.acces) || null;
+let accPerms = [], accRanksList = [], accSession = null;
+const accCall = async (name, ...a) => { const api = accApi(); if (!api) return { ok: false, error: 'Disponible dans l’appli installée.' }; return api[name](...a); };
+const accMsg = (id, txt, bad) => { const e = document.getElementById(id); if (!e) return; e.textContent = txt || ''; e.style.color = bad ? 'var(--race)' : ''; };
+const rankPill = r => `<span class="rankpill" style="--rc:${escM(r.color || '#94a3b8')}">${escM(r.name)}</span>`;
+async function renderAcces(){
+  if (!accPerms.length && accApi()) accPerms = (await accApi().info()).permissions;
+  const s = await accCall('session');
+  if (!s.ok) { setText('accPerms', s.error); return; }
+  accSession = s.value;
+  const me = accSession.rank, can = p => accSession.perms.includes(p);
+  const pill = document.getElementById('accRank'); pill.textContent = me.name; pill.style.setProperty('--rc', me.color);
+  const pn = Object.fromEntries(accPerms);
+  setText('accPerms', accSession.perms.length ? accSession.perms.map(p => pn[p] || p).join(' · ') : 'Aucun accès en plus pour le moment.');
+  setText('accSteam', accSession.steamId ? `Compte Steam ${accSession.steamId} (renseigné dans Steam & Discord). La vraie connexion Steam arrivera avec le serveur.` : 'Ton compte Steam servira à te reconnaître, sans mot de passe à créer. Renseigne ton SteamID64 dans Steam & Discord.');
+  const rr = await accCall('ranks'); accRanksList = rr.ok ? rr.value : [];
+  document.getElementById('accAs').innerHTML = accRanksList.map(r => `<option value="${escM(r.id)}"${r.id === me.id ? ' selected' : ''}>${escM(r.name)} (niveau ${r.level})</option>`).join('');
+  // Rangs
+  document.getElementById('accRanksGroup').classList.toggle('hidden', !can('acces.rangs') && !can('acces.membres'));
+  document.getElementById('accRankForm').classList.toggle('hidden', !can('acces.rangs'));
+  document.getElementById('accRanks').innerHTML = accRanksList.map(r => {
+    const editable = can('acces.rangs') && !r.system && me.level > r.level;
+    const perms = r.perms.includes('*') ? 'Tous les accès' : (r.perms.length ? r.perms.map(p => pn[p] || p).join(' · ') : 'Aucun accès en plus');
+    return `<div class="accrow">${rankPill(r)}<span class="muted">niveau ${r.level}${r.system ? ' · de base' : ''}</span><span class="grow muted">${escM(perms)}</span>${editable ? `<button class="btn" data-ar-edit="${escM(r.id)}">Modifier</button><button class="btn" data-ar-del="${escM(r.id)}">Supprimer</button>` : ''}</div>`;
+  }).join('');
+  const mine = accSession.perms;
+  document.getElementById('arPerms').innerHTML = '<legend>Permissions</legend>' + accPerms.map(([id, lab]) => `<label><input type="checkbox" value="${id}"${mine.includes(id) ? '' : ' disabled'}><span>${escM(lab)}${mine.includes(id) ? '' : ' <span class="muted">(tu ne l’as pas)</span>'}</span></label>`).join('');
+  document.querySelectorAll('[data-ar-del]').forEach(b => b.onclick = async () => {
+    const r = accRanksList.find(x => x.id === b.dataset.arDel);
+    if (!await ask('Supprimer le rang « ' + escM(r.name) + ' » ?', 'Les membres qui l’ont repassent Membre, et les clés qui le donnent sont désactivées.', 'Supprimer')) return;
+    const x = await accCall('deleteRank', r.id); if (!x.ok) accMsg('arMsg', x.error, true); renderAcces();
+  });
+  document.querySelectorAll('[data-ar-edit]').forEach(b => b.onclick = () => {
+    const r = accRanksList.find(x => x.id === b.dataset.arEdit), f = document.getElementById('accRankForm');
+    f.open = true; f.dataset.editId = r.id; f.querySelector('summary').textContent = 'Modifier « ' + r.name + ' »';
+    document.getElementById('arName').value = r.name; document.getElementById('arColor').value = r.color; document.getElementById('arLevel').value = r.level;
+    document.querySelectorAll('#arPerms input').forEach(i => { i.checked = r.perms.includes(i.value); });
+  });
+  // Clés
+  document.getElementById('accKeysGroup').classList.toggle('hidden', !can('acces.cles'));
+  if (can('acces.cles')) {
+    document.getElementById('akRank').innerHTML = accRanksList.filter(r => r.level < me.level && r.id !== 'membre').map(r => `<option value="${escM(r.id)}">${escM(r.name)}</option>`).join('');
+    const k = await accCall('keys'), list = k.ok ? k.value : [];
+    const rn = Object.fromEntries(accRanksList.map(r => [r.id, r]));
+    document.getElementById('accKeys').innerHTML = list.length ? list.map(x => {
+      const done = x.revoked || x.uses >= x.grant.maxUses || (x.grant.expiresAt && Date.parse(x.grant.expiresAt) < Date.now());
+      const st = x.revoked ? 'désactivée' : x.uses >= x.grant.maxUses ? 'utilisée' : (x.grant.expiresAt && Date.parse(x.grant.expiresAt) < Date.now()) ? 'expirée' : `${x.uses}/${x.grant.maxUses} utilisation${x.grant.maxUses > 1 ? 's' : ''}`;
+      return `<div class="accrow${done ? ' off' : ''}"><code>${escM(x.key)}</code>${x.grant.rank && rn[x.grant.rank] ? rankPill(rn[x.grant.rank]) : ''}<span class="grow muted">${escM(st)}${x.grant.expiresAt ? ' · jusqu’au ' + escM(new Date(x.grant.expiresAt).toLocaleDateString('fr-FR')) : ''}</span><button class="btn" data-ak-copy="${escM(x.key)}">Copier</button>${done ? '' : `<button class="btn" data-ak-off="${escM(x.key)}">Désactiver</button>`}</div>`;
+    }).join('') : '<div class="accrow muted">Aucune clé pour le moment.</div>';
+    document.querySelectorAll('[data-ak-copy]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.akCopy); accMsg('akMsg', 'Clé copiée.'); } catch { accMsg('akMsg', 'Copie impossible : sélectionne la clé à la main.', true); } });
+    document.querySelectorAll('[data-ak-off]').forEach(b => b.onclick = async () => { const x = await accCall('revokeKey', b.dataset.akOff); if (!x.ok) accMsg('akMsg', x.error, true); renderAcces(); });
+  }
+}
+document.getElementById('accRedeem').onclick = async () => {
+  const v = document.getElementById('accKey').value;
+  const r = await accCall('redeem', v);
+  if (!r.ok) return accMsg('accKeyMsg', r.error, true);
+  document.getElementById('accKey').value = '';
+  accMsg('accKeyMsg', `Clé activée : tu es maintenant ${r.value.rank.name}.`);
+  renderAcces();
+};
+document.getElementById('accKey').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('accRedeem').click(); });
+document.getElementById('accAs').onchange = async e => { await accCall('previewAs', e.target.value); renderAcces(); };
+document.getElementById('accReset').onclick = async () => {
+  if (!await ask('Effacer l’aperçu ?', 'Les rangs et les clés créés pour essayer sont supprimés, et tu redeviens Fondateur.', 'Effacer')) return;
+  await accCall('reset'); accMsg('accKeyMsg', ''); renderAcces();
+};
+document.getElementById('arSave').onclick = async () => {
+  const f = document.getElementById('accRankForm');
+  const input = { id: f.dataset.editId || undefined, name: document.getElementById('arName').value, color: document.getElementById('arColor').value, level: Number(document.getElementById('arLevel').value), perms: [...document.querySelectorAll('#arPerms input:checked')].map(i => i.value) };
+  const r = await accCall('saveRank', input);
+  if (!r.ok) return accMsg('arMsg', r.error, true);
+  accMsg('arMsg', `Rang « ${r.value.name} » enregistré.`);
+  delete f.dataset.editId; f.querySelector('summary').textContent = 'Créer un rang'; document.getElementById('arName').value = '';
+  renderAcces();
+};
+document.getElementById('akCreate').onclick = async () => {
+  const exp = document.getElementById('akExp').value;
+  const r = await accCall('createKeys', Number(document.getElementById('akCount').value), { rank: document.getElementById('akRank').value || null, maxUses: Number(document.getElementById('akUses').value), expiresAt: exp ? exp + 'T23:59:59' : null });
+  if (!r.ok) return accMsg('akMsg', r.error, true);
+  accMsg('akMsg', r.value.length > 1 ? `${r.value.length} clés créées.` : 'Clé créée.');
+  renderAcces();
+};
+document.getElementById('accVtcBtn').onclick = async () => {
+  setText('accVtc', 'Recherche sur TruckersMP…');
+  const r = await accCall('vtc');
+  if (!r.ok) return setText('accVtc', r.error);
+  const v = r.value;
+  setText('accVtc', !v.found || !v.vtc ? v.reason : `${v.vtc.name}${v.vtc.tag ? ' [' + v.vtc.tag + ']' : ''}${v.vtc.role ? ' · rôle : ' + v.vtc.role : ''} (TruckersMP). Plus tard, le fondateur de ta VTC pourra relier ce rôle à un rang de l’appli.`);
+};
+const openOptCatAcc = openOptCat;
+openOptCat = function (cat) { openOptCatAcc(cat); if (cat === 'compte') renderAcces(); };
 
 /* ---------- Bêta : page News ---------- */
 let newsTab = null;
