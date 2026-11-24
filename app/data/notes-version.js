@@ -144,10 +144,10 @@ window.NOTES_VERSION = [
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
   { version: '0.12.0.5 bêta 1', date: '2026-11-24', titre: 'Paramètres par jeu, vraie page News et ATS', notes: [
-    ['nouveau', 'Paramètres sur deux niveaux. Paramètres généraux (bouton Settings de la barre) : Général, Interface, Accessibilité, Steam & Discord, Mises à jour, Aide. Paramètres ETS2 et Paramètres ATS, ouverts depuis le jeu choisi : Jeu & plugin, Profil & carrière, Conduite, HUD, Carte, Truck & Coach Tools.'],
+    ['nouveau', 'Paramètres sur deux niveaux. Paramètres généraux (bouton Settings de la barre) : Général, Interface, Accessibilité, Steam & Discord, Mises à jour, Aide. Paramètres ETS2 et Paramètres ATS, ouverts avec le bouton Paramètres du jeu choisi : Jeu & plugin, Conduite (profil de carrière, unités, seuils), HUD, Truck & Coach Tools. Ils se chargent tout seuls quand ce jeu est lancé.'],
     ['nouveau', 'Bouton « Copier depuis l’autre jeu » dans les paramètres d’un jeu. Tes réglages actuels sont repris pour ETS2 et pour ATS.'],
     ['nouveau', 'Vraie page News : les dernières actualités Steam d’Euro Truck Simulator 2 et d’American Truck Simulator, et les nouveautés de l’appli.'],
-    ['nouveau', 'American Truck Simulator : « Car » devient « Road Trip » (le DLC de transport de voyageurs d’ATS) et les unités sont américaines (miles, mph, gallons, dollars).'],
+    ['nouveau', 'American Truck Simulator : « Car » devient « Road Trip » (le DLC de transport de voyageurs d’ATS), et le HUD, la Télémétrie et les seuils passent en unités américaines (miles, mph, gallons). Réglable dans Paramètres ATS → Conduite.'],
     ['change', 'Revenir au menu principal referme tout : le menu ☰ et l’espace ouvert. Si une sauvegarde a des modifications non enregistrées, l’appli te demande avant.'],
     ['change', 'La Marketplace est cachée en attendant d’être prête.'],
     ['change', 'Comme dans la version officielle : Programme bêta (toujours activé ici), notes de version par rubriques et page Mises à jour réorganisée.'],
