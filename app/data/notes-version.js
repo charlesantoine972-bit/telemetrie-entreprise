@@ -143,7 +143,7 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
-  { version: '0.12.0.5 bêta 1', date: '2026-11-24', titre: 'Paramètres par jeu, vraie page News et ATS', notes: [
+  { version: '0.12.0.5 bêta 3', date: '2026-11-24', titre: 'Paramètres par jeu, vraie page News et ATS', notes: [
     ['nouveau', 'Paramètres sur deux niveaux. Paramètres généraux (bouton Settings de la barre) : Général, Interface, Accessibilité, Steam & Discord, Mises à jour, Aide. Paramètres ETS2 et Paramètres ATS, ouverts avec le bouton Paramètres du jeu choisi : Jeu & plugin, Conduite (profil de carrière, unités, seuils), HUD, Truck & Coach Tools. Ils se chargent tout seuls quand ce jeu est lancé.'],
     ['nouveau', 'Bouton « Copier depuis l’autre jeu » dans les paramètres d’un jeu. Tes réglages actuels sont repris pour ETS2 et pour ATS.'],
     ['nouveau', 'Vraie page News : les dernières actualités Steam d’Euro Truck Simulator 2 et d’American Truck Simulator, et les nouveautés de l’appli.'],
