@@ -110,7 +110,11 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
   for (const id of ['sPseudo', 'sType', 'sTruck', 'sCar', 'sPct', 'btnSave']) assert.match(conduite, new RegExp(`id="${id}"`));
   assert.ok(conduite.indexOf('id="btnSave"') > conduite.indexOf('id="sPct"'));
   for (const id of ['pluginList', 'btnInstall', 'btnChoose']) assert.match(cat('jeu'), new RegExp(`id="${id}"`));
-  for (const id of ['autoTelSwitch', 'navMiniSwitch', 'soonSwitch']) assert.match(cat('general'), new RegExp(`id="${id}"`));
+  assert.match(cat('general'), /id="autoTelSwitch"/);
+  // Interface → Éléments visibles : tout ce qui fait apparaître ou disparaître quelque chose
+  for (const id of ['navMiniSwitch', 'soonSwitch', 'betaSwitch', 'betaDl']) assert.match(cat('affichage'), new RegExp(`id="${id}"`));
+  assert.match(nav, /data-oc="affichage"[\s\S]*?<span>Interface<\/span>/);
+  assert.match(cat('maj'), /id="notesSeg"/);
   assert.match(cat('tools'), /id="atelierSwitch"/);
   assert.match(cat('maj'), /id="updCurrent"/);
   assert.match(cat('aide'), /id="coachDiag"/);
@@ -558,4 +562,26 @@ test('bandeau camion : données du jeu, boîtes activables, rien d’inventé', 
   assert.equal(H('route'), true);
   assert.equal(H('b-livraison'), true);
   assert.equal(H('b-cargo'), true);
+});
+
+test('notes de version : numéros affichés, rubriques et bêta', () => {
+  const ctx = { window: {} }; vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.resolve(__dirname, '..', 'app', 'data', 'notes-version.js'), 'utf8'), ctx);
+  const w = ctx.window, va = w.versionAffichee;
+  assert.equal(va('0.13.27'), '0.12.0.3');
+  assert.equal(va('0.13.28'), '0.12.0.4');
+  assert.equal(va('0.13.34'), '0.12.0.4');
+  assert.equal(va('0.13.35'), '0.12.0.5');
+  assert.equal(va('0.13.35-beta.1'), '0.12.0.4 bêta 1');
+  assert.equal(va('0.13.35-beta.2'), '0.12.0.4 bêta 2');
+  assert.equal(va('0.13.36-beta.1'), '0.12.0.5 bêta 1');
+  const pkg = require('../package.json');
+  // la série 0.12 est continue, sans trou
+  const serie = w.NOTES_VERSION.map(n => n.version).filter(x => x.startsWith('0.12'));
+  assert.deepEqual([...serie], ['0.12.0.5', '0.12.0.4', '0.12.0.3', '0.12.0.2', '0.12.0.1', '0.12.0']);
+  const types = new Set(w.NOTES_RUBRIQUES.map(([k]) => k));
+  for (const n of [...w.NOTES_VERSION, ...w.NOTES_BETA]) for (const [t] of n.notes) assert.ok(types.has(t), n.version + ' : ' + t);
+  // la version installée a toujours sa note
+  const shown = va(pkg.version);
+  assert.ok([...w.NOTES_VERSION, ...w.NOTES_BETA].some(n => n.version === shown), 'note manquante pour ' + shown);
 });

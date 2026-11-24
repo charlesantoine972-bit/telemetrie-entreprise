@@ -251,7 +251,7 @@
   .lnews h2{margin:0;font-size:18px}
   .lnews-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
   .lnews-list li{display:flex;gap:10px;align-items:baseline;font-size:14px;line-height:1.55}
-  .lnews .tag{flex:none;min-width:74px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
+  .lnews .tag{flex:none;min-width:96px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
   .lnews .tag::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--tc)}
   .lnews .t-nouveau{--tc:var(--accent)} .lnews .t-ameliore{--tc:var(--ok)} .lnews .t-corrige{--tc:var(--race)}
   .optgroup .lnotes{max-width:none;padding:0 20px 18px;box-sizing:border-box}
@@ -271,7 +271,13 @@
   .lnotes li{display:flex;gap:10px;align-items:baseline;font-size:14px;line-height:1.6;color:var(--text)}
   .lnotes .tag{flex:none;min-width:74px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--text)}
   .lnotes .tag::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--tc)}
-  .lnotes .t-nouveau{--tc:var(--accent)} .lnotes .t-ameliore{--tc:var(--ok)} .lnotes .t-corrige{--tc:var(--race)}
+  .lnotes .t-nouveau,.lnews .t-nouveau{--tc:var(--accent)} .lnotes .t-ameliore,.lnews .t-ameliore{--tc:var(--ok)} .lnotes .t-change,.lnews .t-change{--tc:var(--loaded)} .lnotes .t-corrige,.lnews .t-corrige{--tc:var(--race)}
+  .lnotes .rub{padding:0 18px 14px} .lnotes .rub>h4{margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:8px}
+  .lnotes .rub>h4::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--tc)} .lnotes .rub>h4 .n{color:var(--muted);font-weight:700}
+  .lnotes .rub ul{padding:0} .lnotes .rub li::before{content:"•";color:var(--tc);font-weight:800}
+  .lnotes details.rub-fold{background:none;border:none;border-radius:0} .lnotes details.rub-fold>summary{padding:0;display:inline-flex}
+  .lnotes details.rub-fold>summary::after{margin-left:8px}
+  .lnews .rubt{flex:none;min-width:110px;font-size:12px;font-weight:700;color:var(--soft)}
   .lstat{flex:1;min-width:120px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
   .lstat span{font-size:12px;color:var(--muted)} .lstat b{font-size:18px}
   .sideswitch{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:0 2px 8px}
@@ -1297,16 +1303,12 @@
     <section id="v-reglages" class="hidden">
       <h1>Options</h1>
       <div class="opts">
-      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Affichage</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
+      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Interface</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
       <div class="optbody">
       <div class="optcat" id="oc-general" role="tabpanel" aria-label="Général">
         <div class="ochead"><h2>Général</h2><p>Comment l’appli se comporte au quotidien.</p></div>
         <div class="optgroup"><h3>Démarrage</h3>
           <div class="setrow"><div class="lab"><b>Ouvrir la Télémétrie au lancement du jeu</b><span>Dès que le jeu se connecte, l’appli passe sur la Télémétrie. Elle ne passe pas devant le jeu : tu la retrouves prête avec Alt+Tab.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="autoTelSwitch" role="switch" aria-label="Ouvrir la télémétrie au lancement du jeu"><span></span></label></div></div>
-        </div>
-        <div class="optgroup"><h3>Menu</h3>
-          <div class="setrow"><div class="lab"><b>Menu latéral réduit</b><span>N’affiche que les icônes dans le menu de gauche. Tu peux aussi le réduire ou l’agrandir avec le bouton à côté du logo.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="navMiniSwitch" role="switch" aria-label="Menu latéral réduit"><span></span></label></div></div>
-          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
         </div>
       </div>
       <div class="optcat" id="oc-conduite" role="tabpanel" aria-label="Conduite">
@@ -1351,8 +1353,8 @@
           <div class="setrow col"><p class="muted" style="margin:0;font-size:13px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p></div>
         </div>
       </div>
-      <div class="optcat" id="oc-affichage" role="tabpanel" aria-label="Affichage">
-        <div class="ochead"><h2>Affichage</h2><p>L’apparence de tout le logiciel : Hub, Marketplace, Truck &amp; Coach Tools et Options.</p></div>
+      <div class="optcat" id="oc-affichage" role="tabpanel" aria-label="Interface">
+        <div class="ochead"><h2>Interface</h2><p>L’apparence de tout le logiciel et ce qui s’y affiche : Hub, Marketplace, Truck &amp; Coach Tools et Options.</p></div>
         <div class="optgroup"><h3>Couleurs</h3>
           <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Thème</b><span>« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc. « Comme Windows » : suit le mode et la couleur d’accent de Windows.</span></div><div class="ctl"><div class="seg" id="themeSeg"><button data-theme-btn="base">De base</button><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div></div></div>
           <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Couleur d’accent</b><span>Boutons, sélection et interrupteurs. La teinte est ajustée si elle manque de contraste avec le fond.</span></div><div class="ctl"><div class="swatches" id="accentSeg">
@@ -1370,6 +1372,12 @@
         </div>
         <div class="optgroup"><h3>Texte</h3>
           <div class="setrow"><div class="lab"><b>Taille du texte</b><span>Agrandit tout le logiciel.</span></div><div class="ctl"><div class="seg" id="zoomSeg"><button data-zoom-btn="100">Normale</button><button data-zoom-btn="115">Grande</button><button data-zoom-btn="130">Très grande</button></div></div></div>
+        </div>
+        <div class="optgroup"><h3>Éléments visibles</h3>
+          <div class="setrow"><div class="lab"><b>Menu latéral réduit</b><span>N’affiche que les icônes dans le menu de gauche. Tu peux aussi le réduire ou l’agrandir avec le bouton à côté du logo.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="navMiniSwitch" role="switch" aria-label="Menu latéral réduit"><span></span></label></div></div>
+          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
+          <div class="setrow" id="betaRow"><div class="lab"><b>Programme bêta</b><span id="betaDesc">Affiche les notes de la version bêta et le lien pour installer Truck &amp; Coach Hub Bêta, une appli séparée qui s’installe à côté de celle-ci. N’installe rien et ne change pas ta version.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="betaSwitch" role="switch" aria-label="Programme bêta"><span></span></label></div></div>
+          <div class="setrow hidden" id="betaDlRow"><div class="lab"><b>Truck &amp; Coach Hub Bêta</b><span>L’installateur est sur la page des versions : prends le fichier « Truck-and-Coach-Hub-Beta-Setup » de la plus récente marquée « Pre-release ».</span></div><div class="ctl"><button class="btn" id="betaDl">Télécharger la bêta</button></div></div>
         </div>
       </div>
       <div class="optcat" id="oc-acces" role="tabpanel" aria-label="Accessibilité">
@@ -1409,12 +1417,12 @@
       </div>
       <div class="optcat" id="oc-maj" role="tabpanel" aria-label="Mises à jour">
         <div class="ochead"><h2>Mises à jour</h2><p>L’appli vérifie toute seule au démarrage puis toutes les 30 minutes.</p></div>
-        <div class="optgroup"><h3>Version</h3>
+        <div class="optgroup"><h3>Ta version</h3>
           <div class="setrow"><div class="lab"><b>Version installée : <span id="updCurrent">–</span></b><span id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</span></div><div class="ctl"><button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button></div></div>
           <div class="setrow col" style="padding-top:0;border-top:none"><div class="progress hidden" id="updBar" style="width:100%"><div></div></div></div>
         </div>
-        <div class="optgroup"><h3>Notes de version</h3>
-          <div class="lnotes" id="lNotes"><p class="muted" style="margin:0 0 4px;font-size:13px">Ce qui a été ajouté, amélioré et corrigé à chaque mise à jour.</p><div id="lNotesList" style="display:flex;flex-direction:column;gap:10px"></div></div>
+        <div class="optgroup"><h3>Notes à lire</h3>
+          <div class="lnotes" id="lNotes"><div class="between" style="gap:12px;flex-wrap:wrap"><p class="muted" style="margin:0;font-size:13px" id="notesIntro">Ce qui a changé à chaque mise à jour. Lire les notes n’installe rien.</p><div class="seg hidden" id="notesSeg" role="tablist" aria-label="Notes à lire"><button data-notes="officielle" role="tab">Version officielle</button><button data-notes="beta" role="tab">Bêta</button></div></div><div id="lNotesList" style="display:flex;flex-direction:column;gap:10px"></div></div>
         </div>
       </div>
       <div class="optcat" id="oc-aide" role="tabpanel" aria-label="Aide &amp; infos">
@@ -2737,7 +2745,7 @@ const MK_NEWS = [
   { d: '20/11/2026', t: 'Truck & Coach Tools : supprimer une sauvegarde ou un profil', x: 'Dans Truck & Coach Tools → Sauvegardes, chaque copie faite par le Hub a un bouton « Supprimer », et chaque profil un bouton « Supprimer le profil ». Un profil supprimé reste récupérable dans « Profils supprimés » tant que tu n\'effaces pas ses copies.' },
   { d: '17/11/2026', t: 'Truck & Coach Tools : dupliquer un profil et bilan du profil', x: 'Dans Truck & Coach Tools → Sauvegardes, « Dupliquer » crée une copie de ton profil pour faire des tests sans risque. Dans Truck & Coach Tools → Profil, un bilan en lecture seule montre tes finances, ta flotte et les problèmes à corriger.' },
   { d: '17/11/2026', t: 'Truck & Coach Tools : analyse des sauvegardes', x: 'Dans Truck & Coach Tools → Sauvegardes, le bouton « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues (fichier vide, tronqué, illisible…) sans rien modifier.' },
-  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Affichage, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
+  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Interface, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
   { d: '17/11/2026', t: 'HUD : seulement quand tu joues', x: 'Le bandeau se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit. Plugin du jeu mis à jour (1.1.0) : relance le jeu une fois.' },
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },
   { d: '17/11/2026', t: 'Accessibilité revue (WCAG 2.1 AA)', x: 'Navigation complète au clavier, lien « Aller au contenu », lecteurs d\'écran (NVDA, Narrateur), contrastes vérifiés dans tous les thèmes, mode Contraste élevé de Windows, une seule couleur d\'action.' },
@@ -3816,30 +3824,61 @@ if (HAS_APP){
 
 const v = shownVer(new URLSearchParams(location.search).get('v'));
 if (v) { document.getElementById('appVersion').textContent = 'Version ' + v; document.getElementById('lVersion').textContent = 'Version ' + v; setText('lfVer', v); setText('supVer', 'version ' + v); }
-// Notes de version en bas de l'écran d'accueil : la version installée est ouverte, les autres sont repliées.
-function renderNotes(current) {
-  const list = window.NOTES_VERSION || [], box = document.getElementById('lNotesList');
-  if (!box) return;
-  if (!list.length) { document.getElementById('lNotes').classList.add('hidden'); return; }
-  const cur = current && list.some(n => n.version === current) ? current : list[0].version;
-  const lab = { nouveau: 'Nouveau', ameliore: 'Amélioré', corrige: 'Corrigé' };
-  const fmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return d; } };
-  box.innerHTML = list.map(n => `<details${n.version === cur ? ' open' : ''}><summary><span class="ver">Version ${escM(n.version)}</span>`
-    + (n.version === cur ? '<span class="vnow">Ta version</span>' : '')
-    + `<span class="vtitle">${escM(n.titre || '')}</span><span class="vdate">${escM(fmt(n.date))}</span></summary><ul>`
-    + n.notes.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${lab[t] || escM(t)}</span><span>${escM(txt)}</span></li>`).join('')
-    + '</ul></details>').join('');
+// Notes de version (Options → Mises à jour), rangées par rubriques : Nouveautés, Améliorations, Changements, Corrections.
+const RAW_VER = new URLSearchParams(location.search).get('v') || '';
+const APP_BETA = /-beta/i.test(RAW_VER);
+const RUBS = window.NOTES_RUBRIQUES || [['nouveau', 'Nouveautés'], ['ameliore', 'Améliorations'], ['change', 'Changements'], ['corrige', 'Corrections']];
+const RUB_LAB = Object.fromEntries(RUBS);
+const RUB_TAG = { nouveau: 'Nouveau', ameliore: 'Amélioré', change: 'Changé', corrige: 'Corrigé' };
+const notesFmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return d; } };
+const sortNotes = notes => RUBS.flatMap(([k]) => notes.filter(([t]) => t === k)).concat(notes.filter(([t]) => !RUB_LAB[t]));
+function rubHtml(notes) {
+  return RUBS.map(([k, lab]) => {
+    const items = notes.filter(([t]) => t === k);
+    if (!items.length) return '';
+    const head = `<h4>${lab} <span class="n">(${items.length})</span></h4>`, ul = '<ul>' + items.map(([, txt]) => `<li><span>${escM(txt)}</span></li>`).join('') + '</ul>';
+    // Corrections en dernier, repliées quand la liste est longue
+    if (k === 'corrige' && items.length > 3) return `<div class="rub t-${k}"><details class="rub-fold"><summary>${head}</summary>${ul}</details></div>`;
+    return `<div class="rub t-${k}">${head}${ul}</div>`;
+  }).join('');
 }
-renderNotes(v);
+function betaOn() { return APP_BETA || !!store.get('betaProgram', false); }
+let notesTab = APP_BETA ? 'beta' : 'officielle';
+function renderNotes(current) {
+  const box = document.getElementById('lNotesList');
+  if (!box) return;
+  const seg = document.getElementById('notesSeg');
+  if (!betaOn()) notesTab = 'officielle';
+  seg.classList.toggle('hidden', !betaOn());
+  seg.querySelectorAll('[data-notes]').forEach(b => { const on = b.dataset.notes === notesTab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  const list = (notesTab === 'beta' ? window.NOTES_BETA : window.NOTES_VERSION) || [];
+  if (!list.length) { box.innerHTML = '<p class="muted" style="margin:0">Aucune note pour le moment.</p>'; return; }
+  const cur = current && list.some(n => n.version === current) ? current : list[0].version;
+  box.innerHTML = list.map(n => `<details${n.version === cur ? ' open' : ''}><summary><span class="ver">Version ${escM(n.version)}</span>`
+    + (n.version === current ? '<span class="vnow">Ta version</span>' : '')
+    + `<span class="vtitle">${escM(n.titre || '')}</span><span class="vdate">${escM(notesFmt(n.date))}</span></summary>`
+    + rubHtml(n.notes) + '</details>').join('');
+}
+document.querySelectorAll('#notesSeg [data-notes]').forEach(b => b.onclick = () => { notesTab = b.dataset.notes; renderNotes(v); });
+// Programme bêta (Options → Interface → Éléments visibles) : ne fait qu'afficher, n'installe rien
+function applyBeta() {
+  const sw = document.getElementById('betaSwitch'), on = betaOn();
+  sw.checked = on; sw.disabled = APP_BETA;
+  if (APP_BETA) setText('betaDesc', 'Tu utilises Truck & Coach Hub Bêta : le programme reste activé. Les notes s’ouvrent sur la bêta, l’onglet « Version officielle » montre celles de l’appli normale.');
+  document.getElementById('betaDlRow').classList.toggle('hidden', !on || APP_BETA);
+  renderNotes(v);
+}
+document.getElementById('betaSwitch').onchange = e => { store.set('betaProgram', e.target.checked); notesTab = e.target.checked ? notesTab : 'officielle'; applyBeta(); };
+document.getElementById('betaDl').onclick = () => window.open('https://github.com/charlesantoine972-bit/telemetrie-entreprise/releases');
+applyBeta();
 // Encart « Nouveautés » sur l'écran d'accueil : une seule fois après chaque mise à jour
 function renderNews(current){
-  const list = window.NOTES_VERSION || [], n = list.find(x => x.version === current) || (!current && list[0]);
+  const list = (APP_BETA ? window.NOTES_BETA : window.NOTES_VERSION) || [], n = list.find(x => x.version === current) || (!current && list[0]);
   const box = document.getElementById('lNews');
   if (!n || store.get('seenNotes', null) === n.version) { box.classList.add('hidden'); return; }
-  const lab = { nouveau: 'Nouveau', ameliore: 'Amélioré', corrige: 'Corrigé' };
   setText('lNewsVer', n.version); setText('lNewsTitre', n.titre || '');
-  const items = n.notes.slice(0, 4);
-  document.getElementById('lNewsList').innerHTML = items.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${lab[t] || escM(t)}</span><span>${escM(txt)}</span></li>`).join('')
+  const all = sortNotes(n.notes), items = all.slice(0, 4);
+  document.getElementById('lNewsList').innerHTML = items.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${escM(RUB_TAG[t] || t)}</span><span>${escM(txt)}</span></li>`).join('')
     + (n.notes.length > items.length ? `<li class="muted" style="font-size:13px">… et ${n.notes.length - items.length} autre${n.notes.length - items.length > 1 ? 's' : ''} changement${n.notes.length - items.length > 1 ? 's' : ''}.</li>` : '');
   box.classList.remove('hidden');
   const seen = () => { store.set('seenNotes', n.version); box.classList.add('hidden'); };
