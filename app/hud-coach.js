@@ -29,7 +29,7 @@ function hudCoach(root, d) {
         <span class="coach-sep"></span>
         <span class="coach-time"><i class="coach-ico coach-ico-blue">${COACH_ICONS.clock}</i><b data-c="clock">--:--</b></span>
         <span class="coach-sep"></span>
-        <span class="coach-speed"><b data-c="speed">0</b> km/h</span>
+        <span class="coach-speed"><b data-c="speed">0</b> <i data-u="sp" style="font-style:normal">km/h</i></span>
         <span class="coach-limit" data-c="limit">–</span>
         <span class="coach-sep"></span>
         <span class="coach-stop"><i class="coach-ico coach-ico-pin">${COACH_ICONS.pin}</i><b data-c="nextStop">—</b></span>
@@ -67,12 +67,13 @@ function hudCoach(root, d) {
   // Vitesse et limitation
   const kmh = ok(live.speed) ? Math.round(Math.abs(live.speed) * 3.6) : null;
   const limit = ok(live.speedLimit) && live.speedLimit > 0 ? Math.round(live.speedLimit * 3.6) : null;
-  set('speed', kmh == null ? '—' : n(kmh));
-  set('limit', limit == null ? '' : String(limit)); show('limit', limit != null);
+  const U = (typeof UNITS!=='undefined'?UNITS:{speed:x=>x*3.6,dist:x=>x,vol:x=>x,sp:'km/h',d:'km',v:'L'});
+  set('speed', kmh == null ? '—' : n(Math.round(U.speed(Math.abs(live.speed)))));
+  set('limit', limit == null ? '' : String(Math.round(U.speed(live.speedLimit)))); show('limit', limit != null);
   panel.classList.toggle('over-speed', kmh != null && limit != null && kmh > limit);
 
   // Prochain arrêt, sinon distance GPS
-  const gps = ok(live.navDistance) && live.navDistance > 0 ? n(live.navDistance / 1000, 1) + ' km' : null;
+  const gps = ok(live.navDistance) && live.navDistance > 0 ? n(U.dist(live.navDistance / 1000), 1) + ' ' + U.d : null;
   set('nextStop', c.nextStop || (gps ? 'GPS · ' + gps : '—'));
   q('nextStop').title = c.nextStop && gps ? 'Distance GPS : ' + gps : '';
 
@@ -94,8 +95,8 @@ function hudCoach(root, d) {
   }
 
   // Ligne du bas
-  set('distance', ok(c.distanceKm) ? n(c.distanceKm, 1) + ' km' : '—'); show('distanceBox', ok(c.distanceKm));
-  set('odometer', ok(live.odometer) ? n(live.odometer, 1) + ' km' : '—');
+  set('distance', ok(c.distanceKm) ? n(U.dist(c.distanceKm), 1) + ' ' + U.d : '—'); show('distanceBox', ok(c.distanceKm));
+  set('odometer', ok(live.odometer) ? n(U.dist(live.odometer), 1) + ' ' + U.d : '—');
   const tOut = ok(c.outsideTemp), tIn = ok(c.cabinTemp);
   set('temp', (tOut ? n(c.outsideTemp, 1) + ' °C' : '—') + ' / ' + (tIn ? n(c.cabinTemp, 1) + ' °C' : '—'));
   show('tempBox', tOut || tIn);
@@ -107,7 +108,7 @@ function hudCoach(root, d) {
   set('break', brk == null ? '—' : brk <= 0 ? 'maintenant' : TCHMission.duration(brk * 60));
   show('breakBox', brk != null && brk < 120);
   const pct = ok(c.fuelPct) ? c.fuelPct : null;
-  set('fuel', pct != null ? n(pct) + ' %' : ok(live.fuel) ? n(live.fuel) + ' L' : '—');
+  set('fuel', pct != null ? n(pct) + ' %' : ok(live.fuel) ? n(U.vol(live.fuel)) + ' ' + U.v : '—');
   q('fuelBar').style.width = (pct == null ? 0 : pct) + '%';
   q('fuelBar').classList.toggle('low', pct != null && pct < 15);
 }

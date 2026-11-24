@@ -11,6 +11,8 @@ const gameContent = require('./src/game-content');
 const steam = require('./src/steam');
 const { DiscordPresence } = require('./src/discord-presence');
 const coach = require('./src/coach');
+const gameSettings = require('./src/game-settings');
+const { steamNews } = require('./src/steam-news');
 let contentPending = null;
 let atelier;
 let discordPresence;
@@ -79,6 +81,8 @@ function loadSettings() {
   else settings.mapTilesets = Object.fromEntries(Object.entries(settings.mapTilesets).filter(([game, dir]) =>
     ['ets2', 'ats'].includes(game) && typeof dir === 'string'));
   carte.loadTilesets(settings.mapTilesets);
+  // Bêta : réglages de jeu séparés pour ETS2 et ATS (repris des réglages actuels au premier lancement)
+  gameSettings.initGameSettings(settings);
 }
 function saveSettings() {
   fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
@@ -185,7 +189,7 @@ function hudData() {
   const L = sn.live || {};
   const fresh = Date.now() - telemetry.lastPacket < 700;
   const playing = sn.connected && fresh && !L.paused && L.focused !== false;
-  return { ...sn, jobs: undefined, options: activeHudOptions(sn.live, sn.vehicleType), show: playing || test };
+  return { ...sn, jobs: undefined, options: activeHudOptions(sn.live, sn.vehicleType), units: settings.units === 'imperial' ? 'imperial' : 'metric', game: settings.activeGame, show: playing || test };
 }
 function syncHud() {
   const on = !!(settings.modules && settings.modules.hud) || Date.now() < hudTestUntil;
@@ -241,6 +245,13 @@ function setupIpc() {
     return { ok: true, status: installPlugin() };
   });
   ipcMain.handle('settings:get', () => settings);
+  // Réglages par jeu (bêta) : charger ceux d'ETS2 ou d'ATS, copier d'un jeu à l'autre
+  ipcMain.handle('settings:game', (_e, game) => { if (gameSettings.switchGame(settings, game)) { saveSettings(); syncHud(); } return settings; });
+  ipcMain.handle('settings:copyGame', (_e, from, to) => { if (gameSettings.copyGameSettings(settings, from, to)) { saveSettings(); syncHud(); } return settings; });
+  // Page News : annonces officielles Steam d'ETS2 et d'ATS
+  ipcMain.handle('news:steam', async (_e, game) => {
+    try { return { ok: true, items: await steamNews(game) }; } catch (e) { return { ok: false, error: e.message }; }
+  });
   ipcMain.handle('integration:status', () => ({
     steamKeyConfigured: fs.existsSync(integrationSecretsFile()) && !!JSON.parse(fs.readFileSync(integrationSecretsFile(), 'utf8')).steamApiKey,
     discordClientId: settings.discordClientId || ''
@@ -377,6 +388,8 @@ function setupIpc() {
     if (patch.look) settings.look = sanitizeLook({ ...settings.look, ...patch.look });
     if (patch.modules) settings.modules = { ...DEFAULTS.modules, ...settings.modules, ...patch.modules };
     if (patch.hud) settings.hud = mergeHudSettings(DEFAULTS.hud, settings.hud, patch.hud);
+    if ('units' in patch) settings.units = patch.units === 'imperial' ? 'imperial' : 'metric';
+    gameSettings.rememberActive(settings);
     saveSettings();
     if (patch.modules || patch.hud) syncHud();
     if ('discordClientId' in patch && discordPresence) await discordPresence.setClientId(settings.discordClientId);
@@ -433,6 +446,14 @@ if (!app.requestSingleInstanceLock()) {
       try { saveSettings(); } catch (e) { console.error('Réglages :', e.message); }
     });
     telemetry.start();
+    // Le jeu lancé décide des réglages de jeu chargés (ETS2 ou ATS)
+    setInterval(() => {
+      const L = telemetry.live; if (!L || !L.game || Date.now() - telemetry.lastPacket > 3000) return;
+      if (gameSettings.switchGame(settings, L.game === 'ats' ? 'ats' : 'ets2')) {
+        try { saveSettings(); } catch (e) { console.error('Réglages :', e.message); }
+        syncHud(); if (win) win.webContents.send('settings:changed', settings);
+      }
+    }, 2000);
     setInterval(() => {
       if (discordPresence && telemetry) discordPresence.update(telemetry.snapshot()).catch((e) => console.error('Discord Rich Presence :', e.message));
     }, 10000);

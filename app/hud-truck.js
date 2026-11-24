@@ -45,7 +45,7 @@ function hudTruck(root, d) {
         <span class="coach-time"><i class="coach-ico coach-ico-blue">${TRUCK_ICONS.clock}</i><b data-t="clock">--:--</b></span>
         <span class="coach-sep"></span>
         <span class="truck-gear" data-t="gear" title="Rapport engagé" hidden></span>
-        <span class="coach-speed"><b data-t="speed">0</b> km/h</span>
+        <span class="coach-speed"><b data-t="speed">0</b> <i data-u="sp" style="font-style:normal">km/h</i></span>
         <span class="coach-limit" data-t="limit">–</span>
         <span class="truck-cruise" data-t="cruise" title="Régulateur de vitesse" hidden></span>
         <span class="truck-mode" data-t="mode" hidden></span>
@@ -85,11 +85,12 @@ function hudTruck(root, d) {
   set('gear', g == null ? '' : g === 0 ? 'N' : g < 0 ? 'R' + (-g) : String(g)); show('gear', g != null);
   const kmh = ok(live.speed) ? Math.round(Math.abs(live.speed) * 3.6) : null;
   const limit = ok(live.speedLimit) && live.speedLimit > 0 ? Math.round(live.speedLimit * 3.6) : null;
-  set('speed', kmh == null ? '—' : n(kmh));
-  set('limit', limit == null ? '' : String(limit)); show('limit', limit != null);
+  const U = (typeof UNITS!=='undefined'?UNITS:{speed:x=>x*3.6,dist:x=>x,vol:x=>x,sp:'km/h',d:'km',v:'L'});
+  set('speed', kmh == null ? '—' : n(Math.round(U.speed(Math.abs(live.speed)))));
+  set('limit', limit == null ? '' : String(Math.round(U.speed(live.speedLimit)))); show('limit', limit != null);
   panel.classList.toggle('over-speed', kmh != null && limit != null && kmh > limit);
   const cc = ok(live.cruise) && live.cruise > 0.5 ? Math.round(live.cruise * 3.6) : null;
-  set('cruise', cc == null ? '' : 'CC ' + cc); show('cruise', cc != null);
+  set('cruise', cc == null ? '' : 'CC ' + Math.round(U.speed(live.cruise))); show('cruise', cc != null);
   // Mode réel / course : compteurs de l'appli, seulement pour la mission affichée
   const tj = preview ? (d.job || { mode: 'réel', overPct: 0 }) : (m && m.tracked ? d.job : null);
   const modeEl = q('mode');
@@ -101,7 +102,7 @@ function hudTruck(root, d) {
   const box = (key, on) => show('b-' + key, !!boxes[key] && on);
   const left = m && ok(m.remainingKm) ? m.remainingKm : ok(live.navDistance) && live.navDistance > 0 ? live.navDistance / 1000 : null;
   const leftMin = m && ok(m.remainingMin) ? m.remainingMin : ok(live.navTime) && live.navTime > 0 ? live.navTime / 60 : null;
-  set('left', left == null ? '—' : n(left, left < 10 ? 1 : 0) + ' km');
+  set('left', left == null ? '—' : n(U.dist(left), U.dist(left) < 10 ? 1 : 0) + ' ' + U.d);
   set('eta', leftMin == null ? '' : ' · ' + dur(leftMin));
   box('route', left != null);
   const dl = m && ok(m.deadline) && m.deadline > 0 ? m.deadline : null;
@@ -118,10 +119,10 @@ function hudTruck(root, d) {
   box('cargo', !!(m && m.cargo));
   const cap = live.truck && Number(live.truck['fuel.capacity']) > 0 ? Number(live.truck['fuel.capacity']) : null;
   const pct = cap && ok(live.fuel) ? Math.max(0, Math.min(100, live.fuel / cap * 100)) : null;
-  set('fuel', pct != null ? n(pct) + ' %' : ok(live.fuel) && live.fuel > 0 ? n(live.fuel) + ' L' : '—');
+  set('fuel', pct != null ? n(pct) + ' %' : ok(live.fuel) && live.fuel > 0 ? n(U.vol(live.fuel)) + ' ' + U.v : '—');
   q('fuelBar').style.width = (pct == null ? 0 : pct) + '%';
   q('fuelBar').classList.toggle('low', !!live.fuelWarning || (pct != null && pct < 15));
-  q('b-carburant').title = ok(live.fuelRange) && live.fuelRange > 0 ? 'Autonomie : ' + n(live.fuelRange) + ' km' : '';
+  q('b-carburant').title = ok(live.fuelRange) && live.fuelRange > 0 ? 'Autonomie : ' + n(U.dist(live.fuelRange)) + ' ' + U.d : '';
   box('carburant', pct != null || (ok(live.fuel) && live.fuel > 0));
   const brk = ok(live.mandatoryBreak) ? live.mandatoryBreak : ok(live.restStop) ? live.restStop : null;
   set('break', brk == null ? '—' : brk <= 0 ? 'maintenant' : dur(brk));

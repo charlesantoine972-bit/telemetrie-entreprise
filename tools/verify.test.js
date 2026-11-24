@@ -110,7 +110,11 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
   for (const id of ['sPseudo', 'sType', 'sTruck', 'sCar', 'sPct', 'btnSave']) assert.match(conduite, new RegExp(`id="${id}"`));
   assert.ok(conduite.indexOf('id="btnSave"') > conduite.indexOf('id="sPct"'));
   for (const id of ['pluginList', 'btnInstall', 'btnChoose']) assert.match(cat('jeu'), new RegExp(`id="${id}"`));
-  for (const id of ['autoTelSwitch', 'navMiniSwitch', 'soonSwitch']) assert.match(cat('general'), new RegExp(`id="${id}"`));
+  assert.match(cat('general'), /id="autoTelSwitch"/);
+  // Interface → Éléments visibles : tout ce qui fait apparaître ou disparaître quelque chose
+  for (const id of ['navMiniSwitch', 'soonSwitch', 'betaSwitch', 'betaDl']) assert.match(cat('affichage'), new RegExp(`id="${id}"`));
+  assert.match(nav, /data-oc="affichage"[\s\S]*?<span>Interface<\/span>/);
+  assert.match(cat('maj'), /id="notesSeg"/);
   assert.match(cat('tools'), /id="atelierSwitch"/);
   assert.match(cat('maj'), /id="updCurrent"/);
   assert.match(cat('aide'), /id="coachDiag"/);
@@ -558,4 +562,83 @@ test('bandeau camion : données du jeu, boîtes activables, rien d’inventé', 
   assert.equal(H('route'), true);
   assert.equal(H('b-livraison'), true);
   assert.equal(H('b-cargo'), true);
+});
+
+test('notes de version : numéros affichés, rubriques et bêta', () => {
+  const ctx = { window: {} }; vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.resolve(__dirname, '..', 'app', 'data', 'notes-version.js'), 'utf8'), ctx);
+  const w = ctx.window, va = w.versionAffichee;
+  assert.equal(va('0.13.27'), '0.12.0.3');
+  assert.equal(va('0.13.28'), '0.12.0.4');
+  assert.equal(va('0.13.34'), '0.12.0.4');
+  assert.equal(va('0.13.35'), '0.12.0.5');
+  assert.equal(va('0.13.35-beta.1'), '0.12.0.4 bêta 1');
+  assert.equal(va('0.13.35-beta.2'), '0.12.0.4 bêta 2');
+  assert.equal(va('0.13.36-beta.1'), '0.12.0.5 bêta 1');
+  const pkg = require('../package.json');
+  // la série 0.12 est continue, sans trou
+  const serie = w.NOTES_VERSION.map(n => n.version).filter(x => x.startsWith('0.12'));
+  assert.deepEqual([...serie], ['0.12.0.5', '0.12.0.4', '0.12.0.3', '0.12.0.2', '0.12.0.1', '0.12.0']);
+  const types = new Set(w.NOTES_RUBRIQUES.map(([k]) => k));
+  for (const n of [...w.NOTES_VERSION, ...w.NOTES_BETA]) for (const [t] of n.notes) assert.ok(types.has(t), n.version + ' : ' + t);
+  // la version installée a toujours sa note
+  const shown = va(pkg.version);
+  assert.ok([...w.NOTES_VERSION, ...w.NOTES_BETA].some(n => n.version === shown), 'note manquante pour ' + shown);
+});
+
+test('bêta : réglages par jeu (ETS2 / ATS), copie et unités', () => {
+  const gs = require('../src/game-settings');
+  const st = { pseudo: 'James', vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, hud: { truck: { scale: 100 } }, modules: { hud: true } };
+  gs.initGameSettings(st);
+  assert.equal(st.activeGame, 'ets2');
+  assert.equal(st.units, 'metric');
+  assert.equal(st.games.ats.units, 'imperial');
+  assert.equal(st.games.ats.limitTruck, 100, 'les réglages actuels sont repris pour ATS');
+  st.limitTruck = 90; gs.rememberActive(st);
+  assert.equal(st.games.ets2.limitTruck, 90);
+  assert.equal(gs.switchGame(st, 'ats'), true);
+  assert.equal(st.limitTruck, 100); assert.equal(st.units, 'imperial'); assert.equal(st.pseudo, 'James');
+  assert.equal(gs.switchGame(st, 'ats'), false);
+  gs.copyGameSettings(st, 'ets2', 'ats');
+  assert.equal(st.limitTruck, 90, 'copié depuis ETS2');
+  assert.equal(st.units, 'imperial', 'les unités restent propres à chaque jeu');
+  st.hud.truck.scale = 120; gs.rememberActive(st);
+  assert.equal(st.games.ets2.hud.truck.scale, 100, 'les deux jeux ne partagent pas le même objet HUD');
+});
+
+test('bêta : actualités Steam nettoyées (BBCode, images, liens)', () => {
+  const { parseNews, cleanText, excerpt } = require('../src/steam-news');
+  assert.equal(cleanText('[b]Hello[/b] {STEAM_CLAN_IMAGE}/a/b.png [url=https://x.y]le lien[/url]'), 'Hello le lien');
+  assert.ok(excerpt('mot '.repeat(200), 50).endsWith('…'));
+  const items = parseNews({ appnews: { newsitems: [
+    { title: 'Mise à jour 1.58', contents: '[img]x[/img] Nouvelles routes', url: 'https://store.steampowered.com/news/1', date: 1700000000 },
+    { title: 'Sans lien', contents: 'x', url: 'javascript:alert(1)', date: 1 }
+  ] } }, 'ats');
+  assert.equal(items.length, 1);
+  assert.deepEqual(items[0], { game: 'ats', title: 'Mise à jour 1.58', text: 'Nouvelles routes', url: 'https://store.steampowered.com/news/1', date: 1700000000000 });
+});
+
+test('bêta : unités US pour ATS dans le HUD', () => {
+  const U = require('../app/units.js');
+  U.set('imperial');
+  assert.equal(Math.round(U.speed(100 / 3.6)), 62);
+  assert.equal(U.sp, 'mph'); assert.equal(U.d, 'mi'); assert.equal(U.v, 'gal');
+  assert.equal(Math.round(U.toKmh(Math.round(U.fromKmh(100)))), 100);
+  U.set('metric');
+  assert.equal(Math.round(U.speed(25)), 90); assert.equal(U.sp, 'km/h');
+  const hud = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'hud.html'), 'utf8');
+  assert.match(hud, /<script src="units\.js"><\/script>/);
+  assert.match(hud, /UNITS\.set\(d\.units\)/);
+});
+
+test('bêta : News, Marketplace cachée, paramètres généraux / du jeu, retour au menu', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /<section id="v-news"/);
+  assert.match(html, /if \(t === 'news'\) go\('news', 'news'\);/);
+  assert.match(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/);
+  assert.match(html, /const OPT_GAME = \['jeu', 'conduite', 'hud', 'tools'\];/);
+  assert.match(html, /if \(on\) resetSpaces\(\);/);
+  assert.match(html, /Quitter sans appliquer/);
+  const pre = fs.readFileSync(path.resolve(__dirname, '..', 'preload.js'), 'utf8');
+  for (const k of ['setGame', 'copyGameSettings', 'steamNews']) assert.match(pre, new RegExp(k + ':'));
 });

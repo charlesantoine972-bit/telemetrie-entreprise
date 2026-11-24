@@ -1,3 +1,4 @@
+function hudUx(){ return (typeof UNITS!=='undefined'?UNITS:{speed:x=>x*3.6,dist:x=>x,vol:x=>x,sp:'km/h',d:'km',v:'L'}); }
 // Extension commune à l'aperçu et à l'overlay : aucune donnée de ligne inventée.
 function hudMission(root, d) {
   let panel = root.querySelector('.mission-widgets');
@@ -30,10 +31,10 @@ function hudMission(root, d) {
   set('vehicle', coach ? 'CAR' : 'CAMION', !navigation);
   const odometer = live && live.odometer;
   set('odometer', typeof odometer === 'number' && Number.isFinite(odometer) && odometer >= 0
-    ? odometer.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' km' : '—', !navigation || coach);
+    ? hudUx().dist(odometer).toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' ' + hudUx().d : '—', !navigation || coach);
   const fuelRange = live && live.fuelRange;
   const hasFuelRange = typeof fuelRange === 'number' && Number.isFinite(fuelRange) && fuelRange > 0;
-  set('fuelRange', hasFuelRange ? fuelRange.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' km' : '—',
+  set('fuelRange', hasFuelRange ? hudUx().dist(fuelRange).toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' ' + hudUx().d : '—',
     navigation && coach && hasFuelRange);
   panel.querySelector('[data-mission=odometer]').title = 'Kilométrage total du véhicule transmis par le jeu, y compris avant le lancement de l’application.';
   // Trajet et marchandise : tels que le jeu les donne (mission en direct), sinon l’aperçu de test.
@@ -44,7 +45,7 @@ function hudMission(root, d) {
   set('cargo', job ? `${job.cargo || 'Marchandise'}${mass}` : '—', navigation && !coach && hasJob);
   const distance = live && live.navDistance;
   set('remaining', typeof distance === 'number' && Number.isFinite(distance) && distance > 0
-    ? (distance / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' km' : '—', navigation && !!(distance > 0));
+    ? hudUx().dist(distance / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' ' + hudUx().d : '—', navigation && !!(distance > 0));
   set('stops', '', false);
   set('game', fmt(t.gameSeconds));
   set('real', fmt(t.realSeconds) + (t.paused ? ' · pause' : ''));

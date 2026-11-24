@@ -251,7 +251,7 @@
   .lnews h2{margin:0;font-size:18px}
   .lnews-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
   .lnews-list li{display:flex;gap:10px;align-items:baseline;font-size:14px;line-height:1.55}
-  .lnews .tag{flex:none;min-width:74px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
+  .lnews .tag{flex:none;min-width:96px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
   .lnews .tag::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--tc)}
   .lnews .t-nouveau{--tc:var(--accent)} .lnews .t-ameliore{--tc:var(--ok)} .lnews .t-corrige{--tc:var(--race)}
   .optgroup .lnotes{max-width:none;padding:0 20px 18px;box-sizing:border-box}
@@ -271,7 +271,13 @@
   .lnotes li{display:flex;gap:10px;align-items:baseline;font-size:14px;line-height:1.6;color:var(--text)}
   .lnotes .tag{flex:none;min-width:74px;text-align:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--text)}
   .lnotes .tag::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--tc)}
-  .lnotes .t-nouveau{--tc:var(--accent)} .lnotes .t-ameliore{--tc:var(--ok)} .lnotes .t-corrige{--tc:var(--race)}
+  .lnotes .t-nouveau,.lnews .t-nouveau{--tc:var(--accent)} .lnotes .t-ameliore,.lnews .t-ameliore{--tc:var(--ok)} .lnotes .t-change,.lnews .t-change{--tc:var(--loaded)} .lnotes .t-corrige,.lnews .t-corrige{--tc:var(--race)}
+  .lnotes .rub{padding:0 18px 14px} .lnotes .rub>h4{margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:8px}
+  .lnotes .rub>h4::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--tc)} .lnotes .rub>h4 .n{color:var(--muted);font-weight:700}
+  .lnotes .rub ul{padding:0} .lnotes .rub li::before{content:"•";color:var(--tc);font-weight:800}
+  .lnotes details.rub-fold{background:none;border:none;border-radius:0} .lnotes details.rub-fold>summary{padding:0;display:inline-flex}
+  .lnotes details.rub-fold>summary::after{margin-left:8px}
+  .lnews .rubt{flex:none;min-width:110px;font-size:12px;font-weight:700;color:var(--soft)}
   .lstat{flex:1;min-width:120px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
   .lstat span{font-size:12px;color:var(--muted)} .lstat b{font-size:18px}
   .sideswitch{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:0 2px 8px}
@@ -722,8 +728,26 @@
   table.jobs{width:100%;border-collapse:collapse;font-size:13px}
   table.jobs th{text-align:left;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
   table.jobs td{padding:10px;border-bottom:1px solid var(--line)}
+  /* ---------- Bêta : Marketplace cachée en attendant d'être prête ---------- */
+  [data-side-btn="market"],#navMarket{display:none!important}
+  /* ---------- Paramètres d'un jeu ---------- */
+  .optgamebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:-4px 0 18px;padding:14px 18px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;background:var(--panel);font-size:14px;line-height:1.55}
+  .optgamebar .gtag{background:var(--accent);color:var(--on-accent);font-weight:800;font-size:13px;border-radius:6px;padding:3px 8px;flex:none}
+  .optgamebar span.t{flex:1;min-width:240px;color:var(--soft)}
+  .optgamebar.hidden{display:none}
+  .navbtn.optmode{margin-top:auto;border-top:1px solid var(--line);border-radius:0;padding-top:12px}
+  /* ---------- Page News ---------- */
+  .newsgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .newscard{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);text-decoration:none;color:var(--text)}
+  a.newscard:hover{border-color:var(--accent)} a.newscard:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .newscard .nmeta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600}
+  .newscard .nmeta .gtag{background:var(--accent-soft);color:var(--accent-strong);font-weight:800;border-radius:6px;padding:2px 7px}
+  .newscard h3{margin:0;font-size:17px;line-height:1.35}
+  .newscard p{margin:0;font-size:14px;line-height:1.6;color:var(--soft)}
+  .newscard .nmore{margin-top:auto;font-size:13px;font-weight:700;color:var(--accent-strong)}
 </style>
 <link rel="stylesheet" href="hud-mission.css">
+<script src="units.js"></script>
 <script src="mission-time.js"></script>
 <script src="hud-mission.js"></script>
 <script src="hud-render.js"></script>
@@ -822,7 +846,7 @@
       <button class="spacetile" data-side-btn="market" style="--c:var(--c-market)"><span class="ic"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10.6 2.51c.9-.36 1.9-.36 2.8 0l7.5 3.04c.67.27 1.1.91 1.1 1.62v9.66c0 .71-.43 1.35-1.1 1.62l-7.5 3.04c-.9.37-1.9.37-2.8 0l-7.5-3.04c-.67-.27-1.1-.91-1.1-1.62V7.17c0-.7.43-1.35 1.1-1.62zm2.25 1.4a2.3 2.3 0 0 0-1.7 0l-1.9.77 7.52 2.93 2.67-1.03zm1.84 4.5L7.21 5.5 4.6 6.56 12 9.45zM3.5 16.83q0 .17.16.23l7.5 3.04.09.04v-9.38L3.5 7.75zm9.35 3.27 7.5-3.04q.14-.07.15-.23V7.77l-7.75 3v9.37z"/></svg></span><span class="st-txt"><span class="kick">MODS &amp; CONTENUS</span><b>Marketplace</b><span>Les modules du Hub et les cars &amp; bus à installer.</span></span></button>
       <button class="spacetile hidden" data-side-btn="atelier" id="sideBtnAtelier" style="--c:var(--c-atelier)"><span class="ic"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 7.5a5.5 5.5 0 0 1 7.66-5.06.75.75 0 0 1 .24 1.22L16.3 6.25l1.44 1.44 2.59-2.59a.75.75 0 0 1 1.22.24 5.49 5.49 0 0 1-6.35 7.5l-8.3 8.32a2.87 2.87 0 1 1-4.07-4.06l8.31-8.31Q11 8.16 11 7.5m5.5-4a4 4 0 0 0-3.8 5.27c.1.27.03.57-.18.77L3.9 18.16a1.37 1.37 0 0 0 1.94 1.94l8.63-8.62c.2-.2.5-.27.76-.18a4 4 0 0 0 5.25-4.22l-1.85 1.85c-.48.48-1.28.48-1.76 0l-1.8-1.8a1.25 1.25 0 0 1 0-1.76l1.85-1.85z"/></svg></span><span class="st-txt"><span class="kick">OUTILS AVANCÉS · SOLO</span><b>Truck &amp; Coach Tools</b><span>Sauvegardes, camions, remorques, profil et cars.</span></span></button>
     </div>
-    <div class="sp-foot"><button class="linkbtn" id="spaceHome">Changer de jeu</button><button class="linkbtn" id="spaceOptions">Options</button></div>
+    <div class="sp-foot"><button class="linkbtn" id="spaceHome">Changer de jeu</button><button class="linkbtn" id="spaceOptions">Paramètres du jeu</button></div>
   </div>
 </div>
 <div class="app">
@@ -870,7 +894,7 @@
     </nav>
     <nav class="navscroll hidden" id="navOptions" aria-label="Catégories d’options"><button class="navbtn optback" id="optBack"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg><span>Retour</span></button><div class="navsep" aria-hidden="true"></div></nav>
     <div class="updbanner hidden" id="updBanner"><span id="updBannerText">Mise à jour disponible</span><div class="progress hidden" id="updBannerBar"><div></div></div><button class="btn primary" id="updBannerBtn" style="height:34px;font-size:13px">Mettre à jour</button></div>
-    <button class="navbtn" data-view="reglages" id="navOptBtn"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 2.25q1.11.01 2.18.25c.32.07.55.33.59.65l.17 1.53a1.38 1.38 0 0 0 1.92 1.11l1.4-.61c.3-.13.64-.06.85.17a10 10 0 0 1 2.2 3.8c.1.3 0 .63-.26.82l-1.25.92a1.38 1.38 0 0 0 0 2.22l1.25.92c.26.19.36.52.27.82a10 10 0 0 1-2.2 3.8.75.75 0 0 1-.85.17l-1.4-.62a1.38 1.38 0 0 0-1.93 1.12l-.17 1.52a.75.75 0 0 1-.58.65 9.5 9.5 0 0 1-4.4 0 .75.75 0 0 1-.57-.65l-.17-1.52a1.38 1.38 0 0 0-1.93-1.11l-1.4.62a.75.75 0 0 1-.85-.18 10 10 0 0 1-2.2-3.8c-.1-.3 0-.63.26-.82l1.25-.92a1.38 1.38 0 0 0 0-2.22l-1.24-.92a.75.75 0 0 1-.28-.82 10 10 0 0 1 2.2-3.8c.23-.23.57-.3.86-.17l1.4.62c.4.17.86.15 1.25-.08.38-.22.63-.6.68-1.04l.17-1.53a.75.75 0 0 1 .58-.65q1.08-.24 2.2-.25m0 1.5q-.67 0-1.35.12l-.11.97a2.9 2.9 0 0 1-4.03 2.33l-.9-.4A8 8 0 0 0 4.29 9.1l.8.59a2.88 2.88 0 0 1 0 4.64l-.8.59a8 8 0 0 0 1.35 2.32l.9-.4a2.88 2.88 0 0 1 4.02 2.32l.1.99q1.35.22 2.7 0l.1-.99a2.88 2.88 0 0 1 4.02-2.32l.9.4a8 8 0 0 0 1.35-2.32l-.8-.59a2.88 2.88 0 0 1 0-4.64l.8-.59a8 8 0 0 0-1.35-2.32l-.9.4q-.55.24-1.15.24c-1.47 0-2.7-1.1-2.86-2.57l-.11-.97q-.68-.11-1.34-.12M12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5m0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
+    <button class="navbtn" data-view="reglages" id="navOptBtn"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 2.25q1.11.01 2.18.25c.32.07.55.33.59.65l.17 1.53a1.38 1.38 0 0 0 1.92 1.11l1.4-.61c.3-.13.64-.06.85.17a10 10 0 0 1 2.2 3.8c.1.3 0 .63-.26.82l-1.25.92a1.38 1.38 0 0 0 0 2.22l1.25.92c.26.19.36.52.27.82a10 10 0 0 1-2.2 3.8.75.75 0 0 1-.85.17l-1.4-.62a1.38 1.38 0 0 0-1.93 1.12l-.17 1.52a.75.75 0 0 1-.58.65 9.5 9.5 0 0 1-4.4 0 .75.75 0 0 1-.57-.65l-.17-1.52a1.38 1.38 0 0 0-1.93-1.11l-1.4.62a.75.75 0 0 1-.85-.18 10 10 0 0 1-2.2-3.8c-.1-.3 0-.63.26-.82l1.25-.92a1.38 1.38 0 0 0 0-2.22l-1.24-.92a.75.75 0 0 1-.28-.82 10 10 0 0 1 2.2-3.8c.23-.23.57-.3.86-.17l1.4.62c.4.17.86.15 1.25-.08.38-.22.63-.6.68-1.04l.17-1.53a.75.75 0 0 1 .58-.65q1.08-.24 2.2-.25m0 1.5q-.67 0-1.35.12l-.11.97a2.9 2.9 0 0 1-4.03 2.33l-.9-.4A8 8 0 0 0 4.29 9.1l.8.59a2.88 2.88 0 0 1 0 4.64l-.8.59a8 8 0 0 0 1.35 2.32l.9-.4a2.88 2.88 0 0 1 4.02 2.32l.1.99q1.35.22 2.7 0l.1-.99a2.88 2.88 0 0 1 4.02-2.32l.9.4a8 8 0 0 0 1.35-2.32l-.8-.59a2.88 2.88 0 0 1 0-4.64l.8-.59a8 8 0 0 0-1.35-2.32l-.9.4q-.55.24-1.15.24c-1.47 0-2.7-1.1-2.86-2.57l-.11-.97q-.68-.11-1.34-.12M12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5m0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Paramètres</span></button>
     <button id="brandBtn" class="brandfoot" title="Retour au choix du jeu" aria-label="Truck &amp; Coach Hub, retour au choix du jeu">
       <span class="logo">T&amp;C</span>
       <span class="bf-txt"><b>Truck &amp; Coach Hub</b><span id="appVersion">Version</span></span>
@@ -973,6 +997,14 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:26px" id="mkFeatList"></div>
       <h2>Nouveautés</h2>
       <div style="display:flex;flex-direction:column;gap:10px;max-width:900px" id="mkNewsList"></div>
+    </section>
+    <section id="v-news" class="hidden">
+      <h1>News</h1>
+      <div class="between" style="gap:14px;flex-wrap:wrap;margin-bottom:16px">
+        <p class="soft" style="margin:0;max-width:760px;line-height:1.7">Les annonces officielles de SCS Software sur Steam et les nouveautés de l’appli.</p>
+        <div class="seg" id="newsSeg" role="group" aria-label="Actualités à afficher"><button data-news="ets2">ETS2</button><button data-news="ats">ATS</button><button data-news="app">L’appli</button></div>
+      </div>
+      <div id="newsBody" aria-live="polite"></div>
     </section>
     <section id="v-support" class="hidden">
       <h1>Support</h1>
@@ -1140,7 +1172,7 @@
       <div class="grid2 telgrid">
         <div class="telcol tel-left">
           <div class="panel tel-live" style="display:flex;align-items:center;gap:22px">
-            <div><div class="speed" id="lSpeed">–</div><div class="muted" style="font-size:13px;margin-top:6px">km/h</div></div>
+            <div><div class="speed" id="lSpeed">–</div><div class="muted" style="font-size:13px;margin-top:6px" data-u="sp">km/h</div></div>
             <div class="limit" id="lLimit" title="Limitation de vitesse">–</div>
             <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
               <span class="mode real" id="lMode">RÉEL</span>
@@ -1296,17 +1328,14 @@
     <!-- RÉGLAGES -->
     <section id="v-reglages" class="hidden">
       <h1>Options</h1>
+      <div class="optgamebar hidden" id="optGameBar"><span class="gtag" id="optGameTag">ETS2</span><span class="t">Ces réglages ne concernent que <b id="optGameName">Euro Truck Simulator 2</b>. Ils se chargent tout seuls quand ce jeu est lancé.</span><button class="btn" id="optCopyGame">Copier depuis ATS</button></div>
       <div class="opts">
-      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Affichage</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
+      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Interface</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="tools" role="tab" aria-controls="oc-tools"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5a4 4 0 0 0 5 5L13 18a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M4 20l4-4"/></svg><span>Truck &amp; Coach Tools</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
       <div class="optbody">
       <div class="optcat" id="oc-general" role="tabpanel" aria-label="Général">
         <div class="ochead"><h2>Général</h2><p>Comment l’appli se comporte au quotidien.</p></div>
         <div class="optgroup"><h3>Démarrage</h3>
           <div class="setrow"><div class="lab"><b>Ouvrir la Télémétrie au lancement du jeu</b><span>Dès que le jeu se connecte, l’appli passe sur la Télémétrie. Elle ne passe pas devant le jeu : tu la retrouves prête avec Alt+Tab.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="autoTelSwitch" role="switch" aria-label="Ouvrir la télémétrie au lancement du jeu"><span></span></label></div></div>
-        </div>
-        <div class="optgroup"><h3>Menu</h3>
-          <div class="setrow"><div class="lab"><b>Menu latéral réduit</b><span>N’affiche que les icônes dans le menu de gauche. Tu peux aussi le réduire ou l’agrandir avec le bouton à côté du logo.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="navMiniSwitch" role="switch" aria-label="Menu latéral réduit"><span></span></label></div></div>
-          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
         </div>
       </div>
       <div class="optcat" id="oc-conduite" role="tabpanel" aria-label="Conduite">
@@ -1315,9 +1344,12 @@
           <div class="setrow"><div class="lab"><b>Pseudo</b><span>Le nom affiché sur l’écran d’accueil.</span></div><div class="ctl"><input id="sPseudo" type="text" maxlength="32" placeholder="ex. James" aria-label="Pseudo de chauffeur" style="width:220px"></div></div>
           <div class="setrow"><div class="lab"><b>Profil de carrière</b><span>Reste actif en jeu, même hors mission. Un service car est aussi détecté tout seul ; accepter une mission camion ne change pas le profil.</span></div><div class="ctl"><select id="sType" aria-label="Profil de carrière"><option value="camion">Camion</option><option value="car">Car / bus</option></select></div></div>
         </div>
+        <div class="optgroup" id="unitsGroup"><h3>Unités</h3>
+          <div class="setrow"><div class="lab"><b>Unités d’affichage</b><span>Vitesse, distances et carburant dans le HUD, la Télémétrie et ces réglages. Par défaut : métriques pour ETS2, américaines pour ATS.</span></div><div class="ctl"><div class="seg" id="unitsSeg"><button data-units="metric">km, km/h, L</button><button data-units="imperial">mi, mph, gal</button></div></div></div>
+        </div>
         <div class="optgroup"><h3>Réel ou course</h3>
-          <div class="setrow"><div class="lab"><b>Seuil camion</b><span>Vitesse au-delà de laquelle un camion roule « vite ».</span></div><div class="ctl"><input id="sTruck" type="number" min="60" max="150" step="1" required aria-label="Seuil camion en km/h" style="width:90px"><span class="muted">km/h</span></div></div>
-          <div class="setrow"><div class="lab"><b>Seuil car</b><span>Même chose pour un car.</span></div><div class="ctl"><input id="sCar" type="number" min="60" max="150" step="1" required aria-label="Seuil car en km/h" style="width:90px"><span class="muted">km/h</span></div></div>
+          <div class="setrow"><div class="lab"><b>Seuil camion</b><span>Vitesse au-delà de laquelle un camion roule « vite ».</span></div><div class="ctl"><input id="sTruck" type="number" min="60" max="150" step="1" required aria-label="Seuil camion" style="width:90px"><span class="muted" data-u="sp">km/h</span></div></div>
+          <div class="setrow"><div class="lab"><b id="sCarLab">Seuil car</b><span>Même chose pour un car.</span></div><div class="ctl"><input id="sCar" type="number" min="60" max="150" step="1" required aria-label="Seuil car" style="width:90px"><span class="muted" data-u="sp">km/h</span></div></div>
           <div class="setrow"><div class="lab"><b>Part de la distance</b><span>Une mission passe en « course » si plus de ce pourcentage de sa distance est au-dessus du seuil.</span></div><div class="ctl"><input id="sPct" type="number" min="0" max="100" step="1" required aria-label="Pourcentage de course" style="width:90px"><span class="muted">%</span></div></div>
           <div class="setrow end"><span class="muted" id="saveMsg" style="font-size:13px"></span><button class="btn primary" id="btnSave">Enregistrer</button></div>
         </div>
@@ -1351,8 +1383,8 @@
           <div class="setrow col"><p class="muted" style="margin:0;font-size:13px;line-height:1.7">Le bandeau se pose <b>par-dessus</b> la fenêtre du jeu. Il est visible si le jeu est en <b>plein écran fenêtré</b> (fenêtre sans bordures). En plein écran « exclusif », le jeu passe devant et le bandeau ne se voit pas. Si tu ne le vois pas en roulant, passe le jeu en fenêtré sans bordures dans ses options graphiques. Le bandeau ne bloque jamais la souris ni le clavier.</p></div>
         </div>
       </div>
-      <div class="optcat" id="oc-affichage" role="tabpanel" aria-label="Affichage">
-        <div class="ochead"><h2>Affichage</h2><p>L’apparence de tout le logiciel : Hub, Marketplace, Truck &amp; Coach Tools et Options.</p></div>
+      <div class="optcat" id="oc-affichage" role="tabpanel" aria-label="Interface">
+        <div class="ochead"><h2>Interface</h2><p>L’apparence de tout le logiciel et ce qui s’y affiche : Hub, Marketplace, Truck &amp; Coach Tools et Options.</p></div>
         <div class="optgroup"><h3>Couleurs</h3>
           <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Thème</b><span>« De base » : le thème Truck &amp; Coach Hub. « Sombre » et « Clair » : noir ou blanc. « Comme Windows » : suit le mode et la couleur d’accent de Windows.</span></div><div class="ctl"><div class="seg" id="themeSeg"><button data-theme-btn="base">De base</button><button data-theme-btn="sombre">Sombre</button><button data-theme-btn="clair">Clair</button><button data-theme-btn="systeme">Comme Windows</button></div></div></div>
           <div class="setrow" style="flex-wrap:wrap"><div class="lab"><b>Couleur d’accent</b><span>Boutons, sélection et interrupteurs. La teinte est ajustée si elle manque de contraste avec le fond.</span></div><div class="ctl"><div class="swatches" id="accentSeg">
@@ -1370,6 +1402,12 @@
         </div>
         <div class="optgroup"><h3>Texte</h3>
           <div class="setrow"><div class="lab"><b>Taille du texte</b><span>Agrandit tout le logiciel.</span></div><div class="ctl"><div class="seg" id="zoomSeg"><button data-zoom-btn="100">Normale</button><button data-zoom-btn="115">Grande</button><button data-zoom-btn="130">Très grande</button></div></div></div>
+        </div>
+        <div class="optgroup"><h3>Éléments visibles</h3>
+          <div class="setrow"><div class="lab"><b>Menu latéral réduit</b><span>N’affiche que les icônes dans le menu de gauche. Tu peux aussi le réduire ou l’agrandir avec le bouton à côté du logo.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="navMiniSwitch" role="switch" aria-label="Menu latéral réduit"><span></span></label></div></div>
+          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
+          <div class="setrow" id="betaRow"><div class="lab"><b>Programme bêta</b><span id="betaDesc">Affiche les notes de la version bêta et le lien pour installer Truck &amp; Coach Hub Bêta, une appli séparée qui s’installe à côté de celle-ci. N’installe rien et ne change pas ta version.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="betaSwitch" role="switch" aria-label="Programme bêta"><span></span></label></div></div>
+          <div class="setrow hidden" id="betaDlRow"><div class="lab"><b>Truck &amp; Coach Hub Bêta</b><span>L’installateur est sur la page des versions : prends le fichier « Truck-and-Coach-Hub-Beta-Setup » de la plus récente marquée « Pre-release ».</span></div><div class="ctl"><button class="btn" id="betaDl">Télécharger la bêta</button></div></div>
         </div>
       </div>
       <div class="optcat" id="oc-acces" role="tabpanel" aria-label="Accessibilité">
@@ -1409,12 +1447,12 @@
       </div>
       <div class="optcat" id="oc-maj" role="tabpanel" aria-label="Mises à jour">
         <div class="ochead"><h2>Mises à jour</h2><p>L’appli vérifie toute seule au démarrage puis toutes les 30 minutes.</p></div>
-        <div class="optgroup"><h3>Version</h3>
+        <div class="optgroup"><h3>Ta version</h3>
           <div class="setrow"><div class="lab"><b>Version installée : <span id="updCurrent">–</span></b><span id="updMsg">L'appli vérifie toute seule au démarrage puis toutes les 30 minutes.</span></div><div class="ctl"><button class="btn primary" id="btnUpdate">Rechercher une mise à jour</button></div></div>
           <div class="setrow col" style="padding-top:0;border-top:none"><div class="progress hidden" id="updBar" style="width:100%"><div></div></div></div>
         </div>
-        <div class="optgroup"><h3>Notes de version</h3>
-          <div class="lnotes" id="lNotes"><p class="muted" style="margin:0 0 4px;font-size:13px">Ce qui a été ajouté, amélioré et corrigé à chaque mise à jour.</p><div id="lNotesList" style="display:flex;flex-direction:column;gap:10px"></div></div>
+        <div class="optgroup"><h3>Notes à lire</h3>
+          <div class="lnotes" id="lNotes"><div class="between" style="gap:12px;flex-wrap:wrap"><p class="muted" style="margin:0;font-size:13px" id="notesIntro">Ce qui a changé à chaque mise à jour. Lire les notes n’installe rien.</p><div class="seg hidden" id="notesSeg" role="tablist" aria-label="Notes à lire"><button data-notes="officielle" role="tab">Version officielle</button><button data-notes="beta" role="tab">Bêta</button></div></div><div id="lNotesList" style="display:flex;flex-direction:column;gap:10px"></div></div>
         </div>
       </div>
       <div class="optcat" id="oc-aide" role="tabpanel" aria-label="Aide &amp; infos">
@@ -1645,7 +1683,7 @@ document.getElementById('spaceClose').onclick = () => { closeSpaces(); document.
 document.getElementById('spacePanel').addEventListener('click', e => { if (e.target.id === 'spacePanel') closeSpaces(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('spacePanel').classList.contains('hidden')) { closeSpaces(); document.getElementById('spaceBtn').focus(); } });
 document.getElementById('spaceHome').onclick = () => { closeSpaces(); showLauncher(true); };
-document.getElementById('spaceOptions').onclick = () => { closeSpaces(); go('reglages'); };
+document.getElementById('spaceOptions').onclick = () => { closeSpaces(); openGameSettings(); };
 const catState = store.get('cats', { gen: true, ent: false });
 function applyCats(){
   for (const [k, open] of Object.entries(catState)) {
@@ -1656,7 +1694,14 @@ function applyCats(){
 }
 document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catState[b.dataset.cat] = !catState[b.dataset.cat]; store.set('cats', catState); applyCats(); });
 applyCats();
-function showLauncher(on){
+function showLauncher(on, force){
+  // Revenir au menu principal referme tout ; une modification de sauvegarde pas appliquée est signalée avant.
+  if (on && !force && typeof atDirty !== 'undefined' && atDirty && document.getElementById('launcher').classList.contains('hidden')) {
+    ask('Quitter sans appliquer ?', 'Tu as modifié des valeurs dans Truck &amp; Coach Tools sans cliquer sur « Appliquer à la sauvegarde ». Si tu reviens au menu principal, ces changements sont perdus. Ta sauvegarde n’a pas été modifiée.', 'Quitter sans appliquer')
+      .then(ok => { if (ok) showLauncher(true, true); });
+    return;
+  }
+  if (on) resetSpaces();
   document.getElementById('launcher').classList.toggle('hidden', !on);
   document.querySelector('.app').inert = !!on;
   syncRailVisibility();
@@ -1694,6 +1739,7 @@ function applyGame(g){
   try { if (typeof mapSetGame === 'function' && typeof M !== 'undefined' && M.game !== g) mapSetGame(g, true); } catch {}
   document.querySelectorAll('.gamecard').forEach(c => c.classList.toggle('current', c.dataset.game === g));
   if (typeof syncLaunch === 'function' && document.getElementById('btnLaunch')) syncLaunch();
+  if (typeof loadGameSettings === 'function') loadGameSettings(g);
 }
 function openGame(g){ applyGame(g); showLauncher(false); go(lastView[state.side] || 'accueil'); }
 function refreshGames(){
@@ -1727,9 +1773,9 @@ document.getElementById('rail').addEventListener('click', e => {
     return;
   }
   showLauncher(false);
-  if (t === 'news') go('mk-news', 'news');
+  if (t === 'news') go('news', 'news');
   else if (t === 'map') go('cartePerso', 'map');
-  else if (t === 'settings') { settingsFrom = wasSel ? 'game' : railTab; go('reglages', 'settings'); }
+  else if (t === 'settings') { settingsFrom = wasSel ? 'game' : railTab; openOptCat(lastOptCat.general); go('reglages', 'settings'); }
   else if (t === 'support') go('support', 'support');
 });
 document.getElementById('rail').addEventListener('keydown', e => {
@@ -1839,7 +1885,7 @@ document.getElementById('optNav').addEventListener('keydown', e => {
   });
   document.getElementById('optBack').onclick = () => {
     if (railTab === 'settings') {
-      if (settingsFrom === 'news') return go('mk-news', 'news');
+      if (settingsFrom === 'news') return go('news', 'news');
       if (settingsFrom === 'map') return go('cartePerso', 'map');
       if (settingsFrom === 'support') return go('support', 'support');
       return showLauncher(true);       // ouvert depuis la page Game
@@ -1849,9 +1895,119 @@ document.getElementById('optNav').addEventListener('keydown', e => {
   applyNavMini(document.documentElement.dataset.nav === 'mini'); // infobulles des nouvelles entrées en menu réduit
 })();
 openOptCat(optCat);
+/* ---------- Bêta : tout se referme au retour au menu principal ---------- */
+var atDirty = false;
+document.getElementById('mainContent').addEventListener('input', e => { if (e.target.closest('#v-at-profil .atbody, #v-at-coach .atbody')) atDirty = true; });
+document.getElementById('mainContent').addEventListener('change', e => { if (e.target.closest('#v-at-profil .atbody, #v-at-coach .atbody')) atDirty = true; });
+function resetSpaces(){
+  closeSpaces();
+  atDirty = false;
+  if (typeof atSel !== 'undefined') { atSel.summary = null; atSel.msg = ''; }
+  document.querySelectorAll('.atbody').forEach(b => { b.innerHTML = ''; });
+  const f = document.getElementById('atFloat'); if (f) f.classList.add('hidden');
+  Object.assign(lastView, { hub: 'accueil', market: 'mk-discover', atelier: 'at-saves' });
+  state.side = 'hub';
+}
+
+/* ---------- Bêta : paramètres généraux et paramètres du jeu ---------- */
+const OPT_GAME = ['jeu', 'conduite', 'hud', 'tools'];
+const lastOptCat = Object.assign({ general: 'general', game: 'jeu' }, store.get('lastOptCat', {}));
+let optMode = 'general';
+const carWord = () => activeGame === 'ats' ? 'Road Trip' : 'Car';
+function syncOptMode(){
+  optMode = OPT_GAME.includes(optCat) ? 'game' : 'general';
+  lastOptCat[optMode] = optCat; store.set('lastOptCat', lastOptCat);
+  document.querySelectorAll('#optNav [data-oc], #navOptions [data-oc]').forEach(b => b.classList.toggle('hidden', OPT_GAME.includes(b.dataset.oc) !== (optMode === 'game')));
+  const g = activeGame === 'ats' ? 'ats' : 'ets2', u = GAMES_UI[g], o = GAMES_UI[g === 'ats' ? 'ets2' : 'ats'];
+  const h = document.querySelector('#v-reglages > h1'); if (h) h.textContent = optMode === 'game' ? 'Paramètres ' + u.tag : 'Paramètres généraux';
+  document.getElementById('optGameBar').classList.toggle('hidden', optMode !== 'game');
+  setText('optGameTag', u.tag); setText('optGameName', u.name); setText('optCopyGame', 'Copier depuis ' + o.tag);
+  const sw = document.getElementById('optSwitchMode');
+  if (sw) sw.querySelector('span').textContent = optMode === 'game' ? 'Paramètres généraux' : 'Paramètres ' + u.tag;
+  if (typeof state !== 'undefined' && state.view === 'reglages') setText('spaceTitle', optMode === 'game' ? 'PARAMÈTRES ' + u.tag : 'PARAMÈTRES');
+}
+const openOptCatBase = openOptCat;
+openOptCat = function (cat) { openOptCatBase(cat); syncOptMode(); };
+function openGameSettings(){ openOptCat(lastOptCat.game); go('reglages'); }
+document.getElementById('navOptBtn').onclick = openGameSettings;
+(() => {
+  const b = document.createElement('button');
+  b.className = 'navbtn optmode'; b.id = 'optSwitchMode';
+  b.innerHTML = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>';
+  b.onclick = () => { openOptCat(optMode === 'game' ? lastOptCat.general : lastOptCat.game); document.querySelector('main').scrollTop = 0; };
+  document.getElementById('navOptions').append(b);
+})();
+// Réglages du jeu choisi : chargés côté appli (HUD, seuils, unités), puis l'interface suit
+async function loadGameSettings(g){
+  applyGameLabels(g);
+  if (!HAS_APP || !window.tel.setGame) return;
+  const st = await window.tel.setGame(g);
+  reloadGameUI(st);
+}
+function reloadGameUI(st){
+  if (!st) return;
+  UNITS.set(st.units); syncUnitsUI(); UNITS.label(document);
+  if (typeof hudSt !== 'undefined') { hudSt.on = !!(st.modules && st.modules.hud); for (const p of ['truck', 'bus']) Object.assign(hudSt[p], st.hud && st.hud[p] || {}); if (state.view === 'hud' || optCat === 'hud') renderHudPage(); }
+  if (state.view === 'reglages') loadSettingsUI();
+  syncOptMode();
+}
+function syncUnitsUI(){
+  document.querySelectorAll('#unitsSeg [data-units]').forEach(b => { const on = b.dataset.units === UNITS.mode; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  UNITS.label(document);
+}
+document.querySelectorAll('#unitsSeg [data-units]').forEach(b => b.onclick = async () => {
+  if (!HAS_APP) { UNITS.set(b.dataset.units); syncUnitsUI(); return; }
+  const st = await window.tel.setSettings({ units: b.dataset.units });
+  UNITS.set(st.units); loadSettingsUI();
+});
+document.getElementById('optCopyGame').onclick = async () => {
+  const g = activeGame === 'ats' ? 'ats' : 'ets2', o = g === 'ats' ? 'ets2' : 'ats';
+  const ok = await ask('Copier les réglages de ' + GAMES_UI[o].tag + ' ?', `Les réglages de jeu de <b>${GAMES_UI[o].name}</b> (Conduite, HUD, profil de carrière) remplacent ceux de <b>${GAMES_UI[g].name}</b>. Les unités ne changent pas.`, 'Copier');
+  if (!ok || !HAS_APP) return;
+  reloadGameUI(await window.tel.copyGameSettings(o, g));
+};
+if (window.tel && window.tel.onSettingsChanged) window.tel.onSettingsChanged(st => { if (st.activeGame && st.activeGame !== activeGame) applyGame(st.activeGame); else reloadGameUI(st); });
+// ATS : le transport de voyageurs s'appelle Road Trip (DLC d'ATS), pas Car
+function applyGameLabels(g){
+  const w = g === 'ats' ? 'Road Trip' : 'Car';
+  const tt = document.querySelector('#telTabs [data-tt="bus"]'); if (tt) tt.textContent = w;
+  const rt = document.querySelector('[data-rt="bus"]'); if (rt && rt.firstChild) rt.firstChild.nodeValue = w + ' ';
+  const op = document.querySelector('#sType option[value="car"]'); if (op) op.textContent = g === 'ats' ? 'Road Trip' : 'Car / bus';
+  setText('sCarLab', 'Seuil ' + (g === 'ats' ? 'Road Trip' : 'car'));
+  const ct = document.querySelector('#v-at-coach h1'); if (ct) ct.textContent = g === 'ats' ? 'Road Trip Tools' : 'Coach Tools';
+  const nc = document.querySelector('.navbtn[data-view="at-coach"] span'); if (nc) nc.textContent = g === 'ats' ? 'Road Trip Tools' : 'Coach Tools';
+  const hb = document.getElementById('hudTestBus'); if (hb) { hb.textContent = g === 'ats' ? 'Tester le HUD Road Trip' : 'Tester le HUD bus'; const h2 = hb.parentElement.querySelector('h2'); if (h2) h2.textContent = g === 'ats' ? 'Bandeau Road Trip' : 'Bandeau car'; }
+  document.querySelectorAll('#oc-hud .optgroup > h3').forEach(h => { if (/^Bandeau (car|Road Trip)$/.test(h.textContent)) h.textContent = g === 'ats' ? 'Bandeau Road Trip' : 'Bandeau car'; });
+}
+
+/* ---------- Bêta : page News ---------- */
+let newsTab = null;
+const newsCache = {};
+function newsDate(t){ try { return new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return ''; } }
+async function renderNewsPage(){
+  if (!newsTab) newsTab = activeGame === 'ats' ? 'ats' : 'ets2';
+  document.querySelectorAll('#newsSeg [data-news]').forEach(b => { const on = b.dataset.news === newsTab; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  const body = document.getElementById('newsBody');
+  if (newsTab === 'app') {
+    const list = [...(window.NOTES_BETA || []).slice(0, 2), ...(window.NOTES_VERSION || []).slice(0, 3)];
+    body.innerHTML = '<div class="newsgrid">' + list.map(n => `<button class="newscard" style="all:unset;cursor:pointer;display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel)" data-notes-ver="${escM(n.version)}"><span class="nmeta"><span class="gtag">${/bêta/.test(n.version) ? 'BÊTA' : 'APPLI'}</span>Version ${escM(n.version)} · ${escM(newsDate(n.date + 'T12:00:00'))}</span><h3>${escM(n.titre || '')}</h3><p>${escM((sortNotes(n.notes)[0] || ['', ''])[1])}</p><span class="nmore">Toutes les notes de cette version →</span></button>`).join('') + '</div>';
+    body.querySelectorAll('[data-notes-ver]').forEach(b => b.onclick = () => { settingsFrom = 'news'; notesTab = /bêta/.test(b.dataset.notesVer) ? 'beta' : 'officielle'; openOptCat('maj'); go('reglages', 'settings'); });
+    return;
+  }
+  const g = newsTab, name = GAMES_UI[g].name;
+  if (!HAS_APP || !window.tel.steamNews) { body.innerHTML = '<div class="empty">Les actualités Steam s’affichent dans l’appli installée.</div>'; return; }
+  if (!newsCache[g]) body.innerHTML = `<div class="empty">Chargement des actualités ${escM(name)}…</div>`;
+  const r = newsCache[g] || await window.tel.steamNews(g);
+  if (newsTab !== g) return;
+  if (!r.ok) { body.innerHTML = `<div class="empty">Actualités indisponibles pour le moment (${escM(r.error || 'hors ligne')}). Réessaie plus tard.</div>`; return; }
+  newsCache[g] = r;
+  if (!r.items.length) { body.innerHTML = '<div class="empty">Aucune annonce récente.</div>'; return; }
+  body.innerHTML = '<div class="newsgrid">' + r.items.map(n => `<a class="newscard" href="${escM(n.url)}" target="_blank" rel="noopener"><span class="nmeta"><span class="gtag">${GAMES_UI[g].tag}</span>${escM(n.date ? newsDate(n.date) : '')} · Steam</span><h3>${escM(n.title)}</h3><p>${escM(n.text)}</p><span class="nmore">Lire sur Steam →</span></a>`).join('') + '</div>';
+}
+document.querySelectorAll('#newsSeg [data-news]').forEach(b => b.onclick = () => { newsTab = b.dataset.news; renderNewsPage(); });
 document.getElementById('waitOpenPlugin').onclick = () => { openOptCat('jeu'); go('reglages'); };
-document.getElementById('supHelp').onclick = () => { openOptCat('aide'); go('reglages'); };
-document.getElementById('supNotes').onclick = () => { openOptCat('maj'); go('reglages'); };
+document.getElementById('supHelp').onclick = () => { settingsFrom = 'support'; openOptCat('aide'); go('reglages', 'settings'); };
+document.getElementById('supNotes').onclick = () => { settingsFrom = 'support'; openOptCat('maj'); go('reglages', 'settings'); };
 document.getElementById('hudOpenOptions').onclick = () => { openOptCat('hud'); go('reglages'); };
 function go(view, rail){
   state.view = view;
@@ -1881,6 +2037,7 @@ function go(view, rail){
   if (view.startsWith('mk-item:')) renderMkItem(view.slice(8)); else if (view.startsWith('mk-')) mkFrom = view;
   if (view === 'mk-discover') renderMk();
   if (view === 'mk-news') renderMkNews();
+  if (view === 'news') renderNewsPage();
   if (view === 'hud') renderHudPage();
   if (view === 'cartePerso') openMap();
   if (view === 'profil') renderProfile();
@@ -1923,7 +2080,7 @@ function pageMarks(view){
   const parts = [];
   const RAIL_NAMES = { news: 'News', map: 'Map', support: 'Support' };
   if (RAIL_NAMES[railTab]) parts.push(RAIL_NAMES[railTab]);
-  else if (view === 'reglages') parts.push(railTab === 'settings' ? 'Settings' : 'Options');
+  else if (view === 'reglages') parts.push(railTab === 'settings' ? 'Settings' : (typeof optMode !== 'undefined' && optMode === 'game' ? 'Paramètres ' + GAMES_UI[activeGame === 'ats' ? 'ats' : 'ets2'].tag : 'Options'));
   else {
     parts.push(SIDE_NAMES[state.side] || '');
     const btn = document.querySelector(`.side .navscroll:not(.hidden) .navbtn.on`);
@@ -2737,7 +2894,7 @@ const MK_NEWS = [
   { d: '20/11/2026', t: 'Truck & Coach Tools : supprimer une sauvegarde ou un profil', x: 'Dans Truck & Coach Tools → Sauvegardes, chaque copie faite par le Hub a un bouton « Supprimer », et chaque profil un bouton « Supprimer le profil ». Un profil supprimé reste récupérable dans « Profils supprimés » tant que tu n\'effaces pas ses copies.' },
   { d: '17/11/2026', t: 'Truck & Coach Tools : dupliquer un profil et bilan du profil', x: 'Dans Truck & Coach Tools → Sauvegardes, « Dupliquer » crée une copie de ton profil pour faire des tests sans risque. Dans Truck & Coach Tools → Profil, un bilan en lecture seule montre tes finances, ta flotte et les problèmes à corriger.' },
   { d: '17/11/2026', t: 'Truck & Coach Tools : analyse des sauvegardes', x: 'Dans Truck & Coach Tools → Sauvegardes, le bouton « Analyser » vérifie si les sauvegardes d\'un profil sont corrompues (fichier vide, tronqué, illisible…) sans rien modifier.' },
-  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Affichage, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
+  { d: '17/11/2026', t: 'Nouvelle couleur et couleur d\'accent au choix', x: 'Le jaune et le bleu laissent place à un orange ambre. Dans Options → Interface, choisis ta couleur d\'accent : pastilles, roue de couleurs ou couleur de Windows.' },
   { d: '17/11/2026', t: 'HUD : seulement quand tu joues', x: 'Le bandeau se cache dans le menu pause, en Alt+Tab, sur le bureau et quand le jeu est réduit. Plugin du jeu mis à jour (1.1.0) : relance le jeu une fois.' },
   { d: '17/11/2026', t: 'Carte en direct', x: 'La vraie carte d\'ETS2 et d\'ATS avec ton camion en direct, ta destination, le tracé de ta session et tes trajets terminés. Hub → Général → Carte.' },
   { d: '17/11/2026', t: 'Accessibilité revue (WCAG 2.1 AA)', x: 'Navigation complète au clavier, lien « Aller au contenu », lecteurs d\'écran (NVDA, Narrateur), contrastes vérifiés dans tous les thèmes, mode Contraste élevé de Windows, une seule couleur d\'action.' },
@@ -3124,7 +3281,7 @@ function updateMap(sn){
   setText('mapLeft', s && s.navDistance > 0 ? mapKm(s.navDistance / 1000) + ' km' : '—');
   const sec = s && s.navTime > 0 ? s.navTime : 0;
   setText('mapTime', sec ? (sec >= 3600 ? `${Math.floor(sec / 3600)} h ${String(Math.round(sec % 3600 / 60)).padStart(2, '0')}` : `${Math.max(1, Math.round(sec / 60))} min`) : '—');
-  setText('mapSpeed', s ? `${Math.round(s.speed * 3.6)} km/h · ${s.speedLimit > 0 ? Math.round(s.speedLimit * 3.6) + ' km/h' : 'pas de limite'}` : '—');
+  setText('mapSpeed', s ? `${Math.round(UNITS.speed(s.speed))} ${UNITS.sp} · ${s.speedLimit > 0 ? Math.round(UNITS.speed(s.speedLimit)) + ' ' + UNITS.sp : 'pas de limite'}` : '—');
   const city = j ? mapCity(j.game || M.game, j.toId, j.to) : null;
   if (city && (j.game || M.game) === M.game) {
     const ll = mapLL(city[2], city[3]);
@@ -3384,15 +3541,15 @@ function renderLive(sn){
     : 'Aucun kilomètre aujourd\'hui pour l\'instant. Bonne route !';
 
   const th = sn.thresholds;
-  setText('lRule', `Seuil ${th.limit} km/h · ${th.pct} % max`);
+  setText('lRule', `Seuil ${Math.round(UNITS.fromKmh(th.limit))} ${UNITS.sp} · ${th.pct} % max`);
   if (L){
     const kmh = Math.round(Math.abs(L.speed) * 3.6);
-    setText('lSpeed', kmh);
+    setText('lSpeed', Math.round(UNITS.speed(Math.abs(L.speed))));
     const lim = Math.round(L.speedLimit * 3.6);
     const limEl = document.getElementById('lLimit');
-    limEl.style.visibility = lim > 0 ? 'visible' : 'hidden'; setText('lLimit', lim || '');
+    limEl.style.visibility = lim > 0 ? 'visible' : 'hidden'; setText('lLimit', lim ? Math.round(UNITS.speed(L.speedLimit)) : '');
     document.getElementById('lSpeed').style.color = kmh > th.limit ? 'var(--race)' : '';
-    setText('tKind', sn.vehicleType === 'car' ? 'Car' : 'Camion');
+    setText('tKind', sn.vehicleType === 'car' ? carWord() : 'Camion');
     setText('tName', L.truck ? `${L.truck.brand || ''} ${L.truck.name || ''}`.trim() : '–');
     setText('tRest', Number.isFinite(L.restStop) ? (L.restStop > 0 ? dur(L.restStop) : 'maintenant') : '–');
     const gt = L.gameTime; setText('tClock', gt ? `${DAYS[Math.floor(gt/1440)%7]} ${String(Math.floor(gt/60)%24).padStart(2,'0')}:${String(gt%60).padStart(2,'0')}` : '–');
@@ -3640,8 +3797,9 @@ async function loadSettingsUI(){
   const st = await window.tel.getSettings();
   document.getElementById('sPseudo').value = st.pseudo || '';
   document.getElementById('sType').value = st.vehicleType;
-  document.getElementById('sTruck').value = st.limitTruck;
-  document.getElementById('sCar').value = st.limitCar;
+  UNITS.set(st.units); syncUnitsUI();
+  document.getElementById('sTruck').value = Math.round(UNITS.fromKmh(st.limitTruck));
+  document.getElementById('sCar').value = Math.round(UNITS.fromKmh(st.limitCar));
   document.getElementById('sPct').value = st.racePct;
   document.getElementById('steamId').value = st.steamId || '';
   document.getElementById('discordClientId').value = st.discordClientId || '';
@@ -3744,8 +3902,8 @@ if (HAS_APP){
       await window.tel.setSettings({
         pseudo: document.getElementById('sPseudo').value.trim(),
         vehicleType: document.getElementById('sType').value,
-        limitTruck: Number(document.getElementById('sTruck').value),
-        limitCar: Number(document.getElementById('sCar').value),
+        limitTruck: Math.min(150, Math.max(60, Math.round(UNITS.toKmh(Number(document.getElementById('sTruck').value))))),
+        limitCar: Math.min(150, Math.max(60, Math.round(UNITS.toKmh(Number(document.getElementById('sCar').value))))),
         racePct: Number(document.getElementById('sPct').value)
       });
       refreshPseudo();
@@ -3816,36 +3974,67 @@ if (HAS_APP){
 
 const v = shownVer(new URLSearchParams(location.search).get('v'));
 if (v) { document.getElementById('appVersion').textContent = 'Version ' + v; document.getElementById('lVersion').textContent = 'Version ' + v; setText('lfVer', v); setText('supVer', 'version ' + v); }
-// Notes de version en bas de l'écran d'accueil : la version installée est ouverte, les autres sont repliées.
-function renderNotes(current) {
-  const list = window.NOTES_VERSION || [], box = document.getElementById('lNotesList');
-  if (!box) return;
-  if (!list.length) { document.getElementById('lNotes').classList.add('hidden'); return; }
-  const cur = current && list.some(n => n.version === current) ? current : list[0].version;
-  const lab = { nouveau: 'Nouveau', ameliore: 'Amélioré', corrige: 'Corrigé' };
-  const fmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return d; } };
-  box.innerHTML = list.map(n => `<details${n.version === cur ? ' open' : ''}><summary><span class="ver">Version ${escM(n.version)}</span>`
-    + (n.version === cur ? '<span class="vnow">Ta version</span>' : '')
-    + `<span class="vtitle">${escM(n.titre || '')}</span><span class="vdate">${escM(fmt(n.date))}</span></summary><ul>`
-    + n.notes.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${lab[t] || escM(t)}</span><span>${escM(txt)}</span></li>`).join('')
-    + '</ul></details>').join('');
+// Notes de version (Options → Mises à jour), rangées par rubriques : Nouveautés, Améliorations, Changements, Corrections.
+const RAW_VER = new URLSearchParams(location.search).get('v') || '';
+const APP_BETA = /-beta/i.test(RAW_VER);
+const RUBS = window.NOTES_RUBRIQUES || [['nouveau', 'Nouveautés'], ['ameliore', 'Améliorations'], ['change', 'Changements'], ['corrige', 'Corrections']];
+const RUB_LAB = Object.fromEntries(RUBS);
+const RUB_TAG = { nouveau: 'Nouveau', ameliore: 'Amélioré', change: 'Changé', corrige: 'Corrigé' };
+const notesFmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return d; } };
+const sortNotes = notes => RUBS.flatMap(([k]) => notes.filter(([t]) => t === k)).concat(notes.filter(([t]) => !RUB_LAB[t]));
+function rubHtml(notes) {
+  return RUBS.map(([k, lab]) => {
+    const items = notes.filter(([t]) => t === k);
+    if (!items.length) return '';
+    const head = `<h4>${lab} <span class="n">(${items.length})</span></h4>`, ul = '<ul>' + items.map(([, txt]) => `<li><span>${escM(txt)}</span></li>`).join('') + '</ul>';
+    // Corrections en dernier, repliées quand la liste est longue
+    if (k === 'corrige' && items.length > 3) return `<div class="rub t-${k}"><details class="rub-fold"><summary>${head}</summary>${ul}</details></div>`;
+    return `<div class="rub t-${k}">${head}${ul}</div>`;
+  }).join('');
 }
-renderNotes(v);
+function betaOn() { return APP_BETA || !!store.get('betaProgram', false); }
+let notesTab = APP_BETA ? 'beta' : 'officielle';
+function renderNotes(current) {
+  const box = document.getElementById('lNotesList');
+  if (!box) return;
+  const seg = document.getElementById('notesSeg');
+  if (!betaOn()) notesTab = 'officielle';
+  seg.classList.toggle('hidden', !betaOn());
+  seg.querySelectorAll('[data-notes]').forEach(b => { const on = b.dataset.notes === notesTab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  const list = (notesTab === 'beta' ? window.NOTES_BETA : window.NOTES_VERSION) || [];
+  if (!list.length) { box.innerHTML = '<p class="muted" style="margin:0">Aucune note pour le moment.</p>'; return; }
+  const cur = current && list.some(n => n.version === current) ? current : list[0].version;
+  box.innerHTML = list.map(n => `<details${n.version === cur ? ' open' : ''}><summary><span class="ver">Version ${escM(n.version)}</span>`
+    + (n.version === current ? '<span class="vnow">Ta version</span>' : '')
+    + `<span class="vtitle">${escM(n.titre || '')}</span><span class="vdate">${escM(notesFmt(n.date))}</span></summary>`
+    + rubHtml(n.notes) + '</details>').join('');
+}
+document.querySelectorAll('#notesSeg [data-notes]').forEach(b => b.onclick = () => { notesTab = b.dataset.notes; renderNotes(v); });
+// Programme bêta (Options → Interface → Éléments visibles) : ne fait qu'afficher, n'installe rien
+function applyBeta() {
+  const sw = document.getElementById('betaSwitch'), on = betaOn();
+  sw.checked = on; sw.disabled = APP_BETA;
+  if (APP_BETA) setText('betaDesc', 'Tu utilises Truck & Coach Hub Bêta : le programme reste activé. Les notes s’ouvrent sur la bêta, l’onglet « Version officielle » montre celles de l’appli normale.');
+  document.getElementById('betaDlRow').classList.toggle('hidden', !on || APP_BETA);
+  renderNotes(v);
+}
+document.getElementById('betaSwitch').onchange = e => { store.set('betaProgram', e.target.checked); notesTab = e.target.checked ? notesTab : 'officielle'; applyBeta(); };
+document.getElementById('betaDl').onclick = () => window.open('https://github.com/charlesantoine972-bit/telemetrie-entreprise/releases');
+applyBeta();
 // Encart « Nouveautés » sur l'écran d'accueil : une seule fois après chaque mise à jour
 function renderNews(current){
-  const list = window.NOTES_VERSION || [], n = list.find(x => x.version === current) || (!current && list[0]);
+  const list = (APP_BETA ? window.NOTES_BETA : window.NOTES_VERSION) || [], n = list.find(x => x.version === current) || (!current && list[0]);
   const box = document.getElementById('lNews');
   if (!n || store.get('seenNotes', null) === n.version) { box.classList.add('hidden'); return; }
-  const lab = { nouveau: 'Nouveau', ameliore: 'Amélioré', corrige: 'Corrigé' };
   setText('lNewsVer', n.version); setText('lNewsTitre', n.titre || '');
-  const items = n.notes.slice(0, 4);
-  document.getElementById('lNewsList').innerHTML = items.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${lab[t] || escM(t)}</span><span>${escM(txt)}</span></li>`).join('')
+  const all = sortNotes(n.notes), items = all.slice(0, 4);
+  document.getElementById('lNewsList').innerHTML = items.map(([t, txt]) => `<li><span class="tag t-${escM(t)}">${escM(RUB_TAG[t] || t)}</span><span>${escM(txt)}</span></li>`).join('')
     + (n.notes.length > items.length ? `<li class="muted" style="font-size:13px">… et ${n.notes.length - items.length} autre${n.notes.length - items.length > 1 ? 's' : ''} changement${n.notes.length - items.length > 1 ? 's' : ''}.</li>` : '');
   box.classList.remove('hidden');
   const seen = () => { store.set('seenNotes', n.version); box.classList.add('hidden'); };
   document.getElementById('lNewsOk').onclick = seen;
   document.getElementById('lNewsClose').onclick = seen;
-  document.getElementById('lNewsAll').onclick = () => { seen(); showLauncher(false); openOptCat('maj'); go('reglages'); };
+  document.getElementById('lNewsAll').onclick = () => { seen(); showLauncher(false); settingsFrom = 'game'; openOptCat('maj'); go('reglages', 'settings'); };
 }
 renderNews(v);
 renderMk(); go('accueil'); if (activeGame) applyGame(activeGame); showLauncher(true);
