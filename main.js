@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences, safeStorage } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences, safeStorage, session } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
@@ -160,6 +160,7 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'app', 'index.html'), { query: { v: app.getVersion() } });
   // Liens externes : toujours dans le navigateur, jamais dans l'appli
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https:\/\//.test(url)) shell.openExternal(url); return { action: 'deny' }; });
+  lockDown(win.webContents);
 }
 
 /* ---------- HUD : bandeau transparent par-dessus le jeu ----------
@@ -167,6 +168,13 @@ function createWindow() {
    Visible seulement quand le jeu envoie des données (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
+// Sécurité : une fenêtre de l'appli n'affiche que les pages de l'appli. Toute tentative d'ouvrir une autre
+// adresse dans la fenêtre (lien piégé, contenu injecté) est bloquée ; les liens https partent dans le navigateur.
+function lockDown(wc){
+  wc.on('will-navigate', (e, url) => { if (!url.startsWith('file://')) { e.preventDefault(); if (/^https:\/\//.test(url)) shell.openExternal(url); } });
+  wc.on('will-redirect', (e, url) => { if (!url.startsWith('file://')) e.preventDefault(); });
+  wc.on('will-attach-webview', (e) => e.preventDefault());
+}
 const HUD_W = 1440, HUD_H = 440; // assez large pour le Bandeau en taille « Grand » (fenêtre transparente, traversée par la souris)
 function activeHudOptions(live = telemetry && telemetry.live, vehicleType = telemetry ? telemetry.vehicleType(live) : settings.vehicleType) {
   const profile = vehicleType === 'car' ? 'bus' : 'truck';
@@ -203,6 +211,7 @@ function syncHud() {
       webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, preload: path.join(__dirname, 'preload.js') } });
     hudWin.setAlwaysOnTop(true, 'screen-saver');
     hudWin.setIgnoreMouseEvents(true);
+    lockDown(hudWin.webContents);
     hudWin.loadFile(path.join(__dirname, 'app', 'hud.html'));
     hudWin.on('closed', () => { hudWin = null; });
   } else hudWin.setBounds(hudBounds());
@@ -446,11 +455,14 @@ if (!app.requestSingleInstanceLock()) {
   app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
 
   app.whenReady().then(() => {
+    // Sécurité : aucune permission web (caméra, micro, géolocalisation, notifications web…) n'est jamais accordée.
+    session.defaultSession.setPermissionRequestHandler((_wc, _perm, cb) => cb(false));
+    session.defaultSession.setPermissionCheckHandler(() => false);
     loadSettings();
     telemetry = new Telemetry(app.getPath('userData'), () => settings);
     discordPresence = new DiscordPresence();
     discordPresence.setClientId(settings.discordClientId).catch((e) => console.error('Discord Rich Presence :', e.message));
-    const decryptExe = process.env.TCH_DECRYPT || (app.isPackaged
+    const decryptExe = (!app.isPackaged && process.env.TCH_DECRYPT) || (app.isPackaged
       ? path.join(process.resourcesPath, 'tools', 'decrypt_truck.exe')
       : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
     atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);

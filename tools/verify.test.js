@@ -739,3 +739,31 @@ test('accès (préparation) : VTC TruckersMP lue par SteamID', async () => {
   await assert.rejects(() => V.truckersmpVtc('123'), /SteamID64/);
   assert.equal(V.mapVtcRole(' event manager ', { 'Event Manager': 'chef-de-convoi' }), 'chef-de-convoi');
 });
+
+test('sécurité : fenêtres verrouillées, aucune permission web, outils et chemins contrôlés', () => {
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /contextIsolation: true, nodeIntegration: false, sandbox: true/);
+  assert.match(main, /wc\.on\('will-navigate'/);
+  assert.match(main, /wc\.on\('will-attach-webview', \(e\) => e\.preventDefault\(\)\)/);
+  assert.equal((main.match(/lockDown\((win|hudWin)\.webContents\)/g) || []).length, 2, 'les deux fenêtres');
+  assert.match(main, /setPermissionRequestHandler\(\(_wc, _perm, cb\) => cb\(false\)\)/);
+  assert.match(main, /\(!app\.isPackaged && process\.env\.TCH_DECRYPT\)/, 'pas d’exe remplaçable dans l’appli installée');
+  const { Atelier } = require('../src/atelier');
+  const a = new Atelier('/tmp/docs', '/tmp/bk', '/nonexistent');
+  for (const bad of ['ets2/profiles/.', 'ets2/profiles/..', 'ets2/profiles/', 'ets2/profiles/../x', 'ets2/profiles/AB\\..', 'ets2/profiles/zz'])
+    assert.throws(() => a.resolve(bad), /Profil inconnu/, bad);
+  assert.equal(a.resolve('ets2/profiles/4A616D6573').folder, '4A616D6573');
+});
+
+test('bêta 5 : mode Paramètres (dossiers dans la barre) et recherche', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  for (const f of ['back', 'compte', 'appli', 'jeu', 'connexions', 'donnees', 'aide']) assert.match(html, new RegExp(`data-srail="${f}"`));
+  assert.match(html, /html\[data-rail="settings"\] \.rail-tabs:not\(\.rail-settings\)\{display:none\}/);
+  assert.match(html, /id="optQuery" type="search"/);
+  assert.match(html, /function runOptSearch\(\)/);
+  for (const c of ['notifs', 'donnees']) assert.match(html, new RegExp(`<div class="optcat is-soon" id="oc-${c}"`));
+  // chaque catégorie appartient à un dossier
+  const cats = [...html.matchAll(/<div class="optcat[^"]*" id="oc-([a-z]+)"/g)].map(m => m[1]);
+  const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(html)[1];
+  for (const c of cats) assert.match(folders, new RegExp(`'${c}'`), c);
+});

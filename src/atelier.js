@@ -138,7 +138,8 @@ class Atelier {
 
   resolve(id) {
     const [game, kind, folder] = String(id).split('/');
-    if (!GAMES[game] || !PROFILE_DIRS.includes(kind) || !folder || folder.includes('..') || /[\\/]/.test(folder)) throw new Error('Profil inconnu.');
+    // Le dossier d'un profil est son nom en hexadécimal : rien d'autre n'est accepté (ni « . », ni « .. », ni chemin).
+    if (!GAMES[game] || !PROFILE_DIRS.includes(kind) || !/^[0-9A-Fa-f]{2,200}$/.test(folder || '')) throw new Error('Profil inconnu.');
     return { game, kind, folder, dir: path.join(this.gameDir(game), kind, folder), store: path.join(this.backups, game, kind, folder) };
   }
 

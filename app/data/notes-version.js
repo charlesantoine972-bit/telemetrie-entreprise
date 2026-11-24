@@ -143,7 +143,11 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
-  { version: '0.12.0.5 bêta 5', date: '2026-11-24', titre: 'Aperçu de Compte & accès', notes: [
+  { version: '0.12.0.5 bêta 5', date: '2026-11-24', titre: 'Nouveau mode Paramètres, aperçu de Compte & accès et sécurité', notes: [
+    ['nouveau', 'Mode Paramètres : depuis Settings, la barre de gauche se transforme en dossiers de réglages (Compte, Appli, Jeu, Liens, Données, Aide). Retour en haut de la barre, ou la touche Échap, pour revenir.'],
+    ['nouveau', 'Recherche dans les paramètres : tape un mot (HUD, Discord, thème…) pour trouver un réglage dans toutes les catégories, y compris les paramètres du jeu. Un clic y mène et le met en surbrillance.'],
+    ['nouveau', 'Notifications et Données & confidentialité, en préparation : la liste des réglages prévus, visible avec Interface → Pages en préparation.'],
+    ['ameliore', 'Sécurité : les fenêtres de l’appli ne peuvent plus afficher autre chose que l’appli, aucune permission web (caméra, micro…) n’est jamais accordée, et les dossiers de profils sont vérifiés plus strictement avant une suppression ou une restauration.'],
     ['nouveau', 'Paramètres généraux → Compte & accès, en préparation : ton rang, les accès qu’il donne, l’activation d’une clé, ta VTC sur TruckersMP, la création de rangs et de clés. Visible seulement avec Interface → Pages en préparation activé.'],
     ['nouveau', 'Rangs de base : Fondateur, Administrateur, Testeur et Membre, plus tes propres rangs (nom, couleur, niveau, permissions). On ne gère que les rangs plus bas que le sien.'],
     ['change', 'Rien n’est encore relié à un serveur : tout reste sur ce PC, rien n’est partagé ni protégé. « Voir l’appli comme… » permet de se mettre à la place d’un autre rang.'],
