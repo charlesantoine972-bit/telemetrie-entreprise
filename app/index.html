@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: tchmap: https://raw.githubusercontent.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: tchmap: https://raw.githubusercontent.com; frame-src http://127.0.0.1:*">
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <script src="vendor/leaflet/leaflet.js"></script>
 <script src="data/villes.js"></script>
@@ -646,6 +646,9 @@
   .lmap{position:relative;height:calc(100vh - 170px);min-height:460px;border-radius:16px;border:1px solid var(--line);overflow:hidden;background:#303030}
   .lmap .leaflet-container{background:#303030;font-family:inherit}
   #lmap{position:absolute;inset:0}
+  .tchframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:1;background:var(--bg)}
+  .lmap .ovl{z-index:2}
+  html[data-map-engine="tch"] #lmap,html[data-map-engine="tch"] #mapNote,html[data-map-engine="tch"] #mapTileTools{visibility:hidden}
   .lmap .ovl{position:absolute;z-index:500;display:flex;gap:6px}
   .lmap .ovl.hidden{display:none}
   .lmap .ovl .btn{height:36px;font-size:13px;padding:0 12px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
@@ -736,6 +739,47 @@
   .optgamebar span.t{flex:1;min-width:240px;color:var(--soft)}
   .optgamebar.hidden{display:none}
   .navbtn.optmode{margin-top:auto;border-top:1px solid var(--line);border-radius:0;padding-top:12px}
+
+  /* ---------- Mode Paramètres : la barre devient les dossiers de réglages ---------- */
+  .rail-settings{display:none}
+  html[data-rail="settings"] .rail-tabs:not(.rail-settings){display:none}
+  html[data-rail="settings"] .rail-settings{display:flex;animation:railIn .22s ease-out}
+  html[data-rail="settings"] .rail-settings [data-srail="back"]{margin-bottom:10px;min-height:52px;border:1px solid var(--line)}
+  @keyframes railIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){html[data-rail="settings"] .rail-settings{animation:none}}
+  html[data-rail="settings"] #optBack{display:none}
+  .optsearch{position:relative;margin:4px 0 10px}
+  .optsearch input{width:100%;box-sizing:border-box;height:40px;border-radius:12px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px 0 36px;font-size:14px;font-family:inherit}
+  .optsearch svg{position:absolute;left:11px;top:11px;color:var(--muted);pointer-events:none}
+  .optresults{display:flex;flex-direction:column;gap:2px}
+  .optresults button{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px}
+  .optresults button:hover,.optresults button:focus-visible{background:var(--hover)} .optresults button:focus-visible{outline:2px solid var(--accent)}
+  .optresults b{font-size:14px;color:var(--text)} .optresults span{font-size:12px;color:var(--muted)}
+  .optresults .none{padding:9px 12px;font-size:13px;color:var(--muted)}
+  .setrow.flash,.optgroup.flash{animation:optFlash 2.2s ease-out}
+  @keyframes optFlash{0%,35%{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}100%{background:transparent;box-shadow:none}}
+  .optfolder{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 12px 4px}
+  /* ---------- Compte & accès (préparation) ---------- */
+  .accnote{margin:-4px 0 18px;padding:12px 16px;border:1px dashed var(--line);border-left:4px solid var(--race);border-radius:12px;background:var(--panel);font-size:14px;line-height:1.55;color:var(--soft)}
+  .rankpill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;font-weight:800;font-size:13px;border:1px solid var(--line);background:var(--bg2,var(--panel))}
+  .rankpill::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--rc,#94a3b8)}
+  .acclist{display:flex;flex-direction:column}
+  .accrow{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+  .accrow .grow{flex:1;min-width:200px} .accrow .muted{font-size:13px}
+  .accrow code{font-family:ui-monospace,Consolas,monospace;font-size:14px;letter-spacing:.04em}
+  .accrow.off{opacity:.55}
+  .accform{border-top:1px solid var(--line);padding:12px 18px} .accform>summary{cursor:pointer;font-weight:700;color:var(--accent-strong)}
+  .accgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:12px 18px}
+  .accform .accgrid{padding:12px 0}
+  .accgrid label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--soft)}
+  .accgrid small{font-weight:500;color:var(--muted)}
+  .accgrid input:not([type=color]),.accgrid select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit;font-weight:500;color-scheme:dark light}
+  .accgrid input[type=color]{height:38px;width:64px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);padding:3px;cursor:pointer}
+  .accperms input{accent-color:var(--accent);width:16px;height:16px;margin-top:1px}
+  .accperms{border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin:0}
+  .accperms legend{font-size:13px;font-weight:700;color:var(--soft);padding:0 6px}
+  .accperms label{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.4}
+  .acc-msg{margin:0;padding:0 18px 10px;font-size:13px} .setrow .acc-msg{padding:0}
   /* ---------- Page News ---------- */
   .newsgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
   .newscard{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);text-decoration:none;color:var(--text)}
@@ -765,6 +809,16 @@
     <button class="railbtn" data-rail="map" title="Carte en direct"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5 3.5 6.5v13l5.5-2 6 2 5.5-2v-13l-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></svg><span>Map</span></button>
     <button class="railbtn" data-rail="settings" title="Options de l’appli"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5v.2a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg><span>Settings</span></button>
     <button class="railbtn" data-rail="support" title="Aide et contact"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1-4.4A8.5 8.5 0 1 1 20.5 12z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg><span>Support</span></button>
+  </div>
+  <!-- Mode Paramètres : la barre se transforme en dossiers de réglages -->
+  <div class="rail-tabs rail-settings" role="group" aria-label="Dossiers des paramètres">
+    <button class="railbtn" data-srail="back" title="Quitter les paramètres (Échap)"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span>Retour</span></button>
+    <button class="railbtn" data-srail="compte" title="Ton rang, tes clés et ta VTC"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span>Compte</span></button>
+    <button class="railbtn" data-srail="appli" title="Général, Interface, Accessibilité, Notifications"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg><span>Appli</span></button>
+    <button class="railbtn" data-srail="jeu" title="Paramètres ETS2 / ATS : plugin, conduite, HUD"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="4"/><path d="M8 11v4M6 13h4M15.5 12.5h.01M17.5 14.5h.01"/></svg><span>Jeu</span></button>
+    <button class="railbtn" data-srail="connexions" title="Steam et Discord"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg><span>Liens</span></button>
+    <button class="railbtn" data-srail="donnees" title="Mises à jour, données et confidentialité"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Données</span></button>
+    <button class="railbtn" data-srail="aide" title="Aide, infos et diagnostic"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17h.01"/></svg><span>Aide</span></button>
   </div>
 </nav>
 <div id="launcher">
@@ -1330,7 +1384,7 @@
       <h1>Options</h1>
       <div class="optgamebar hidden" id="optGameBar"><span class="gtag" id="optGameTag">ETS2</span><span class="t">Ces réglages ne concernent que <b id="optGameName">Euro Truck Simulator 2</b>. Ils se chargent tout seuls quand ce jeu est lancé.</span><button class="btn" id="optCopyGame">Copier depuis ATS</button></div>
       <div class="opts">
-      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Interface</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
+      <nav class="optnav" id="optNav" role="tablist" aria-label="Catégories d’options"><button data-oc="general" role="tab" aria-controls="oc-general"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Général</span></button><button data-oc="conduite" role="tab" aria-controls="oc-conduite"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 14v6.5M10.2 11 4 9.5M13.8 11 20 9.5"/></svg><span>Conduite</span></button><button data-oc="jeu" role="tab" aria-controls="oc-jeu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="14" r=".8" fill="currentColor"/></svg><span>Jeu &amp; plugin</span></button><button data-oc="hud" role="tab" aria-controls="oc-hud"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M7 9.5h5M7 12.5h8"/></svg><span>HUD</span></button><button data-oc="affichage" role="tab" aria-controls="oc-affichage"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span>Interface</span></button><button data-oc="acces" role="tab" aria-controls="oc-acces"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.8" r="1.6"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1M12 9.5v4.5M12 14l-3 6M12 14l3 6"/></svg><span>Accessibilité</span></button><button data-oc="integrations" role="tab" aria-controls="oc-integrations"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Steam &amp; Discord</span></button><button data-oc="notifs" class="is-soon" role="tab" aria-controls="oc-notifs"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><span>Notifications</span><span class="soon">Bientôt</span></button><button data-oc="donnees" class="is-soon" role="tab" aria-controls="oc-donnees"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/></svg><span>Données &amp; confidentialité</span><span class="soon">Bientôt</span></button><button data-oc="compte" class="is-soon" role="tab" aria-controls="oc-compte"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M14.5 8.5l2 2"/></svg><span>Compte &amp; accès</span><span class="soon">Bientôt</span></button><button data-oc="maj" role="tab" aria-controls="oc-maj"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.5 4.5M20 20v-3.5h-3.5"/></svg><span>Mises à jour</span></button><button data-oc="aide" role="tab" aria-controls="oc-aide"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Aide &amp; infos</span></button></nav>
       <div class="optbody">
       <div class="optcat" id="oc-general" role="tabpanel" aria-label="Général">
         <div class="ochead"><h2>Général</h2><p>Comment l’appli se comporte au quotidien.</p></div>
@@ -1405,7 +1459,7 @@
         </div>
         <div class="optgroup"><h3>Éléments visibles</h3>
           <div class="setrow"><div class="lab"><b>Menu latéral réduit</b><span>N’affiche que les icônes dans le menu de gauche. Tu peux aussi le réduire ou l’agrandir avec le bouton à côté du logo.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="navMiniSwitch" role="switch" aria-label="Menu latéral réduit"><span></span></label></div></div>
-          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
+          <div class="setrow"><div class="lab"><b>Pages en préparation</b><span>Affiche les pages pas encore terminées, marquées « Bientôt » : Ma VTC et ses onglets, Calendrier, Infos VTC, Compte &amp; accès.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="soonSwitch" role="switch" aria-label="Afficher les pages en préparation"><span></span></label></div></div>
           <div class="setrow"><div class="lab"><b>Truck &amp; Coach Tools <span class="muted" style="font-weight:600">· ETS2</span></b><span>Outils expérimentaux pour tes profils solo d’Euro Truck Simulator 2 (sauvegardes, camions, remorques, cars). Ajoute l’espace dans le menu ☰ quand ETS2 est choisi.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" data-atg="ets2" role="switch" aria-label="Activer Truck & Coach Tools pour ETS2"><span></span></label></div></div>
           <div class="setrow"><div class="lab"><b>Truck &amp; Road Trip Tools <span class="muted" style="font-weight:600">· ATS</span></b><span>Les mêmes outils pour American Truck Simulator, avec Road Trip à la place des cars. Ajoute l’espace dans le menu ☰ quand ATS est choisi.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" data-atg="ats" role="switch" aria-label="Activer Truck & Road Trip Tools pour ATS"><span></span></label></div></div>
           <div class="setrow" id="betaRow"><div class="lab"><b>Programme bêta</b><span id="betaDesc">Affiche les notes de la version bêta et le lien pour installer Truck &amp; Coach Hub Bêta, une appli séparée qui s’installe à côté de celle-ci. N’installe rien et ne change pas ta version.</span></div><div class="ctl"><label class="switch" style="width:46px;height:26px"><input type="checkbox" id="betaSwitch" role="switch" aria-label="Programme bêta"><span></span></label></div></div>
@@ -1435,6 +1489,63 @@
           <div class="setrow end"><span class="muted" id="discordStatus" style="font-size:13px" aria-live="polite"></span><button class="btn primary" id="btnDiscordTest">Enregistrer et tester</button></div>
         </div>
       </div>
+      <div class="optcat is-soon" id="oc-compte" role="tabpanel" aria-label="Compte &amp; accès">
+        <div class="ochead"><h2>Compte &amp; accès</h2><p>Ton rang dans l’appli, tes clés d’activation et ta VTC. Les rangs donnent des accès en plus : versions bêta, outils expérimentaux, gestion de la VTC.</p></div>
+        <div class="accnote" role="note"><b>Page en préparation.</b> Elle n’est pas encore reliée au serveur des comptes : ce que tu fais ici reste sur ce PC, rien n’est partagé, donné à quelqu’un ni protégé. Tu es Fondateur pour pouvoir tout essayer. Plus tard, le bot du Discord du projet lira ton rang ici pour te donner le rôle Discord qui correspond.</div>
+        <div class="optgroup"><h3>Ton compte</h3>
+          <div class="setrow"><div class="lab"><b>Connexion Steam</b><span id="accSteam">Ton compte Steam servira à te reconnaître, sans mot de passe à créer.</span></div><div class="ctl"><button class="btn" disabled>Bientôt</button></div></div>
+          <div class="setrow"><div class="lab"><b>Ton rang</b><span id="accPerms">—</span></div><div class="ctl"><span class="rankpill" id="accRank">—</span></div></div>
+          <div class="setrow" id="accAsRow"><div class="lab"><b>Voir l’appli comme…</b><span>Aperçu seulement : prends un autre rang pour voir ce qu’il peut faire. « Effacer l’aperçu » te remet Fondateur.</span></div><div class="ctl"><select id="accAs" aria-label="Voir l’appli comme"></select></div></div>
+        </div>
+        <div class="optgroup"><h3>Clé d’activation</h3>
+          <div class="setrow"><div class="lab"><b>Activer une clé</b><span>Une clé reçue d’un fondateur ou d’un administrateur (accès testeur, bêta…). Format : TCH-XXXX-XXXX-XXXX-X.</span></div><div class="ctl"><input id="accKey" autocomplete="off" spellcheck="false" placeholder="TCH-XXXX-XXXX-XXXX-X" aria-label="Clé d’activation" style="width:230px;font-family:ui-monospace,Consolas,monospace"><button class="btn primary" id="accRedeem">Activer</button></div></div>
+          <p class="muted acc-msg" id="accKeyMsg" aria-live="polite"></p>
+        </div>
+        <div class="optgroup"><h3>Ma VTC</h3>
+          <div class="setrow"><div class="lab"><b>TruckersMP</b><span id="accVtc">Retrouve ta VTC et ton rôle grâce à ton SteamID64 (Options → Steam &amp; Discord). Trucky viendra ensuite ; HaulMP n’a pas encore d’API publique.</span></div><div class="ctl"><button class="btn" id="accVtcBtn">Chercher ma VTC</button></div></div>
+        </div>
+        <div class="optgroup hidden" id="accRanksGroup"><h3>Rangs</h3>
+          <div id="accRanks" class="acclist"></div>
+          <details class="accform" id="accRankForm"><summary>Créer un rang</summary>
+            <div class="accgrid">
+              <label>Nom<input id="arName" maxlength="24" placeholder="Ex. Chef de convoi"></label>
+              <label>Couleur<input id="arColor" type="color" value="#3b82f6"></label>
+              <label>Niveau<input id="arLevel" type="number" min="1" max="99" value="30"><small>Plus haut = plus de pouvoir. On ne gère que les rangs plus bas que le sien.</small></label>
+            </div>
+            <fieldset class="accperms" id="arPerms"><legend>Permissions</legend></fieldset>
+            <div class="setrow end"><span class="muted acc-msg" id="arMsg" aria-live="polite"></span><button class="btn primary" id="arSave">Enregistrer le rang</button></div>
+          </details>
+        </div>
+        <div class="optgroup hidden" id="accKeysGroup"><h3>Clés créées</h3>
+          <div class="accgrid">
+            <label>Nombre<input id="akCount" type="number" min="1" max="50" value="1"></label>
+            <label>Donne le rang<select id="akRank"></select></label>
+            <label>Utilisations<input id="akUses" type="number" min="1" max="1000" value="1"></label>
+            <label>Valable jusqu’au<input id="akExp" type="date"></label>
+          </div>
+          <div class="setrow end"><span class="muted acc-msg" id="akMsg" aria-live="polite"></span><button class="btn primary" id="akCreate">Créer les clés</button></div>
+          <div id="accKeys" class="acclist"></div>
+        </div>
+        <div class="setrow end"><button class="btn" id="accReset">Effacer l’aperçu</button></div>
+      </div>
+      <div class="optcat is-soon" id="oc-notifs" role="tabpanel" aria-label="Notifications">
+        <div class="ochead"><h2>Notifications</h2><p>Les alertes que l’appli peut t’envoyer pendant que tu roules ou quand elle est en arrière-plan.</p></div>
+        <div class="optgroup"><h3>Notifications Windows</h3>
+          <div class="setrow"><div class="lab"><b>Mise à jour disponible</b><span>Une notification quand une nouvelle version de l’appli est prête.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div><div class="setrow"><div class="lab"><b>Pause obligatoire</b><span>Prévient 30 minutes puis 10 minutes avant la pause obligatoire.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div><div class="setrow"><div class="lab"><b>Carburant bas</b><span>Prévient quand le réservoir passe sous le seuil choisi.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div><div class="setrow"><div class="lab"><b>Livraison terminée</b><span>Résumé de la livraison ou du service : km, revenu, dégâts.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div>
+        </div>
+        <div class="optgroup"><h3>Sons d’alerte</h3>
+          <div class="setrow"><div class="lab"><b>Excès de vitesse</b><span>Un son quand tu dépasses la limitation de plus de 5 ou 10 km/h (au choix).</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div><div class="setrow"><div class="lab"><b>Volume</b><span>Le volume des sons d’alerte, indépendant du jeu.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div>
+        </div>
+      </div>
+      <div class="optcat is-soon" id="oc-donnees" role="tabpanel" aria-label="Données et confidentialité">
+        <div class="ochead"><h2>Données &amp; confidentialité</h2><p>Ce que l’appli garde sur ce PC, et comment le sauvegarder, le déplacer ou l’effacer.</p></div>
+        <div class="optgroup"><h3>Tes données</h3>
+          <div class="setrow"><div class="lab"><b>Exporter mes données</b><span>Un fichier avec tes réglages et ton historique, pour changer de PC ou passer de la bêta à la version officielle.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div><div class="setrow"><div class="lab"><b>Importer des données</b><span>Reprend un fichier exporté. Ce que tu as déjà est gardé en copie avant.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div><div class="setrow"><div class="lab"><b>Ouvrir le dossier des données</b><span>Le dossier où l’appli range tes réglages, ton historique et les copies de profils.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div>
+        </div>
+        <div class="optgroup"><h3>Effacer</h3>
+          <div class="setrow"><div class="lab"><b>Effacer l’historique des trajets</b><span>Supprime la Feuille de route et les totaux de Ma carrière. Tes profils du jeu ne sont pas touchés.</span></div><div class="ctl"><span class="soon" style="margin:0">Bientôt</span></div></div>
+        </div>
+      </div>
       <div class="optcat" id="oc-maj" role="tabpanel" aria-label="Mises à jour">
         <div class="ochead"><h2>Mises à jour</h2><p>L’appli vérifie toute seule au démarrage puis toutes les 30 minutes.</p></div>
         <div class="optgroup"><h3>Ta version</h3>
@@ -1447,6 +1558,10 @@
       </div>
       <div class="optcat" id="oc-aide" role="tabpanel" aria-label="Aide &amp; infos">
         <div class="ochead"><h2>Aide &amp; infos</h2><p>Ce que l’appli reçoit du jeu et, bientôt, une fiche « comment ça marche » pour chaque fonction.</p></div>
+        <div class="optgroup"><h3>Licences</h3>
+          <div class="setrow"><div class="lab"><b>TCH Map</b><span>La carte est un programme séparé et libre (GNU GPL v3), fondé sur TruckSim Maps de truckermudgeon. Son code source complet est public.</span></div><div class="ctl"><a class="btn" href="https://github.com/charlesantoine972-bit/telemetrie-entreprise/tree/beta/tch-map" target="_blank" rel="noopener">Code source</a></div></div>
+          <div class="setrow"><div class="lab"><b>Autres composants</b><span>MapLibre GL JS (BSD-3), world-atlas (ISC), Natural Earth (domaine public), DecryptTruck (MIT), ETS2-City-Coordinate-Retriever (MIT). Données des jeux © SCS Software.</span></div></div>
+        </div>
         <div class="optgroup" id="optInfos"><h3>Données du jeu</h3>
           <div class="setrow col">
       <details class="acc" id="coachDiag" style="width:100%;margin:0">
@@ -1497,11 +1612,12 @@
 
     <!-- CARTE PERSO (vraie carte du jeu) -->
     <section id="v-cartePerso" class="hidden">
-      <h1>Carte <span class="chip" id="mapChip"><span class="d" style="background:var(--muted)"></span>En attente du jeu</span></h1>
+      <div class="between" style="gap:12px;flex-wrap:wrap;margin-bottom:6px"><h1 style="margin:0">Carte <span class="chip" id="mapChip"><span class="d" style="background:var(--muted)"></span>En attente du jeu</span></h1><div class="seg" id="mapEngine" role="group" aria-label="Carte affichée"><button data-engine="tch" title="TCH Map : carte vectorielle, villes visitées, Islande (aperçu)">Nouvelle carte</button><button data-engine="old" title="Carte en images (TsMap 1.48)">Ancienne carte</button></div></div>
       <div class="panel" id="contentPanel" style="margin-bottom:18px"><div class="between"><b>Fichiers du jeu et DLC</b><button class="btn" id="contentScan">Vérifier les jeux</button></div><div id="contentStatus" class="soft" role="status" aria-live="polite">Vérification en lecture seule des installations ETS2 / ATS.</div><div id="contentDetails"></div></div>
       <div class="lwrap">
         <div class="lmap">
           <div id="lmap"></div>
+          <iframe id="tchFrame" class="tchframe hidden" title="Carte du jeu (TCH Map)" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>
           <div class="ovl" style="top:12px;right:12px">
             <button class="btn on" id="mapFollow" title="Garder ton camion au centre de la carte">Suivre mon camion</button>
           </div>
@@ -1751,7 +1867,7 @@ document.querySelectorAll('.gamecard').forEach(c => c.onclick = () => openGame(c
 document.getElementById('gameChip').onclick = () => showLauncher(true);
 document.getElementById('railLogo').onclick = () => showLauncher(true);
 document.getElementById('rail').addEventListener('click', e => {
-  const b = e.target.closest('.railbtn'); if (!b) return;
+  const b = e.target.closest('.railbtn'); if (!b || b.dataset.srail) return;
   if (typeof closeSpaces === 'function') closeSpaces();
   const t = b.dataset.rail;
   const wasSel = !document.getElementById('launcher').classList.contains('hidden');
@@ -1770,7 +1886,7 @@ document.getElementById('rail').addEventListener('click', e => {
 });
 document.getElementById('rail').addEventListener('keydown', e => {
   if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
-  const bs = [...document.querySelectorAll('.railbtn')], i = bs.indexOf(document.activeElement); if (i < 0) return;
+  const bs = [...document.querySelectorAll('.railbtn')].filter(x => x.offsetParent !== null), i = bs.indexOf(document.activeElement); if (i < 0) return;
   e.preventDefault(); bs[(i + (e.key === 'ArrowDown' ? 1 : bs.length - 1)) % bs.length].focus();
 });
 document.getElementById('lfNotes').onclick = () => { showLauncher(false); openOptCat('maj'); go('reglages', 'settings'); };
@@ -1867,7 +1983,7 @@ document.getElementById('optNav').addEventListener('keydown', e => {
   const nav = document.getElementById('navOptions');
   document.querySelectorAll('#optNav [data-oc]').forEach(b => {
     const c = document.createElement('button');
-    c.className = 'navbtn'; c.dataset.oc = b.dataset.oc;
+    c.className = 'navbtn' + (b.classList.contains('is-soon') ? ' is-soon' : ''); c.dataset.oc = b.dataset.oc;
     c.innerHTML = b.innerHTML.replace('width="18" height="18"', 'width="20" height="20"');
     c.querySelector('span').style.cssText = 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
     c.onclick = () => { openOptCat(c.dataset.oc); document.querySelector('main').scrollTop = 0; };
@@ -1976,6 +2092,221 @@ function applyGameLabels(g){
   document.querySelectorAll('#oc-hud .optgroup > h3').forEach(h => { if (/^Bandeau (car|Road Trip)$/.test(h.textContent)) h.textContent = g === 'ats' ? 'Bandeau Road Trip' : 'Bandeau car'; });
 }
 
+/* ---------- Compte & accès (préparation : aperçu local, pas encore de serveur) ---------- */
+const accApi = () => (window.tel && window.tel.acces) || null;
+let accPerms = [], accRanksList = [], accSession = null;
+const accCall = async (name, ...a) => { const api = accApi(); if (!api) return { ok: false, error: 'Disponible dans l’appli installée.' }; return api[name](...a); };
+const accMsg = (id, txt, bad) => { const e = document.getElementById(id); if (!e) return; e.textContent = txt || ''; e.style.color = bad ? 'var(--race)' : ''; };
+const rankPill = r => `<span class="rankpill" style="--rc:${escM(r.color || '#94a3b8')}">${escM(r.name)}</span>`;
+async function renderAcces(){
+  if (!accPerms.length && accApi()) accPerms = (await accApi().info()).permissions;
+  const s = await accCall('session');
+  if (!s.ok) { setText('accPerms', s.error); return; }
+  accSession = s.value;
+  const me = accSession.rank, can = p => accSession.perms.includes(p);
+  const pill = document.getElementById('accRank'); pill.textContent = me.name; pill.style.setProperty('--rc', me.color);
+  const pn = Object.fromEntries(accPerms);
+  setText('accPerms', accSession.perms.length ? accSession.perms.map(p => pn[p] || p).join(' · ') : 'Aucun accès en plus pour le moment.');
+  setText('accSteam', accSession.steamId ? `Compte Steam ${accSession.steamId} (renseigné dans Steam & Discord). La vraie connexion Steam arrivera avec le serveur.` : 'Ton compte Steam servira à te reconnaître, sans mot de passe à créer. Renseigne ton SteamID64 dans Steam & Discord.');
+  const rr = await accCall('ranks'); accRanksList = rr.ok ? rr.value : [];
+  document.getElementById('accAs').innerHTML = accRanksList.map(r => `<option value="${escM(r.id)}"${r.id === me.id ? ' selected' : ''}>${escM(r.name)} (niveau ${r.level})</option>`).join('');
+  // Rangs
+  document.getElementById('accRanksGroup').classList.toggle('hidden', !can('acces.rangs') && !can('acces.membres'));
+  document.getElementById('accRankForm').classList.toggle('hidden', !can('acces.rangs'));
+  document.getElementById('accRanks').innerHTML = accRanksList.map(r => {
+    const editable = can('acces.rangs') && !r.system && me.level > r.level;
+    const perms = r.perms.includes('*') ? 'Tous les accès' : (r.perms.length ? r.perms.map(p => pn[p] || p).join(' · ') : 'Aucun accès en plus');
+    return `<div class="accrow">${rankPill(r)}<span class="muted">niveau ${r.level}${r.system ? ' · de base' : ''}</span><span class="grow muted">${escM(perms)}</span>${editable ? `<button class="btn" data-ar-edit="${escM(r.id)}">Modifier</button><button class="btn" data-ar-del="${escM(r.id)}">Supprimer</button>` : ''}</div>`;
+  }).join('');
+  const mine = accSession.perms;
+  document.getElementById('arPerms').innerHTML = '<legend>Permissions</legend>' + accPerms.map(([id, lab]) => `<label><input type="checkbox" value="${id}"${mine.includes(id) ? '' : ' disabled'}><span>${escM(lab)}${mine.includes(id) ? '' : ' <span class="muted">(tu ne l’as pas)</span>'}</span></label>`).join('');
+  document.querySelectorAll('[data-ar-del]').forEach(b => b.onclick = async () => {
+    const r = accRanksList.find(x => x.id === b.dataset.arDel);
+    if (!await ask('Supprimer le rang « ' + escM(r.name) + ' » ?', 'Les membres qui l’ont repassent Membre, et les clés qui le donnent sont désactivées.', 'Supprimer')) return;
+    const x = await accCall('deleteRank', r.id); if (!x.ok) accMsg('arMsg', x.error, true); renderAcces();
+  });
+  document.querySelectorAll('[data-ar-edit]').forEach(b => b.onclick = () => {
+    const r = accRanksList.find(x => x.id === b.dataset.arEdit), f = document.getElementById('accRankForm');
+    f.open = true; f.dataset.editId = r.id; f.querySelector('summary').textContent = 'Modifier « ' + r.name + ' »';
+    document.getElementById('arName').value = r.name; document.getElementById('arColor').value = r.color; document.getElementById('arLevel').value = r.level;
+    document.querySelectorAll('#arPerms input').forEach(i => { i.checked = r.perms.includes(i.value); });
+  });
+  // Clés
+  document.getElementById('accKeysGroup').classList.toggle('hidden', !can('acces.cles'));
+  if (can('acces.cles')) {
+    document.getElementById('akRank').innerHTML = accRanksList.filter(r => r.level < me.level && r.id !== 'membre').map(r => `<option value="${escM(r.id)}">${escM(r.name)}</option>`).join('');
+    const k = await accCall('keys'), list = k.ok ? k.value : [];
+    const rn = Object.fromEntries(accRanksList.map(r => [r.id, r]));
+    document.getElementById('accKeys').innerHTML = list.length ? list.map(x => {
+      const done = x.revoked || x.uses >= x.grant.maxUses || (x.grant.expiresAt && Date.parse(x.grant.expiresAt) < Date.now());
+      const st = x.revoked ? 'désactivée' : x.uses >= x.grant.maxUses ? 'utilisée' : (x.grant.expiresAt && Date.parse(x.grant.expiresAt) < Date.now()) ? 'expirée' : `${x.uses}/${x.grant.maxUses} utilisation${x.grant.maxUses > 1 ? 's' : ''}`;
+      return `<div class="accrow${done ? ' off' : ''}"><code>${escM(x.key)}</code>${x.grant.rank && rn[x.grant.rank] ? rankPill(rn[x.grant.rank]) : ''}<span class="grow muted">${escM(st)}${x.grant.expiresAt ? ' · jusqu’au ' + escM(new Date(x.grant.expiresAt).toLocaleDateString('fr-FR')) : ''}</span><button class="btn" data-ak-copy="${escM(x.key)}">Copier</button>${done ? '' : `<button class="btn" data-ak-off="${escM(x.key)}">Désactiver</button>`}</div>`;
+    }).join('') : '<div class="accrow muted">Aucune clé pour le moment.</div>';
+    document.querySelectorAll('[data-ak-copy]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.akCopy); accMsg('akMsg', 'Clé copiée.'); } catch { accMsg('akMsg', 'Copie impossible : sélectionne la clé à la main.', true); } });
+    document.querySelectorAll('[data-ak-off]').forEach(b => b.onclick = async () => { const x = await accCall('revokeKey', b.dataset.akOff); if (!x.ok) accMsg('akMsg', x.error, true); renderAcces(); });
+  }
+}
+document.getElementById('accRedeem').onclick = async () => {
+  const v = document.getElementById('accKey').value;
+  const r = await accCall('redeem', v);
+  if (!r.ok) return accMsg('accKeyMsg', r.error, true);
+  document.getElementById('accKey').value = '';
+  accMsg('accKeyMsg', `Clé activée : tu es maintenant ${r.value.rank.name}.`);
+  renderAcces();
+};
+document.getElementById('accKey').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('accRedeem').click(); });
+document.getElementById('accAs').onchange = async e => { await accCall('previewAs', e.target.value); renderAcces(); };
+document.getElementById('accReset').onclick = async () => {
+  if (!await ask('Effacer l’aperçu ?', 'Les rangs et les clés créés pour essayer sont supprimés, et tu redeviens Fondateur.', 'Effacer')) return;
+  await accCall('reset'); accMsg('accKeyMsg', ''); renderAcces();
+};
+document.getElementById('arSave').onclick = async () => {
+  const f = document.getElementById('accRankForm');
+  const input = { id: f.dataset.editId || undefined, name: document.getElementById('arName').value, color: document.getElementById('arColor').value, level: Number(document.getElementById('arLevel').value), perms: [...document.querySelectorAll('#arPerms input:checked')].map(i => i.value) };
+  const r = await accCall('saveRank', input);
+  if (!r.ok) return accMsg('arMsg', r.error, true);
+  accMsg('arMsg', `Rang « ${r.value.name} » enregistré.`);
+  delete f.dataset.editId; f.querySelector('summary').textContent = 'Créer un rang'; document.getElementById('arName').value = '';
+  renderAcces();
+};
+document.getElementById('akCreate').onclick = async () => {
+  const exp = document.getElementById('akExp').value;
+  const r = await accCall('createKeys', Number(document.getElementById('akCount').value), { rank: document.getElementById('akRank').value || null, maxUses: Number(document.getElementById('akUses').value), expiresAt: exp ? exp + 'T23:59:59' : null });
+  if (!r.ok) return accMsg('akMsg', r.error, true);
+  accMsg('akMsg', r.value.length > 1 ? `${r.value.length} clés créées.` : 'Clé créée.');
+  renderAcces();
+};
+document.getElementById('accVtcBtn').onclick = async () => {
+  setText('accVtc', 'Recherche sur TruckersMP…');
+  const r = await accCall('vtc');
+  if (!r.ok) return setText('accVtc', r.error);
+  const v = r.value;
+  setText('accVtc', !v.found || !v.vtc ? v.reason : `${v.vtc.name}${v.vtc.tag ? ' [' + v.vtc.tag + ']' : ''}${v.vtc.role ? ' · rôle : ' + v.vtc.role : ''} (TruckersMP). Plus tard, le fondateur de ta VTC pourra relier ce rôle à un rang de l’appli.`);
+};
+const openOptCatAcc = openOptCat;
+openOptCat = function (cat) { openOptCatAcc(cat); if (cat === 'compte') renderAcces(); };
+
+/* ---------- Mode Paramètres : dossiers dans la barre + recherche ---------- */
+// Depuis Settings (barre de l'accueil), la barre de gauche se transforme : Retour, puis les dossiers de réglages.
+// La colonne d'à côté montre la recherche et les catégories du dossier choisi.
+const SET_FOLDERS = {
+  compte: ['compte'],
+  appli: ['general', 'affichage', 'acces', 'notifs'],
+  jeu: ['jeu', 'conduite', 'hud'],
+  connexions: ['integrations'],
+  donnees: ['maj', 'donnees'],
+  aide: ['aide'],
+};
+const folderOf = cat => Object.keys(SET_FOLDERS).find(f => SET_FOLDERS[f].includes(cat)) || 'appli';
+const catVisible = cat => { const el = document.getElementById('oc-' + cat); return !!el && !(el.classList.contains('is-soon') && document.documentElement.dataset.hideSoon); };
+function syncSettingsRail(){
+  const inRail = railTab === 'settings';
+  const f = folderOf(optCat);
+  document.querySelectorAll('.rail-settings [data-srail]').forEach(b => {
+    const on = inRail && b.dataset.srail === f;
+    b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    if (SET_FOLDERS[b.dataset.srail]) b.classList.toggle('hidden', !SET_FOLDERS[b.dataset.srail].some(catVisible));
+  });
+  if (!inRail) return;
+  // Dans le mode Paramètres : seulement les catégories du dossier ouvert
+  document.querySelectorAll('#navOptions [data-oc]').forEach(b => b.classList.toggle('hidden', !SET_FOLDERS[f].includes(b.dataset.oc)));
+  const sw = document.getElementById('optSwitchMode'); if (sw) sw.classList.add('hidden');
+  const t = document.getElementById('optFolderTitle'); if (t) t.textContent = ({ compte: 'Compte', appli: 'Appli', jeu: 'Jeu · ' + GAMES_UI[activeGame === 'ats' ? 'ats' : 'ets2'].tag, connexions: 'Liens', donnees: 'Données', aide: 'Aide' })[f];
+}
+function openFolder(f){
+  const cats = SET_FOLDERS[f].filter(catVisible);
+  const pick = cats.includes(lastOptCat['f_' + f]) ? lastOptCat['f_' + f] : cats[0];
+  if (pick) openOptCat(pick);
+  document.querySelector('main').scrollTop = 0;
+}
+function leaveSettings(){ document.getElementById('optBack').click(); }
+document.querySelectorAll('.rail-settings [data-srail]').forEach(b => b.onclick = () => b.dataset.srail === 'back' ? leaveSettings() : openFolder(b.dataset.srail));
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || railTab !== 'settings' || state.view !== 'reglages') return;
+  if (!document.getElementById('modal').classList.contains('hidden')) return;          // une fenêtre ouverte se ferme d'abord
+  const q = document.getElementById('optQuery'); if (q && q.value) { q.value = ''; runOptSearch(); return; }
+  leaveSettings();
+});
+// Recherche : fouille toutes les catégories (générales et du jeu), y compris celles des autres dossiers
+(() => {
+  const nav = document.getElementById('navOptions'), back = document.getElementById('optBack');
+  const box = document.createElement('div');
+  box.className = 'optsearch';
+  box.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="optQuery" type="search" placeholder="Rechercher un réglage" aria-label="Rechercher un réglage" autocomplete="off">';
+  const res = document.createElement('div'); res.className = 'optresults hidden'; res.id = 'optResults'; res.setAttribute('role', 'listbox'); res.setAttribute('aria-label', 'Résultats');
+  const title = document.createElement('div'); title.className = 'optfolder'; title.id = 'optFolderTitle';
+  back.after(box, res, title);
+  document.getElementById('optQuery').addEventListener('input', runOptSearch);
+  document.getElementById('optQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { const f = res.querySelector('button'); if (f) f.click(); } if (e.key === 'ArrowDown') { const f = res.querySelector('button'); if (f) { e.preventDefault(); f.focus(); } } });
+})();
+const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+function optIndex(){
+  const out = [];
+  document.querySelectorAll('#v-reglages .optcat').forEach(cat => {
+    const id = cat.id.replace(/^oc-/, ''); if (!catVisible(id)) return;
+    const cname = (cat.querySelector('.ochead h2') || {}).textContent || id;
+    cat.querySelectorAll('.setrow').forEach(r => {
+      const b = r.querySelector('.lab b'); if (!b) return;
+      const group = (r.closest('.optgroup') && r.closest('.optgroup').querySelector('h3') || {}).textContent || '';
+      const d = (r.querySelector('.lab span') || {}).textContent || '';
+      out.push({ cat: id, el: r, title: b.textContent.trim(), path: cname + (group ? ' › ' + group : ''), hay: norm(b.textContent + ' ' + d + ' ' + group + ' ' + cname) });
+    });
+  });
+  return out;
+}
+function runOptSearch(){
+  const q = norm(document.getElementById('optQuery').value).trim(), res = document.getElementById('optResults');
+  const cats = [...document.querySelectorAll('#navOptions [data-oc]')], title = document.getElementById('optFolderTitle');
+  if (!q) { res.classList.add('hidden'); res.innerHTML = ''; title.classList.remove('hidden'); cats.forEach(b => b.style.display = ''); return; }
+  cats.forEach(b => b.style.display = 'none'); title.classList.add('hidden');
+  const words = q.split(/\s+/);
+  const hits = optIndex().filter(x => words.every(w => x.hay.includes(w))).sort((a, b) => (norm(b.title).includes(words[0]) ? 1 : 0) - (norm(a.title).includes(words[0]) ? 1 : 0)).slice(0, 30);
+  res.classList.remove('hidden');
+  res.innerHTML = hits.length ? hits.map((h, i) => `<button role="option" data-hit="${i}"><b>${escM(h.title)}</b><span>${escM(h.path)}</span></button>`).join('') : '<div class="none">Aucun réglage trouvé.</div>';
+  res.querySelectorAll('[data-hit]').forEach(b => b.onclick = () => {
+    const h = hits[Number(b.dataset.hit)];
+    document.getElementById('optQuery').value = ''; runOptSearch();
+    openOptCat(h.cat);
+    const g = h.el.closest('details'); if (g) g.open = true;
+    setTimeout(() => { h.el.scrollIntoView({ block: 'center', behavior: 'smooth' }); h.el.classList.remove('flash'); void h.el.offsetWidth; h.el.classList.add('flash'); const f = h.el.querySelector('input,select,button'); if (f) f.focus({ preventScroll: true }); }, 60);
+  });
+}
+const openOptCatRail = openOptCat;
+openOptCat = function (cat) { openOptCatRail(cat); const f = folderOf(cat); lastOptCat['f_' + f] = cat; syncSettingsRail(); };
+const setRailBase = setRail;
+setRail = function (t) { setRailBase(t); if (typeof syncSettingsRail === 'function') syncSettingsRail(); };
+
+/* ---------- Nouvelle carte : TCH Map (programme séparé, GPL-3, dossier tch-map/) ----------
+   L'appli ne fait que l'afficher dans un cadre et lui envoyer des messages : aucun code de la carte ici. */
+let mapEngine = store.get('mapEngine', 'tch');
+const hasTch = () => !!(window.tel && window.tel.tchMap);
+const toHex = (c) => { c = String(c || '').trim(); if (/^#[0-9a-f]{3,8}$/i.test(c)) return c; const m = c.match(/\d+(\.\d+)?/g); return m && m.length >= 3 ? '#' + m.slice(0, 3).map(v => Math.round(+v).toString(16).padStart(2, '0')).join('') : null; };
+function tchTheme(){
+  const cs = getComputedStyle(document.documentElement), v = n => toHex(cs.getPropertyValue(n));
+  return { bg: v('--bg'), land: v('--panel'), border: v('--line'), text: v('--text'), muted: v('--muted'), accent: v('--accent'), trail: v('--accent') };
+}
+async function syncMapEngine(){
+  const on = mapEngine === 'tch' && hasTch();
+  document.documentElement.dataset.mapEngine = on ? 'tch' : 'old';
+  document.querySelectorAll('#mapEngine [data-engine]').forEach(b => { const a = b.dataset.engine === (on ? 'tch' : 'old'); b.classList.toggle('on', a); b.setAttribute('aria-pressed', a); });
+  document.getElementById('mapEngine').classList.toggle('hidden', !hasTch());
+  const f = document.getElementById('tchFrame');
+  f.classList.toggle('hidden', !on);
+  if (!hasTch()) return;
+  if (!on || state.view !== 'cartePerso') { window.tel.tchMap.visible(false); return; }
+  const r = await window.tel.tchMap.start();
+  if (!r.ok) { mapEngine = 'old'; syncMapEngine(); const n = document.getElementById('mapNote'); n.textContent = 'Nouvelle carte indisponible : ' + r.error; n.classList.remove('hidden'); return; }
+  if (f.dataset.src !== r.url) { f.dataset.src = r.url; f.src = r.url; }
+  window.tel.tchMap.theme(tchTheme());
+  window.tel.tchMap.visible(true, { game: (typeof M !== 'undefined' && M.game) || activeGame || 'ets2', follow: typeof M !== 'undefined' ? M.follow : true });
+}
+document.querySelectorAll('#mapEngine [data-engine]').forEach(b => b.onclick = () => { mapEngine = b.dataset.engine; store.set('mapEngine', mapEngine); syncMapEngine(); });
+const openMapBase = openMap;
+openMap = async function () { await openMapBase(); syncMapEngine(); };
+// Boutons existants : ils pilotent aussi la nouvelle carte
+document.getElementById('mapFollow').addEventListener('click', () => { if (hasTch() && mapEngine === 'tch') window.tel.tchMap.visible(true, { follow: M.follow }); });
+document.querySelectorAll('[data-mapgame]').forEach(b => b.addEventListener('click', () => { if (hasTch() && mapEngine === 'tch' && state.view === 'cartePerso') window.tel.tchMap.visible(true, { game: b.dataset.mapgame }); }));
+
 /* ---------- Bêta : page News ---------- */
 let newsTab = null;
 const newsCache = {};
@@ -2006,6 +2337,7 @@ document.getElementById('supHelp').onclick = () => { settingsFrom = 'support'; o
 document.getElementById('supNotes').onclick = () => { settingsFrom = 'support'; openOptCat('maj'); go('reglages', 'settings'); };
 document.getElementById('hudOpenOptions').onclick = () => { openOptCat('hud'); go('reglages'); };
 function go(view, rail){
+  if (view !== 'cartePerso' && window.tel && window.tel.tchMap) window.tel.tchMap.visible(false);
   state.view = view;
   // Onglet de la barre globale : celui demandé, sinon Settings pour les Options, Support, ou Game (espaces du jeu)
   if (typeof setRail === 'function') setRail(rail || (view === 'support' ? 'support' : 'game'));
@@ -2324,6 +2656,7 @@ function applySoon(show, save){
   if (show) delete document.documentElement.dataset.hideSoon; else document.documentElement.dataset.hideSoon = '1';
   document.getElementById('soonSwitch').checked = !!show;
   if (!show && typeof state !== 'undefined' && ['vtc', 'calendrier', 'infos', 'classement', 'carte', 'missions', 'convois', 'defis'].includes(state.view) && !(['carte', 'cartePerso'].includes(state.view) && railTab === 'map')) go('accueil');
+  if (!show && typeof optCat !== 'undefined' && optCat === 'compte') openOptCat('general');
   if (save && window.tel) window.tel.setSettings({ showSoon: !!show });
 }
 document.getElementById('soonSwitch').onchange = (e) => applySoon(e.target.checked, true);

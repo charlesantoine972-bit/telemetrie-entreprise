@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences, safeStorage } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, systemPreferences, safeStorage, session, utilityProcess } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
@@ -13,6 +13,9 @@ const { DiscordPresence } = require('./src/discord-presence');
 const coach = require('./src/coach');
 const gameSettings = require('./src/game-settings');
 const { steamNews } = require('./src/steam-news');
+const acces = require('./src/acces/fournisseur');
+const accesVtc = require('./src/acces/vtc');
+const rangs = require('./src/acces/rangs');
 let contentPending = null;
 let atelier;
 let discordPresence;
@@ -157,6 +160,7 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'app', 'index.html'), { query: { v: app.getVersion() } });
   // Liens externes : toujours dans le navigateur, jamais dans l'appli
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https:\/\//.test(url)) shell.openExternal(url); return { action: 'deny' }; });
+  lockDown(win.webContents);
 }
 
 /* ---------- HUD : bandeau transparent par-dessus le jeu ----------
@@ -164,6 +168,70 @@ function createWindow() {
    Visible seulement quand le jeu envoie des données (ou pendant un test).
    Le jeu doit être en mode fenêtré plein écran (sans bordures) : un plein écran exclusif passe au-dessus. */
 let hudWin = null, hudTimer = null, hudTestUntil = 0;
+
+// ---------- TCH Map (programme de carte séparé, sous GPL-3, dossier tch-map/) ----------
+// L'appli ne contient aucun code de la carte : elle lance tch-map/server.js dans son propre processus et lui
+// envoie de simples messages JSON (voir tch-map/PROTOCOLE.md). La page Carte affiche l'adresse locale qu'il renvoie.
+const pickTheme = (t) => Object.fromEntries(['bg', 'land', 'border', 'text', 'muted', 'accent', 'trail'].filter(k => t && /^#[0-9a-f]{3,8}$/i.test(String(t[k] || ''))).map(k => [k, t[k]]));
+const tchMap = {
+  proc: null, url: null, waiting: null, timer: null, lastTrail: 0, game: null,
+  start() {
+    if (this.url) return Promise.resolve(this.url);
+    if (this.waiting) return this.waiting;
+    this.waiting = new Promise((resolve, reject) => {
+      const dataDir = path.join(app.getPath('userData'), 'TCH Map');
+      const p = utilityProcess.fork(path.join(__dirname, 'tch-map', 'server.js'), [dataDir], { serviceName: 'TCH Map', stdio: 'ignore' });
+      this.proc = p;
+      const fail = setTimeout(() => { reject(new Error('La carte ne répond pas.')); this.stop(); }, 15000);
+      p.on('message', (m) => {
+        if (!m || m.type !== 'ready') return;
+        clearTimeout(fail);
+        this.url = /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f]{48}\/$/.test(m.url) ? m.url : null;
+        if (!this.url) { reject(new Error('Adresse de carte invalide.')); return this.stop(); }
+        this.post({ type: 'cities', ...tchMapCities() });
+        resolve(this.url);
+      });
+      p.on('exit', () => { this.proc = null; this.url = null; this.waiting = null; clearInterval(this.timer); this.timer = null; });
+    });
+    return this.waiting;
+  },
+  post(m) { try { if (this.proc) this.proc.postMessage(m); } catch {} },
+  // Envoi en direct seulement quand la page Carte est affichée
+  visible(on, opts) {
+    clearInterval(this.timer); this.timer = null;
+    if (!on || !this.proc) return;
+    if (opts.game) { this.game = opts.game === 'ats' ? 'ats' : 'ets2'; this.post({ type: 'config', game: this.game }); this.lastTrail = 0; }
+    if (typeof opts.follow === 'boolean') this.post({ type: 'config', follow: opts.follow });
+    const tick = () => {
+      const sn = telemetry.snapshot(), L = sn.live, game = (L && L.game === 'ats') ? 'ats' : (L && L.game ? 'ets2' : this.game || 'ets2');
+      const j = sn.job || sn.busJob || null;
+      this.post({ type: 'state', game, connected: !!sn.connected, paused: !!(L && L.paused), x: L ? L.x : null, z: L ? L.z : null, heading: L ? L.heading : 0, speed: L ? L.speed : 0, destId: j && (j.toId || null) });
+      if (Date.now() - this.lastTrail > 5000) {
+        this.lastTrail = Date.now();
+        const h = telemetry.mapHistory();
+        const pts = [];
+        // null = coupure (nouveau trajet, téléportation) : la carte ne relie pas les deux bouts
+        for (const jb of h.jobs || []) if ((jb.game || 'ets2') === game && Array.isArray(jb.path)) pts.push(null, ...jb.path);
+        if ((h.game || 'ets2') === game && Array.isArray(h.trail)) pts.push(null, ...h.trail);
+        this.post({ type: 'trail', game, points: pts.slice(-20000) });
+      }
+    };
+    tick();
+    this.timer = setInterval(tick, 250);
+  },
+  stop() { try { if (this.proc) this.proc.kill(); } catch {} this.proc = null; this.url = null; this.waiting = null; },
+};
+// Villes du jeu (app/data/villes.js, licence MIT) envoyées une fois à la carte
+function tchMapCities() {
+  try { const s = fs.readFileSync(path.join(__dirname, 'app', 'data', 'villes.js'), 'utf8'); return JSON.parse(s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1)); } catch { return { ets2: [], ats: [] }; }
+}
+// Sécurité : une fenêtre de l'appli n'affiche que les pages de l'appli. Toute tentative d'ouvrir une autre
+// adresse dans la fenêtre (lien piégé, contenu injecté) est bloquée ; les liens https partent dans le navigateur.
+function lockDown(wc){
+  wc.on('will-navigate', (e, url) => { if (!url.startsWith('file://')) { e.preventDefault(); if (/^https:\/\//.test(url)) shell.openExternal(url); } });
+  wc.on('will-redirect', (e, url) => { if (!url.startsWith('file://')) e.preventDefault(); });
+  wc.on('will-attach-webview', (e) => e.preventDefault());
+}
 const HUD_W = 1440, HUD_H = 440; // assez large pour le Bandeau en taille « Grand » (fenêtre transparente, traversée par la souris)
 function activeHudOptions(live = telemetry && telemetry.live, vehicleType = telemetry ? telemetry.vehicleType(live) : settings.vehicleType) {
   const profile = vehicleType === 'car' ? 'bus' : 'truck';
@@ -200,6 +268,7 @@ function syncHud() {
       webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, preload: path.join(__dirname, 'preload.js') } });
     hudWin.setAlwaysOnTop(true, 'screen-saver');
     hudWin.setIgnoreMouseEvents(true);
+    lockDown(hudWin.webContents);
     hudWin.loadFile(path.join(__dirname, 'app', 'hud.html'));
     hudWin.on('closed', () => { hudWin = null; });
   } else hudWin.setBounds(hudBounds());
@@ -249,6 +318,22 @@ function setupIpc() {
   ipcMain.handle('settings:game', (_e, game) => { if (gameSettings.switchGame(settings, game)) { saveSettings(); syncHud(); } return settings; });
   ipcMain.handle('settings:gameKey', (_e, game, key, value) => { if (gameSettings.setGameKey(settings, game, key, value)) { saveSettings(); syncHud(); } return settings; });
   ipcMain.handle('settings:copyGame', (_e, from, to) => { if (gameSettings.copyGameSettings(settings, from, to)) { saveSettings(); syncHud(); } return settings; });
+  // Accès, rangs et clés d'activation (préparation) : aperçu local tant que le serveur n'existe pas
+  let accesP = null;
+  const ap = () => accesP || (accesP = acces.createProvider({ dir: app.getPath('userData'), serverUrl: null, getSteamId: () => settings.steamId }));
+  const wrap = (fn) => async (_e, ...a) => { try { return { ok: true, value: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
+  ipcMain.handle('acces:info', () => ({ permissions: rangs.PERMISSIONS }));
+  ipcMain.handle('acces:session', wrap(() => ap().session()));
+  ipcMain.handle('acces:ranks', wrap(() => ap().ranks()));
+  ipcMain.handle('acces:saveRank', wrap((r) => ap().saveRank(r)));
+  ipcMain.handle('acces:deleteRank', wrap((id) => ap().deleteRank(id)));
+  ipcMain.handle('acces:keys', wrap(() => ap().keys()));
+  ipcMain.handle('acces:createKeys', wrap((n, g) => ap().createKeys(n, g)));
+  ipcMain.handle('acces:revokeKey', wrap((k) => ap().revokeKey(k)));
+  ipcMain.handle('acces:redeem', wrap((k) => ap().redeemKey(k)));
+  ipcMain.handle('acces:previewAs', wrap((id) => ap().previewAs(id)));
+  ipcMain.handle('acces:reset', wrap(() => ap().resetPreview()));
+  ipcMain.handle('acces:vtc', wrap(() => accesVtc.truckersmpVtc(settings.steamId)));
   // Page News : annonces officielles Steam d'ETS2 et d'ATS
   ipcMain.handle('news:steam', async (_e, game) => {
     try { return { ok: true, items: await steamNews(game) }; } catch (e) { return { ok: false, error: e.message }; }
@@ -315,6 +400,10 @@ function setupIpc() {
     return carte.info();
   });
   ipcMain.handle('map:history', () => telemetry.mapHistory());
+  // Nouvelle carte : TCH Map, programme séparé (GPL-3) lancé en arrière-plan, affiché dans la page Carte
+  ipcMain.handle('tchmap:start', async () => { try { return { ok: true, url: await tchMap.start() }; } catch (e) { return { ok: false, error: e.message }; } });
+  ipcMain.handle('tchmap:visible', (_e, on, opts) => { tchMap.visible(!!on, opts || {}); return true; });
+  ipcMain.handle('tchmap:theme', (_e, t) => { tchMap.post({ type: 'theme', ...pickTheme(t) }); return true; });
   ipcMain.handle('map:cache', () => carte.cacheSize(mapCache()));
   ipcMain.handle('map:clearCache', () => carte.clearCache(mapCache()));
   // ----- Atelier (outils avancés) : chaque appel renvoie { ok, data | error }
@@ -427,11 +516,14 @@ if (!app.requestSingleInstanceLock()) {
   app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
 
   app.whenReady().then(() => {
+    // Sécurité : aucune permission web (caméra, micro, géolocalisation, notifications web…) n'est jamais accordée.
+    session.defaultSession.setPermissionRequestHandler((_wc, _perm, cb) => cb(false));
+    session.defaultSession.setPermissionCheckHandler(() => false);
     loadSettings();
     telemetry = new Telemetry(app.getPath('userData'), () => settings);
     discordPresence = new DiscordPresence();
     discordPresence.setClientId(settings.discordClientId).catch((e) => console.error('Discord Rich Presence :', e.message));
-    const decryptExe = process.env.TCH_DECRYPT || (app.isPackaged
+    const decryptExe = (!app.isPackaged && process.env.TCH_DECRYPT) || (app.isPackaged
       ? path.join(process.resourcesPath, 'tools', 'decrypt_truck.exe')
       : path.join(__dirname, 'resources', 'tools', process.platform === 'win32' ? 'decrypt_truck.exe' : 'decrypt_truck'));
     atelier = new Atelier(app.getPath('documents'), path.join(app.getPath('userData'), 'Sauvegardes de profils'), decryptExe);
@@ -469,6 +561,7 @@ if (!app.requestSingleInstanceLock()) {
 
   app.on('before-quit', () => {
     if (telemetry) telemetry.stop();
+    tchMap.stop();
     if (discordPresence) discordPresence.disconnect().catch((e) => console.error('Discord Rich Presence :', e.message));
   });
   app.on('window-all-closed', () => app.quit());

@@ -662,3 +662,166 @@ test('bêta 4 : outils par jeu et carte du jeu dans son espace', () => {
   assert.match(html, /if \(mapLocked\(\)\) mapSetGame\(activeGame === 'ats' \? 'ats' : 'ets2'\);/);
   assert.match(html, /function toolsName\(g\)\{ return \(g \|\| activeGame\) === 'ats' \? 'Truck & Road Trip Tools' : 'Truck & Coach Tools'; \}/);
 });
+
+test('accès (préparation) : rangs, hiérarchie et permissions', () => {
+  const R = require('../src/acces/rangs');
+  const rank = id => R.SYSTEM_RANKS.find(r => r.id === id);
+  const fond = rank('fondateur'), admin = rank('admin'), test_ = rank('testeur');
+  assert.equal(R.permsOf(fond).length, R.PERM_IDS.length, 'le Fondateur a tout');
+  assert.ok(R.canAssign(fond, admin)); assert.ok(R.canAssign(admin, test_));
+  assert.ok(!R.canAssign(admin, admin), 'pas son propre niveau'); assert.ok(!R.canAssign(admin, fond)); assert.ok(!R.canAssign(test_, rank('membre')), 'il faut la permission');
+  assert.ok(!R.canEditRank(fond, admin), 'les rangs de base sont fixes');
+  let v = R.validateRank({ name: 'Chef de convoi', color: '#3B82F6', level: 40, perms: ['vtc.convois'] }, admin, R.SYSTEM_RANKS);
+  assert.equal(v.ok, false, 'admin n’a pas acces.rangs');
+  v = R.validateRank({ name: 'Chef de convoi', color: '#3B82F6', level: 40, perms: ['vtc.convois', 'inconnue'] }, fond, R.SYSTEM_RANKS);
+  assert.ok(v.ok); assert.deepEqual([...v.rank.perms], ['vtc.convois']); assert.equal(v.rank.id, 'chef-de-convoi'); assert.equal(v.rank.color, '#3b82f6');
+  assert.equal(R.validateRank({ name: 'X', color: '#000000', level: 10 }, fond, []).ok, false);
+  assert.equal(R.validateRank({ name: 'Trop haut', color: '#000000', level: 100 }, fond, []).ok, false);
+  assert.equal(R.validateRank({ name: 'administrateur', color: '#000000', level: 10 }, fond, R.SYSTEM_RANKS).ok, false, 'nom déjà pris');
+  const chef = { id: 'chef', name: 'Chef', level: 50, perms: ['acces.rangs', 'vtc.convois'] };
+  assert.equal(R.validateRank({ name: 'Adjoint', color: '#111111', level: 30, perms: ['vtc.gerer'] }, chef, []).ok, false, 'pas une permission qu’on n’a pas');
+  assert.equal(R.validateRank({ name: 'Adjoint', color: '#111111', level: 60 }, chef, []).ok, false, 'pas plus haut que soi');
+});
+
+test('accès (préparation) : clés d’activation', () => {
+  const K = require('../src/acces/cles');
+  const seen = new Set();
+  for (let i = 0; i < 200; i++) { const k = K.generateKey(); assert.match(k, /^TCH-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]$/); assert.ok(K.isWellFormed(k)); seen.add(k); }
+  assert.equal(seen.size, 200);
+  const k = K.generateKey();
+  assert.ok(K.isWellFormed(k.toLowerCase().replace(/-/g, ' ')), 'minuscules et espaces acceptés');
+  const body = k.slice(4, 18).replace(/-/g, '');
+  const wrong = k.slice(0, 4) + (body[0] === 'A' ? 'B' : 'A') + k.slice(5);
+  assert.equal(K.isWellFormed(wrong), false, 'une faute de frappe est repérée');
+  assert.equal(K.normalizeKey('n’importe quoi'), null);
+  assert.equal(K.validateGrant({}).ok, false);
+  assert.equal(K.validateGrant({ rank: 'testeur', maxUses: 0 }).ok, false);
+  assert.deepEqual({ ...K.validateGrant({ rank: 'testeur' }).grant }, { rank: 'testeur', perms: [], expiresAt: null, maxUses: 1 });
+});
+
+test('accès (préparation) : aperçu local (rangs, clés, activation)', async () => {
+  const os = require('node:os');
+  const { createProvider, Serveur } = require('../src/acces/fournisseur');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'acces-'));
+  const p = createProvider({ dir, getSteamId: () => '76561198000000000' });
+  let s = await p.session();
+  assert.equal(s.mode, 'apercu'); assert.equal(s.rankId, 'fondateur'); assert.equal(s.steamId, '76561198000000000');
+  await p.saveRank({ name: 'Chef de convoi', color: '#3b82f6', level: 40, perms: ['vtc.convois'] });
+  const [key] = await p.createKeys(1, { rank: 'testeur', maxUses: 1 });
+  await assert.rejects(() => p.createKeys(1, { rank: 'fondateur' }), /plus bas/);
+  await p.previewAs('membre');
+  await assert.rejects(() => p.keys(), /ne le permet pas/);
+  await assert.rejects(() => p.redeemKey('TCH-0000-0000-0000-0'), /mal écrite|inconnue/);
+  const r = await p.redeemKey(key.key.toLowerCase());
+  assert.equal(r.rank.id, 'testeur'); assert.ok(r.perms.includes('beta.acces'));
+  await assert.rejects(() => p.redeemKey(key.key), /déjà été utilisée/);
+  // relu depuis le disque
+  const p2 = createProvider({ dir });
+  assert.equal((await p2.session()).rankId, 'testeur');
+  assert.ok((await p2.ranks()).some(x => x.id === 'chef-de-convoi'));
+  await p2.resetPreview(); assert.equal((await p2.session()).rankId, 'fondateur');
+  await assert.rejects(() => new Serveur('https://exemple').session(), /n’existe pas encore/);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('accès (préparation) : VTC TruckersMP lue par SteamID', async () => {
+  const V = require('../src/acces/vtc');
+  const fake = (routes) => async (url) => { const b = routes[url]; return { ok: !!b, status: b ? 200 : 404, json: async () => b }; };
+  const api = 'https://api.truckersmp.com/v2';
+  const r = await V.truckersmpVtc('76561198000000001', fake({
+    [`${api}/player/76561198000000001`]: { error: false, response: { name: 'James', vtc: { id: 12, name: 'Atlantique Logistique', tag: 'ATL', inVTC: true, memberID: 99 } } },
+    [`${api}/vtc/12/member/99`]: { error: false, response: { role: 'Event Manager' } },
+  }));
+  assert.deepEqual(JSON.parse(JSON.stringify(r)), { found: true, vtc: { platform: 'truckersmp', vtcId: 12, name: 'Atlantique Logistique', tag: 'ATL', memberId: 99, player: 'James', role: 'Event Manager' } });
+  const none = await V.truckersmpVtc('76561198000000002', fake({ [`${api}/player/76561198000000002`]: { error: false, response: { vtc: { inVTC: false } } } }));
+  assert.equal(none.vtc, null);
+  assert.equal((await V.truckersmpVtc('76561198000000003', fake({}))).found, false);
+  await assert.rejects(() => V.truckersmpVtc('123'), /SteamID64/);
+  assert.equal(V.mapVtcRole(' event manager ', { 'Event Manager': 'chef-de-convoi' }), 'chef-de-convoi');
+});
+
+test('sécurité : fenêtres verrouillées, aucune permission web, outils et chemins contrôlés', () => {
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /contextIsolation: true, nodeIntegration: false, sandbox: true/);
+  assert.match(main, /wc\.on\('will-navigate'/);
+  assert.match(main, /wc\.on\('will-attach-webview', \(e\) => e\.preventDefault\(\)\)/);
+  assert.equal((main.match(/lockDown\((win|hudWin)\.webContents\)/g) || []).length, 2, 'les deux fenêtres');
+  assert.match(main, /setPermissionRequestHandler\(\(_wc, _perm, cb\) => cb\(false\)\)/);
+  assert.match(main, /\(!app\.isPackaged && process\.env\.TCH_DECRYPT\)/, 'pas d’exe remplaçable dans l’appli installée');
+  const { Atelier } = require('../src/atelier');
+  const a = new Atelier('/tmp/docs', '/tmp/bk', '/nonexistent');
+  for (const bad of ['ets2/profiles/.', 'ets2/profiles/..', 'ets2/profiles/', 'ets2/profiles/../x', 'ets2/profiles/AB\\..', 'ets2/profiles/zz'])
+    assert.throws(() => a.resolve(bad), /Profil inconnu/, bad);
+  assert.equal(a.resolve('ets2/profiles/4A616D6573').folder, '4A616D6573');
+});
+
+test('bêta 5 : mode Paramètres (dossiers dans la barre) et recherche', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  for (const f of ['back', 'compte', 'appli', 'jeu', 'connexions', 'donnees', 'aide']) assert.match(html, new RegExp(`data-srail="${f}"`));
+  assert.match(html, /html\[data-rail="settings"\] \.rail-tabs:not\(\.rail-settings\)\{display:none\}/);
+  assert.match(html, /id="optQuery" type="search"/);
+  assert.match(html, /function runOptSearch\(\)/);
+  for (const c of ['notifs', 'donnees']) assert.match(html, new RegExp(`<div class="optcat is-soon" id="oc-${c}"`));
+  // chaque catégorie appartient à un dossier
+  const cats = [...html.matchAll(/<div class="optcat[^"]*" id="oc-([a-z]+)"/g)].map(m => m[1]);
+  const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(html)[1];
+  for (const c of cats) assert.match(folders, new RegExp(`'${c}'`), c);
+});
+
+test('TCH Map : projection du jeu vers longitude / latitude (villes réelles)', async () => {
+  const { toLngLat } = await import('../tch-map/viewer/projection.js');
+  const src = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'data', 'villes.js'), 'utf8');
+  const V = JSON.parse(src.slice(src.indexOf('{'), src.lastIndexOf('}') + 1));
+  const near = (game, id, lon, lat, tol) => {
+    const c = V[game].find(v => v[0] === id); assert.ok(c, id);
+    const [x, y] = toLngLat(game, c[2], c[3]);
+    assert.ok(Math.hypot(x - lon, y - lat) < tol, `${id} : ${x.toFixed(2)}, ${y.toFixed(2)}`);
+  };
+  near('ets2', 'paris', 2.35, 48.86, 0.5); near('ets2', 'berlin', 13.4, 52.52, 0.5); near('ets2', 'oslo', 10.75, 59.9, 0.5);
+  near('ets2', 'london', -0.13, 51.5, 0.6);   // Royaume-Uni : échelle propre au jeu
+  near('ats', 'los_angeles', -118.24, 34.05, 0.5); near('ats', 'seattle', -122.33, 47.6, 0.5);
+  // Islande : placée par SCS plus près du continent ; le fond de carte est recalé de la même façon
+  near('ets2', 'reykjavik', -21.9 - 5.93, 64.1 - 1.75, 0.3);
+});
+
+test('TCH Map : serveur local (jeton, chemins, messages)', async () => {
+  const { fork } = require('node:child_process');
+  const http = require('node:http');
+  const child = fork(path.resolve(__dirname, '..', 'tch-map', 'server.js'), [], { stdio: 'ignore' });
+  try {
+    const ready = await new Promise((res, rej) => { child.on('message', m => m.type === 'ready' && res(m)); setTimeout(() => rej(new Error('pas prêt')), 5000); });
+    assert.match(ready.url, /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f]{48}\/$/);
+    const get = (u) => new Promise((res) => http.get(u, r => { let b = ''; r.on('data', d => b += d); r.on('end', () => res({ code: r.statusCode, body: b, h: r.headers })); }));
+    const base = ready.url;
+    const ok = await get(base);
+    assert.equal(ok.code, 200); assert.match(ok.body, /TCH Map/); assert.match(ok.h['content-security-policy'], /default-src 'self'/);
+    assert.equal((await get(`http://127.0.0.1:${ready.port}/mauvaisjeton/`)).code, 404);
+    assert.equal((await get(`http://127.0.0.1:${ready.port}/`)).code, 404);
+    assert.notEqual((await get(base + '..%2f..%2fpackage.json')).code, 200);
+    assert.notEqual((await get(base + 'data/..%2f..%2fmain.js')).code, 200);
+    assert.equal((await get(base + 'vendor/maplibre-gl.mjs')).h['content-type'], 'text/javascript; charset=utf-8');
+    // un message de l'hôte est rejoué à l'ouverture du flux
+    child.send({ type: 'state', game: 'ets2', connected: true, x: 1, z: 2 });
+    child.send({ type: 'pirate', x: 1 });
+    await new Promise(r => setTimeout(r, 100));
+    const ev = await new Promise((res) => http.get(base + 'events', r => { let b = ''; r.on('data', d => { b += d; if (b.includes('event: state')) { r.destroy(); res(b); } }); }));
+    assert.match(ev, /event: state\ndata: \{"type":"state","game":"ets2"/);
+    assert.doesNotMatch(ev, /pirate/);
+  } finally { child.kill(); }
+});
+
+test('TCH Map : séparée de l’appli (aucun code partagé) et livrée avec elle', () => {
+  const pkg = require('../package.json');
+  assert.ok(pkg.build.files.includes('tch-map/**/*'));
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /utilityProcess\.fork\(path\.join\(__dirname, 'tch-map', 'server\.js'\)/);
+  for (const f of ['server.js', 'viewer/carte.js', 'viewer/projection.js']) {
+    const t = fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', f), 'utf8');
+    assert.match(t, /GNU General Public License v3/, f + ' : mention de licence');
+    assert.doesNotMatch(t, /require\(['"]\.\.\/(src|app)|from ['"]\.\.\/\.\.\/(src|app)/, f + ' : pas de code de l’appli');
+  }
+  assert.ok(fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'LICENSE'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /frame-src http:\/\/127\.0\.0\.1:\*/);
+  assert.match(html, /<iframe id="tchFrame"[^>]*sandbox="allow-scripts allow-same-origin allow-popups"/);
+});
