@@ -343,6 +343,93 @@
   .setrow input[type=text],.setrow input[type=password],.setrow input[type=number],.setrow input:not([type]),.setrow select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit}
   @media (max-width:900px){ .opts{grid-template-columns:1fr} .optnav{position:static;flex-direction:row;flex-wrap:wrap} }
 
+
+  /* ---------- Barre globale (Game, News, Map, Settings, Support) ---------- */
+  :root{--railw:84px}
+  .rail{position:fixed;left:0;top:0;bottom:0;width:var(--railw);z-index:60;background:var(--nav);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:14px;overflow-y:auto}
+  .rail-logo{all:unset;cursor:pointer;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex:none}
+  .rail-logo .logo{width:44px;height:44px;border-radius:12px;font-size:14px}
+  .rail-logo:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .rail-tabs{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;width:100%;padding:0 8px;box-sizing:border-box}
+  .railbtn{all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:64px;border-radius:14px;color:var(--soft);font-size:12.5px;font-weight:600;text-align:center;box-sizing:border-box;padding:6px 2px}
+  .railbtn:hover{background:var(--hover);color:var(--text)}
+  .railbtn:focus-visible{outline:3px solid var(--accent);outline-offset:-1px}
+  .railbtn.on{background:var(--accent-soft);color:var(--accent-strong);font-weight:800}
+  .railbtn.on::before{content:"";position:absolute;left:-8px;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--accent)}
+  body{padding-left:var(--railw)}
+  #launcher{left:var(--railw)}
+  #spacePanel{inset:0 0 0 calc(var(--railw) + var(--navw,264px))}
+  html[data-rail="news"] .side,html[data-rail="map"] .side,html[data-rail="support"] .side{display:none}
+  html[data-rail="map"] .vtcbar{display:none}
+  /* Dans les espaces (Hub, Marketplace, Truck & Coach Tools) : mise en page 0.12.0.7, sans barre globale */
+  html.in-space{--railw:0px}
+  html.in-space .rail{display:none}
+  .gamechip{display:none!important}
+  /* ---------- Page Game ---------- */
+  .lhead{border-bottom:0;padding:22px 32px 6px}
+  .appname{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .appname b{font-size:22px;font-weight:800}
+  .lmain.games{justify-content:flex-start;align-items:stretch;gap:20px;padding:14px 32px 18px}
+  .gamegrid{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;min-height:min(560px,62vh)}
+  .gamecard{all:unset;cursor:pointer;position:relative;overflow:hidden;border-radius:24px;border:2px solid var(--line);min-height:340px;display:flex;align-items:flex-end;color:#fff;isolation:isolate;transition:border-color .2s,transform .2s,box-shadow .2s}
+  .gc-art{position:absolute;inset:0;z-index:-2;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .gc-scene{width:100%;height:100%;display:block}
+  .gc-photo{position:absolute;inset:0;background:var(--photo) center/cover no-repeat}
+  .gc-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,10,16,0) 30%,rgba(6,10,16,.55) 58%,rgba(6,10,16,.92) 100%)}
+  .gamecard:hover,.gamecard:focus-visible{border-color:var(--accent);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+  .gamecard:hover .gc-art,.gamecard:focus-visible .gc-art{transform:scale(1.04)}
+  .gamecard:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .gamecard:active{transform:scale(.99)}
+  .gc-body{display:flex;flex-direction:column;gap:10px;padding:30px 32px;max-width:640px}
+  .gc-kick{font-size:13px;font-weight:800;letter-spacing:.12em;color:#ffd7a3}
+  .gc-name{font-size:clamp(28px,2.8vw,40px);font-weight:900;line-height:1.08;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+  .gc-status{display:flex;align-items:center;gap:8px;font-size:14px;color:#e6eaf0}
+  .gc-status .dot{width:9px;height:9px;border-radius:50%;background:#9aa3ad;flex:none}
+  .gc-status.ok .dot{background:#4fd08a} .gc-status.warn .dot{background:#f0b24a}
+  .gc-go{align-self:flex-start;margin-top:6px;height:48px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px}
+  .gc-active{position:absolute;top:18px;left:18px;display:none;background:rgba(6,10,16,.72);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700}
+  .gamecard.current .gc-active{display:inline-flex}
+  .gamecard.current{border-color:var(--accent)}
+  .lfoot{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:14px 32px 18px;border-top:1px solid var(--line);font-size:14px}
+  .lf-link{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;color:var(--soft);font-weight:600;min-height:32px}
+  .lf-link:hover{color:var(--text)} .lf-link:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+  .lf-ver{display:inline-flex;align-items:center;gap:8px;color:var(--soft)}
+  .lf-badge{background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:800;letter-spacing:.06em;border-radius:6px;padding:3px 7px}
+  .lnews{max-width:none}
+  @media (max-width:980px){ .gamegrid{grid-template-columns:minmax(0,1fr)} .gamecard{min-height:280px} }
+  @media (max-height:640px){ .railbtn{min-height:54px} .rail{gap:8px} }
+  /* ---------- Page Game : deux visuels pleine page (style HaulMP) ---------- */
+  #launcher{overflow:hidden}
+  #launcher .lhead{position:absolute;top:0;left:0;right:0;z-index:3;padding:24px 36px 40px;background:linear-gradient(180deg,rgba(5,8,13,.78),rgba(5,8,13,0));color:#fff;pointer-events:none}
+  #launcher .lhead>*{pointer-events:auto}
+  #launcher .appname b{color:#fff;font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+  #launcher .appname .muted{color:rgba(255,255,255,.78)}
+  .lmain.games{position:absolute;inset:0;padding:0;gap:0;display:block}
+  .gamegrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;min-height:0}
+  .gamecard{border-radius:0;border:0;min-height:0;box-shadow:none!important}
+  .gamecard+.gamecard{border-left:1px solid rgba(255,255,255,.14)}
+  .gamecard:hover,.gamecard:focus-visible{border-color:rgba(255,255,255,.14)}
+  .gamecard:focus-visible{outline:4px solid var(--accent);outline-offset:-4px}
+  .gamecard.current{border-color:rgba(255,255,255,.14)}
+  .gamecard.current::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--accent)}
+  .gc-shade{background:linear-gradient(180deg,rgba(6,10,16,.15) 0%,rgba(6,10,16,0) 30%,rgba(6,10,16,.5) 60%,rgba(6,10,16,.9) 100%)}
+  .gc-body{padding:0 clamp(28px,4vw,56px) 118px;max-width:640px}
+  .gc-active{top:auto;bottom:calc(118px + 4px);left:auto;right:clamp(20px,3vw,40px)}
+  .gamecard.current .gc-active{display:inline-flex}
+  #launcher .lfoot{position:absolute;left:0;right:0;bottom:0;z-index:3;background:rgba(7,11,17,.74);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.14);color:#e9edf2}
+  #launcher .lf-link,#launcher .lf-ver{color:#e9edf2}
+  #launcher .lf-link:hover{color:#fff}
+  #launcher .lnews{position:absolute;z-index:4;right:24px;bottom:84px;width:min(460px,calc(100% - 48px));max-height:calc(100% - 200px);overflow:auto;margin:0;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  @media (max-width:980px){ .gamegrid{grid-template-columns:minmax(0,1fr);grid-template-rows:1fr 1fr} .gamecard+.gamecard{border-left:0;border-top:1px solid rgba(255,255,255,.14)} .gc-body{padding-bottom:28px} .gamegrid{bottom:64px} .gc-active{top:auto;bottom:30px;right:20px} }
+  /* ---------- Jeu actif dans le menu ---------- */
+  .gamechip{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;margin:0 2px 8px;padding:7px 10px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:13px;color:var(--soft);min-height:24px}
+  .gamechip:hover{border-color:var(--accent);color:var(--text)}
+  .gamechip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .gamechip .gtag{background:var(--accent);color:var(--on-accent);font-weight:800;font-size:12px;border-radius:6px;padding:2px 6px;flex:none}
+  .gamechip .gname{flex:1;min-width:0;font-weight:600;line-height:1.3}
+  .gamechip .gchg{font-size:12px;color:var(--accent-strong);font-weight:700;flex:none}
+  [data-nav="mini"] .gamechip{justify-content:center;padding:6px 0;margin:0 0 8px}
+  [data-nav="mini"] .gamechip .gname,[data-nav="mini"] .gamechip .gchg{display:none}
   /* ---------- Menu : burger des espaces, titre, pied ---------- */
   .sidetop{justify-content:space-between;align-items:center;padding:0 2px 6px}
   .spacetitle{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--accent-strong);padding:2px 10px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -642,41 +729,64 @@
 <script src="hud-truck.js"></script>
 </head>
 <body>
+<nav class="rail" id="rail" aria-label="Navigation principale">
+  <button class="rail-logo" id="railLogo" title="Choisir le jeu" aria-label="Logo, retour au choix du jeu"><span class="logo" data-app-logo>T&amp;C</span></button>
+  <div class="rail-tabs">
+    <button class="railbtn" data-rail="game" title="Choisir le jeu et ouvrir ses espaces"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg><span>Game</span></button>
+    <button class="railbtn" data-rail="news" title="Actualités et nouveautés"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M15 3.5V7h3.5M9 11h6M9 14.5h6M9 18h4"/></svg><span>News</span></button>
+    <button class="railbtn" data-rail="map" title="Carte en direct"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5 3.5 6.5v13l5.5-2 6 2 5.5-2v-13l-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></svg><span>Map</span></button>
+    <button class="railbtn" data-rail="settings" title="Options de l’appli"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5v.2a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg><span>Settings</span></button>
+    <button class="railbtn" data-rail="support" title="Aide et contact"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1-4.4A8.5 8.5 0 1 1 20.5 12z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg><span>Support</span></button>
+  </div>
+</nav>
 <div id="launcher">
   <header class="lhead">
-    <div style="display:flex;align-items:center;gap:12px"><span class="logo">T&amp;C</span>
-      <div style="display:flex;flex-direction:column"><b style="font-size:17px">Truck &amp; Coach Hub</b><span class="muted" style="font-size:12px" id="lVersion">Version</span></div></div>
-    <div style="display:flex;align-items:center;gap:10px">
-    <button class="btn" id="launcherOptions" style="height:44px;display:flex;align-items:center;gap:8px;padding:0 16px"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 2.25q1.11.01 2.18.25c.32.07.55.33.59.65l.17 1.53a1.38 1.38 0 0 0 1.92 1.11l1.4-.61c.3-.13.64-.06.85.17a10 10 0 0 1 2.2 3.8c.1.3 0 .63-.26.82l-1.25.92a1.38 1.38 0 0 0 0 2.22l1.25.92c.26.19.36.52.27.82a10 10 0 0 1-2.2 3.8.75.75 0 0 1-.85.17l-1.4-.62a1.38 1.38 0 0 0-1.93 1.12l-.17 1.52a.75.75 0 0 1-.58.65 9.5 9.5 0 0 1-4.4 0 .75.75 0 0 1-.57-.65l-.17-1.52a1.38 1.38 0 0 0-1.93-1.11l-1.4.62a.75.75 0 0 1-.85-.18 10 10 0 0 1-2.2-3.8c-.1-.3 0-.63.26-.82l1.25-.92a1.38 1.38 0 0 0 0-2.22l-1.24-.92a.75.75 0 0 1-.28-.82 10 10 0 0 1 2.2-3.8c.23-.23.57-.3.86-.17l1.4.62c.4.17.86.15 1.25-.08.38-.22.63-.6.68-1.04l.17-1.53a.75.75 0 0 1 .58-.65q1.08-.24 2.2-.25m0 1.5q-.67 0-1.35.12l-.11.97a2.9 2.9 0 0 1-4.03 2.33l-.9-.4A8 8 0 0 0 4.29 9.1l.8.59a2.88 2.88 0 0 1 0 4.64l-.8.59a8 8 0 0 0 1.35 2.32l.9-.4a2.88 2.88 0 0 1 4.02 2.32l.1.99q1.35.22 2.7 0l.1-.99a2.88 2.88 0 0 1 4.02-2.32l.9.4a8 8 0 0 0 1.35-2.32l-.8-.59a2.88 2.88 0 0 1 0-4.64l.8-.59a8 8 0 0 0-1.35-2.32l-.9.4q-.55.24-1.15.24c-1.47 0-2.7-1.1-2.86-2.57l-.11-.97q-.68-.11-1.34-.12M12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5m0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5"/></svg>Options</button>
+    <div class="appname"><b data-app-name>Truck &amp; Coach Hub</b><span class="muted" id="lVersion">Version</span></div>
     <button id="profileChip" title="La page Profil est en préparation." aria-label="Profil, bientôt disponible" disabled style="all:unset;cursor:default;opacity:.72;display:flex;align-items:center;gap:12px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel)">
       <span id="pAvatar" style="width:36px;height:36px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">?</span>
       <span style="display:flex;flex-direction:column;line-height:1.3"><b id="pName" style="font-size:14px">Chauffeur</b><span class="muted" style="font-size:12px">Entreprise : aucune</span></span>
     </button>
-    </div>
   </header>
-  <div class="lmain" role="region" aria-label="Choix de l'espace">
-    <h1 style="margin:0;font-size:32px;font-weight:800;text-align:center">Que veux-tu ouvrir ?</h1>
-    <div class="lgrid">
-      <button class="lcard" data-open="market" style="--c:var(--c-market)">
-        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M10.6 2.51c.9-.36 1.9-.36 2.8 0l7.5 3.04c.67.27 1.1.91 1.1 1.62v9.66c0 .71-.43 1.35-1.1 1.62l-7.5 3.04c-.9.37-1.9.37-2.8 0l-7.5-3.04c-.67-.27-1.1-.91-1.1-1.62V7.17c0-.7.43-1.35 1.1-1.62zm2.25 1.4a2.3 2.3 0 0 0-1.7 0l-1.9.77 7.52 2.93 2.67-1.03zm1.84 4.5L7.21 5.5 4.6 6.56 12 9.45zM3.5 16.83q0 .17.16.23l7.5 3.04.09.04v-9.38L3.5 7.75zm9.35 3.27 7.5-3.04q.14-.07.15-.23V7.77l-7.75 3v9.37z"/></svg></span>
-          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">MODS &amp; CONTENUS · GRATUIT</span><span class="ttl">Marketplace</span></span></div>
-        <span class="soft" style="font-size:15px;line-height:1.6">Trouve, installe et mets à jour tes contenus en un clic : les modules du Hub (tablette, mini-GPS) et les cars &amp; bus.</span>
-        <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Installés</span><b id="lMkInstalled">0 contenu</b></span><span class="lstat"><span>À venir</span><b>2 modules</b></span></span>
-        <span class="go">Ouvrir la Marketplace →</span>
+  <div class="lmain games" role="region" aria-labelledby="gamesTitle">
+    <h1 id="gamesTitle" class="sr-only">Choisis ton jeu</h1>
+    <div class="gamegrid">
+      <button class="gamecard" data-game="ets2" aria-describedby="gs-ets2">
+        <span class="gc-art" aria-hidden="true"><svg class="gc-scene" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+            <defs><linearGradient id="skyEu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e2a3f"/><stop offset=".55" stop-color="#2f6f86"/><stop offset="1" stop-color="#e2b27a"/></linearGradient>
+            <radialGradient id="sunEu" cx=".72" cy=".52" r=".3"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".95"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient></defs>
+            <rect width="800" height="600" fill="url(#skyEu)"/><rect width="800" height="600" fill="url(#sunEu)"/>
+            <path d="M0 360 C120 320 200 340 300 318 S520 300 620 326 S760 332 800 318 V600 H0Z" fill="#1d4a5c"/>
+            <path d="M40 372h24v-46h10v-20h8v20h10v46h30v-62l18-14 18 14v62h26v-38h40v38h22v-80h6v-12h6v12h6v80h40v-30h30v30h500v228H40Z" fill="#163b4b"/>
+            <path d="M0 410 C200 380 600 390 800 405 V600 H0Z" fill="#10303e"/>
+            <path d="M330 600 L392 410 H408 L470 600Z" fill="#0b2531"/><path d="M398 600 L399 410 H401 L402 600Z" fill="#e8c27f" opacity=".7"/>
+          </svg><span class="gc-photo"></span></span>
+        <span class="gc-shade" aria-hidden="true"></span>
+        <span class="gc-active" aria-hidden="true">Jeu actif</span>
+        <span class="gc-body">
+          <span class="gc-kick">EUROPE</span>
+          <span class="gc-name">Euro Truck Simulator 2</span>
+          <span class="gc-status" id="gs-ets2"><i class="dot"></i><span>Recherche du jeu…</span></span>
+          <span class="gc-go">Ouvrir ETS2 <span aria-hidden="true">→</span></span>
+        </span>
       </button>
-      <button class="lcard" data-open="hub" style="--c:var(--c-hub)">
-        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M7.93 16.07a.75.75 0 1 1-1.06 1.06 7.25 7.25 0 0 1 6.8-12.19.75.75 0 1 1-.34 1.46 5.75 5.75 0 0 0-5.4 9.67m9.96-6.93c.39-.14.82.07.95.46a7.3 7.3 0 0 1-1.71 7.53.75.75 0 1 1-1.06-1.06 5.8 5.8 0 0 0 1.36-5.97.75.75 0 0 1 .46-.96m-2.01-2.47a.63.63 0 0 1 .96.76l-.13.25a355 355 0 0 1-3.02 5.67c-.12.2-.24.4-.32.5a1.88 1.88 0 0 1-2.94-2.33q.14-.16.41-.42l.68-.63a154 154 0 0 1 4.15-3.62zM22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 0 0-17 0"/></svg></span>
-          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">TÉLÉMÉTRIE · CARRIÈRE · ENTREPRISE</span><span class="ttl">Hub</span></span></div>
-        <span class="soft" style="font-size:15px;line-height:1.6">Ta route et ton entreprise : télémétrie en direct, carrière, carte, classement, convois, défis et HUD en jeu.</span>
-        <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Aujourd'hui</span><b id="lToday">0 km</b></span><span class="lstat"><span>Missions enregistrées</span><b id="lJobs">0</b></span></span>
-        <span class="go">Ouvrir le Hub →</span>
-      </button>
-      <button class="lcard hidden" data-open="atelier" id="lcardAtelier" style="--c:var(--c-atelier)">
-        <div style="display:flex;align-items:center;gap:14px"><span class="ic"><svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M7 6.25V7H4.25C3.01 7 2 8 2 9.25v8.5C2 18.99 3 20 4.25 20h15.5c1.24 0 2.25-1.01 2.25-2.25v-8.5C22 8.01 21 7 19.75 7H17v-.75C17 5.01 16 4 14.75 4h-5.5C8.01 4 7 5.01 7 6.25m2.25-.75h5.5c.41 0 .75.34.75.75V7h-7v-.75c0-.41.34-.75.75-.75M7 8.5h12.75c.41 0 .75.34.75.75v2.25h-3v-.75a.75.75 0 0 0-1.5 0v.75H8v-.75a.75.75 0 0 0-1.5 0v.75h-3V9.25c0-.41.34-.75.75-.75zm9 4.5v1.25a.75.75 0 0 0 1.5 0V13h3v4.75c0 .41-.34.75-.75.75H4.25a.75.75 0 0 1-.75-.75V13h3v1.25a.75.75 0 0 0 1.5 0V13z"/></svg></span>
-          <span style="display:flex;flex-direction:column;gap:2px"><span class="kick">OUTILS AVANCÉS · SOLO</span><span class="ttl">Truck &amp; Coach Tools</span></span></div>
-        <span class="soft" style="font-size:15px;line-height:1.6">Gère tes profils, camions et carrières car dans ETS2 et ATS. Une sauvegarde de secours est créée avant chaque modification.</span>
-        <span style="display:flex;gap:10px;flex-wrap:wrap"><span class="lstat"><span>Profils trouvés</span><b id="lAtProfiles">–</b></span><span class="lstat"><span>Mode</span><b>Solo uniquement</b></span></span>
-        <span class="go">Ouvrir les outils →</span>
+      <button class="gamecard" data-game="ats" aria-describedby="gs-ats">
+        <span class="gc-art" aria-hidden="true"><svg class="gc-scene" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+            <defs><linearGradient id="skyUs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1838"/><stop offset=".5" stop-color="#a5484a"/><stop offset="1" stop-color="#f0a85a"/></linearGradient>
+            <radialGradient id="sunUs" cx=".3" cy=".6" r=".28"><stop offset="0" stop-color="#ffe1a8" stop-opacity=".95"/><stop offset="1" stop-color="#ffe1a8" stop-opacity="0"/></radialGradient></defs>
+            <rect width="800" height="600" fill="url(#skyUs)"/><rect width="800" height="600" fill="url(#sunUs)"/>
+            <path d="M0 380 H70 V300 Q75 290 90 290 H170 Q186 290 190 300 V380 H420 V330 Q424 318 440 318 H520 Q534 318 538 330 V380 H800 V600 H0Z" fill="#5a2b33"/>
+            <path d="M0 420 C220 396 560 400 800 414 V600 H0Z" fill="#3d1d27"/>
+            <path d="M640 420 v-52 a7 7 0 0 1 14 0 v52 M640 392 h-10 v-16 a5 5 0 0 1 10 0 M654 400 h10 v-18 a5 5 0 0 1 10 0 v18 h-10" fill="none" stroke="#2c141c" stroke-width="10" stroke-linecap="round"/>
+            <path d="M330 600 L392 420 H408 L470 600Z" fill="#2a131b"/><path d="M398 600 L399 420 H401 L402 600Z" fill="#f3c46e" opacity=".7"/>
+          </svg><span class="gc-photo"></span></span>
+        <span class="gc-shade" aria-hidden="true"></span>
+        <span class="gc-active" aria-hidden="true">Jeu actif</span>
+        <span class="gc-body">
+          <span class="gc-kick">AMÉRIQUE DU NORD</span>
+          <span class="gc-name">American Truck Simulator</span>
+          <span class="gc-status" id="gs-ats"><i class="dot"></i><span>Recherche du jeu…</span></span>
+          <span class="gc-go">Ouvrir ATS <span aria-hidden="true">→</span></span>
+        </span>
       </button>
     </div>
     <section class="lnews hidden" id="lNews" aria-labelledby="lNewsTitle">
@@ -686,6 +796,11 @@
       <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn" id="lNewsAll">Toutes les notes de version</button><button class="btn primary" id="lNewsOk">J’ai compris</button></div>
     </section>
   </div>
+  <footer class="lfoot">
+    <button class="lf-link" id="lfNotes"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M9 11h6M9 14.5h6"/></svg>Nouveautés</button>
+    <span class="lf-ver"><span class="lf-badge">NOUVEAU</span><span data-app-name>Truck &amp; Coach Hub</span> <span id="lfVer"></span></span>
+    <button class="lf-link" id="lfAbout" style="margin-left:auto">À propos<svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.2"/></svg></button>
+  </footer>
 </div>
 <div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody"><div class="box">
   <h2 style="margin:0" id="modalTitle"></h2><div class="soft" style="font-size:14px;line-height:1.7" id="modalBody"></div>
@@ -703,7 +818,7 @@
       <button class="spacetile" data-side-btn="market" style="--c:var(--c-market)"><span class="ic"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10.6 2.51c.9-.36 1.9-.36 2.8 0l7.5 3.04c.67.27 1.1.91 1.1 1.62v9.66c0 .71-.43 1.35-1.1 1.62l-7.5 3.04c-.9.37-1.9.37-2.8 0l-7.5-3.04c-.67-.27-1.1-.91-1.1-1.62V7.17c0-.7.43-1.35 1.1-1.62zm2.25 1.4a2.3 2.3 0 0 0-1.7 0l-1.9.77 7.52 2.93 2.67-1.03zm1.84 4.5L7.21 5.5 4.6 6.56 12 9.45zM3.5 16.83q0 .17.16.23l7.5 3.04.09.04v-9.38L3.5 7.75zm9.35 3.27 7.5-3.04q.14-.07.15-.23V7.77l-7.75 3v9.37z"/></svg></span><span class="st-txt"><span class="kick">MODS &amp; CONTENUS</span><b>Marketplace</b><span>Les modules du Hub et les cars &amp; bus à installer.</span></span></button>
       <button class="spacetile hidden" data-side-btn="atelier" id="sideBtnAtelier" style="--c:var(--c-atelier)"><span class="ic"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 7.5a5.5 5.5 0 0 1 7.66-5.06.75.75 0 0 1 .24 1.22L16.3 6.25l1.44 1.44 2.59-2.59a.75.75 0 0 1 1.22.24 5.49 5.49 0 0 1-6.35 7.5l-8.3 8.32a2.87 2.87 0 1 1-4.07-4.06l8.31-8.31Q11 8.16 11 7.5m5.5-4a4 4 0 0 0-3.8 5.27c.1.27.03.57-.18.77L3.9 18.16a1.37 1.37 0 0 0 1.94 1.94l8.63-8.62c.2-.2.5-.27.76-.18a4 4 0 0 0 5.25-4.22l-1.85 1.85c-.48.48-1.28.48-1.76 0l-1.8-1.8a1.25 1.25 0 0 1 0-1.76l1.85-1.85z"/></svg></span><span class="st-txt"><span class="kick">OUTILS AVANCÉS · SOLO</span><b>Truck &amp; Coach Tools</b><span>Sauvegardes, camions, remorques, profil et cars.</span></span></button>
     </div>
-    <div class="sp-foot"><button class="linkbtn" id="spaceHome">Écran d’accueil</button><button class="linkbtn" id="spaceOptions">Options</button></div>
+    <div class="sp-foot"><button class="linkbtn" id="spaceHome">Changer de jeu</button><button class="linkbtn" id="spaceOptions">Options</button></div>
   </div>
 </div>
 <div class="app">
@@ -711,6 +826,7 @@
   <aside class="side" aria-label="Menu">
     <div class="side-resize" id="sideResize" role="separator" aria-orientation="vertical" aria-label="Largeur du menu (glisser, flèches gauche / droite, double-clic pour revenir à la taille normale)" tabindex="0" title="Glisse pour régler la largeur du menu · double-clic : taille normale"></div>
     <div class="sidetop"><button class="navtoggle" id="spaceBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="spacePanel" aria-label="Changer d’espace" title="Changer d’espace"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button class="navtoggle" id="navToggle" aria-label="Réduire le menu" title="Réduire le menu"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9 4.5v15"/><path class="chev" d="M15.5 9.5 13 12l2.5 2.5"/></svg></button></div>
+    <button class="gamechip" id="gameChip" title="Changer de jeu"><span class="gtag" id="gameTag">ETS2</span><span class="gname" id="gameName">Euro Truck Simulator 2</span><span class="gchg">Changer</span></button>
     <div class="spacetitle" id="spaceTitle" aria-live="polite">HUB</div>
     <nav class="navscroll" id="navHub" aria-label="Hub">
       <button class="navcat" data-cat="gen" aria-expanded="true"><span>Général</span><span class="arr">▾</span></button>
@@ -751,7 +867,7 @@
     <nav class="navscroll hidden" id="navOptions" aria-label="Catégories d’options"><button class="navbtn optback" id="optBack"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg><span>Retour</span></button><div class="navsep" aria-hidden="true"></div></nav>
     <div class="updbanner hidden" id="updBanner"><span id="updBannerText">Mise à jour disponible</span><div class="progress hidden" id="updBannerBar"><div></div></div><button class="btn primary" id="updBannerBtn" style="height:34px;font-size:13px">Mettre à jour</button></div>
     <button class="navbtn" data-view="reglages" id="navOptBtn"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 2.25q1.11.01 2.18.25c.32.07.55.33.59.65l.17 1.53a1.38 1.38 0 0 0 1.92 1.11l1.4-.61c.3-.13.64-.06.85.17a10 10 0 0 1 2.2 3.8c.1.3 0 .63-.26.82l-1.25.92a1.38 1.38 0 0 0 0 2.22l1.25.92c.26.19.36.52.27.82a10 10 0 0 1-2.2 3.8.75.75 0 0 1-.85.17l-1.4-.62a1.38 1.38 0 0 0-1.93 1.12l-.17 1.52a.75.75 0 0 1-.58.65 9.5 9.5 0 0 1-4.4 0 .75.75 0 0 1-.57-.65l-.17-1.52a1.38 1.38 0 0 0-1.93-1.11l-1.4.62a.75.75 0 0 1-.85-.18 10 10 0 0 1-2.2-3.8c-.1-.3 0-.63.26-.82l1.25-.92a1.38 1.38 0 0 0 0-2.22l-1.24-.92a.75.75 0 0 1-.28-.82 10 10 0 0 1 2.2-3.8c.23-.23.57-.3.86-.17l1.4.62c.4.17.86.15 1.25-.08.38-.22.63-.6.68-1.04l.17-1.53a.75.75 0 0 1 .58-.65q1.08-.24 2.2-.25m0 1.5q-.67 0-1.35.12l-.11.97a2.9 2.9 0 0 1-4.03 2.33l-.9-.4A8 8 0 0 0 4.29 9.1l.8.59a2.88 2.88 0 0 1 0 4.64l-.8.59a8 8 0 0 0 1.35 2.32l.9-.4a2.88 2.88 0 0 1 4.02 2.32l.1.99q1.35.22 2.7 0l.1-.99a2.88 2.88 0 0 1 4.02-2.32l.9.4a8 8 0 0 0 1.35-2.32l-.8-.59a2.88 2.88 0 0 1 0-4.64l.8-.59a8 8 0 0 0-1.35-2.32l-.9.4q-.55.24-1.15.24c-1.47 0-2.7-1.1-2.86-2.57l-.11-.97q-.68-.11-1.34-.12M12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5m0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Options</span></button>
-    <button id="brandBtn" class="brandfoot" title="Retour à l’écran d’accueil" aria-label="Truck &amp; Coach Hub, retour à l’écran d’accueil">
+    <button id="brandBtn" class="brandfoot" title="Retour au choix du jeu" aria-label="Truck &amp; Coach Hub, retour au choix du jeu">
       <span class="logo">T&amp;C</span>
       <span class="bf-txt"><b>Truck &amp; Coach Hub</b><span id="appVersion">Version</span></span>
       <span class="bf-home"><svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5M6.5 9.5V20h11V9.5"/></svg></span>
@@ -853,6 +969,24 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:26px" id="mkFeatList"></div>
       <h2>Nouveautés</h2>
       <div style="display:flex;flex-direction:column;gap:10px;max-width:900px" id="mkNewsList"></div>
+    </section>
+    <section id="v-support" class="hidden">
+      <h1>Support</h1>
+      <p class="soft" style="max-width:760px;line-height:1.7;margin-top:0">Besoin d’aide ou un souci à signaler ? Voici où trouver des réponses.</p>
+      <div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <div class="panel" style="display:flex;flex-direction:column;gap:10px"><h2 style="margin:0">Aide de l’appli</h2>
+          <p class="muted" style="margin:0;font-size:14px;line-height:1.6">Ce que l’appli reçoit du jeu, et bientôt une fiche « comment ça marche » pour chaque fonction.</p>
+          <button class="btn" id="supHelp" style="align-self:flex-start">Ouvrir Settings → Aide &amp; infos</button></div>
+        <div class="panel" style="display:flex;flex-direction:column;gap:10px"><h2 style="margin:0">Signaler un problème</h2>
+          <p class="muted" style="margin:0;font-size:14px;line-height:1.6">Décris ce qui ne marche pas, avec ta version et une capture si possible. Tu peux le faire sur la page GitHub du projet.</p>
+          <a class="btn" href="https://github.com/charlesantoine972-bit/telemetrie-entreprise/issues" target="_blank" rel="noopener" style="align-self:flex-start;text-decoration:none;display:inline-flex;align-items:center">Ouvrir les signalements GitHub</a></div>
+        <div class="panel" style="display:flex;flex-direction:column;gap:10px"><h2 style="margin:0">À propos</h2>
+          <p class="muted" style="margin:0;font-size:14px;line-height:1.6"><b data-app-name>Truck &amp; Coach Hub</b>, <span id="supVer">version</span>. Télémétrie, HUD et outils pour Euro Truck Simulator 2 et American Truck Simulator.</p>
+          <button class="btn" id="supNotes" style="align-self:flex-start">Voir les notes de version</button></div>
+        <div class="panel" style="display:flex;flex-direction:column;gap:10px"><h2 style="margin:0">Discord et contact</h2>
+          <p class="muted" style="margin:0;font-size:14px;line-height:1.6">Un serveur Discord et un contact direct sont prévus. Ils ne sont pas encore ouverts.</p>
+          <span class="lbl" style="align-self:flex-start">BIENTÔT</span></div>
+      </div>
     </section>
     <section id="v-hud" class="hidden">
       <div class="lbl" style="color:var(--accent);margin-bottom:4px">HUB · ENTREPRISE</div><h1>HUD</h1>
@@ -1521,15 +1655,89 @@ applyCats();
 function showLauncher(on){
   document.getElementById('launcher').classList.toggle('hidden', !on);
   document.querySelector('.app').inert = !!on;
-  if (on) setTimeout(() => { const c = document.querySelector('#launcher .lcard:not(.hidden)'); if (c) c.focus(); }, 0);
+  syncRailVisibility();
+  if (on) { setRail('game'); refreshGames(); setTimeout(() => { const c = document.querySelector('#launcher .gamecard.current') || document.querySelector('#launcher .gamecard'); if (c) c.focus(); }, 0); }
 }
+/* ---------- Nom de l'appli : un seul endroit à changer ---------- */
+const APP = { name: 'Truck & Coach Hub', logo: 'T&C' };
+document.querySelectorAll('[data-app-name]').forEach(e => { e.textContent = APP.name; });
+document.querySelectorAll('[data-app-logo]').forEach(e => { e.textContent = APP.logo; });
+document.title = APP.name;
+/* ---------- Barre globale ---------- */
+// Visible sur la page Game et les pages News, Map, Settings, Support ouvertes depuis la barre.
+// Dans les espaces (Hub, Marketplace, Truck & Coach Tools) : menu 0.12.0.7 seul.
+function syncRailVisibility(){
+  const onSel = !document.getElementById('launcher').classList.contains('hidden');
+  document.documentElement.classList.toggle('in-space', !onSel && (typeof railTab === 'undefined' || railTab === 'game'));
+}
+const GAMES_UI = { ets2: { tag: 'ETS2', name: 'Euro Truck Simulator 2' }, ats: { tag: 'ATS', name: 'American Truck Simulator' } };
+let railTab = 'game';
+let activeGame = store.get('game', null);
+function setRail(t){
+  railTab = t; document.documentElement.dataset.rail = t;
+  syncRailVisibility();
+  document.querySelectorAll('.railbtn').forEach(b => { const on = b.dataset.rail === t; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+}
+function applyGame(g){
+  activeGame = g; store.set('game', g);
+  const u = GAMES_UI[g] || GAMES_UI.ets2;
+  setText('gameTag', u.tag); setText('gameName', u.name);
+  document.getElementById('gameChip').setAttribute('aria-label', `Jeu actif : ${u.name}. Changer de jeu`);
+  // Le jeu choisi devient le contexte des espaces : carte du bon jeu, ce jeu mis en avant
+  store.set('mapGame', g);
+  try { if (typeof mapSetGame === 'function' && typeof M !== 'undefined' && M.game !== g) mapSetGame(g, true); } catch {}
+  document.querySelectorAll('.gamecard').forEach(c => c.classList.toggle('current', c.dataset.game === g));
+  if (typeof syncLaunch === 'function' && document.getElementById('btnLaunch')) syncLaunch();
+}
+function openGame(g){ applyGame(g); showLauncher(false); go(lastView[state.side] || 'accueil'); }
+function refreshGames(){
+  if (!window.tel || !window.tel.atelier || !window.tel.atelier.status) return;
+  Promise.all([window.tel.atelier.status().catch(() => null), window.tel.pluginStatus().catch(() => [])]).then(([st, pl]) => {
+    for (const g of ['ets2', 'ats']) {
+      const el = document.getElementById('gs-' + g); if (!el) continue;
+      const inst = st && st[g] && st[g].installed, run = st && st[g] && st[g].running;
+      const p = (pl || []).find(x => x.id === g);
+      const txt = run ? 'Jeu en cours' : inst ? 'Profils trouvés sur ce PC' : 'Pas de profil trouvé sur ce PC';
+      el.className = 'gc-status ' + (run || (inst && p && p.status === 'ok') ? 'ok' : inst ? 'warn' : '');
+      el.querySelector('span').textContent = txt + (p ? (p.status === 'ok' ? ' · plugin installé' : ' · plugin à installer') : '');
+    }
+  });
+}
+// Visuels : image fournie dans app/assets/games/<jeu>.jpg si elle existe, sinon l'illustration intégrée
+document.querySelectorAll('.gamecard').forEach(c => { const img = new Image(); img.onload = () => c.style.setProperty('--photo', `url("assets/games/${c.dataset.game}.jpg")`); img.src = `assets/games/${c.dataset.game}.jpg`; });
+document.querySelectorAll('.gamecard').forEach(c => c.onclick = () => openGame(c.dataset.game));
+document.getElementById('gameChip').onclick = () => showLauncher(true);
+document.getElementById('railLogo').onclick = () => showLauncher(true);
+document.getElementById('rail').addEventListener('click', e => {
+  const b = e.target.closest('.railbtn'); if (!b) return;
+  if (typeof closeSpaces === 'function') closeSpaces();
+  const t = b.dataset.rail;
+  if (t === 'game') {
+    const onSel = !document.getElementById('launcher').classList.contains('hidden');
+    if (onSel) return;
+    if (railTab === 'game' || !activeGame) showLauncher(true);      // retour au choix du jeu
+    else { showLauncher(false); go(lastView[state.side] || 'accueil'); }  // retour dans l'espace en cours
+    return;
+  }
+  showLauncher(false);
+  if (t === 'news') go('mk-news', 'news');
+  else if (t === 'map') go('cartePerso', 'map');
+  else if (t === 'settings') go('reglages', 'settings');
+  else if (t === 'support') go('support', 'support');
+});
+document.getElementById('rail').addEventListener('keydown', e => {
+  if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+  const bs = [...document.querySelectorAll('.railbtn')], i = bs.indexOf(document.activeElement); if (i < 0) return;
+  e.preventDefault(); bs[(i + (e.key === 'ArrowDown' ? 1 : bs.length - 1)) % bs.length].focus();
+});
+document.getElementById('lfNotes').onclick = () => { showLauncher(false); openOptCat('maj'); go('reglages', 'settings'); };
+document.getElementById('lfAbout').onclick = () => { showLauncher(false); go('support', 'support'); };
 // Accessibilité : état « appuyé » des boutons de choix, annonces pour les lecteurs d'écran
 function announce(t){ const r = document.getElementById('srLive'); r.textContent = ''; setTimeout(() => { r.textContent = t; }, 60); }
 function syncPressed(root){ (root || document).querySelectorAll('.seg button, .sideswitch button, .vtcbar button').forEach(b => b.setAttribute('aria-pressed', b.classList.contains('on') ? 'true' : 'false')); }
 new MutationObserver(muts => { for (const m of muts) { const t = m.target; if (t.matches && t.matches('.seg button, .sideswitch button, .vtcbar button')) t.setAttribute('aria-pressed', t.classList.contains('on') ? 'true' : 'false'); else if (m.type === 'childList') syncPressed(t); } })
   .observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'], childList: true });
 syncPressed();
-document.querySelectorAll('[data-open]').forEach(c => c.onclick = () => { showLauncher(false); go(lastView[c.dataset.open]); });
 document.querySelector('.skip').onclick = (e) => { e.preventDefault(); document.getElementById('mainContent').focus(); };
 document.getElementById('brandBtn').onclick = () => showLauncher(true);
 document.querySelectorAll('[data-goto-view]').forEach(b => b.onclick = () => go(b.dataset.gotoView));
@@ -1627,12 +1835,15 @@ document.getElementById('optNav').addEventListener('keydown', e => {
 })();
 openOptCat(optCat);
 document.getElementById('waitOpenPlugin').onclick = () => { openOptCat('jeu'); go('reglages'); };
+document.getElementById('supHelp').onclick = () => { openOptCat('aide'); go('reglages'); };
+document.getElementById('supNotes').onclick = () => { openOptCat('maj'); go('reglages'); };
 document.getElementById('hudOpenOptions').onclick = () => { openOptCat('hud'); go('reglages'); };
-document.getElementById('launcherOptions').onclick = () => { showLauncher(false); go('reglages'); };
-function go(view){
+function go(view, rail){
   state.view = view;
-  const side = view === 'reglages' ? state.side : (view.startsWith('mk-') ? 'market' : view.startsWith('at-') ? 'atelier' : 'hub');
-  if (view !== 'reglages') lastView[side] = view;
+  // Onglet de la barre globale : celui demandé, sinon Settings pour les Options, Support, ou Game (espaces du jeu)
+  if (typeof setRail === 'function') setRail(rail || (view === 'support' ? 'support' : 'game'));
+  const side = (view === 'reglages' || view === 'support') ? state.side : (view.startsWith('mk-') ? 'market' : view.startsWith('at-') ? 'atelier' : 'hub');
+  if (view !== 'reglages' && view !== 'support' && !rail) lastView[side] = view;
   setSide(side);
   // ouvre la catégorie qui contient la page demandée
   for (const k of Object.keys(catState)) { const g = document.getElementById('cat-' + k); if (g && g.querySelector(`[data-view="${['classement','carte'].includes(view) ? 'vtc' : view}"]`) && !catState[k]) { catState[k] = true; applyCats(); } }
@@ -1695,7 +1906,9 @@ function pageMarks(view){
   const sec = main.querySelector(':scope > section:not(.hidden)');
   // Fil d'Ariane : espace › catégorie (le nom de la page apparaît en haut quand on fait défiler)
   const parts = [];
-  if (view === 'reglages') parts.push('Options');
+  const RAIL_NAMES = { news: 'News', map: 'Map', support: 'Support' };
+  if (RAIL_NAMES[railTab]) parts.push(RAIL_NAMES[railTab]);
+  else if (view === 'reglages') parts.push('Options');
   else {
     parts.push(SIDE_NAMES[state.side] || '');
     const btn = document.querySelector(`.side .navscroll:not(.hidden) .navbtn.on`);
@@ -1760,7 +1973,7 @@ function ask(title, html, yes = 'Confirmer'){
 /* ---------- Atelier ---------- */
 function applyAtelier(on){
   document.getElementById('sideBtnAtelier').classList.toggle('hidden', !on);
-  document.getElementById('lcardAtelier').classList.toggle('hidden', !on);
+  const lca = document.getElementById('lcardAtelier'); if (lca) lca.classList.toggle('hidden', !on);
   document.getElementById('atelierSwitch').checked = on;
   if (!on && state.side === 'atelier') go('reglages');
 }
@@ -1931,7 +2144,7 @@ function applySoon(show, save){
   store.set('showSoon', !!show);
   if (show) delete document.documentElement.dataset.hideSoon; else document.documentElement.dataset.hideSoon = '1';
   document.getElementById('soonSwitch').checked = !!show;
-  if (!show && typeof state !== 'undefined' && ['vtc', 'calendrier', 'infos', 'classement', 'carte', 'missions', 'convois', 'defis'].includes(state.view)) go('accueil');
+  if (!show && typeof state !== 'undefined' && ['vtc', 'calendrier', 'infos', 'classement', 'carte', 'missions', 'convois', 'defis'].includes(state.view) && !(['carte', 'cartePerso'].includes(state.view) && railTab === 'map')) go('accueil');
   if (save && window.tel) window.tel.setSettings({ showSoon: !!show });
 }
 document.getElementById('soonSwitch').onchange = (e) => applySoon(e.target.checked, true);
@@ -3484,13 +3697,23 @@ async function launch(game){
   const r = await window.tel.launchGame(game);
   renderPlugin(r.status || []);
   hint.textContent = r.ok ? 'Lancement demandé à Steam… Bonne route !' : r.error;
-  setTimeout(() => { hint.innerHTML = 'Le plugin est vérifié, puis le jeu se lance via Steam. <a href="#" id="lnkAts">Lancer American Truck Simulator</a>'; bindAts(); }, 6000);
+  setTimeout(() => { syncLaunch(); }, 6000);
 }
 document.querySelectorAll('.addon-preview').forEach(a => a.onclick = (e) => { e.preventDefault(); go(a.dataset.goto); });
-function bindAts(){ const a = document.getElementById('lnkAts'); if (a) a.onclick = (e) => { e.preventDefault(); launch('ats'); }; }
+function otherGame(){ return activeGame === 'ats' ? 'ets2' : 'ats'; }
+function bindAts(){ const a = document.getElementById('lnkAts'); if (a) a.onclick = (e) => { e.preventDefault(); launch(otherGame()); }; }
+// Accueil dans le contexte du jeu choisi : bouton principal = ce jeu, lien = l'autre
+function syncLaunch(){
+  const g = activeGame === 'ats' ? 'ats' : 'ets2';
+  setText('btnLaunch', 'LANCER ' + GAMES_UI[g].name.toUpperCase());
+  const hint = document.getElementById('launchHint');
+  hint.innerHTML = 'Le plugin est vérifié, puis le jeu se lance via Steam. <a href="#" id="lnkAts">Lancer ' + GAMES_UI[otherGame()].name + '</a>';
+  bindAts();
+}
 
 if (HAS_APP){
-  document.getElementById('btnLaunch').onclick = () => launch('ets2');
+  document.getElementById('btnLaunch').onclick = () => launch(activeGame === 'ats' ? 'ats' : 'ets2');
+  syncLaunch();
   bindAts();
   document.querySelectorAll('[data-link]').forEach(b => b.onclick = async () => {
     const ok = await window.tel.openLink(b.dataset.link);
@@ -3577,7 +3800,7 @@ if (HAS_APP){
 }
 
 const v = shownVer(new URLSearchParams(location.search).get('v'));
-if (v) { document.getElementById('appVersion').textContent = 'Version ' + v; document.getElementById('lVersion').textContent = 'Version ' + v; }
+if (v) { document.getElementById('appVersion').textContent = 'Version ' + v; document.getElementById('lVersion').textContent = 'Version ' + v; setText('lfVer', v); setText('supVer', 'version ' + v); }
 // Notes de version en bas de l'écran d'accueil : la version installée est ouverte, les autres sont repliées.
 function renderNotes(current) {
   const list = window.NOTES_VERSION || [], box = document.getElementById('lNotesList');
@@ -3610,7 +3833,7 @@ function renderNews(current){
   document.getElementById('lNewsAll').onclick = () => { seen(); showLauncher(false); openOptCat('maj'); go('reglages'); };
 }
 renderNews(v);
-renderMk(); go('accueil'); showLauncher(true);
+renderMk(); go('accueil'); if (activeGame) applyGame(activeGame); showLauncher(true);
 renderRanking(); tickMap(); tickTablet();
 setInterval(tickMap, 1000);
 setInterval(tickTablet, 3000);
