@@ -143,6 +143,11 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 5', date: '2026-11-24', titre: 'Aperçu de Compte & accès', notes: [
+    ['nouveau', 'Paramètres généraux → Compte & accès, en préparation : ton rang, les accès qu’il donne, l’activation d’une clé, ta VTC sur TruckersMP, la création de rangs et de clés. Visible seulement avec Interface → Pages en préparation activé.'],
+    ['nouveau', 'Rangs de base : Fondateur, Administrateur, Testeur et Membre, plus tes propres rangs (nom, couleur, niveau, permissions). On ne gère que les rangs plus bas que le sien.'],
+    ['change', 'Rien n’est encore relié à un serveur : tout reste sur ce PC, rien n’est partagé ni protégé. « Voir l’appli comme… » permet de se mettre à la place d’un autre rang.'],
+  ]},
   { version: '0.12.0.5 bêta 4', date: '2026-11-24', titre: 'Une carte et des outils par jeu', notes: [
     ['nouveau', 'Interface → Éléments visibles : un interrupteur pour Truck & Coach Tools (ETS2) et un autre pour Truck & Road Trip Tools (ATS). Chaque jeu affiche ses outils seulement s’ils sont activés pour lui.'],
     ['change', 'Dans ATS, l’espace des outils s’appelle Truck & Road Trip Tools, du nom du DLC de voyageurs d’ATS. Il reste Truck & Coach Tools dans ETS2.'],
