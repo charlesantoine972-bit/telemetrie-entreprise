@@ -116,12 +116,18 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
   assert.match(cat('aide'), /id="coachDiag"/);
 });
 
-test('menu latéral rétractable et bouton Options sur l’écran d’accueil', () => {
+test('barre globale Game / News / Map / Settings / Support et page de choix du jeu', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
-  assert.match(html, /id="navToggle"/);
-  assert.match(html, /\[data-nav="mini"\] \.side\{width:72px/);
-  assert.match(html, /id="hudNavDot"/);
-  assert.match(html.slice(html.indexOf('<div id="launcher">'), html.indexOf('<div class="lmain"')), /id="launcherOptions"/);
+  const rail = html.match(/<nav class="rail" id="rail"[\s\S]*?<\/nav>/)[0];
+  const order = [...rail.matchAll(/data-rail="(\w+)"/g)].map(m => m[1]);
+  assert.deepEqual(order, ['game', 'news', 'map', 'settings', 'support']);
+  assert.doesNotMatch(rail, /is-soon/);                     // jamais masqués avec les pages en préparation
+  const launcher = html.slice(html.indexOf('<div id="launcher">'), html.indexOf('<div id="modal"'));
+  assert.match(launcher, /data-game="ets2"/); assert.match(launcher, /data-game="ats"/);
+  assert.doesNotMatch(launcher, /data-open="(hub|market|atelier)"/); // plus de choix d'espace sur l'accueil
+  assert.match(html, /const APP = \{ name: /);                // nom de l'appli centralisé
+  assert.match(html, /id="gameChip"/); assert.match(html, /id="v-support"/);
+  assert.match(html, /id="navToggle"/); assert.match(html, /id="hudNavDot"/);
   assert.doesNotMatch(html, />Truck Tools</);
 });
 

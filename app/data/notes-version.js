@@ -16,6 +16,13 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.8', date: '2026-11-24', titre: 'Nouvelle entrée : choisis ton jeu', notes: [
+    ['nouveau', 'L’appli s’ouvre sur Game : deux grandes cartes, Euro Truck Simulator 2 et American Truck Simulator, avec l’état du jeu et du plugin. Choisis ton jeu pour ouvrir le Hub, la Marketplace et Truck & Coach Tools.'],
+    ['nouveau', 'Barre de navigation à gauche, toujours visible : Game, News, Map, Settings et Support. Elle reste là dans tous les espaces, même quand les pages en préparation sont masquées.'],
+    ['nouveau', 'Le jeu choisi est rappelé en haut du menu, avec « Changer ». La carte et le bouton « Lancer » de l’Accueil suivent ce jeu.'],
+    ['nouveau', 'Page Support : aide de l’appli, signalement d’un problème sur GitHub, version et notes de version.'],
+    ['ameliore', 'Le nom de l’appli n’est écrit qu’à un seul endroit, pour pouvoir le changer facilement. Le logo et le nom ne sont plus répétés en bas du menu.'],
+  ]},
   { version: '0.12.0.7', date: '2026-11-23', titre: 'Repères de navigation, Options dans le menu, page HUD épurée', notes: [
     ['nouveau', 'Repères : en haut de chaque page, une barre indique où tu es (par exemple Hub › Entreprise). Quand tu fais défiler, elle se fige en haut avec le titre de la page.'],
     ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu, les blocs apparaissent au fil du défilement, et un trait marque la page active. Tout se coupe avec Options → Accessibilité → Réduire les animations.'],
