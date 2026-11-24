@@ -19,6 +19,12 @@ window.versionAffichee = function (v) {
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 window.NOTES_VERSION = [
+  { version: '0.12.0.10 bêta 1', date: '2026-11-24', titre: 'Bêta : entrée par le choix du jeu', notes: [
+    ['nouveau', 'L’appli s’ouvre sur Game : Euro Truck Simulator 2 et American Truck Simulator en grands visuels pleine page, avec l’état du jeu et du plugin. Choisis ton jeu pour ouvrir le Hub, la Marketplace et Truck & Coach Tools.'],
+    ['nouveau', 'Sur l’écran d’accueil, une barre à gauche donne accès à Game, News, Map, Settings et Support, même quand les pages en préparation sont masquées. Dans le Hub, la Marketplace et Truck & Coach Tools, la mise en page reste celle de la version normale.'],
+    ['nouveau', 'Settings ouvert depuis la barre : seulement le menu des paramètres (Retour, puis les catégories), sans le menu des espaces.'],
+    ['nouveau', 'La carte et le bouton « Lancer » de l’Accueil suivent le jeu choisi. Le logo en bas du menu ramène au choix du jeu. Nouvelle page Support.'],
+  ]},
   { version: '0.12.0.9', date: '2026-11-24', titre: 'Retour à l’interface habituelle, nouvelle interface en bêta', notes: [
     ['ameliore', 'L’appli reprend l’interface de la 0.12.0.7. La nouvelle entrée par le choix du jeu (Game, News, Map, Settings, Support) se teste dans Truck & Coach Hub Bêta, une appli séparée à installer à côté.'],
     ['nouveau', 'Truck & Coach Hub Bêta : son propre installateur, son raccourci « Truck & Coach Hub (Bêta) » et ses propres réglages. Au premier lancement, elle reprend une copie de tes données ; la version normale n’est pas modifiée.'],
