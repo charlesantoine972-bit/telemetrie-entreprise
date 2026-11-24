@@ -126,7 +126,8 @@ test('barre globale Game / News / Map / Settings / Support et page de choix du j
   assert.match(launcher, /data-game="ets2"/); assert.match(launcher, /data-game="ats"/);
   assert.doesNotMatch(launcher, /data-open="(hub|market|atelier)"/); // plus de choix d'espace sur l'accueil
   assert.match(html, /const APP = \{ name: /);                // nom de l'appli centralisé
-  assert.match(html, /id="gameChip"/); assert.match(html, /id="v-support"/);
+  assert.match(html, /id="v-support"/);
+  assert.match(html, /html\.in-space \.rail\{display:none\}/);   // pas de barre globale dans les espaces
   assert.match(html, /id="navToggle"/); assert.match(html, /id="hudNavDot"/);
   assert.doesNotMatch(html, />Truck Tools</);
 });
