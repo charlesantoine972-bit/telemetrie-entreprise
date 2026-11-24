@@ -22,7 +22,8 @@
       "main.js",
       "preload.js",
       "src/**/*",
-      "app/**/*"
+      "app/**/*",
+      "tch-map/**/*"
     ],
     "win": {
       "target": "nsis"

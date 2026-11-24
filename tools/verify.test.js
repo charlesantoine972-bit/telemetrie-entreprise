@@ -767,3 +767,61 @@ test('bêta 5 : mode Paramètres (dossiers dans la barre) et recherche', () => {
   const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(html)[1];
   for (const c of cats) assert.match(folders, new RegExp(`'${c}'`), c);
 });
+
+test('TCH Map : projection du jeu vers longitude / latitude (villes réelles)', async () => {
+  const { toLngLat } = await import('../tch-map/viewer/projection.js');
+  const src = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'data', 'villes.js'), 'utf8');
+  const V = JSON.parse(src.slice(src.indexOf('{'), src.lastIndexOf('}') + 1));
+  const near = (game, id, lon, lat, tol) => {
+    const c = V[game].find(v => v[0] === id); assert.ok(c, id);
+    const [x, y] = toLngLat(game, c[2], c[3]);
+    assert.ok(Math.hypot(x - lon, y - lat) < tol, `${id} : ${x.toFixed(2)}, ${y.toFixed(2)}`);
+  };
+  near('ets2', 'paris', 2.35, 48.86, 0.5); near('ets2', 'berlin', 13.4, 52.52, 0.5); near('ets2', 'oslo', 10.75, 59.9, 0.5);
+  near('ets2', 'london', -0.13, 51.5, 0.6);   // Royaume-Uni : échelle propre au jeu
+  near('ats', 'los_angeles', -118.24, 34.05, 0.5); near('ats', 'seattle', -122.33, 47.6, 0.5);
+  // Islande : placée par SCS plus près du continent ; le fond de carte est recalé de la même façon
+  near('ets2', 'reykjavik', -21.9 - 5.93, 64.1 - 1.75, 0.3);
+});
+
+test('TCH Map : serveur local (jeton, chemins, messages)', async () => {
+  const { fork } = require('node:child_process');
+  const http = require('node:http');
+  const child = fork(path.resolve(__dirname, '..', 'tch-map', 'server.js'), [], { stdio: 'ignore' });
+  try {
+    const ready = await new Promise((res, rej) => { child.on('message', m => m.type === 'ready' && res(m)); setTimeout(() => rej(new Error('pas prêt')), 5000); });
+    assert.match(ready.url, /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f]{48}\/$/);
+    const get = (u) => new Promise((res) => http.get(u, r => { let b = ''; r.on('data', d => b += d); r.on('end', () => res({ code: r.statusCode, body: b, h: r.headers })); }));
+    const base = ready.url;
+    const ok = await get(base);
+    assert.equal(ok.code, 200); assert.match(ok.body, /TCH Map/); assert.match(ok.h['content-security-policy'], /default-src 'self'/);
+    assert.equal((await get(`http://127.0.0.1:${ready.port}/mauvaisjeton/`)).code, 404);
+    assert.equal((await get(`http://127.0.0.1:${ready.port}/`)).code, 404);
+    assert.notEqual((await get(base + '..%2f..%2fpackage.json')).code, 200);
+    assert.notEqual((await get(base + 'data/..%2f..%2fmain.js')).code, 200);
+    assert.equal((await get(base + 'vendor/maplibre-gl.mjs')).h['content-type'], 'text/javascript; charset=utf-8');
+    // un message de l'hôte est rejoué à l'ouverture du flux
+    child.send({ type: 'state', game: 'ets2', connected: true, x: 1, z: 2 });
+    child.send({ type: 'pirate', x: 1 });
+    await new Promise(r => setTimeout(r, 100));
+    const ev = await new Promise((res) => http.get(base + 'events', r => { let b = ''; r.on('data', d => { b += d; if (b.includes('event: state')) { r.destroy(); res(b); } }); }));
+    assert.match(ev, /event: state\ndata: \{"type":"state","game":"ets2"/);
+    assert.doesNotMatch(ev, /pirate/);
+  } finally { child.kill(); }
+});
+
+test('TCH Map : séparée de l’appli (aucun code partagé) et livrée avec elle', () => {
+  const pkg = require('../package.json');
+  assert.ok(pkg.build.files.includes('tch-map/**/*'));
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /utilityProcess\.fork\(path\.join\(__dirname, 'tch-map', 'server\.js'\)/);
+  for (const f of ['server.js', 'viewer/carte.js', 'viewer/projection.js']) {
+    const t = fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', f), 'utf8');
+    assert.match(t, /GNU General Public License v3/, f + ' : mention de licence');
+    assert.doesNotMatch(t, /require\(['"]\.\.\/(src|app)|from ['"]\.\.\/\.\.\/(src|app)/, f + ' : pas de code de l’appli');
+  }
+  assert.ok(fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'LICENSE'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /frame-src http:\/\/127\.0\.0\.1:\*/);
+  assert.match(html, /<iframe id="tchFrame"[^>]*sandbox="allow-scripts allow-same-origin allow-popups"/);
+});

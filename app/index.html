@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: tchmap: https://raw.githubusercontent.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: tchmap: https://raw.githubusercontent.com; frame-src http://127.0.0.1:*">
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <script src="vendor/leaflet/leaflet.js"></script>
 <script src="data/villes.js"></script>
@@ -646,6 +646,9 @@
   .lmap{position:relative;height:calc(100vh - 170px);min-height:460px;border-radius:16px;border:1px solid var(--line);overflow:hidden;background:#303030}
   .lmap .leaflet-container{background:#303030;font-family:inherit}
   #lmap{position:absolute;inset:0}
+  .tchframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:1;background:var(--bg)}
+  .lmap .ovl{z-index:2}
+  html[data-map-engine="tch"] #lmap,html[data-map-engine="tch"] #mapNote,html[data-map-engine="tch"] #mapTileTools{visibility:hidden}
   .lmap .ovl{position:absolute;z-index:500;display:flex;gap:6px}
   .lmap .ovl.hidden{display:none}
   .lmap .ovl .btn{height:36px;font-size:13px;padding:0 12px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
@@ -1555,6 +1558,10 @@
       </div>
       <div class="optcat" id="oc-aide" role="tabpanel" aria-label="Aide &amp; infos">
         <div class="ochead"><h2>Aide &amp; infos</h2><p>Ce que l’appli reçoit du jeu et, bientôt, une fiche « comment ça marche » pour chaque fonction.</p></div>
+        <div class="optgroup"><h3>Licences</h3>
+          <div class="setrow"><div class="lab"><b>TCH Map</b><span>La carte est un programme séparé et libre (GNU GPL v3), fondé sur TruckSim Maps de truckermudgeon. Son code source complet est public.</span></div><div class="ctl"><a class="btn" href="https://github.com/charlesantoine972-bit/telemetrie-entreprise/tree/beta/tch-map" target="_blank" rel="noopener">Code source</a></div></div>
+          <div class="setrow"><div class="lab"><b>Autres composants</b><span>MapLibre GL JS (BSD-3), world-atlas (ISC), Natural Earth (domaine public), DecryptTruck (MIT), ETS2-City-Coordinate-Retriever (MIT). Données des jeux © SCS Software.</span></div></div>
+        </div>
         <div class="optgroup" id="optInfos"><h3>Données du jeu</h3>
           <div class="setrow col">
       <details class="acc" id="coachDiag" style="width:100%;margin:0">
@@ -1605,11 +1612,12 @@
 
     <!-- CARTE PERSO (vraie carte du jeu) -->
     <section id="v-cartePerso" class="hidden">
-      <h1>Carte <span class="chip" id="mapChip"><span class="d" style="background:var(--muted)"></span>En attente du jeu</span></h1>
+      <div class="between" style="gap:12px;flex-wrap:wrap;margin-bottom:6px"><h1 style="margin:0">Carte <span class="chip" id="mapChip"><span class="d" style="background:var(--muted)"></span>En attente du jeu</span></h1><div class="seg" id="mapEngine" role="group" aria-label="Carte affichée"><button data-engine="tch" title="TCH Map : carte vectorielle, villes visitées, Islande (aperçu)">Nouvelle carte</button><button data-engine="old" title="Carte en images (TsMap 1.48)">Ancienne carte</button></div></div>
       <div class="panel" id="contentPanel" style="margin-bottom:18px"><div class="between"><b>Fichiers du jeu et DLC</b><button class="btn" id="contentScan">Vérifier les jeux</button></div><div id="contentStatus" class="soft" role="status" aria-live="polite">Vérification en lecture seule des installations ETS2 / ATS.</div><div id="contentDetails"></div></div>
       <div class="lwrap">
         <div class="lmap">
           <div id="lmap"></div>
+          <iframe id="tchFrame" class="tchframe hidden" title="Carte du jeu (TCH Map)" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>
           <div class="ovl" style="top:12px;right:12px">
             <button class="btn on" id="mapFollow" title="Garder ton camion au centre de la carte">Suivre mon camion</button>
           </div>
@@ -2268,6 +2276,37 @@ openOptCat = function (cat) { openOptCatRail(cat); const f = folderOf(cat); last
 const setRailBase = setRail;
 setRail = function (t) { setRailBase(t); if (typeof syncSettingsRail === 'function') syncSettingsRail(); };
 
+/* ---------- Nouvelle carte : TCH Map (programme séparé, GPL-3, dossier tch-map/) ----------
+   L'appli ne fait que l'afficher dans un cadre et lui envoyer des messages : aucun code de la carte ici. */
+let mapEngine = store.get('mapEngine', 'tch');
+const hasTch = () => !!(window.tel && window.tel.tchMap);
+const toHex = (c) => { c = String(c || '').trim(); if (/^#[0-9a-f]{3,8}$/i.test(c)) return c; const m = c.match(/\d+(\.\d+)?/g); return m && m.length >= 3 ? '#' + m.slice(0, 3).map(v => Math.round(+v).toString(16).padStart(2, '0')).join('') : null; };
+function tchTheme(){
+  const cs = getComputedStyle(document.documentElement), v = n => toHex(cs.getPropertyValue(n));
+  return { bg: v('--bg'), land: v('--panel'), border: v('--line'), text: v('--text'), muted: v('--muted'), accent: v('--accent'), trail: v('--accent') };
+}
+async function syncMapEngine(){
+  const on = mapEngine === 'tch' && hasTch();
+  document.documentElement.dataset.mapEngine = on ? 'tch' : 'old';
+  document.querySelectorAll('#mapEngine [data-engine]').forEach(b => { const a = b.dataset.engine === (on ? 'tch' : 'old'); b.classList.toggle('on', a); b.setAttribute('aria-pressed', a); });
+  document.getElementById('mapEngine').classList.toggle('hidden', !hasTch());
+  const f = document.getElementById('tchFrame');
+  f.classList.toggle('hidden', !on);
+  if (!hasTch()) return;
+  if (!on || state.view !== 'cartePerso') { window.tel.tchMap.visible(false); return; }
+  const r = await window.tel.tchMap.start();
+  if (!r.ok) { mapEngine = 'old'; syncMapEngine(); const n = document.getElementById('mapNote'); n.textContent = 'Nouvelle carte indisponible : ' + r.error; n.classList.remove('hidden'); return; }
+  if (f.dataset.src !== r.url) { f.dataset.src = r.url; f.src = r.url; }
+  window.tel.tchMap.theme(tchTheme());
+  window.tel.tchMap.visible(true, { game: (typeof M !== 'undefined' && M.game) || activeGame || 'ets2', follow: typeof M !== 'undefined' ? M.follow : true });
+}
+document.querySelectorAll('#mapEngine [data-engine]').forEach(b => b.onclick = () => { mapEngine = b.dataset.engine; store.set('mapEngine', mapEngine); syncMapEngine(); });
+const openMapBase = openMap;
+openMap = async function () { await openMapBase(); syncMapEngine(); };
+// Boutons existants : ils pilotent aussi la nouvelle carte
+document.getElementById('mapFollow').addEventListener('click', () => { if (hasTch() && mapEngine === 'tch') window.tel.tchMap.visible(true, { follow: M.follow }); });
+document.querySelectorAll('[data-mapgame]').forEach(b => b.addEventListener('click', () => { if (hasTch() && mapEngine === 'tch' && state.view === 'cartePerso') window.tel.tchMap.visible(true, { game: b.dataset.mapgame }); }));
+
 /* ---------- Bêta : page News ---------- */
 let newsTab = null;
 const newsCache = {};
@@ -2298,6 +2337,7 @@ document.getElementById('supHelp').onclick = () => { settingsFrom = 'support'; o
 document.getElementById('supNotes').onclick = () => { settingsFrom = 'support'; openOptCat('maj'); go('reglages', 'settings'); };
 document.getElementById('hudOpenOptions').onclick = () => { openOptCat('hud'); go('reglages'); };
 function go(view, rail){
+  if (view !== 'cartePerso' && window.tel && window.tel.tchMap) window.tel.tchMap.visible(false);
   state.view = view;
   // Onglet de la barre globale : celui demandé, sinon Settings pour les Options, Support, ou Game (espaces du jeu)
   if (typeof setRail === 'function') setRail(rail || (view === 'support' ? 'support' : 'game'));

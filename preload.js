@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld('tel', {
   copyGameSettings: (from, to) => ipcRenderer.invoke('settings:copyGame', from, to),
   onSettingsChanged: (cb) => ipcRenderer.on('settings:changed', (_e, s) => cb(s)),
   steamNews: (game) => ipcRenderer.invoke('news:steam', game),
+  // Nouvelle carte (TCH Map, programme séparé) : démarrer, signaler qu'elle est affichée, lui passer le thème
+  tchMap: { start: () => ipcRenderer.invoke('tchmap:start'), visible: (on, opts) => ipcRenderer.invoke('tchmap:visible', on, opts), theme: (t) => ipcRenderer.invoke('tchmap:theme', t) },
   // Accès, rangs et clés (préparation : aperçu local). Chaque appel renvoie { ok, value } ou { ok:false, error }.
   acces: {
     info: () => ipcRenderer.invoke('acces:info'),

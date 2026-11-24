@@ -1,0 +1,24 @@
+/* TCH Map — Copyright (C) 2026 Truck & Coach Hub. Logiciel libre sous GNU GPL v3 ou ultérieure. */
+:root { --bg: #0f1720; --land: #1b2632; --border: #3b4b5c; --text: #e6edf3; --muted: #8b9bab; --accent: #f08a24; --trail: #f08a24; --city: #c9d4df; --city-new: #5d6c7b; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: "Segoe UI", Inter, system-ui, sans-serif; overflow: hidden; }
+#carte { position: absolute; inset: 0; }
+.hidden { display: none !important; }
+.tch-note { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); max-width: 80%; padding: 8px 14px; border-radius: 10px; background: rgba(15, 23, 32, .92); border: 1px solid var(--border); font-size: 13px; color: var(--muted); z-index: 5; text-align: center; }
+.tch-credits { position: absolute; left: 6px; bottom: 4px; font-size: 10.5px; color: var(--muted); background: rgba(15, 23, 32, .75); padding: 2px 6px; border-radius: 6px; z-index: 5; }
+.tch-credits a { color: var(--muted); }
+.maplibregl-ctrl-group { background: rgba(15, 23, 32, .92) !important; border: 1px solid var(--border); }
+.maplibregl-ctrl-group button { filter: invert(1) hue-rotate(180deg); }
+.maplibregl-ctrl-attrib { display: none; }
+
+/* Villes : point + nom. Gris clair = déjà visitée (sur ta trace), gris foncé = pas encore. */
+.city { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--city); text-shadow: 0 1px 2px #000, 0 0 3px #000; pointer-events: none; white-space: nowrap; }
+.city::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 2px rgba(0,0,0,.6); }
+.city.new { color: var(--city-new); font-weight: 500; }
+.city.dest { color: #6fd8c4; font-weight: 800; }
+.city.small { font-size: 0; gap: 0; }
+
+/* Camion */
+.truck { width: 34px; height: 34px; }
+.truck svg { width: 34px; height: 34px; transition: transform .25s linear; filter: drop-shadow(0 2px 3px rgba(0,0,0,.7)); }
+.truck.off svg { opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .truck svg { transition: none; } }
