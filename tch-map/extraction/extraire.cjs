@@ -42774,7 +42774,7 @@ function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
         defData: toDefData(defData, l10n)
       };
     }
-    const sectorData = parseSectorFiles(entries);
+    const sectorData = parseSectorFiles(entries, defData);
     return {
       ...baseResult,
       data: "all",
@@ -42798,7 +42798,7 @@ function parseVersionSii(entries) {
   logger.info("parsing", application, version);
   return { application, version };
 }
-function parseSectorFiles(entries) {
+function parseSectorFiles(entries, __defs) {
   const mapDir = Preconditions.checkExists(entries.directories.get("map"));
   const mbds = mapDir.files.filter((f3) => f3.endsWith(".mbd"));
   if (mbds.length !== 1) {
@@ -42825,35 +42825,48 @@ function parseSectorFiles(entries) {
   bar.start(baseFiles.length, 0);
   const sectors = /* @__PURE__ */ new Map();
   const sectorRegex = /^sec([+-]\d{4})([+-]\d{4})$/;
-  const seenNodeUids = /* @__PURE__ */ new Set();
+  const __garder = (it) => it.type !== 1 /* Terrain */ && !(it.type === 5 /* Model */ && __defs && !__defs.models.has(it.token));
+  const __refs = /* @__PURE__ */ new Set();
+  const __citer = (o3, depth = 0) => {
+    if (!o3 || typeof o3 !== "object" || depth > 4) return;
+    for (const k2 of Object.keys(o3)) {
+      const v2 = o3[k2];
+      if (/nodeuids?$/i.test(k2)) {
+        if (typeof v2 === "bigint") __refs.add(v2);
+        else if (Array.isArray(v2)) {
+          for (const x2 of v2) if (typeof x2 === "bigint") __refs.add(x2);
+        }
+      } else if (v2 && typeof v2 === "object") __citer(v2, depth + 1);
+    }
+  };
+  const __cles = [];
   for (const f3 of baseFiles) {
     const sectorKey = f3.replace(/\.(base|aux)$/, "");
-    if (!sectorRegex.test(sectorKey)) {
-      throw new Error(`unexpected sector key "${sectorKey}"`);
-    }
-    const [, sectorX, sectorY] = Array.from(
-      assertExists(sectorRegex.exec(sectorKey)),
-      parseFloat
-    );
-    if (isNaN(sectorX) || isNaN(sectorY)) {
-      throw new Error(`couldn't parse ${sectorX} or ${sectorY}`);
-    }
+    const m2 = sectorRegex.exec(sectorKey);
+    if (!m2) throw new Error(`unexpected sector key "${sectorKey}"`);
+    __cles.push([f3, sectorKey, parseFloat(m2[1]), parseFloat(m2[2])]);
     const sector = putIfAbsent(sectorKey, { items: [], nodes: [] }, sectors);
     const baseFile = assertExists(entries.files.get(`map/${map}/${f3}`));
-    const parsedSector = parseSector(baseFile.read(), seenNodeUids);
-    sector.items = sector.items.concat(
-      parsedSector.items.map(
-        (item) => withDlcGuard(__alleger(item), map, baseFile.scsSource)
-      )
-    );
-    for (const node of parsedSector.nodes) {
-      if (seenNodeUids.has(node.uid)) {
-        continue;
-      }
+    const tous = { has: () => true };
+    const parsed = parseSector(baseFile.read(), tous);
+    for (const item of parsed.items) {
+      if (!__garder(item)) continue;
+      __citer(item);
+      sector.items.push(withDlcGuard(item, map, baseFile.scsSource));
+    }
+    bar.increment({ filename: f3 });
+  }
+  const seenNodeUids = /* @__PURE__ */ new Set();
+  const ignorer = { has: (uid) => !__refs.has(uid) || seenNodeUids.has(uid) };
+  for (const [f3, sectorKey] of __cles) {
+    const sector = sectors.get(sectorKey);
+    const baseFile = assertExists(entries.files.get(`map/${map}/${f3}`));
+    const parsed = parseSector(baseFile.read(), ignorer);
+    for (const node of parsed.nodes) {
+      if (seenNodeUids.has(node.uid) || !__refs.has(node.uid)) continue;
       seenNodeUids.add(node.uid);
       sector.nodes.push(node);
     }
-    bar.increment({ filename: f3 });
   }
   if (unknownScsSources.size) {
     logger.warn("encountered unknown .scs files containing map data", [
@@ -43707,10 +43720,6 @@ function checkReference(ref, store, fieldName, item) {
       );
     }
   }
-}
-function __alleger(i2) {
-  if (i2.type === 1 /* Terrain */) return { type: i2.type, uid: i2.uid, startNodeUid: i2.startNodeUid, endNodeUid: i2.endNodeUid };
-  return i2;
 }
 
 // ../packages/libs/io/file-source.ts
