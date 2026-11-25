@@ -42843,7 +42843,7 @@ function parseSectorFiles(entries) {
     const parsedSector = parseSector(baseFile.read(), seenNodeUids);
     sector.items = sector.items.concat(
       parsedSector.items.map(
-        (item) => withDlcGuard(item, map, baseFile.scsSource)
+        (item) => withDlcGuard(__alleger(item), map, baseFile.scsSource)
       )
     );
     for (const node of parsedSector.nodes) {
@@ -43707,6 +43707,10 @@ function checkReference(ref, store, fieldName, item) {
       );
     }
   }
+}
+function __alleger(i2) {
+  if (i2.type === 1 /* Terrain */) return { type: i2.type, uid: i2.uid, startNodeUid: i2.startNodeUid, endNodeUid: i2.endNodeUid };
+  return i2;
 }
 
 // ../packages/libs/io/file-source.ts
