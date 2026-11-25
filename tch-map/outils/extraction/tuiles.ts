@@ -45,7 +45,9 @@ export function ecrireCarte(gj: any, outDir: string, gardes: Set<number>) {
         break;
     }
   }
+  gj.features = []; // libère le GeoJSON complet : seules les entités gardées restent
   const index = geojsonvt({ type: 'FeatureCollection', features: feats } as any, { maxZoom: ZMAX, indexMaxZoom: 5, indexMaxPoints: 100000, tolerance: 3, buffer: 64 });
+  feats.length = 0;
   const tuiles: Record<string, [number, number]> = {};
   const bin = fs.openSync(path.join(outDir, 'tuiles.bin.tmp'), 'w');
   let pos = 0;

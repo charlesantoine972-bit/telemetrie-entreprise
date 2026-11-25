@@ -662,6 +662,11 @@
 .modrow details{font-size:12px;color:var(--muted);margin-top:4px}
 .modrow details code{display:block;white-space:pre-wrap;word-break:break-all}
 .tchprep{margin-bottom:14px}
+.tchmini{position:fixed;right:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:600 12.5px/1 inherit;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}
+.tchmini[hidden]{display:none}
+.tchmini .spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:tchspin 1s linear infinite}
+@keyframes tchspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.tchmini .spin{animation:none}}
 .tchprep .soft{font-weight:400}
 .tchbar{height:6px;border-radius:4px;background:var(--line);margin-top:10px;overflow:hidden}
 .tchbar i{display:block;height:100%;width:0;background:var(--accent);transition:width .6s ease}
@@ -2343,10 +2348,30 @@ document.getElementById('mapFollow').addEventListener('click', () => { if (hasTc
 document.querySelectorAll('[data-mapgame]').forEach(b => b.addEventListener('click', () => { if (hasTch() && mapEngine === 'tch' && state.view === 'cartePerso') window.tel.tchMap.visible(true, { game: b.dataset.mapgame }); }));
 
 /* Carte du jeu : préparée une fois par version du jeu, en lisant les fichiers du jeu (lecture seule) */
-const TCH_ETAPES = { lecture: ['Lecture des fichiers du jeu…', 8, 70], conversion: ['Assemblage des routes et des villes…', 70, 90], tuiles: ['Découpage de la carte…', 90, 98] };
-let tchPrepGame = null, tchPrepTimer = null;
+const TCH_ETAPES = { lecture: 'Lecture des fichiers du jeu', conversion: 'Assemblage des routes et des villes', tuiles: 'Découpage de la carte' };
+let tchPrepGame = null, tchPrepTimer = null, tchPrepDernier = null;
 const tchPrepJeu = () => (typeof M !== 'undefined' && M.game) || activeGame || 'ets2';
 const fmtMin = (s) => s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')}`;
+// Avancement réel : lecture = secteurs lus / total (0 → 65 %), assemblage estimé (65 → 95 %), découpage (95 → 99 %)
+function tchPrepPct(st, s) {
+  if (st.etape === 'tuiles') return 97;
+  if (st.etape === 'conversion') { const d = Math.max(0, s - (st.debutConv || s)); return 65 + 30 * Math.min(1, d / 50); }
+  return st.total ? 2 + 63 * (st.fait / st.total) : 2;
+}
+// Petit indicateur discret, visible sur toutes les pages pendant la préparation (comme une mise à jour en arrière-plan)
+function tchPrepMini(st) {
+  let el = document.getElementById('tchPrepMini');
+  if (!el) {
+    el = document.createElement('button');
+    el.id = 'tchPrepMini'; el.className = 'tchmini'; el.type = 'button';
+    el.title = 'Préparation de la carte du jeu, en arrière-plan';
+    el.onclick = () => { if (typeof go === 'function') go('cartePerso'); };
+    document.body.appendChild(el);
+  }
+  if (!st) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = `<span class="spin" aria-hidden="true"></span><span>Carte du jeu ${Math.round(st.pct)} %</span>`;
+}
 function tchPrepAfficher(st) {
   const box = document.getElementById('tchPrep'), txt = document.getElementById('tchPrepTxt'), btn = document.getElementById('tchPrepBtn');
   const ann = document.getElementById('tchPrepAnnuler'), barW = document.getElementById('tchPrepBarWrap'), bar = document.getElementById('tchPrepBar');
@@ -2354,21 +2379,29 @@ function tchPrepAfficher(st) {
   const nom = st.game === 'ats' ? 'ATS' : 'ETS2';
   btn.hidden = true; ann.hidden = true; barW.hidden = true;
   clearInterval(tchPrepTimer); tchPrepTimer = null;
-  if (st.etat === 'en-cours' || TCH_ETAPES[st.etape] || st.etape === 'lecture') {
-    const [lib, a, b] = TCH_ETAPES[st.etape] || TCH_ETAPES.lecture;
+  if (st.etat === 'en-cours' || TCH_ETAPES[st.etape]) {
+    if (st.etape === 'conversion' && !(tchPrepDernier && tchPrepDernier.etape === 'conversion')) st.debutConv = st.s || 0;
+    else if (tchPrepDernier && tchPrepDernier.debutConv != null) st.debutConv = tchPrepDernier.debutConv;
+    tchPrepDernier = st;
     const debut = Date.now() - (st.s || 0) * 1000;
-    // Progression estimée (la lecture prend ~3 à 4 min sur un PC courant)
-    const maj = () => { const s = Math.round((Date.now() - debut) / 1000); const f = st.etape === 'lecture' || !st.etape ? Math.min(1, s / 220) : .6; bar.style.width = (a + (b - a) * f) + '%'; txt.textContent = `${nom} — ${lib} (${fmtMin(s)}). Tu peux continuer à utiliser l’appli.`; };
+    const maj = () => {
+      const s = Math.round((Date.now() - debut) / 1000), pct = tchPrepPct(st, s);
+      bar.style.width = pct + '%';
+      const lu = st.etape === 'lecture' && st.total ? ` — ${st.fait} / ${st.total} morceaux` : '';
+      txt.textContent = `${nom} — ${TCH_ETAPES[st.etape] || TCH_ETAPES.lecture}${lu} (${fmtMin(s)}). En arrière-plan : tu peux continuer à utiliser l’appli et jouer.`;
+      tchPrepMini({ pct });
+    };
     maj(); tchPrepTimer = setInterval(maj, 1000);
     barW.hidden = false; ann.hidden = false;
     return;
   }
+  tchPrepDernier = null; tchPrepMini(null);
   if (st.etape === 'erreur') { txt.textContent = `${nom} — la préparation a échoué : ${st.message}`; btn.textContent = 'Réessayer'; btn.hidden = false; return; }
   const v = st.version ? ` (version ${st.version})` : '';
   if (st.etat === 'a-jour') { txt.textContent = `${nom} — à jour${v}, toutes tes DLC comprises.`; btn.textContent = 'Refaire'; btn.hidden = false; btn.classList.remove('on'); return; }
-  if (st.etat === 'perimee') { txt.textContent = `${nom} — le jeu ou tes DLC ont changé depuis la dernière préparation${v}.`; btn.textContent = 'Mettre à jour la carte'; btn.hidden = false; btn.classList.add('on'); return; }
+  if (st.etat === 'perimee') { txt.textContent = `${nom} — le jeu ou tes DLC ont changé depuis la dernière préparation${v}. Elle se refait toute seule au prochain lancement.`; btn.textContent = 'Mettre à jour maintenant'; btn.hidden = false; btn.classList.add('on'); return; }
   if (st.etat === 'sans-jeu') { txt.textContent = `${nom} — jeu introuvable : indique son dossier dans Paramètres → Jeu.`; return; }
-  txt.textContent = `${nom} — pas encore préparée. L’appli lit la carte dans tes fichiers du jeu, en lecture seule : environ 5 minutes, une fois par version du jeu.`;
+  txt.textContent = `${nom} — pas encore préparée. L’appli lit la carte dans tes fichiers du jeu, en arrière-plan et en lecture seule (environ 1 à 2 minutes, une fois par version du jeu).`;
   btn.textContent = 'Préparer la carte'; btn.hidden = false; btn.classList.add('on');
 }
 async function tchPrepMaj() {
@@ -2378,7 +2411,9 @@ async function tchPrepMaj() {
 }
 if (hasTch() && window.tel.tchMap.onProgression) {
   window.tel.tchMap.onProgression((m) => {
-    if (m.game !== tchPrepGame) return;
+    if (m.etape === 'fini' || m.etape === 'erreur') tchPrepMini(null);
+    if (m.game !== (tchPrepGame || tchPrepJeu())) { if (TCH_ETAPES[m.etape]) tchPrepMini({ pct: m.total ? 2 + 63 * m.fait / m.total : 2 }); return; }
+    tchPrepGame = m.game;
     if (m.etape === 'fini') { tchPrepMaj(); return; }
     tchPrepAfficher(m.etape === 'erreur' ? m : { ...m, etat: 'en-cours' });
   });

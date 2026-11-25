@@ -24577,14 +24577,14 @@ var require_dynamicDefaults = __commonJS({
         compile(schema, _parentSchema, it) {
           if (!it.opts.useDefaults || it.compositeRule)
             return () => true;
-          const fs8 = {};
+          const fs7 = {};
           for (const key in schema)
-            fs8[key] = getDefault(schema[key]);
+            fs7[key] = getDefault(schema[key]);
           const empty = it.opts.useDefaults === "empty";
           return (data) => {
             for (const prop in schema) {
               if (data[prop] === void 0 || empty && (data[prop] === null || data[prop] === "")) {
-                data[prop] = fs8[prop]();
+                data[prop] = fs7[prop]();
               }
             }
             return true;
@@ -25883,7 +25883,7 @@ var require_utils2 = __commonJS({
 var require_fattr = __commonJS({
   "../../../../ext/maps/node_modules/adm-zip/util/fattr.js"(exports2, module2) {
     var pth = require("path");
-    module2.exports = function(path8, { fs: fs8 }) {
+    module2.exports = function(path8, { fs: fs7 }) {
       var _path = path8 || "", _obj = newAttr(), _stat = null;
       function newAttr() {
         return {
@@ -25895,8 +25895,8 @@ var require_fattr = __commonJS({
           atime: 0
         };
       }
-      if (_path && fs8.existsSync(_path)) {
-        _stat = fs8.statSync(_path);
+      if (_path && fs7.existsSync(_path)) {
+        _stat = fs7.statSync(_path);
         _obj.directory = _stat.isDirectory();
         _obj.mtime = _stat.mtime;
         _obj.atime = _stat.atime;
@@ -36265,7 +36265,7 @@ var require_vt_pbf = __commonJS({
 
 // extraire.ts
 var import_fs6 = __toESM(require("fs"));
-var import_os = __toESM(require("os"));
+var import_os2 = __toESM(require("os"));
 var import_path7 = __toESM(require("path"));
 
 // dir-archive.ts
@@ -44008,857 +44008,8 @@ var ScsArchiveDirectory = class extends ScsArchiveEntry {
   }
 };
 
-// ../../../../ext/maps/packages/clis/parser/game-files/sector-parser.ts
-var quadInfo = new r3.Struct({
-  materials: new r3.Array(
-    new r3.Struct({
-      token: token64,
-      rot: r3.uint16le
-    }),
-    r3.uint16le
-  ),
-  colors: new r3.Array(r3.uint32le, r3.uint16le),
-  sizeX: r3.uint16le,
-  sizeY: r3.uint16le,
-  storage: new r3.Array(r3.uint32le, r3.uint32le),
-  offsets: new r3.Array(
-    new r3.Struct({
-      x: r3.uint16le,
-      y: r3.uint16le,
-      normal: float3
-    }),
-    r3.uint32le
-  ),
-  normals: new r3.Array(
-    new r3.Struct({
-      x: r3.uint16le,
-      y: r3.uint16le,
-      normal: float3
-    }),
-    r3.uint32le
-  )
-});
-var vegetationSpheres = new r3.Array(
-  new r3.Struct({
-    center: float3,
-    radius: r3.floatle,
-    type: r3.uint32le
-  }),
-  r3.uint32le
-);
-var SimpleItemStruct = {
-  header: {
-    // Note: care must be taken to _not_ reuse header keys
-    // in the versioned struct keys below, as the keys get
-    // merged during decoding.
-    uid: uint64le,
-    pos: float3,
-    posR: float3,
-    rot: float3,
-    padding: new r3.Reserved(r3.floatle, 1),
-    flags: r3.uint32le,
-    viewDistance: r3.uint8
-    // uncomment this to get console output of the above item headers.
-    // useful for finding node UIDs of items that may have changed between
-    // game versions.
-    //debugStruct,
-  },
-  [1 /* Terrain */]: {
-    startNodeUid: uint64le,
-    endNodeUid: uint64le,
-    node0Offset: float3,
-    node1Offset: float3,
-    length: r3.floatle,
-    previousLength: r3.floatle,
-    randomSeed: r3.uint32le,
-    railings: new r3.Array(
-      new r3.Struct({
-        token: token64,
-        offset: r3.uint16le
-      }),
-      3
-    ),
-    terrains: new r3.Array(
-      new r3.Struct({
-        size: r3.uint16le,
-        profile: token64,
-        coef: r3.floatle,
-        prevProfile: token64,
-        prevCoef: r3.floatle,
-        vegetation: new r3.Array(
-          new r3.Struct({
-            token: token64,
-            density: r3.uint16le,
-            highPolyDistance: r3.uint8,
-            scaleType: r3.uint8,
-            start: r3.uint16le,
-            end: r3.uint16le
-          }),
-          3
-        ),
-        dvdm: r3.uint16le,
-        dvd: r3.uint16le
-      }),
-      2
-    ),
-    vegetationSpheres,
-    rightQuad: quadInfo,
-    leftQuad: quadInfo,
-    rightEdge: token64,
-    rightEdgeLook: token64,
-    leftEdge: token64,
-    leftEdgeLook: token64
-  },
-  [2 /* Building */]: {
-    scheme: token64,
-    lookOverride: token64,
-    startNodeUid: uint64le,
-    endNodeUid: uint64le,
-    length: r3.floatle,
-    seed: r3.uint32le,
-    stretchCoef: r3.floatle,
-    heightOffsets: new r3.Array(r3.floatle, r3.uint32le)
-  },
-  [3 /* Road */]: {
-    flags1: r3.uint8,
-    dlcGuard: r3.uint8,
-    flags2: r3.uint16le,
-    roadLook: token64,
-    rightLanesVariant: token64,
-    leftLanesVariant: token64,
-    rightTemplateVariant: token64,
-    leftTemplateVariant: token64,
-    rightEdgeRight: token64,
-    rightEdgeLeft: token64,
-    leftEdgeRight: token64,
-    leftEdgeLeft: token64,
-    rightProfile: token64,
-    rightProfileCoef: r3.floatle,
-    leftProfile: token64,
-    leftProfileCoef: r3.floatle,
-    rightTemplateLook: token64,
-    leftTemplateLook: token64,
-    material: token64,
-    railings: new r3.Array(
-      new r3.Struct({
-        rightRailing: token64,
-        rightRailingOffset: r3.int16le,
-        leftRailing: token64,
-        leftRailingOffset: r3.int16le
-      }),
-      3
-    ),
-    rightRoadHeight: r3.int32le,
-    leftRoadHeight: r3.int32le,
-    startNodeUid: uint64le,
-    endNodeUid: uint64le,
-    length: r3.floatle
-  },
-  [4 /* Prefab */]: {
-    model: token64,
-    variant: token64,
-    parts: new r3.Array(token64, r3.uint32le),
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    connectedItemUids: new r3.Array(uint64le, r3.uint32le),
-    ferryLink: uint64le,
-    originIndex: r3.uint16le,
-    terrainInfos: new r3.Array(
-      new r3.Struct({
-        token: token64,
-        coef: r3.floatle
-      }),
-      (parent) => parent.nodeUids.length
-    ),
-    semaphoreProfile: token64
-  },
-  [5 /* Model */]: {
-    token: token64,
-    look: token64,
-    variant: token64,
-    addParts: new r3.Array(token64, r3.uint32le),
-    nodeUid: uint64le,
-    scale: float3,
-    material: token64,
-    color: r3.uint32le,
-    terrainRot: r3.floatle
-  },
-  [6 /* Company */]: {
-    cityName: token64,
-    prefabUid: uint64le,
-    overlayName: token64,
-    nodeUid: uint64le,
-    nodes: new r3.Array(
-      new r3.Struct({
-        nodeUid: uint64le,
-        nodeFlag: r3.uint32le
-      }),
-      r3.uint32le
-    )
-  },
-  [7 /* Service */]: {
-    nodeUid: uint64le,
-    prefabUid: uint64le,
-    subItemUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [8 /* CutPlane */]: {
-    nodeUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [9 /* Mover */]: {
-    tags: new r3.Array(token64, r3.uint32le),
-    model: token64,
-    look: token64,
-    variant: token64,
-    speed: r3.floatle,
-    endDelay: r3.floatle,
-    width: r3.floatle,
-    count: r3.uint32le,
-    lengths: new r3.Array(r3.floatle, r3.uint32le),
-    nodeUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [11 /* NoWeather */]: {
-    width: r3.floatle,
-    height: r3.floatle,
-    fogMaskPresetId: r3.int32le,
-    // new in v901.
-    unknown: new r3.Reserved(r3.uint8, 16),
-    nodeUid: uint64le
-  },
-  [12 /* City */]: {
-    token: token64,
-    width: r3.floatle,
-    height: r3.floatle,
-    nodeUid: uint64le
-  },
-  [13 /* Hinge */]: {
-    token: token64,
-    look: token64,
-    nodeUid: uint64le,
-    minRot: r3.floatle,
-    maxRot: r3.floatle
-  },
-  [18 /* MapOverlay */]: {
-    name: token64,
-    nodeUid: uint64le
-  },
-  [19 /* Ferry */]: {
-    ferryPort: token64,
-    prefabUid: uint64le,
-    nodeUid: uint64le,
-    unloadOffset: float3
-  },
-  [22 /* Garage */]: {
-    cityName: token64,
-    // TODO verify type and nodeUid values and prefab values
-    type: r3.uint32le,
-    nodeUid: uint64le,
-    prefabUid: uint64le,
-    childItemUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [23 /* CameraPoint */]: {
-    tags: new r3.Array(token64, r3.uint32le),
-    nodeUid: uint64le
-  },
-  [34 /* Trigger */]: {
-    tags: new r3.Array(token64, r3.uint32le),
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    actions: new r3.Array(
-      new r3.Struct({
-        action: token64,
-        hasOverride: r3.int32le,
-        overrideValues: new r3.Array(r3.uint32le, "hasOverride"),
-        override: new r3.Optional(
-          new r3.Struct({
-            params: new r3.Array(uint64String, r3.uint32le),
-            targetTags: new r3.Array(uint64le, r3.uint32le),
-            range: r3.floatle,
-            type: r3.uint32le
-          }),
-          (parent) => parent.hasOverride >= 0
-        )
-      }),
-      r3.uint32le
-    ),
-    radius: new r3.Optional(
-      r3.floatle,
-      (parent) => parent.nodeUids.length === 1
-    )
-  },
-  [35 /* FuelPump */]: {
-    nodeUid: uint64le,
-    prefabUid: uint64le,
-    childItemUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [36 /* Sign */]: {
-    token: token64,
-    nodeUid: uint64le,
-    look: token64,
-    variant: token64,
-    boards: new r3.Array(
-      new r3.Struct({
-        token: token64,
-        city1: token64,
-        city2: token64
-      }),
-      r3.uint8
-    ),
-    overrideTemplate: uint64String,
-    overrides: new r3.Optional(
-      new r3.Struct({
-        boards: new r3.Array(
-          new r3.Struct({
-            areaName: token64,
-            flags: r3.uint8,
-            offsets: new r3.Optional(
-              new r3.Struct({
-                x: r3.int8,
-                y: r3.int8
-              }),
-              (parent) => (parent.flags & 1) !== 0
-            ),
-            token: new r3.Optional(
-              token64,
-              (parent) => (parent.flags & 2) !== 0
-            )
-          }),
-          r3.uint32le
-        ),
-        items: new r3.Array(
-          new r3.Struct({
-            id: r3.uint32le,
-            areaName: token64,
-            attributes: new r3.Array(
-              new r3.VersionedStruct(r3.uint16le, {
-                header: {
-                  index: r3.uint32le
-                },
-                1: {
-                  value: r3.int8
-                },
-                2: {
-                  value: r3.int32le
-                },
-                3: {
-                  value: r3.uint32le
-                },
-                4: {
-                  value: r3.floatle
-                },
-                5: {
-                  value: uint64String
-                },
-                6: {
-                  value: uint64le
-                }
-              }),
-              r3.uint32le
-            )
-          }),
-          r3.uint32le
-        )
-        //debugStruct,
-      }),
-      (parent) => parent.overrideTemplate != ""
-    )
-  },
-  [37 /* BusStop */]: {
-    cityName: token64,
-    prefabUid: uint64le,
-    nodeUid: uint64le
-  },
-  // Possibly useful for mapping?
-  [38 /* TrafficRule */]: {
-    tags: new r3.Array(token64, r3.uint32le),
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    ruleId: token64,
-    range: r3.floatle
-  },
-  [39 /* BezierPatch */]: {
-    controlPoints: new r3.Array(float3, 16),
-    xTess: r3.uint16le,
-    zTess: r3.uint16le,
-    nodeUid: uint64le,
-    randomSeed: r3.uint32le,
-    vegetation: new r3.Array(
-      new r3.Struct({
-        token: token64,
-        sparsity: r3.uint16le,
-        scale: r3.uint8
-      }),
-      3
-    ),
-    vegetationSpheres,
-    quadInfo
-  },
-  [41 /* TrajectoryItem */]: {
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    flags2: uint64le,
-    routeRules: new r3.Array(
-      new r3.Struct({
-        node: r3.uint32le,
-        rule: token64,
-        padding: new r3.Reserved(r3.uint32le),
-        params: float3
-      }),
-      r3.uint32le
-    ),
-    checkpoints: new r3.Array(
-      new r3.Struct({
-        route: token64,
-        checkpoint: token64
-      }),
-      r3.uint32le
-    ),
-    tags: new r3.Array(token64, r3.uint32le)
-  },
-  [42 /* MapArea */]: {
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    colorIndex: r3.uint32le
-  },
-  [43 /* FarModel */]: {
-    width: r3.floatle,
-    height: r3.floatle,
-    models: new r3.Array(
-      new r3.Struct({
-        token: token64,
-        scale: float3
-      }),
-      r3.uint32le
-    ),
-    childUids: new r3.Array(uint64le, r3.uint32le),
-    nodeUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [44 /* Curve */]: {
-    startNodeUid: uint64le,
-    endNodeUid: uint64le,
-    paddingUids: new r3.Array(uint64le, 2),
-    length: r3.floatle,
-    subcurveUseMask: r3.uint32le,
-    subcurves: new r3.Array(
-      new r3.Struct({
-        model: token64,
-        flags: r3.uint32le,
-        randomSeed: r3.uint32le,
-        stretchCoef: r3.floatle,
-        scale: r3.floatle,
-        fixedStep: r3.floatle,
-        material: token64,
-        color: r3.uint32le,
-        terrainRot: r3.floatle,
-        firstPart: token64,
-        lastPart: token64,
-        centerPartVariation: token64,
-        modelLook: token64,
-        heightOffsets: new r3.Array(r3.floatle, r3.uint32le),
-        initialHeightOffset: r3.floatle,
-        offsetFromBaseCurveStartX: r3.floatle,
-        offsetFromBaseCurveStartY: r3.floatle,
-        offsetFromBaseCurveEndX: r3.floatle,
-        offsetFromBaseCurveEndY: r3.floatle
-      }),
-      (parent) => {
-        let n2 = parent.subcurveUseMask;
-        let count = 0;
-        while (n2 !== 0) {
-          n2 &= n2 - 1;
-          count++;
-        }
-        return count;
-      }
-    )
-  },
-  [45 /* CameraPath */]: {
-    tags: new r3.Array(token64, r3.uint32le),
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    trackPointNodeUids: new r3.Array(uint64le, r3.uint32le),
-    curveControlNodeUids: new r3.Array(uint64le, r3.uint32le),
-    keyFrames: new r3.Array(
-      new r3.Struct({
-        speedChange: r3.int32le,
-        rotationChange: r3.int32le,
-        speedCoef: r3.floatle,
-        fov: r3.floatle,
-        backwardTangentPos: float3,
-        forwardTangentPos: float3
-      }),
-      r3.uint32le
-    ),
-    speed: r3.floatle
-  },
-  [46 /* Cutscene */]: {
-    tags: new r3.Array(token64, r3.uint32le),
-    nodeUid: uint64le,
-    actions: new r3.Array(
-      new r3.Struct({
-        params: new r3.Array(r3.uint32le, r3.uint32le),
-        stringParams: new r3.Array(uint64String, r3.uint32le),
-        targetTags: new r3.Array(uint64le, r3.uint32le),
-        range: r3.floatle,
-        actionFlags: r3.uint32le
-      }),
-      r3.uint32le
-    )
-  },
-  [47 /* Hookup */]: {
-    name: uint64String,
-    nodeUid: uint64le
-  },
-  [48 /* VisibilityArea */]: {
-    nodeUid: uint64le,
-    width: r3.floatle,
-    height: r3.floatle,
-    childItemUids: new r3.Array(uint64le, r3.uint32le)
-  },
-  [49 /* Gate */]: {
-    model: token64,
-    nodeUids: new r3.Array(uint64le, r3.uint32le),
-    activationPointUnits: new r3.Array(
-      new r3.Struct({
-        triggerUnitName: uint64String,
-        triggerNodeIndex: r3.int32le
-      }),
-      2
-    )
-  }
-};
-var SectorNode = new r3.Struct({
-  uid: uint64le,
-  pos: new r3.Array(r3.int32le, 3),
-  rot: float4,
-  backwardItemUid: uint64le,
-  forwardItemUid: uint64le,
-  flags: r3.uint32le
-});
-var SimpleItem = new r3.VersionedStruct(r3.uint32le, SimpleItemStruct);
-var ComplexItem = new r3.VersionedStruct(r3.uint32le, {
-  ...SimpleItemStruct,
-  [40 /* Compound */]: {
-    nodeUid: uint64le,
-    childItems: new r3.Array(SimpleItem, r3.uint32le),
-    childNodes: new r3.Array(SectorNode, r3.uint32le)
-  }
-});
-var Sector = new r3.Struct({
-  version: r3.uint32le,
-  gameId: token64,
-  padding: new r3.Reserved(r3.uint32le),
-  items: new r3.Array(ComplexItem, r3.uint32le),
-  nodes: new r3.Array(SectorNode, r3.uint32le),
-  visibleAreaChildUids: new r3.Array(uint64le, r3.uint32le)
-});
-var versionWarnings = /* @__PURE__ */ new Set();
-function parseSector(buffer, ignoreNodeUids) {
-  const version = buffer.readUint32LE();
-  if (version !== 907) {
-    if (!versionWarnings.has(version)) {
-      logger.warn("unknown .base file version", version);
-      logger.warn("errors may come up, and parse results may be inaccurate.");
-      versionWarnings.add(version);
-    }
-  }
-  const str = new r3.DecodeStream(buffer);
-  const sector = Sector.decode(str);
-  if (str.pos !== buffer.length) {
-    logger.error(
-      "not enough bytes read; expected / actual",
-      buffer.length,
-      str.pos
-    );
-    throw new Error();
-  }
-  const simples = {
-    items: sector.items.map((ri) => {
-      switch (ri.version) {
-        case 3 /* Road */:
-          return toRoad(ri);
-        case 4 /* Prefab */:
-          return toPrefab(ri);
-        case 42 /* MapArea */:
-          return toMapArea(ri);
-        case 12 /* City */:
-          return toCityArea(ri);
-        case 18 /* MapOverlay */:
-          return toMapOverlay(ri);
-        case 19 /* Ferry */:
-          return toFerry(ri);
-        case 6 /* Company */:
-          return toCompany(ri);
-        case 46 /* Cutscene */:
-          return toCutscene(ri);
-        case 34 /* Trigger */:
-          return toTrigger(ri);
-        case 36 /* Sign */:
-          return toSignWithText(ri);
-        case 5 /* Model */:
-          return toModel(ri);
-        case 1 /* Terrain */:
-          return toTerrain(ri);
-        case 2 /* Building */:
-          return toBuilding(ri);
-        case 44 /* Curve */:
-          return toCurve(ri);
-        case 41 /* TrajectoryItem */:
-          return toTrajectoryItem(ri);
-        default:
-          return void 0;
-      }
-    }).filter((i2) => i2 != null),
-    nodes: sector.nodes.reduce((acc, n2) => {
-      if (!ignoreNodeUids.has(n2.uid)) {
-        acc.push(toNode(n2));
-      }
-      return acc;
-    }, [])
-  };
-  const moreItems = [];
-  const moreNodes = [];
-  for (const ri of sector.items) {
-    if (ri.version !== 40 /* Compound */) {
-      continue;
-    }
-    for (const ci of ri.childItems) {
-      let pushNodes = false;
-      if (ci.version === 5 /* Model */) {
-        moreItems.push(toModel(ci));
-        pushNodes = true;
-      } else if (ci.version === 2 /* Building */) {
-        const b2 = toBuilding(ci);
-        if (b2) {
-          moreItems.push(b2);
-          pushNodes = true;
-        }
-      } else if (ci.version === 44 /* Curve */) {
-        const c3 = toCurve(ci);
-        if (c3) {
-          moreItems.push(c3);
-          pushNodes = true;
-        }
-      }
-      if (pushNodes) {
-        moreNodes.push(...ri.childNodes.map(toNode));
-      }
-    }
-  }
-  return {
-    items: simples.items.concat(moreItems),
-    nodes: simples.nodes.concat(moreNodes)
-  };
-}
-function toBaseItem(rawItem) {
-  return {
-    uid: rawItem.uid,
-    type: rawItem.version,
-    x: rawItem.pos[0],
-    y: rawItem.pos[2]
-  };
-}
-function toRoad(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    dlcGuard: rawItem.dlcGuard,
-    //                          ┌─ bit 25 (0-based)
-    hidden: (rawItem.flags & 33554432) !== 0 ? true : void 0,
-    //                             ┌─ bit 16 (0-based)
-    secret: (rawItem.flags & 65536) !== 0 ? true : void 0,
-    roadLookToken: rawItem.roadLook,
-    startNodeUid: rawItem.startNodeUid,
-    endNodeUid: rawItem.endNodeUid,
-    length: rawItem.length
-  };
-}
-function toPrefab(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    dlcGuard: (rawItem.flags & 65280) >> 8,
-    token: rawItem.model,
-    //                             ┌─ bit 17 (0-based)
-    hidden: (rawItem.flags & 131072) !== 0 ? true : void 0,
-    //                                  ┌─ bit 5 (0-based)
-    secret: (rawItem.flags & 32) !== 0 ? true : void 0,
-    //                                   ┌─ bit 0 (0-based)
-    tunnel: (rawItem.flags & 1) !== 0 ? true : void 0,
-    //                                             ┌─ bit 1 (0-based)
-    customSemaphores: (rawItem.flags & 2) !== 0 ? true : void 0,
-    //                                     ┌─ bit 19 (0-based)
-    showSemaphores: (rawItem.flags & 524288) !== 0 ? true : void 0,
-    ferryLinkUid: rawItem.ferryLink || void 0,
-    nodeUids: rawItem.nodeUids,
-    originNodeIndex: rawItem.originIndex
-  };
-}
-function toMapArea(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    dlcGuard: (rawItem.flags & 65280) >> 8,
-    drawOver: (rawItem.flags & 1) !== 0 ? true : void 0,
-    //                                  ┌─ bit 4 (0-based)
-    secret: (rawItem.flags & 268435472) !== 0 ? true : void 0,
-    nodeUids: rawItem.nodeUids,
-    color: MapAreaColorUtils.from(rawItem.colorIndex)
-  };
-}
-function toCityArea(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    token: rawItem.token,
-    hidden: (rawItem.flags & 1) !== 0,
-    width: rawItem.width,
-    height: rawItem.height
-  };
-}
-function toMapOverlay(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    dlcGuard: (rawItem.flags & 65280) >> 8,
-    //                             ┌─ bit 16 (0-based)
-    secret: (rawItem.flags & 65536) !== 0 ? true : void 0,
-    overlayType: MapOverlayTypeUtils.from(rawItem.flags & 15),
-    token: rawItem.name,
-    nodeUid: rawItem.nodeUid
-  };
-}
-function toFerry(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    token: rawItem.ferryPort,
-    train: (rawItem.flags & 1) !== 0,
-    prefabUid: rawItem.prefabUid,
-    nodeUid: rawItem.nodeUid
-  };
-}
-function toCompany(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    token: rawItem.overlayName,
-    cityToken: rawItem.cityName,
-    prefabUid: rawItem.prefabUid,
-    nodeUid: rawItem.nodeUid
-  };
-}
-function toCutscene(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    dlcGuard: (rawItem.flags & 65280) >> 8,
-    //                         ┌─ bit 28 (0-based)
-    secret: (rawItem.flags & 268435456) !== 0 ? true : void 0,
-    flags: rawItem.flags,
-    tags: rawItem.tags,
-    nodeUid: rawItem.nodeUid,
-    actionStringParams: rawItem.actions.flatMap((action) => action.stringParams)
-    // TODO search actions.stringParams "ui_value" for @@ localization string name
-  };
-}
-function toTrigger(rawItem) {
-  const actionsMap = new Map(
-    rawItem.actions.map((a2) => [a2.action, a2.override ? a2.override.params : []])
-  );
-  return {
-    ...toBaseItem(rawItem),
-    dlcGuard: (rawItem.flags & 65280) >> 8,
-    //                             ┌─ bit 18 (0-based)
-    secret: (rawItem.flags & 262144) !== 0 ? true : void 0,
-    actions: [...actionsMap.entries()],
-    nodeUids: rawItem.nodeUids
-  };
-}
-function toSignWithText(rawItem) {
-  const textItems = [];
-  for (const attr of (rawItem.overrides ?? { items: [] }).items.flatMap(
-    (item) => item.attributes
-  )) {
-    if (attr.version === 5) {
-      textItems.push(attr.value);
-    }
-  }
-  if (textItems.length === 0) {
-    return void 0;
-  }
-  return {
-    ...toBaseItem(rawItem),
-    token: rawItem.token,
-    nodeUid: rawItem.nodeUid,
-    textItems
-  };
-}
-function toBuilding(rawItem) {
-  if (rawItem.scheme !== "scheme20") {
-    return;
-  }
-  return {
-    ...toBaseItem(rawItem),
-    scheme: rawItem.scheme,
-    startNodeUid: rawItem.startNodeUid,
-    endNodeUid: rawItem.endNodeUid
-  };
-}
-function toCurve(rawItem) {
-  assert(rawItem.subcurves.length >= 1, "curve has no subcurves");
-  if (rawItem.subcurves.every((sc) => sc.model !== "0i03a") && rawItem.subcurves.every((sc) => sc.model !== "0i03b")) {
-    return;
-  }
-  return {
-    ...toBaseItem(rawItem),
-    subcurves: rawItem.subcurves.map((sc) => ({
-      model: sc.model,
-      look: sc.modelLook,
-      numBuildings: sc.heightOffsets.length
-    })),
-    startNodeUid: rawItem.startNodeUid,
-    endNodeUid: rawItem.endNodeUid
-  };
-}
-function toTrajectoryItem(rawItem) {
-  if (!rawItem.checkpoints.some((c3) => c3.checkpoint === "offer_point")) {
-    return;
-  }
-  return {
-    ...toBaseItem(rawItem),
-    nodeUids: rawItem.nodeUids,
-    checkpoints: rawItem.checkpoints
-  };
-}
-function toModel(rawItem) {
-  const [sx, sy, sz] = rawItem.scale;
-  return {
-    ...toBaseItem(rawItem),
-    token: rawItem.token,
-    nodeUid: rawItem.nodeUid,
-    scale: { x: sx, y: sz, z: sy }
-  };
-}
-function toTerrain(rawItem) {
-  return {
-    ...toBaseItem(rawItem),
-    startNodeUid: rawItem.startNodeUid,
-    endNodeUid: rawItem.endNodeUid,
-    length: rawItem.length
-  };
-}
-function toNode(rawNode) {
-  const [qw, , qy] = rawNode.rot;
-  const rotation = normalizeRadians(Math.atan2(-qy, qw) * 2 - Math.PI / 2);
-  return {
-    uid: rawNode.uid,
-    x: rawNode.pos[0] / 256,
-    y: rawNode.pos[2] / 256,
-    z: rawNode.pos[1] / 256,
-    rotation,
-    rotationQuat: rawNode.rot,
-    forwardItemUid: rawNode.forwardItemUid,
-    backwardItemUid: rawNode.backwardItemUid,
-    forwardCountryId: (rawNode.flags & 65280) >> 8,
-    backwardCountryId: (rawNode.flags & 16711680) >> 16
-    // playerVehicleTypeChange: isBitSetU32(rawNode.flags, 4) ? true : undefined,
-    // forwardTruck: isBitSetU32(rawNode.flags, 5),
-    // forwardBus: isBitSetU32(rawNode.flags, 6),
-    // forwardCar: isBitSetU32(rawNode.flags, 7),
-    // backwardTruck: isBitSetU32(rawNode.flags, 28),
-    // backwardBus: isBitSetU32(rawNode.flags, 29),
-    // backwardCar: isBitSetU32(rawNode.flags, 30),
-  };
-}
-
 // ../../../../ext/maps/packages/clis/parser/game-files/map-files-parser.ts
-function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
+async function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
   const requiredFiles = /* @__PURE__ */ new Set([
     "base.scs",
     "base_map.scs",
@@ -44902,7 +44053,7 @@ function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
         defData: toDefData(defData, l10n)
       };
     }
-    const sectorData = parseSectorFiles(entries, defData);
+    const sectorData = await parseSectorFiles(entries, defData);
     return {
       ...baseResult,
       data: "all",
@@ -44926,7 +44077,7 @@ function parseVersionSii(entries) {
   logger.info("parsing", application, version);
   return { application, version };
 }
-function parseSectorFiles(entries, __defs) {
+async function parseSectorFiles(entries, __defs) {
   const mapDir = Preconditions.checkExists(entries.directories.get("map"));
   const mbds = mapDir.files.filter((f3) => f3.endsWith(".mbd"));
   if (mbds.length !== 1) {
@@ -44953,7 +44104,6 @@ function parseSectorFiles(entries, __defs) {
   bar.start(baseFiles.length, 0);
   const sectors = /* @__PURE__ */ new Map();
   const sectorRegex = /^sec([+-]\d{4})([+-]\d{4})$/;
-  const __garder = (it) => it.type !== 1 /* Terrain */ && !(it.type === 5 /* Model */ && __defs && !__defs.models.has(it.token));
   const __refs = /* @__PURE__ */ new Set();
   const __citer = (o3, depth = 0) => {
     if (!o3 || typeof o3 !== "object" || depth > 4) return;
@@ -44967,35 +44117,55 @@ function parseSectorFiles(entries, __defs) {
       } else if (v2 && typeof v2 === "object") __citer(v2, depth + 1);
     }
   };
-  const __cles = [];
-  for (const f3 of baseFiles) {
-    const sectorKey = f3.replace(/\.(base|aux)$/, "");
-    const m2 = sectorRegex.exec(sectorKey);
-    if (!m2) throw new Error(`unexpected sector key "${sectorKey}"`);
-    __cles.push([f3, sectorKey, parseFloat(m2[1]), parseFloat(m2[2])]);
-    const sector = putIfAbsent(sectorKey, { items: [], nodes: [] }, sectors);
-    const baseFile = assertExists(entries.files.get(`map/${map}/${f3}`));
-    const tous = { has: () => true };
-    const parsed = parseSector(baseFile.read(), tous);
-    for (const item of parsed.items) {
-      if (!__garder(item)) continue;
-      __citer(item);
-      sector.items.push(withDlcGuard(item, map, baseFile.scsSource));
+  const __paquets = [];
+  const __pool = globalThis.__tchOuvriers(__defs && [...__defs.models.keys()] || []);
+  const __enCours = [];
+  let __faits = 0;
+  try {
+    for (const f3 of baseFiles) {
+      const sectorKey = f3.replace(/\.(base|aux)$/, "");
+      if (!sectorRegex.test(sectorKey)) throw new Error(`unexpected sector key "${sectorKey}"`);
+      const sector = putIfAbsent(sectorKey, { items: [], nodes: [] }, sectors);
+      const baseFile = assertExists(entries.files.get(`map/${map}/${f3}`));
+      const buf = baseFile.read();
+      const ab2 = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length);
+      await __pool.place();
+      __enCours.push(__pool.confier(ab2).then((r4) => {
+        for (const item of r4.items) {
+          __citer(item);
+          sector.items.push(withDlcGuard(item, map, baseFile.scsSource));
+        }
+        if (r4.n) __paquets.push({ secteur: sectorKey, n: r4.n, u: new BigUint64Array(r4.u), f: new Float32Array(r4.f), c: new Uint8Array(r4.c) });
+        __faits++;
+        globalThis.__tchProgression?.(__faits, baseFiles.length);
+      }));
     }
-    bar.increment({ filename: f3 });
+    await Promise.all(__enCours);
+    if (process.env.TCH_DEBUG) console.error("ELU fil principal", require("perf_hooks").performance.eventLoopUtilization().utilization.toFixed(2));
+  } finally {
+    await __pool.fermer();
   }
-  const seenNodeUids = /* @__PURE__ */ new Set();
-  const ignorer = { has: (uid) => !__refs.has(uid) || seenNodeUids.has(uid) };
-  for (const [f3, sectorKey] of __cles) {
-    const sector = sectors.get(sectorKey);
-    const baseFile = assertExists(entries.files.get(`map/${map}/${f3}`));
-    const parsed = parseSector(baseFile.read(), ignorer);
-    for (const node of parsed.nodes) {
-      if (seenNodeUids.has(node.uid) || !__refs.has(node.uid)) continue;
-      seenNodeUids.add(node.uid);
-      sector.nodes.push(node);
+  for (const p of __paquets) {
+    const sector = sectors.get(p.secteur);
+    for (let i2 = 0; i2 < p.n; i2++) {
+      const uid = p.u[3 * i2];
+      if (!__refs.delete(uid)) continue;
+      const k2 = 8 * i2;
+      sector.nodes.push({
+        uid,
+        x: p.f[k2],
+        y: p.f[k2 + 1],
+        z: p.f[k2 + 2],
+        rotation: p.f[k2 + 3],
+        rotationQuat: [p.f[k2 + 4], p.f[k2 + 5], p.f[k2 + 6], p.f[k2 + 7]],
+        forwardItemUid: p.u[3 * i2 + 1],
+        backwardItemUid: p.u[3 * i2 + 2],
+        forwardCountryId: p.c[2 * i2],
+        backwardCountryId: p.c[2 * i2 + 1]
+      });
     }
   }
+  __paquets.length = 0;
   if (unknownScsSources.size) {
     logger.warn("encountered unknown .scs files containing map data", [
       ...unknownScsSources
@@ -46366,14 +45536,15 @@ function readArrayFile(source, filename, options = {}) {
   const basename = import_path4.default.basename(filename, ".json");
   const start = Date.now();
   const reviver = basename.endsWith("elevation") || basename.endsWith("prefabDescriptions") || basename.endsWith("nodes") ? void 0 : bigintReviver;
-  const results = JSON.parse(source.readUtf8(filename), reviver);
+  const __mem = source.memoire;
+  const results = __mem ? __mem(filename) : JSON.parse(source.readUtf8(filename), reviver);
   if (!Array.isArray(results)) {
     throw new Error();
   }
   const { transform, filter } = options;
   const transformed = transform ? results.map(transform) : results;
   const filtered = filter ? transformed.filter(filter) : transformed;
-  if (basename.endsWith("nodes")) {
+  if (basename.endsWith("nodes") && !source.memoire) {
     for (const t2 of filtered) {
       const node = t2;
       node.uid = BigInt("0x" + node.uid);
@@ -46397,15 +45568,6 @@ function toBigInt(v2) {
   assert(typeof v2 === "string" && /^[0-9a-f]+$/.test(v2));
   return BigInt("0x" + v2);
 }
-
-// ../../../../ext/maps/packages/libs/io/write.ts
-var fs4 = __toESM(require("node:fs"), 1);
-function writeArrayFile(array, outputFile) {
-  fs4.writeFileSync(outputFile, JSON.stringify(array, null, 2));
-}
-BigInt.prototype.toJSON = function() {
-  return this.toString(16);
-};
 
 // ../../../../ext/maps/packages/libs/base/equals.ts
 function areSetsEqual(a2, b2) {
@@ -47581,13 +46743,13 @@ function convertToMapGeoJson(tsMapData, options) {
   logger3.log("creating roads and quadtree of prefab-adjacent roads...");
   const roadFeatures = [];
   for (const r4 of roads.values()) {
-    const fs8 = roadToFeature(
+    const fs7 = roadToFeature(
       r4,
       assertExists(roadLooks.get(r4.roadLookToken)),
       nodes,
       dividerFeatures
     );
-    for (const f3 of fs8) {
+    for (const f3 of fs7) {
       roadFeatures.push(f3);
       if (prefabNodeUids.has(r4.startNodeUid)) {
         const node = assertExists(nodes.get(r4.startNodeUid));
@@ -48592,7 +47754,9 @@ function ecrireCarte(gj, outDir2, gardes) {
         break;
     }
   }
+  gj.features = [];
   const index = (0, import_geojson_vt.default)({ type: "FeatureCollection", features: feats }, { maxZoom: ZMAX, indexMaxZoom: 5, indexMaxPoints: 1e5, tolerance: 3, buffer: 64 });
+  feats.length = 0;
   const tuiles = {};
   const bin = import_fs5.default.openSync(import_path6.default.join(outDir2, "tuiles.bin.tmp"), "w");
   let pos = 0;
@@ -48615,35 +47779,1002 @@ function ecrireCarte(gj, outDir2, gardes) {
   return { tuiles: Object.keys(tuiles).length, octets: pos, villes: villes.length };
 }
 
+// ouvriers.ts
+var import_os = __toESM(require("os"));
+var import_worker_threads = require("worker_threads");
+
+// ../../../../ext/maps/packages/clis/parser/game-files/sector-parser.ts
+var quadInfo = new r3.Struct({
+  materials: new r3.Array(
+    new r3.Struct({
+      token: token64,
+      rot: r3.uint16le
+    }),
+    r3.uint16le
+  ),
+  colors: new r3.Array(r3.uint32le, r3.uint16le),
+  sizeX: r3.uint16le,
+  sizeY: r3.uint16le,
+  storage: new r3.Array(r3.uint32le, r3.uint32le),
+  offsets: new r3.Array(
+    new r3.Struct({
+      x: r3.uint16le,
+      y: r3.uint16le,
+      normal: float3
+    }),
+    r3.uint32le
+  ),
+  normals: new r3.Array(
+    new r3.Struct({
+      x: r3.uint16le,
+      y: r3.uint16le,
+      normal: float3
+    }),
+    r3.uint32le
+  )
+});
+var vegetationSpheres = new r3.Array(
+  new r3.Struct({
+    center: float3,
+    radius: r3.floatle,
+    type: r3.uint32le
+  }),
+  r3.uint32le
+);
+var SimpleItemStruct = {
+  header: {
+    // Note: care must be taken to _not_ reuse header keys
+    // in the versioned struct keys below, as the keys get
+    // merged during decoding.
+    uid: uint64le,
+    pos: float3,
+    posR: float3,
+    rot: float3,
+    padding: new r3.Reserved(r3.floatle, 1),
+    flags: r3.uint32le,
+    viewDistance: r3.uint8
+    // uncomment this to get console output of the above item headers.
+    // useful for finding node UIDs of items that may have changed between
+    // game versions.
+    //debugStruct,
+  },
+  [1 /* Terrain */]: {
+    startNodeUid: uint64le,
+    endNodeUid: uint64le,
+    node0Offset: float3,
+    node1Offset: float3,
+    length: r3.floatle,
+    previousLength: r3.floatle,
+    randomSeed: r3.uint32le,
+    railings: new r3.Array(
+      new r3.Struct({
+        token: token64,
+        offset: r3.uint16le
+      }),
+      3
+    ),
+    terrains: new r3.Array(
+      new r3.Struct({
+        size: r3.uint16le,
+        profile: token64,
+        coef: r3.floatle,
+        prevProfile: token64,
+        prevCoef: r3.floatle,
+        vegetation: new r3.Array(
+          new r3.Struct({
+            token: token64,
+            density: r3.uint16le,
+            highPolyDistance: r3.uint8,
+            scaleType: r3.uint8,
+            start: r3.uint16le,
+            end: r3.uint16le
+          }),
+          3
+        ),
+        dvdm: r3.uint16le,
+        dvd: r3.uint16le
+      }),
+      2
+    ),
+    vegetationSpheres,
+    rightQuad: quadInfo,
+    leftQuad: quadInfo,
+    rightEdge: token64,
+    rightEdgeLook: token64,
+    leftEdge: token64,
+    leftEdgeLook: token64
+  },
+  [2 /* Building */]: {
+    scheme: token64,
+    lookOverride: token64,
+    startNodeUid: uint64le,
+    endNodeUid: uint64le,
+    length: r3.floatle,
+    seed: r3.uint32le,
+    stretchCoef: r3.floatle,
+    heightOffsets: new r3.Array(r3.floatle, r3.uint32le)
+  },
+  [3 /* Road */]: {
+    flags1: r3.uint8,
+    dlcGuard: r3.uint8,
+    flags2: r3.uint16le,
+    roadLook: token64,
+    rightLanesVariant: token64,
+    leftLanesVariant: token64,
+    rightTemplateVariant: token64,
+    leftTemplateVariant: token64,
+    rightEdgeRight: token64,
+    rightEdgeLeft: token64,
+    leftEdgeRight: token64,
+    leftEdgeLeft: token64,
+    rightProfile: token64,
+    rightProfileCoef: r3.floatle,
+    leftProfile: token64,
+    leftProfileCoef: r3.floatle,
+    rightTemplateLook: token64,
+    leftTemplateLook: token64,
+    material: token64,
+    railings: new r3.Array(
+      new r3.Struct({
+        rightRailing: token64,
+        rightRailingOffset: r3.int16le,
+        leftRailing: token64,
+        leftRailingOffset: r3.int16le
+      }),
+      3
+    ),
+    rightRoadHeight: r3.int32le,
+    leftRoadHeight: r3.int32le,
+    startNodeUid: uint64le,
+    endNodeUid: uint64le,
+    length: r3.floatle
+  },
+  [4 /* Prefab */]: {
+    model: token64,
+    variant: token64,
+    parts: new r3.Array(token64, r3.uint32le),
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    connectedItemUids: new r3.Array(uint64le, r3.uint32le),
+    ferryLink: uint64le,
+    originIndex: r3.uint16le,
+    terrainInfos: new r3.Array(
+      new r3.Struct({
+        token: token64,
+        coef: r3.floatle
+      }),
+      (parent) => parent.nodeUids.length
+    ),
+    semaphoreProfile: token64
+  },
+  [5 /* Model */]: {
+    token: token64,
+    look: token64,
+    variant: token64,
+    addParts: new r3.Array(token64, r3.uint32le),
+    nodeUid: uint64le,
+    scale: float3,
+    material: token64,
+    color: r3.uint32le,
+    terrainRot: r3.floatle
+  },
+  [6 /* Company */]: {
+    cityName: token64,
+    prefabUid: uint64le,
+    overlayName: token64,
+    nodeUid: uint64le,
+    nodes: new r3.Array(
+      new r3.Struct({
+        nodeUid: uint64le,
+        nodeFlag: r3.uint32le
+      }),
+      r3.uint32le
+    )
+  },
+  [7 /* Service */]: {
+    nodeUid: uint64le,
+    prefabUid: uint64le,
+    subItemUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [8 /* CutPlane */]: {
+    nodeUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [9 /* Mover */]: {
+    tags: new r3.Array(token64, r3.uint32le),
+    model: token64,
+    look: token64,
+    variant: token64,
+    speed: r3.floatle,
+    endDelay: r3.floatle,
+    width: r3.floatle,
+    count: r3.uint32le,
+    lengths: new r3.Array(r3.floatle, r3.uint32le),
+    nodeUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [11 /* NoWeather */]: {
+    width: r3.floatle,
+    height: r3.floatle,
+    fogMaskPresetId: r3.int32le,
+    // new in v901.
+    unknown: new r3.Reserved(r3.uint8, 16),
+    nodeUid: uint64le
+  },
+  [12 /* City */]: {
+    token: token64,
+    width: r3.floatle,
+    height: r3.floatle,
+    nodeUid: uint64le
+  },
+  [13 /* Hinge */]: {
+    token: token64,
+    look: token64,
+    nodeUid: uint64le,
+    minRot: r3.floatle,
+    maxRot: r3.floatle
+  },
+  [18 /* MapOverlay */]: {
+    name: token64,
+    nodeUid: uint64le
+  },
+  [19 /* Ferry */]: {
+    ferryPort: token64,
+    prefabUid: uint64le,
+    nodeUid: uint64le,
+    unloadOffset: float3
+  },
+  [22 /* Garage */]: {
+    cityName: token64,
+    // TODO verify type and nodeUid values and prefab values
+    type: r3.uint32le,
+    nodeUid: uint64le,
+    prefabUid: uint64le,
+    childItemUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [23 /* CameraPoint */]: {
+    tags: new r3.Array(token64, r3.uint32le),
+    nodeUid: uint64le
+  },
+  [34 /* Trigger */]: {
+    tags: new r3.Array(token64, r3.uint32le),
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    actions: new r3.Array(
+      new r3.Struct({
+        action: token64,
+        hasOverride: r3.int32le,
+        overrideValues: new r3.Array(r3.uint32le, "hasOverride"),
+        override: new r3.Optional(
+          new r3.Struct({
+            params: new r3.Array(uint64String, r3.uint32le),
+            targetTags: new r3.Array(uint64le, r3.uint32le),
+            range: r3.floatle,
+            type: r3.uint32le
+          }),
+          (parent) => parent.hasOverride >= 0
+        )
+      }),
+      r3.uint32le
+    ),
+    radius: new r3.Optional(
+      r3.floatle,
+      (parent) => parent.nodeUids.length === 1
+    )
+  },
+  [35 /* FuelPump */]: {
+    nodeUid: uint64le,
+    prefabUid: uint64le,
+    childItemUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [36 /* Sign */]: {
+    token: token64,
+    nodeUid: uint64le,
+    look: token64,
+    variant: token64,
+    boards: new r3.Array(
+      new r3.Struct({
+        token: token64,
+        city1: token64,
+        city2: token64
+      }),
+      r3.uint8
+    ),
+    overrideTemplate: uint64String,
+    overrides: new r3.Optional(
+      new r3.Struct({
+        boards: new r3.Array(
+          new r3.Struct({
+            areaName: token64,
+            flags: r3.uint8,
+            offsets: new r3.Optional(
+              new r3.Struct({
+                x: r3.int8,
+                y: r3.int8
+              }),
+              (parent) => (parent.flags & 1) !== 0
+            ),
+            token: new r3.Optional(
+              token64,
+              (parent) => (parent.flags & 2) !== 0
+            )
+          }),
+          r3.uint32le
+        ),
+        items: new r3.Array(
+          new r3.Struct({
+            id: r3.uint32le,
+            areaName: token64,
+            attributes: new r3.Array(
+              new r3.VersionedStruct(r3.uint16le, {
+                header: {
+                  index: r3.uint32le
+                },
+                1: {
+                  value: r3.int8
+                },
+                2: {
+                  value: r3.int32le
+                },
+                3: {
+                  value: r3.uint32le
+                },
+                4: {
+                  value: r3.floatle
+                },
+                5: {
+                  value: uint64String
+                },
+                6: {
+                  value: uint64le
+                }
+              }),
+              r3.uint32le
+            )
+          }),
+          r3.uint32le
+        )
+        //debugStruct,
+      }),
+      (parent) => parent.overrideTemplate != ""
+    )
+  },
+  [37 /* BusStop */]: {
+    cityName: token64,
+    prefabUid: uint64le,
+    nodeUid: uint64le
+  },
+  // Possibly useful for mapping?
+  [38 /* TrafficRule */]: {
+    tags: new r3.Array(token64, r3.uint32le),
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    ruleId: token64,
+    range: r3.floatle
+  },
+  [39 /* BezierPatch */]: {
+    controlPoints: new r3.Array(float3, 16),
+    xTess: r3.uint16le,
+    zTess: r3.uint16le,
+    nodeUid: uint64le,
+    randomSeed: r3.uint32le,
+    vegetation: new r3.Array(
+      new r3.Struct({
+        token: token64,
+        sparsity: r3.uint16le,
+        scale: r3.uint8
+      }),
+      3
+    ),
+    vegetationSpheres,
+    quadInfo
+  },
+  [41 /* TrajectoryItem */]: {
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    flags2: uint64le,
+    routeRules: new r3.Array(
+      new r3.Struct({
+        node: r3.uint32le,
+        rule: token64,
+        padding: new r3.Reserved(r3.uint32le),
+        params: float3
+      }),
+      r3.uint32le
+    ),
+    checkpoints: new r3.Array(
+      new r3.Struct({
+        route: token64,
+        checkpoint: token64
+      }),
+      r3.uint32le
+    ),
+    tags: new r3.Array(token64, r3.uint32le)
+  },
+  [42 /* MapArea */]: {
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    colorIndex: r3.uint32le
+  },
+  [43 /* FarModel */]: {
+    width: r3.floatle,
+    height: r3.floatle,
+    models: new r3.Array(
+      new r3.Struct({
+        token: token64,
+        scale: float3
+      }),
+      r3.uint32le
+    ),
+    childUids: new r3.Array(uint64le, r3.uint32le),
+    nodeUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [44 /* Curve */]: {
+    startNodeUid: uint64le,
+    endNodeUid: uint64le,
+    paddingUids: new r3.Array(uint64le, 2),
+    length: r3.floatle,
+    subcurveUseMask: r3.uint32le,
+    subcurves: new r3.Array(
+      new r3.Struct({
+        model: token64,
+        flags: r3.uint32le,
+        randomSeed: r3.uint32le,
+        stretchCoef: r3.floatle,
+        scale: r3.floatle,
+        fixedStep: r3.floatle,
+        material: token64,
+        color: r3.uint32le,
+        terrainRot: r3.floatle,
+        firstPart: token64,
+        lastPart: token64,
+        centerPartVariation: token64,
+        modelLook: token64,
+        heightOffsets: new r3.Array(r3.floatle, r3.uint32le),
+        initialHeightOffset: r3.floatle,
+        offsetFromBaseCurveStartX: r3.floatle,
+        offsetFromBaseCurveStartY: r3.floatle,
+        offsetFromBaseCurveEndX: r3.floatle,
+        offsetFromBaseCurveEndY: r3.floatle
+      }),
+      (parent) => {
+        let n2 = parent.subcurveUseMask;
+        let count = 0;
+        while (n2 !== 0) {
+          n2 &= n2 - 1;
+          count++;
+        }
+        return count;
+      }
+    )
+  },
+  [45 /* CameraPath */]: {
+    tags: new r3.Array(token64, r3.uint32le),
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    trackPointNodeUids: new r3.Array(uint64le, r3.uint32le),
+    curveControlNodeUids: new r3.Array(uint64le, r3.uint32le),
+    keyFrames: new r3.Array(
+      new r3.Struct({
+        speedChange: r3.int32le,
+        rotationChange: r3.int32le,
+        speedCoef: r3.floatle,
+        fov: r3.floatle,
+        backwardTangentPos: float3,
+        forwardTangentPos: float3
+      }),
+      r3.uint32le
+    ),
+    speed: r3.floatle
+  },
+  [46 /* Cutscene */]: {
+    tags: new r3.Array(token64, r3.uint32le),
+    nodeUid: uint64le,
+    actions: new r3.Array(
+      new r3.Struct({
+        params: new r3.Array(r3.uint32le, r3.uint32le),
+        stringParams: new r3.Array(uint64String, r3.uint32le),
+        targetTags: new r3.Array(uint64le, r3.uint32le),
+        range: r3.floatle,
+        actionFlags: r3.uint32le
+      }),
+      r3.uint32le
+    )
+  },
+  [47 /* Hookup */]: {
+    name: uint64String,
+    nodeUid: uint64le
+  },
+  [48 /* VisibilityArea */]: {
+    nodeUid: uint64le,
+    width: r3.floatle,
+    height: r3.floatle,
+    childItemUids: new r3.Array(uint64le, r3.uint32le)
+  },
+  [49 /* Gate */]: {
+    model: token64,
+    nodeUids: new r3.Array(uint64le, r3.uint32le),
+    activationPointUnits: new r3.Array(
+      new r3.Struct({
+        triggerUnitName: uint64String,
+        triggerNodeIndex: r3.int32le
+      }),
+      2
+    )
+  }
+};
+var SectorNode = new r3.Struct({
+  uid: uint64le,
+  pos: new r3.Array(r3.int32le, 3),
+  rot: float4,
+  backwardItemUid: uint64le,
+  forwardItemUid: uint64le,
+  flags: r3.uint32le
+});
+var SimpleItem = new r3.VersionedStruct(r3.uint32le, SimpleItemStruct);
+var ComplexItem = new r3.VersionedStruct(r3.uint32le, {
+  ...SimpleItemStruct,
+  [40 /* Compound */]: {
+    nodeUid: uint64le,
+    childItems: new r3.Array(SimpleItem, r3.uint32le),
+    childNodes: new r3.Array(SectorNode, r3.uint32le)
+  }
+});
+var Sector = new r3.Struct({
+  version: r3.uint32le,
+  gameId: token64,
+  padding: new r3.Reserved(r3.uint32le),
+  items: new r3.Array(ComplexItem, r3.uint32le),
+  nodes: new r3.Array(SectorNode, r3.uint32le),
+  visibleAreaChildUids: new r3.Array(uint64le, r3.uint32le)
+});
+var versionWarnings = /* @__PURE__ */ new Set();
+function parseSector(buffer, ignoreNodeUids) {
+  const version = buffer.readUint32LE();
+  if (version !== 907) {
+    if (!versionWarnings.has(version)) {
+      logger.warn("unknown .base file version", version);
+      logger.warn("errors may come up, and parse results may be inaccurate.");
+      versionWarnings.add(version);
+    }
+  }
+  const str = new r3.DecodeStream(buffer);
+  const sector = Sector.decode(str);
+  if (str.pos !== buffer.length) {
+    logger.error(
+      "not enough bytes read; expected / actual",
+      buffer.length,
+      str.pos
+    );
+    throw new Error();
+  }
+  const simples = {
+    items: sector.items.map((ri) => {
+      switch (ri.version) {
+        case 3 /* Road */:
+          return toRoad(ri);
+        case 4 /* Prefab */:
+          return toPrefab(ri);
+        case 42 /* MapArea */:
+          return toMapArea(ri);
+        case 12 /* City */:
+          return toCityArea(ri);
+        case 18 /* MapOverlay */:
+          return toMapOverlay(ri);
+        case 19 /* Ferry */:
+          return toFerry(ri);
+        case 6 /* Company */:
+          return toCompany(ri);
+        case 46 /* Cutscene */:
+          return toCutscene(ri);
+        case 34 /* Trigger */:
+          return toTrigger(ri);
+        case 36 /* Sign */:
+          return toSignWithText(ri);
+        case 5 /* Model */:
+          return toModel(ri);
+        case 1 /* Terrain */:
+          return toTerrain(ri);
+        case 2 /* Building */:
+          return toBuilding(ri);
+        case 44 /* Curve */:
+          return toCurve(ri);
+        case 41 /* TrajectoryItem */:
+          return toTrajectoryItem(ri);
+        default:
+          return void 0;
+      }
+    }).filter((i2) => i2 != null),
+    nodes: sector.nodes.reduce((acc, n2) => {
+      if (!ignoreNodeUids.has(n2.uid)) {
+        acc.push(toNode(n2));
+      }
+      return acc;
+    }, [])
+  };
+  const moreItems = [];
+  const moreNodes = [];
+  for (const ri of sector.items) {
+    if (ri.version !== 40 /* Compound */) {
+      continue;
+    }
+    for (const ci of ri.childItems) {
+      let pushNodes = false;
+      if (ci.version === 5 /* Model */) {
+        moreItems.push(toModel(ci));
+        pushNodes = true;
+      } else if (ci.version === 2 /* Building */) {
+        const b2 = toBuilding(ci);
+        if (b2) {
+          moreItems.push(b2);
+          pushNodes = true;
+        }
+      } else if (ci.version === 44 /* Curve */) {
+        const c3 = toCurve(ci);
+        if (c3) {
+          moreItems.push(c3);
+          pushNodes = true;
+        }
+      }
+      if (pushNodes) {
+        moreNodes.push(...ri.childNodes.map(toNode));
+      }
+    }
+  }
+  return {
+    items: simples.items.concat(moreItems),
+    nodes: simples.nodes.concat(moreNodes)
+  };
+}
+function toBaseItem(rawItem) {
+  return {
+    uid: rawItem.uid,
+    type: rawItem.version,
+    x: rawItem.pos[0],
+    y: rawItem.pos[2]
+  };
+}
+function toRoad(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    dlcGuard: rawItem.dlcGuard,
+    //                          ┌─ bit 25 (0-based)
+    hidden: (rawItem.flags & 33554432) !== 0 ? true : void 0,
+    //                             ┌─ bit 16 (0-based)
+    secret: (rawItem.flags & 65536) !== 0 ? true : void 0,
+    roadLookToken: rawItem.roadLook,
+    startNodeUid: rawItem.startNodeUid,
+    endNodeUid: rawItem.endNodeUid,
+    length: rawItem.length
+  };
+}
+function toPrefab(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    dlcGuard: (rawItem.flags & 65280) >> 8,
+    token: rawItem.model,
+    //                             ┌─ bit 17 (0-based)
+    hidden: (rawItem.flags & 131072) !== 0 ? true : void 0,
+    //                                  ┌─ bit 5 (0-based)
+    secret: (rawItem.flags & 32) !== 0 ? true : void 0,
+    //                                   ┌─ bit 0 (0-based)
+    tunnel: (rawItem.flags & 1) !== 0 ? true : void 0,
+    //                                             ┌─ bit 1 (0-based)
+    customSemaphores: (rawItem.flags & 2) !== 0 ? true : void 0,
+    //                                     ┌─ bit 19 (0-based)
+    showSemaphores: (rawItem.flags & 524288) !== 0 ? true : void 0,
+    ferryLinkUid: rawItem.ferryLink || void 0,
+    nodeUids: rawItem.nodeUids,
+    originNodeIndex: rawItem.originIndex
+  };
+}
+function toMapArea(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    dlcGuard: (rawItem.flags & 65280) >> 8,
+    drawOver: (rawItem.flags & 1) !== 0 ? true : void 0,
+    //                                  ┌─ bit 4 (0-based)
+    secret: (rawItem.flags & 268435472) !== 0 ? true : void 0,
+    nodeUids: rawItem.nodeUids,
+    color: MapAreaColorUtils.from(rawItem.colorIndex)
+  };
+}
+function toCityArea(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    token: rawItem.token,
+    hidden: (rawItem.flags & 1) !== 0,
+    width: rawItem.width,
+    height: rawItem.height
+  };
+}
+function toMapOverlay(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    dlcGuard: (rawItem.flags & 65280) >> 8,
+    //                             ┌─ bit 16 (0-based)
+    secret: (rawItem.flags & 65536) !== 0 ? true : void 0,
+    overlayType: MapOverlayTypeUtils.from(rawItem.flags & 15),
+    token: rawItem.name,
+    nodeUid: rawItem.nodeUid
+  };
+}
+function toFerry(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    token: rawItem.ferryPort,
+    train: (rawItem.flags & 1) !== 0,
+    prefabUid: rawItem.prefabUid,
+    nodeUid: rawItem.nodeUid
+  };
+}
+function toCompany(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    token: rawItem.overlayName,
+    cityToken: rawItem.cityName,
+    prefabUid: rawItem.prefabUid,
+    nodeUid: rawItem.nodeUid
+  };
+}
+function toCutscene(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    dlcGuard: (rawItem.flags & 65280) >> 8,
+    //                         ┌─ bit 28 (0-based)
+    secret: (rawItem.flags & 268435456) !== 0 ? true : void 0,
+    flags: rawItem.flags,
+    tags: rawItem.tags,
+    nodeUid: rawItem.nodeUid,
+    actionStringParams: rawItem.actions.flatMap((action) => action.stringParams)
+    // TODO search actions.stringParams "ui_value" for @@ localization string name
+  };
+}
+function toTrigger(rawItem) {
+  const actionsMap = new Map(
+    rawItem.actions.map((a2) => [a2.action, a2.override ? a2.override.params : []])
+  );
+  return {
+    ...toBaseItem(rawItem),
+    dlcGuard: (rawItem.flags & 65280) >> 8,
+    //                             ┌─ bit 18 (0-based)
+    secret: (rawItem.flags & 262144) !== 0 ? true : void 0,
+    actions: [...actionsMap.entries()],
+    nodeUids: rawItem.nodeUids
+  };
+}
+function toSignWithText(rawItem) {
+  const textItems = [];
+  for (const attr of (rawItem.overrides ?? { items: [] }).items.flatMap(
+    (item) => item.attributes
+  )) {
+    if (attr.version === 5) {
+      textItems.push(attr.value);
+    }
+  }
+  if (textItems.length === 0) {
+    return void 0;
+  }
+  return {
+    ...toBaseItem(rawItem),
+    token: rawItem.token,
+    nodeUid: rawItem.nodeUid,
+    textItems
+  };
+}
+function toBuilding(rawItem) {
+  if (rawItem.scheme !== "scheme20") {
+    return;
+  }
+  return {
+    ...toBaseItem(rawItem),
+    scheme: rawItem.scheme,
+    startNodeUid: rawItem.startNodeUid,
+    endNodeUid: rawItem.endNodeUid
+  };
+}
+function toCurve(rawItem) {
+  assert(rawItem.subcurves.length >= 1, "curve has no subcurves");
+  if (rawItem.subcurves.every((sc) => sc.model !== "0i03a") && rawItem.subcurves.every((sc) => sc.model !== "0i03b")) {
+    return;
+  }
+  return {
+    ...toBaseItem(rawItem),
+    subcurves: rawItem.subcurves.map((sc) => ({
+      model: sc.model,
+      look: sc.modelLook,
+      numBuildings: sc.heightOffsets.length
+    })),
+    startNodeUid: rawItem.startNodeUid,
+    endNodeUid: rawItem.endNodeUid
+  };
+}
+function toTrajectoryItem(rawItem) {
+  if (!rawItem.checkpoints.some((c3) => c3.checkpoint === "offer_point")) {
+    return;
+  }
+  return {
+    ...toBaseItem(rawItem),
+    nodeUids: rawItem.nodeUids,
+    checkpoints: rawItem.checkpoints
+  };
+}
+function toModel(rawItem) {
+  const [sx, sy, sz] = rawItem.scale;
+  return {
+    ...toBaseItem(rawItem),
+    token: rawItem.token,
+    nodeUid: rawItem.nodeUid,
+    scale: { x: sx, y: sz, z: sy }
+  };
+}
+function toTerrain(rawItem) {
+  return {
+    ...toBaseItem(rawItem),
+    startNodeUid: rawItem.startNodeUid,
+    endNodeUid: rawItem.endNodeUid,
+    length: rawItem.length
+  };
+}
+function toNode(rawNode) {
+  const [qw, , qy] = rawNode.rot;
+  const rotation = normalizeRadians(Math.atan2(-qy, qw) * 2 - Math.PI / 2);
+  return {
+    uid: rawNode.uid,
+    x: rawNode.pos[0] / 256,
+    y: rawNode.pos[2] / 256,
+    z: rawNode.pos[1] / 256,
+    rotation,
+    rotationQuat: rawNode.rot,
+    forwardItemUid: rawNode.forwardItemUid,
+    backwardItemUid: rawNode.backwardItemUid,
+    forwardCountryId: (rawNode.flags & 65280) >> 8,
+    backwardCountryId: (rawNode.flags & 16711680) >> 16
+    // playerVehicleTypeChange: isBitSetU32(rawNode.flags, 4) ? true : undefined,
+    // forwardTruck: isBitSetU32(rawNode.flags, 5),
+    // forwardBus: isBitSetU32(rawNode.flags, 6),
+    // forwardCar: isBitSetU32(rawNode.flags, 7),
+    // backwardTruck: isBitSetU32(rawNode.flags, 28),
+    // backwardBus: isBitSetU32(rawNode.flags, 29),
+    // backwardCar: isBitSetU32(rawNode.flags, 30),
+  };
+}
+
+// ouvriers.ts
+var estOuvrier = !import_worker_threads.isMainThread && !!(import_worker_threads.workerData && import_worker_threads.workerData.tchOuvrier);
+function nombreOuvriers() {
+  const env2 = Number(process.env.TCH_OUVRIERS);
+  if (env2 > 0) return Math.min(32, Math.floor(env2));
+  const coeurs = typeof import_os.default.availableParallelism === "function" ? import_os.default.availableParallelism() : import_os.default.cpus().length;
+  const libreGo = import_os.default.freemem() / 2 ** 30;
+  return Math.max(1, Math.min(coeurs - 2, 8, Math.floor((libreGo - 1.5) / 0.4)));
+}
+function creerOuvriers(modeles) {
+  const n2 = nombreOuvriers();
+  const fichier = __filename;
+  const ouvriers = Array.from({ length: n2 }, () => {
+    const w2 = new import_worker_threads.Worker(fichier, { workerData: { tchOuvrier: true, modeles }, resourceLimits: { maxOldGenerationSizeMb: 1024 } });
+    const o3 = { w: w2, charge: 0, attentes: /* @__PURE__ */ new Map() };
+    w2.on("message", (m2) => {
+      const a2 = o3.attentes.get(m2.id);
+      if (!a2) return;
+      o3.attentes.delete(m2.id);
+      o3.charge--;
+      libere();
+      if (m2.erreur) a2[1](new Error(m2.erreur));
+      else a2[0](m2);
+    });
+    w2.on("error", (e2) => {
+      for (const [, a2] of o3.attentes) a2[1](e2);
+      o3.attentes.clear();
+    });
+    return o3;
+  });
+  let id = 0, enAttente = [];
+  const total = () => ouvriers.reduce((s2, o3) => s2 + o3.charge, 0);
+  const libere = () => {
+    while (enAttente.length && total() < 2 * n2) enAttente.shift()();
+  };
+  return {
+    n: n2,
+    // Attend qu'une place se libère (au plus 2 secteurs par ouvrier en même temps)
+    place: () => total() < 2 * n2 ? Promise.resolve() : new Promise((r4) => enAttente.push(r4)),
+    confier(ab2) {
+      const o3 = ouvriers.reduce((a2, b2) => b2.charge < a2.charge ? b2 : a2);
+      const i2 = ++id;
+      o3.charge++;
+      return new Promise((res, rej) => {
+        o3.attentes.set(i2, [res, rej]);
+        o3.w.postMessage({ id: i2, ab: ab2 }, [ab2]);
+      });
+    },
+    fermer: () => Promise.all(ouvriers.map((o3) => o3.w.terminate()))
+  };
+}
+function lancerOuvrier() {
+  const modeles = new Set(import_worker_threads.workerData.modeles || []);
+  const aucun = { has: () => false };
+  const inutiles = /* @__PURE__ */ new Set([1 /* Terrain */, 2 /* Building */, 44 /* Curve */, 36 /* Sign */, 5 /* Model */, 41 /* TrajectoryItem */]);
+  const garder = (it) => !inutiles.has(it.type);
+  void modeles;
+  import_worker_threads.parentPort.on("message", ({ id, ab: ab2 }) => {
+    try {
+      const s2 = parseSector(Buffer.from(ab2), aucun);
+      const items = s2.items.filter(garder);
+      const n2 = s2.nodes.length;
+      const u3 = new BigUint64Array(3 * n2), f3 = new Float32Array(8 * n2), c3 = new Uint8Array(2 * n2);
+      for (let i2 = 0; i2 < n2; i2++) {
+        const d2 = s2.nodes[i2];
+        u3[3 * i2] = BigInt.asUintN(64, d2.uid);
+        u3[3 * i2 + 1] = BigInt.asUintN(64, d2.forwardItemUid);
+        u3[3 * i2 + 2] = BigInt.asUintN(64, d2.backwardItemUid);
+        const q2 = d2.rotationQuat || [0, 0, 0, 0], k2 = 8 * i2;
+        f3[k2] = d2.x;
+        f3[k2 + 1] = d2.y;
+        f3[k2 + 2] = d2.z;
+        f3[k2 + 3] = d2.rotation;
+        f3[k2 + 4] = q2[0];
+        f3[k2 + 5] = q2[1];
+        f3[k2 + 6] = q2[2];
+        f3[k2 + 7] = q2[3];
+        c3[2 * i2] = d2.forwardCountryId;
+        c3[2 * i2 + 1] = d2.backwardCountryId;
+      }
+      import_worker_threads.parentPort.postMessage({ id, items, n: n2, u: u3.buffer, f: f3.buffer, c: c3.buffer }, [u3.buffer, f3.buffer, c3.buffer]);
+    } catch (e2) {
+      import_worker_threads.parentPort.postMessage({ id, erreur: String(e2 && e2.message || e2) });
+    }
+  });
+}
+
 // extraire.ts
+BigInt.prototype.toJSON = function() {
+  return this.toString(16);
+};
 var [gameDir, outDir] = process.argv.slice(2);
 var t0 = Date.now();
 var etape = (nom, extra = {}) => process.stdout.write("@TCH " + JSON.stringify({ etape: nom, s: Math.round((Date.now() - t0) / 1e3), mo: Math.round(process.memoryUsage().rss / 1e6), ...extra }) + "\n");
-try {
-  import_fs6.default.mkdirSync(outDir, { recursive: true });
-  const scs = import_fs6.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path7.default.join(gameDir, f3));
-  const empreinte = scs.map((f3) => {
-    const st = import_fs6.default.statSync(f3);
-    return [import_path7.default.basename(f3), st.size, Math.round(st.mtimeMs)];
-  });
-  etape("lecture");
-  let r4 = parseMapFiles(scs, { includeDlc: true, mode: "all" });
-  const map = r4.map, version = r4.version;
-  etape("conversion", { version });
-  const tmp = import_fs6.default.mkdtempSync(import_path7.default.join(import_os.default.tmpdir(), "tchmap-"));
+async function principal() {
   try {
-    for (const k2 of Object.keys(r4.mapData)) writeArrayFile(r4.mapData[k2], import_path7.default.join(tmp, `${map}-${k2}.json`));
-    r4 = null;
-    const data = readMapData(tmp, map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
-    const gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
-    etape("tuiles");
-    const res = ecrireCarte(gj, outDir, gardesVisibles(map, scs));
-    import_fs6.default.writeFileSync(import_path7.default.join(outDir, "info.json"), JSON.stringify({ jeu: map === "usa" ? "ats" : "ets2", version, date: (/* @__PURE__ */ new Date()).toISOString(), empreinte, ...res }));
-    etape("fini", res);
-  } finally {
-    import_fs6.default.rmSync(tmp, { recursive: true, force: true });
+    try {
+      import_os2.default.setPriority(process.pid, import_os2.default.constants.priority.PRIORITY_BELOW_NORMAL);
+    } catch {
+    }
+    let dernier = -1;
+    globalThis.__tchOuvriers = (modeles) => creerOuvriers(modeles);
+    globalThis.__tchProgression = (fait, total) => {
+      const pct = Math.floor(fait / total * 100);
+      if (pct !== dernier) {
+        dernier = pct;
+        etape("lecture", { fait, total });
+      }
+    };
+    import_fs6.default.mkdirSync(outDir, { recursive: true });
+    const scs = import_fs6.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path7.default.join(gameDir, f3));
+    const empreinte = scs.map((f3) => {
+      const st = import_fs6.default.statSync(f3);
+      return [import_path7.default.basename(f3), st.size, Math.round(st.mtimeMs)];
+    });
+    etape("lecture", { fait: 0, total: 0, ouvriers: nombreOuvriers() });
+    let r4 = await parseMapFiles(scs, { includeDlc: true, mode: "all" });
+    const map = r4.map, version = r4.version;
+    etape("conversion", { version });
+    {
+      const donnees = r4.mapData;
+      r4 = null;
+      const source = {
+        has: (n2) => n2.startsWith(map + "-") && n2.slice(map.length + 1, -5) in donnees,
+        readUtf8: () => {
+          throw new Error("lecture m\xE9moire uniquement");
+        },
+        describe: () => "m\xE9moire",
+        memoire: (n2) => donnees[n2.slice(map.length + 1, -5)]
+      };
+      let data = readMapData(source, map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
+      for (const k2 of Object.keys(donnees)) delete donnees[k2];
+      const gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
+      data = null;
+      etape("tuiles");
+      const res = ecrireCarte(gj, outDir, gardesVisibles(map, scs));
+      import_fs6.default.writeFileSync(import_path7.default.join(outDir, "info.json"), JSON.stringify({ jeu: map === "usa" ? "ats" : "ets2", version, date: (/* @__PURE__ */ new Date()).toISOString(), empreinte, ...res }));
+      etape("fini", res);
+    }
+  } catch (e2) {
+    etape("erreur", { message: String(e2?.message || e2) });
+    process.exitCode = 1;
   }
-} catch (e2) {
-  etape("erreur", { message: String(e2?.message || e2) });
-  process.exitCode = 1;
 }
+if (estOuvrier) lancerOuvrier();
+else principal();
