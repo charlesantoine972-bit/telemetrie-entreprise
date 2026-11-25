@@ -6,7 +6,7 @@
 // Étapes :
 //   1. terres et frontières à l'échelle 1:50 000 000 ;
 //   2. Groenland retiré (absent d'ETS2) ;
-//   3. polygones qui traversent l'antiméridien recalés (sinon bande parasite sur toute la carte) ;
+//   3. Antarctique retiré ; polygones qui traversent l'antiméridien recalés (seulement leurs points de l'extrême est) ;
 //   4. Islande : côte détaillée (1:10 000 000) recalée sur sa place dans ETS2. SCS l'a rapprochée du continent
 //      et agrandi la région de Reykjavík. Plaque mince (thin-plate spline) des vraies positions de ses 15 villes
 //      vers leurs positions dans le jeu : chaque ville tombe à sa place, la côte reste lisse.
@@ -73,14 +73,15 @@ const geom = terres.features[0].geometry;
 const bbox = (ring) => { const xs = ring.map(p => p[0]), ys = ring.map(p => p[1]); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; };
 const isIceland = ([x0, y0, x1, y1]) => x0 > -25.5 && x1 < -12.5 && y0 > 62.8 && y1 < 67.2;
 const isGreenland = ([x0, y0, x1]) => x0 > -75 && x1 < -10 && y0 > 58.5;
-geom.coordinates = geom.coordinates.filter(poly => { const b = bbox(poly[0]); return !isIceland(b) && !isGreenland(b); });
+geom.coordinates = geom.coordinates.filter(poly => { const b = bbox(poly[0]); return !isIceland(b) && !isGreenland(b) && b[3] > -55; }); // sans l'Antarctique
 // Islande en version détaillée (1:10 000 000) : fjords et péninsules reconnaissables
 const land10 = JSON.parse(fs.readFileSync(path.join(atlasDir, 'land-10m.json')));
 const terres10 = round(tc.feature(land10, land10.objects.land)).features[0].geometry.coordinates;
 geom.coordinates.push(...terres10.filter(poly => isIceland(bbox(poly[0])) && poly[0].length >= 8));
 for (const poly of geom.coordinates) {
   const b = bbox(poly[0]);
-  if (b[2] - b[0] > 180) for (const ring of poly) for (const p of ring) if (p[0] < 0) p[0] += 360;
+  // Seuls les points de l'extrême est (Tchoukotka, îles Fidji…) passent de l'autre côté : jamais l'Europe de l'Ouest
+  if (b[2] - b[0] > 180) for (const ring of poly) for (const p of ring) if (p[0] < -150) p[0] += 360;
   if (isIceland(b)) for (const ring of poly) for (const p of ring) { const q = toGame(p); p[0] = Math.round(q[0] * 1e3) / 1e3; p[1] = Math.round(q[1] * 1e3) / 1e3; }
 }
 const frontieres = round({ type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: tc.mesh(ctry, ctry.objects.countries, (a, b) => a !== b) }] });

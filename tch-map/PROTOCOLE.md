@@ -17,11 +17,15 @@ Chaque message remplace le précédent du même type, et il est rejoué à chaqu
 | `{ type: 'cities', ets2: [[id, nom, x, z], …], ats: [...] }` | villes du jeu (coordonnées monde, mètres) |
 | `{ type: 'trail', game, points: [[x, z, …] \| null, …] }` | trace parcourue ; `null` = coupure |
 | `{ type: 'state', game, connected, paused, x, z, heading, speed, destId }` | état du camion ; `heading` de 0 à 1 (fraction de tour) |
+| `{ type: 'donnees', game, rev }` | une nouvelle carte a été extraite des fichiers du jeu : la page la recharge |
 
 ## Adresses servies (toutes sous `/<jeton>/`)
 - `/<jeton>/` : la page de carte.
 - `/<jeton>/events` : flux d'événements (Server-Sent Events) avec les messages ci-dessus.
-- `/<jeton>/data/…` : cartes générées depuis le jeu (dossier passé en premier argument à `server.js`).
+- `/<jeton>/data/<jeu>/info.json`, `villes.json`, `tuiles/<z>/<x>/<y>.pbf` : carte extraite des fichiers du jeu par `extraction/extraire.cjs`, rangée dans `<dossier passé à server.js>/<jeu>/<nom lu dans courant.txt>/`.
 - `/<jeton>/…` : fichiers de `viewer/`.
 
 Toute adresse sans le bon jeton, toute méthode autre que GET et tout chemin qui sort des dossiers autorisés reçoivent une erreur.
+
+## Extraction (`extraction/extraire.cjs`)
+Programme séparé lui aussi : `extraire.cjs <dossier du jeu> <dossier de sortie>`. Il lit les `.scs` en lecture seule et écrit `tuiles.bin`, `tuiles.json`, `villes.json`, `info.json`. Progression sur la sortie standard : lignes `@TCH {"etape": "lecture" | "conversion" | "tuiles" | "fini" | "erreur", …}`. Sources : `outils/extraction/`.

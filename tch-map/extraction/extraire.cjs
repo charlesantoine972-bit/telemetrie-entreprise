@@ -1,4 +1,4 @@
-"use strict";
+// TCH Map — extraction de la carte. Code compilé depuis tch-map/outils/extraction et truckermudgeon/maps (GPL-3).
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -32,9 +32,9 @@ var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__
   mod2
 ));
 
-// ../../../telemetrie-entreprise/tch-map/lecteur/cityhash.js
+// ../../lecteur/cityhash.js
 var require_cityhash = __commonJS({
-  "../../../telemetrie-entreprise/tch-map/lecteur/cityhash.js"(exports2, module2) {
+  "../../lecteur/cityhash.js"(exports2, module2) {
     "use strict";
     var M = (1n << 64n) - 1n;
     var k0 = 0xc3a5c85c97cb3127n;
@@ -102,8 +102,8 @@ var require_cityhash = __commonJS({
       c3 = add4(c3, rot(a2, 7));
       a2 = add4(a2, f64(s2, len - 16));
       const wf = add4(a2, z2), ws = add4(b2, rot(a2, 31), c3);
-      const r5 = shiftMix(add4(mul(add4(vf, ws), k2), mul(add4(wf, vs), k0)));
-      return mul(shiftMix(add4(mul(r5, k0), vs)), k2);
+      const r4 = shiftMix(add4(mul(add4(vf, ws), k2), mul(add4(wf, vs), k0)));
+      return mul(shiftMix(add4(mul(r4, k0), vs)), k2);
     }
     function city643(input) {
       const s2 = Buffer.isBuffer(input) ? input : Buffer.from(String(input), "utf8");
@@ -137,17 +137,17 @@ var require_cityhash = __commonJS({
   }
 });
 
-// ../node_modules/sweepline-intersections/dist/sweeplineIntersections.js
+// ../../../../ext/maps/node_modules/sweepline-intersections/dist/sweeplineIntersections.js
 var require_sweeplineIntersections = __commonJS({
-  "../node_modules/sweepline-intersections/dist/sweeplineIntersections.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/sweepline-intersections/dist/sweeplineIntersections.js"(exports2, module2) {
     (function(global2, factory) {
       typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, global2.sweeplineIntersections = factory());
-    })(exports2, function() {
+    })(exports2, (function() {
       "use strict";
-      var TinyQueue = function TinyQueue2(data2, compare) {
-        if (data2 === void 0) data2 = [];
+      var TinyQueue = function TinyQueue2(data, compare) {
+        if (data === void 0) data = [];
         if (compare === void 0) compare = defaultCompare2;
-        this.data = data2;
+        this.data = data;
         this.length = this.data.length;
         this.compare = compare;
         if (this.length > 0) {
@@ -179,41 +179,41 @@ var require_sweeplineIntersections = __commonJS({
       };
       TinyQueue.prototype._up = function _up(pos) {
         var ref = this;
-        var data2 = ref.data;
+        var data = ref.data;
         var compare = ref.compare;
-        var item = data2[pos];
+        var item = data[pos];
         while (pos > 0) {
           var parent = pos - 1 >> 1;
-          var current = data2[parent];
+          var current = data[parent];
           if (compare(item, current) >= 0) {
             break;
           }
-          data2[pos] = current;
+          data[pos] = current;
           pos = parent;
         }
-        data2[pos] = item;
+        data[pos] = item;
       };
       TinyQueue.prototype._down = function _down(pos) {
         var ref = this;
-        var data2 = ref.data;
+        var data = ref.data;
         var compare = ref.compare;
         var halfLength = this.length >> 1;
-        var item = data2[pos];
+        var item = data[pos];
         while (pos < halfLength) {
           var left = (pos << 1) + 1;
-          var best = data2[left];
+          var best = data[left];
           var right = left + 1;
-          if (right < this.length && compare(data2[right], best) < 0) {
+          if (right < this.length && compare(data[right], best) < 0) {
             left = right;
-            best = data2[right];
+            best = data[right];
           }
           if (compare(best, item) >= 0) {
             break;
           }
-          data2[pos] = best;
+          data[pos] = best;
           pos = left;
         }
-        data2[pos] = item;
+        data[pos] = item;
       };
       function defaultCompare2(a2, b2) {
         return a2 < b2 ? -1 : a2 > b2 ? 1 : 0;
@@ -375,13 +375,13 @@ var require_sweeplineIntersections = __commonJS({
         return runCheck(eventQueue, ignoreSelfIntersections);
       }
       return sweeplineIntersections2;
-    });
+    }));
   }
 });
 
-// ../node_modules/cli-progress/lib/eta.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/eta.js
 var require_eta = __commonJS({
-  "../node_modules/cli-progress/lib/eta.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/eta.js"(exports2, module2) {
     var ETA = class {
       constructor(length, initTime, initValue) {
         this.etaBufferLength = length || 100;
@@ -426,9 +426,9 @@ var require_eta = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/terminal.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/terminal.js
 var require_terminal = __commonJS({
-  "../node_modules/cli-progress/lib/terminal.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/terminal.js"(exports2, module2) {
     var _readline = require("readline");
     var Terminal2 = class {
       constructor(outputStream) {
@@ -545,9 +545,9 @@ var require_terminal = __commonJS({
   }
 });
 
-// ../node_modules/string-width/node_modules/ansi-regex/index.js
+// ../../../../ext/maps/node_modules/string-width/node_modules/ansi-regex/index.js
 var require_ansi_regex = __commonJS({
-  "../node_modules/string-width/node_modules/ansi-regex/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/string-width/node_modules/ansi-regex/index.js"(exports2, module2) {
     "use strict";
     module2.exports = ({ onlyFirst = false } = {}) => {
       const pattern = [
@@ -559,18 +559,18 @@ var require_ansi_regex = __commonJS({
   }
 });
 
-// ../node_modules/string-width/node_modules/strip-ansi/index.js
+// ../../../../ext/maps/node_modules/string-width/node_modules/strip-ansi/index.js
 var require_strip_ansi = __commonJS({
-  "../node_modules/string-width/node_modules/strip-ansi/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/string-width/node_modules/strip-ansi/index.js"(exports2, module2) {
     "use strict";
     var ansiRegex3 = require_ansi_regex();
     module2.exports = (string2) => typeof string2 === "string" ? string2.replace(ansiRegex3(), "") : string2;
   }
 });
 
-// ../node_modules/string-width/node_modules/is-fullwidth-code-point/index.js
+// ../../../../ext/maps/node_modules/string-width/node_modules/is-fullwidth-code-point/index.js
 var require_is_fullwidth_code_point = __commonJS({
-  "../node_modules/string-width/node_modules/is-fullwidth-code-point/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/string-width/node_modules/is-fullwidth-code-point/index.js"(exports2, module2) {
     "use strict";
     var isFullwidthCodePoint = (codePoint) => {
       if (Number.isNaN(codePoint)) {
@@ -601,9 +601,9 @@ var require_is_fullwidth_code_point = __commonJS({
   }
 });
 
-// ../node_modules/emoji-regex/index.js
+// ../../../../ext/maps/node_modules/emoji-regex/index.js
 var require_emoji_regex = __commonJS({
-  "../node_modules/emoji-regex/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/emoji-regex/index.js"(exports2, module2) {
     "use strict";
     module2.exports = function() {
       return /\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62(?:\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67|\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74|\uDB40\uDC77\uDB40\uDC6C\uDB40\uDC73)\uDB40\uDC7F|\uD83D\uDC68(?:\uD83C\uDFFC\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68\uD83C\uDFFB|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFE])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFD])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFC])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83D\uDC68|(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67]))|\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D[\uDC66\uDC67])|[\u2695\u2696\u2708]\uFE0F|\uD83D[\uDC66\uDC67]|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|(?:\uD83C\uDFFB\u200D[\u2695\u2696\u2708]|\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708])\uFE0F|\uD83C\uDFFB\u200D(?:\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C[\uDFFB-\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFB\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFC\u200D\uD83E\uDD1D\u200D\uD83D\uDC69)\uD83C\uDFFB|\uD83E\uDDD1(?:\uD83C\uDFFF\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1(?:\uD83C[\uDFFB-\uDFFF])|\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1)|(?:\uD83E\uDDD1\uD83C\uDFFE\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFF\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB-\uDFFE])|(?:\uD83E\uDDD1\uD83C\uDFFC\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFD\u200D\uD83E\uDD1D\u200D\uD83D\uDC69)(?:\uD83C[\uDFFB\uDFFC])|\uD83D\uDC69(?:\uD83C\uDFFE\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFD\uDFFF])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFD-\uDFFF])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFB\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFC-\uDFFF])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFC\uDFFE\uDFFF])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69])|\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83C[\uDF3E\uDF73\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))|\uD83D\uDC69\u200D\uD83D\uDC69\u200D(?:\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67]))|(?:\uD83E\uDDD1\uD83C\uDFFD\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFE\u200D\uD83E\uDD1D\u200D\uD83D\uDC69)(?:\uD83C[\uDFFB-\uDFFD])|\uD83D\uDC69\u200D\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC69\u200D\uD83D\uDC69\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D\uDC41\uFE0F\u200D\uD83D\uDDE8|\uD83D\uDC69(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\uD83C\uDFFB\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])|(?:(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)\uFE0F|\uD83D\uDC6F|\uD83E[\uDD3C\uDDDE\uDDDF])\u200D[\u2640\u2642]|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uD83C[\uDFFB-\uDFFF])\u200D[\u2640\u2642]|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD6-\uDDDD])(?:(?:\uD83C[\uDFFB-\uDFFF])\u200D[\u2640\u2642]|\u200D[\u2640\u2642])|\uD83C\uDFF4\u200D\u2620)\uFE0F|\uD83D\uDC69\u200D\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67])|\uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08|\uD83D\uDC15\u200D\uD83E\uDDBA|\uD83D\uDC69\u200D\uD83D\uDC66|\uD83D\uDC69\u200D\uD83D\uDC67|\uD83C\uDDFD\uD83C\uDDF0|\uD83C\uDDF4\uD83C\uDDF2|\uD83C\uDDF6\uD83C\uDDE6|[#\*0-9]\uFE0F\u20E3|\uD83C\uDDE7(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEF\uDDF1-\uDDF4\uDDF6-\uDDF9\uDDFB\uDDFC\uDDFE\uDDFF])|\uD83C\uDDF9(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDED\uDDEF-\uDDF4\uDDF7\uDDF9\uDDFB\uDDFC\uDDFF])|\uD83C\uDDEA(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDED\uDDF7-\uDDFA])|\uD83E\uDDD1(?:\uD83C[\uDFFB-\uDFFF])|\uD83C\uDDF7(?:\uD83C[\uDDEA\uDDF4\uDDF8\uDDFA\uDDFC])|\uD83D\uDC69(?:\uD83C[\uDFFB-\uDFFF])|\uD83C\uDDF2(?:\uD83C[\uDDE6\uDDE8-\uDDED\uDDF0-\uDDFF])|\uD83C\uDDE6(?:\uD83C[\uDDE8-\uDDEC\uDDEE\uDDF1\uDDF2\uDDF4\uDDF6-\uDDFA\uDDFC\uDDFD\uDDFF])|\uD83C\uDDF0(?:\uD83C[\uDDEA\uDDEC-\uDDEE\uDDF2\uDDF3\uDDF5\uDDF7\uDDFC\uDDFE\uDDFF])|\uD83C\uDDED(?:\uD83C[\uDDF0\uDDF2\uDDF3\uDDF7\uDDF9\uDDFA])|\uD83C\uDDE9(?:\uD83C[\uDDEA\uDDEC\uDDEF\uDDF0\uDDF2\uDDF4\uDDFF])|\uD83C\uDDFE(?:\uD83C[\uDDEA\uDDF9])|\uD83C\uDDEC(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEE\uDDF1-\uDDF3\uDDF5-\uDDFA\uDDFC\uDDFE])|\uD83C\uDDF8(?:\uD83C[\uDDE6-\uDDEA\uDDEC-\uDDF4\uDDF7-\uDDF9\uDDFB\uDDFD-\uDDFF])|\uD83C\uDDEB(?:\uD83C[\uDDEE-\uDDF0\uDDF2\uDDF4\uDDF7])|\uD83C\uDDF5(?:\uD83C[\uDDE6\uDDEA-\uDDED\uDDF0-\uDDF3\uDDF7-\uDDF9\uDDFC\uDDFE])|\uD83C\uDDFB(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDEE\uDDF3\uDDFA])|\uD83C\uDDF3(?:\uD83C[\uDDE6\uDDE8\uDDEA-\uDDEC\uDDEE\uDDF1\uDDF4\uDDF5\uDDF7\uDDFA\uDDFF])|\uD83C\uDDE8(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDEE\uDDF0-\uDDF5\uDDF7\uDDFA-\uDDFF])|\uD83C\uDDF1(?:\uD83C[\uDDE6-\uDDE8\uDDEE\uDDF0\uDDF7-\uDDFB\uDDFE])|\uD83C\uDDFF(?:\uD83C[\uDDE6\uDDF2\uDDFC])|\uD83C\uDDFC(?:\uD83C[\uDDEB\uDDF8])|\uD83C\uDDFA(?:\uD83C[\uDDE6\uDDEC\uDDF2\uDDF3\uDDF8\uDDFE\uDDFF])|\uD83C\uDDEE(?:\uD83C[\uDDE8-\uDDEA\uDDF1-\uDDF4\uDDF6-\uDDF9])|\uD83C\uDDEF(?:\uD83C[\uDDEA\uDDF2\uDDF4\uDDF5])|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD6-\uDDDD])(?:\uD83C[\uDFFB-\uDFFF])|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u261D\u270A-\u270D]|\uD83C[\uDF85\uDFC2\uDFC7]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66\uDC67\uDC6B-\uDC6D\uDC70\uDC72\uDC74-\uDC76\uDC78\uDC7C\uDC83\uDC85\uDCAA\uDD74\uDD7A\uDD90\uDD95\uDD96\uDE4C\uDE4F\uDEC0\uDECC]|\uD83E[\uDD0F\uDD18-\uDD1C\uDD1E\uDD1F\uDD30-\uDD36\uDDB5\uDDB6\uDDBB\uDDD2-\uDDD5])(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5\uDEEB\uDEEC\uDEF4-\uDEFA\uDFE0-\uDFEB]|\uD83E[\uDD0D-\uDD3A\uDD3C-\uDD45\uDD47-\uDD71\uDD73-\uDD76\uDD7A-\uDDA2\uDDA5-\uDDAA\uDDAE-\uDDCA\uDDCD-\uDDFF\uDE70-\uDE73\uDE78-\uDE7A\uDE80-\uDE82\uDE90-\uDE95])|(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5\uDEE0-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFA\uDFE0-\uDFEB]|\uD83E[\uDD0D-\uDD3A\uDD3C-\uDD45\uDD47-\uDD71\uDD73-\uDD76\uDD7A-\uDDA2\uDDA5-\uDDAA\uDDAE-\uDDCA\uDDCD-\uDDFF\uDE70-\uDE73\uDE78-\uDE7A\uDE80-\uDE82\uDE90-\uDE95])\uFE0F|(?:[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD])/g;
@@ -611,9 +611,9 @@ var require_emoji_regex = __commonJS({
   }
 });
 
-// ../node_modules/string-width/index.js
+// ../../../../ext/maps/node_modules/string-width/index.js
 var require_string_width = __commonJS({
-  "../node_modules/string-width/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/string-width/index.js"(exports2, module2) {
     "use strict";
     var stripAnsi3 = require_strip_ansi();
     var isFullwidthCodePoint = require_is_fullwidth_code_point();
@@ -648,9 +648,9 @@ var require_string_width = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/format-value.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/format-value.js
 var require_format_value = __commonJS({
-  "../node_modules/cli-progress/lib/format-value.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/format-value.js"(exports2, module2) {
     module2.exports = function formatValue(v2, options, type) {
       if (options.autopadding !== true) {
         return v2;
@@ -668,9 +668,9 @@ var require_format_value = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/format-bar.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/format-bar.js
 var require_format_bar = __commonJS({
-  "../node_modules/cli-progress/lib/format-bar.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/format-bar.js"(exports2, module2) {
     module2.exports = function formatBar(progress, options) {
       const completeSize = Math.round(progress * options.barsize);
       const incompleteSize = options.barsize - completeSize;
@@ -679,9 +679,9 @@ var require_format_bar = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/format-time.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/format-time.js
 var require_format_time = __commonJS({
-  "../node_modules/cli-progress/lib/format-time.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/format-time.js"(exports2, module2) {
     module2.exports = function formatTime(t2, options, roundToMultipleOf) {
       function round(input) {
         if (roundToMultipleOf) {
@@ -706,9 +706,9 @@ var require_format_time = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/formatter.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/formatter.js
 var require_formatter = __commonJS({
-  "../node_modules/cli-progress/lib/formatter.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/formatter.js"(exports2, module2) {
     var _stringWidth = require_string_width();
     var _defaultFormatValue = require_format_value();
     var _defaultFormatBar = require_format_bar();
@@ -758,9 +758,9 @@ var require_formatter = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/options.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/options.js
 var require_options = __commonJS({
-  "../node_modules/cli-progress/lib/options.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/options.js"(exports2, module2) {
     function mergeOption(v2, defaultValue) {
       if (typeof v2 === "undefined" || v2 === null) {
         return defaultValue;
@@ -812,9 +812,9 @@ var require_options = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/generic-bar.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/generic-bar.js
 var require_generic_bar = __commonJS({
-  "../node_modules/cli-progress/lib/generic-bar.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/generic-bar.js"(exports2, module2) {
     var _ETA = require_eta();
     var _Terminal = require_terminal();
     var _formatter = require_formatter();
@@ -939,9 +939,9 @@ var require_generic_bar = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/single-bar.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/single-bar.js
 var require_single_bar = __commonJS({
-  "../node_modules/cli-progress/lib/single-bar.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/single-bar.js"(exports2, module2) {
     var _GenericBar = require_generic_bar();
     var _options = require_options();
     module2.exports = class SingleBar extends _GenericBar {
@@ -1027,9 +1027,9 @@ var require_single_bar = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/lib/multi-bar.js
+// ../../../../ext/maps/node_modules/cli-progress/lib/multi-bar.js
 var require_multi_bar = __commonJS({
-  "../node_modules/cli-progress/lib/multi-bar.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/lib/multi-bar.js"(exports2, module2) {
     var _Terminal = require_terminal();
     var _BarElement = require_generic_bar();
     var _options = require_options();
@@ -1165,9 +1165,9 @@ var require_multi_bar = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/presets/legacy.js
+// ../../../../ext/maps/node_modules/cli-progress/presets/legacy.js
 var require_legacy = __commonJS({
-  "../node_modules/cli-progress/presets/legacy.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/presets/legacy.js"(exports2, module2) {
     module2.exports = {
       format: "progress [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}",
       barCompleteChar: "=",
@@ -1176,9 +1176,9 @@ var require_legacy = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/presets/shades-classic.js
+// ../../../../ext/maps/node_modules/cli-progress/presets/shades-classic.js
 var require_shades_classic = __commonJS({
-  "../node_modules/cli-progress/presets/shades-classic.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/presets/shades-classic.js"(exports2, module2) {
     module2.exports = {
       format: " {bar} {percentage}% | ETA: {eta}s | {value}/{total}",
       barCompleteChar: "\u2588",
@@ -1187,9 +1187,9 @@ var require_shades_classic = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/presets/shades-grey.js
+// ../../../../ext/maps/node_modules/cli-progress/presets/shades-grey.js
 var require_shades_grey = __commonJS({
-  "../node_modules/cli-progress/presets/shades-grey.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/presets/shades-grey.js"(exports2, module2) {
     module2.exports = {
       format: " \x1B[90m{bar}\x1B[0m {percentage}% | ETA: {eta}s | {value}/{total}",
       barCompleteChar: "\u2588",
@@ -1198,9 +1198,9 @@ var require_shades_grey = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/presets/rect.js
+// ../../../../ext/maps/node_modules/cli-progress/presets/rect.js
 var require_rect = __commonJS({
-  "../node_modules/cli-progress/presets/rect.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/presets/rect.js"(exports2, module2) {
     module2.exports = {
       format: " {bar}\u25A0 {percentage}% | ETA: {eta}s | {value}/{total}",
       barCompleteChar: "\u25A0",
@@ -1209,9 +1209,9 @@ var require_rect = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/presets/index.js
+// ../../../../ext/maps/node_modules/cli-progress/presets/index.js
 var require_presets = __commonJS({
-  "../node_modules/cli-progress/presets/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/presets/index.js"(exports2, module2) {
     var _legacy = require_legacy();
     var _shades_classic = require_shades_classic();
     var _shades_grey = require_shades_grey();
@@ -1225,9 +1225,9 @@ var require_presets = __commonJS({
   }
 });
 
-// ../node_modules/cli-progress/cli-progress.js
+// ../../../../ext/maps/node_modules/cli-progress/cli-progress.js
 var require_cli_progress = __commonJS({
-  "../node_modules/cli-progress/cli-progress.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/cli-progress/cli-progress.js"(exports2, module2) {
     var _SingleBar = require_single_bar();
     var _MultiBar = require_multi_bar();
     var _Presets = require_presets();
@@ -1250,9 +1250,9 @@ var require_cli_progress = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/chunkstream.js
+// ../../../../ext/maps/node_modules/pngjs/lib/chunkstream.js
 var require_chunkstream = __commonJS({
-  "../node_modules/pngjs/lib/chunkstream.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/chunkstream.js"(exports2, module2) {
     "use strict";
     var util = require("util");
     var Stream = require("stream");
@@ -1283,16 +1283,16 @@ var require_chunkstream = __commonJS({
         }.bind(this)
       );
     };
-    ChunkStream.prototype.write = function(data2, encoding) {
+    ChunkStream.prototype.write = function(data, encoding) {
       if (!this.writable) {
         this.emit("error", new Error("Stream not writable"));
         return false;
       }
       let dataBuffer;
-      if (Buffer.isBuffer(data2)) {
-        dataBuffer = data2;
+      if (Buffer.isBuffer(data)) {
+        dataBuffer = data;
       } else {
-        dataBuffer = Buffer.from(data2, encoding || this._encoding);
+        dataBuffer = Buffer.from(data, encoding || this._encoding);
       }
       this._buffers.push(dataBuffer);
       this._buffered += dataBuffer.length;
@@ -1302,9 +1302,9 @@ var require_chunkstream = __commonJS({
       }
       return this.writable && !this._paused;
     };
-    ChunkStream.prototype.end = function(data2, encoding) {
-      if (data2) {
-        this.write(data2, encoding);
+    ChunkStream.prototype.end = function(data, encoding) {
+      if (data) {
+        this.write(data, encoding);
       }
       this.writable = false;
       if (!this._buffers) {
@@ -1350,11 +1350,11 @@ var require_chunkstream = __commonJS({
       this._reads.shift();
       let pos = 0;
       let count = 0;
-      let data2 = Buffer.alloc(read.length);
+      let data = Buffer.alloc(read.length);
       while (pos < read.length) {
         let buf = this._buffers[count++];
         let len = Math.min(buf.length, read.length - pos);
-        buf.copy(data2, pos, 0, len);
+        buf.copy(data, pos, 0, len);
         pos += len;
         if (len !== buf.length) {
           this._buffers[--count] = buf.slice(len);
@@ -1364,7 +1364,7 @@ var require_chunkstream = __commonJS({
         this._buffers.splice(0, count);
       }
       this._buffered -= read.length;
-      read.func.call(this, data2);
+      read.func.call(this, data);
     };
     ChunkStream.prototype._process = function() {
       try {
@@ -1388,9 +1388,9 @@ var require_chunkstream = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/interlace.js
+// ../../../../ext/maps/node_modules/pngjs/lib/interlace.js
 var require_interlace = __commonJS({
-  "../node_modules/pngjs/lib/interlace.js"(exports2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/interlace.js"(exports2) {
     "use strict";
     var imagePasses = [
       {
@@ -1471,9 +1471,9 @@ var require_interlace = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/paeth-predictor.js
+// ../../../../ext/maps/node_modules/pngjs/lib/paeth-predictor.js
 var require_paeth_predictor = __commonJS({
-  "../node_modules/pngjs/lib/paeth-predictor.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/paeth-predictor.js"(exports2, module2) {
     "use strict";
     module2.exports = function paethPredictor(left, above, upLeft) {
       let paeth = left + above - upLeft;
@@ -1491,9 +1491,9 @@ var require_paeth_predictor = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/filter-parse.js
+// ../../../../ext/maps/node_modules/pngjs/lib/filter-parse.js
 var require_filter_parse = __commonJS({
-  "../node_modules/pngjs/lib/filter-parse.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/filter-parse.js"(exports2, module2) {
     "use strict";
     var interlaceUtils = require_interlace();
     var paethPredictor = require_paeth_predictor();
@@ -1632,9 +1632,9 @@ var require_filter_parse = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/filter-parse-async.js
+// ../../../../ext/maps/node_modules/pngjs/lib/filter-parse-async.js
 var require_filter_parse_async = __commonJS({
-  "../node_modules/pngjs/lib/filter-parse-async.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/filter-parse-async.js"(exports2, module2) {
     "use strict";
     var util = require("util");
     var ChunkStream = require_chunkstream();
@@ -1658,9 +1658,9 @@ var require_filter_parse_async = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/constants.js
+// ../../../../ext/maps/node_modules/pngjs/lib/constants.js
 var require_constants = __commonJS({
-  "../node_modules/pngjs/lib/constants.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/constants.js"(exports2, module2) {
     "use strict";
     module2.exports = {
       PNG_SIGNATURE: [137, 80, 78, 71, 13, 10, 26, 10],
@@ -1693,9 +1693,9 @@ var require_constants = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/crc.js
+// ../../../../ext/maps/node_modules/pngjs/lib/crc.js
 var require_crc = __commonJS({
-  "../node_modules/pngjs/lib/crc.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/crc.js"(exports2, module2) {
     "use strict";
     var crcTable = [];
     (function() {
@@ -1714,9 +1714,9 @@ var require_crc = __commonJS({
     var CrcCalculator = module2.exports = function() {
       this._crc = -1;
     };
-    CrcCalculator.prototype.write = function(data2) {
-      for (let i2 = 0; i2 < data2.length; i2++) {
-        this._crc = crcTable[(this._crc ^ data2[i2]) & 255] ^ this._crc >>> 8;
+    CrcCalculator.prototype.write = function(data) {
+      for (let i2 = 0; i2 < data.length; i2++) {
+        this._crc = crcTable[(this._crc ^ data[i2]) & 255] ^ this._crc >>> 8;
       }
       return true;
     };
@@ -1733,9 +1733,9 @@ var require_crc = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/parser.js
+// ../../../../ext/maps/node_modules/pngjs/lib/parser.js
 var require_parser = __commonJS({
-  "../node_modules/pngjs/lib/parser.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/parser.js"(exports2, module2) {
     "use strict";
     var constants = require_constants();
     var CrcCalculator = require_crc();
@@ -1770,24 +1770,24 @@ var require_parser = __commonJS({
     Parser3.prototype.start = function() {
       this.read(constants.PNG_SIGNATURE.length, this._parseSignature.bind(this));
     };
-    Parser3.prototype._parseSignature = function(data2) {
+    Parser3.prototype._parseSignature = function(data) {
       let signature = constants.PNG_SIGNATURE;
       for (let i2 = 0; i2 < signature.length; i2++) {
-        if (data2[i2] !== signature[i2]) {
+        if (data[i2] !== signature[i2]) {
           this.error(new Error("Invalid file signature"));
           return;
         }
       }
       this.read(8, this._parseChunkBegin.bind(this));
     };
-    Parser3.prototype._parseChunkBegin = function(data2) {
-      let length = data2.readUInt32BE(0);
-      let type = data2.readUInt32BE(4);
+    Parser3.prototype._parseChunkBegin = function(data) {
+      let length = data.readUInt32BE(0);
+      let type = data.readUInt32BE(4);
       let name = "";
       for (let i2 = 4; i2 < 8; i2++) {
-        name += String.fromCharCode(data2[i2]);
+        name += String.fromCharCode(data[i2]);
       }
-      let ancillary = Boolean(data2[4] & 32);
+      let ancillary = Boolean(data[4] & 32);
       if (!this._hasIHDR && type !== constants.TYPE_IHDR) {
         this.error(new Error("Expected IHDR on beggining"));
         return;
@@ -1809,8 +1809,8 @@ var require_parser = __commonJS({
     Parser3.prototype._handleChunkEnd = function() {
       this.read(4, this._parseChunkEnd.bind(this));
     };
-    Parser3.prototype._parseChunkEnd = function(data2) {
-      let fileCrc = data2.readInt32BE(0);
+    Parser3.prototype._parseChunkEnd = function(data) {
+      let fileCrc = data.readInt32BE(0);
       let calcCrc = this._crc.crc32();
       if (this._options.checkCRC && calcCrc !== fileCrc) {
         this.error(new Error("Crc error - " + fileCrc + " - " + calcCrc));
@@ -1823,15 +1823,15 @@ var require_parser = __commonJS({
     Parser3.prototype._handleIHDR = function(length) {
       this.read(length, this._parseIHDR.bind(this));
     };
-    Parser3.prototype._parseIHDR = function(data2) {
-      this._crc.write(data2);
-      let width = data2.readUInt32BE(0);
-      let height = data2.readUInt32BE(4);
-      let depth = data2[8];
-      let colorType = data2[9];
-      let compr = data2[10];
-      let filter = data2[11];
-      let interlace = data2[12];
+    Parser3.prototype._parseIHDR = function(data) {
+      this._crc.write(data);
+      let width = data.readUInt32BE(0);
+      let height = data.readUInt32BE(4);
+      let depth = data[8];
+      let colorType = data[9];
+      let compr = data[10];
+      let filter = data[11];
+      let interlace = data[12];
       if (depth !== 8 && depth !== 4 && depth !== 2 && depth !== 1 && depth !== 16) {
         this.error(new Error("Unsupported bit depth " + depth));
         return;
@@ -1871,11 +1871,11 @@ var require_parser = __commonJS({
     Parser3.prototype._handlePLTE = function(length) {
       this.read(length, this._parsePLTE.bind(this));
     };
-    Parser3.prototype._parsePLTE = function(data2) {
-      this._crc.write(data2);
-      let entries = Math.floor(data2.length / 3);
+    Parser3.prototype._parsePLTE = function(data) {
+      this._crc.write(data);
+      let entries = Math.floor(data.length / 3);
       for (let i2 = 0; i2 < entries; i2++) {
-        this._palette.push([data2[i2 * 3], data2[i2 * 3 + 1], data2[i2 * 3 + 2], 255]);
+        this._palette.push([data[i2 * 3], data[i2 * 3 + 1], data[i2 * 3 + 2], 255]);
       }
       this.palette(this._palette);
       this._handleChunkEnd();
@@ -1884,30 +1884,30 @@ var require_parser = __commonJS({
       this.simpleTransparency();
       this.read(length, this._parseTRNS.bind(this));
     };
-    Parser3.prototype._parseTRNS = function(data2) {
-      this._crc.write(data2);
+    Parser3.prototype._parseTRNS = function(data) {
+      this._crc.write(data);
       if (this._colorType === constants.COLORTYPE_PALETTE_COLOR) {
         if (this._palette.length === 0) {
           this.error(new Error("Transparency chunk must be after palette"));
           return;
         }
-        if (data2.length > this._palette.length) {
+        if (data.length > this._palette.length) {
           this.error(new Error("More transparent colors than palette size"));
           return;
         }
-        for (let i2 = 0; i2 < data2.length; i2++) {
-          this._palette[i2][3] = data2[i2];
+        for (let i2 = 0; i2 < data.length; i2++) {
+          this._palette[i2][3] = data[i2];
         }
         this.palette(this._palette);
       }
       if (this._colorType === constants.COLORTYPE_GRAYSCALE) {
-        this.transColor([data2.readUInt16BE(0)]);
+        this.transColor([data.readUInt16BE(0)]);
       }
       if (this._colorType === constants.COLORTYPE_COLOR) {
         this.transColor([
-          data2.readUInt16BE(0),
-          data2.readUInt16BE(2),
-          data2.readUInt16BE(4)
+          data.readUInt16BE(0),
+          data.readUInt16BE(2),
+          data.readUInt16BE(4)
         ]);
       }
       this._handleChunkEnd();
@@ -1915,9 +1915,9 @@ var require_parser = __commonJS({
     Parser3.prototype._handleGAMA = function(length) {
       this.read(length, this._parseGAMA.bind(this));
     };
-    Parser3.prototype._parseGAMA = function(data2) {
-      this._crc.write(data2);
-      this.gamma(data2.readUInt32BE(0) / constants.GAMMA_DIVISION);
+    Parser3.prototype._parseGAMA = function(data) {
+      this._crc.write(data);
+      this.gamma(data.readUInt32BE(0) / constants.GAMMA_DIVISION);
       this._handleChunkEnd();
     };
     Parser3.prototype._handleIDAT = function(length) {
@@ -1927,13 +1927,13 @@ var require_parser = __commonJS({
       }
       this.read(-length, this._parseIDAT.bind(this, length));
     };
-    Parser3.prototype._parseIDAT = function(length, data2) {
-      this._crc.write(data2);
+    Parser3.prototype._parseIDAT = function(length, data) {
+      this._crc.write(data);
       if (this._colorType === constants.COLORTYPE_PALETTE_COLOR && this._palette.length === 0) {
         throw new Error("Expected palette not found");
       }
-      this.inflateData(data2);
-      let leftOverLength = length - data2.length;
+      this.inflateData(data);
+      let leftOverLength = length - data.length;
       if (leftOverLength > 0) {
         this._handleIDAT(leftOverLength);
       } else {
@@ -1943,8 +1943,8 @@ var require_parser = __commonJS({
     Parser3.prototype._handleIEND = function(length) {
       this.read(length, this._parseIEND.bind(this));
     };
-    Parser3.prototype._parseIEND = function(data2) {
-      this._crc.write(data2);
+    Parser3.prototype._parseIEND = function(data) {
+      this._crc.write(data);
       this._hasIEND = true;
       this._handleChunkEnd();
       if (this.finished) {
@@ -1954,9 +1954,9 @@ var require_parser = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/bitmapper.js
+// ../../../../ext/maps/node_modules/pngjs/lib/bitmapper.js
 var require_bitmapper = __commonJS({
-  "../node_modules/pngjs/lib/bitmapper.js"(exports2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/bitmapper.js"(exports2) {
     "use strict";
     var interlaceUtils = require_interlace();
     var pixelBppMapper = [
@@ -1965,11 +1965,11 @@ var require_bitmapper = __commonJS({
       },
       // 1 - L
       // 0: 0, 1: 0, 2: 0, 3: 0xff
-      function(pxData, data2, pxPos, rawPos) {
-        if (rawPos === data2.length) {
+      function(pxData, data, pxPos, rawPos) {
+        if (rawPos === data.length) {
           throw new Error("Ran out of data");
         }
-        let pixel = data2[rawPos];
+        let pixel = data[rawPos];
         pxData[pxPos] = pixel;
         pxData[pxPos + 1] = pixel;
         pxData[pxPos + 2] = pixel;
@@ -1977,37 +1977,37 @@ var require_bitmapper = __commonJS({
       },
       // 2 - LA
       // 0: 0, 1: 0, 2: 0, 3: 1
-      function(pxData, data2, pxPos, rawPos) {
-        if (rawPos + 1 >= data2.length) {
+      function(pxData, data, pxPos, rawPos) {
+        if (rawPos + 1 >= data.length) {
           throw new Error("Ran out of data");
         }
-        let pixel = data2[rawPos];
+        let pixel = data[rawPos];
         pxData[pxPos] = pixel;
         pxData[pxPos + 1] = pixel;
         pxData[pxPos + 2] = pixel;
-        pxData[pxPos + 3] = data2[rawPos + 1];
+        pxData[pxPos + 3] = data[rawPos + 1];
       },
       // 3 - RGB
       // 0: 0, 1: 1, 2: 2, 3: 0xff
-      function(pxData, data2, pxPos, rawPos) {
-        if (rawPos + 2 >= data2.length) {
+      function(pxData, data, pxPos, rawPos) {
+        if (rawPos + 2 >= data.length) {
           throw new Error("Ran out of data");
         }
-        pxData[pxPos] = data2[rawPos];
-        pxData[pxPos + 1] = data2[rawPos + 1];
-        pxData[pxPos + 2] = data2[rawPos + 2];
+        pxData[pxPos] = data[rawPos];
+        pxData[pxPos + 1] = data[rawPos + 1];
+        pxData[pxPos + 2] = data[rawPos + 2];
         pxData[pxPos + 3] = 255;
       },
       // 4 - RGBA
       // 0: 0, 1: 1, 2: 2, 3: 3
-      function(pxData, data2, pxPos, rawPos) {
-        if (rawPos + 3 >= data2.length) {
+      function(pxData, data, pxPos, rawPos) {
+        if (rawPos + 3 >= data.length) {
           throw new Error("Ran out of data");
         }
-        pxData[pxPos] = data2[rawPos];
-        pxData[pxPos + 1] = data2[rawPos + 1];
-        pxData[pxPos + 2] = data2[rawPos + 2];
-        pxData[pxPos + 3] = data2[rawPos + 3];
+        pxData[pxPos] = data[rawPos];
+        pxData[pxPos + 1] = data[rawPos + 1];
+        pxData[pxPos + 2] = data[rawPos + 2];
+        pxData[pxPos + 3] = data[rawPos + 3];
       }
     ];
     var pixelBppCustomMapper = [
@@ -2049,21 +2049,21 @@ var require_bitmapper = __commonJS({
         pxData[pxPos + 3] = pixelData[3];
       }
     ];
-    function bitRetriever(data2, depth) {
+    function bitRetriever(data, depth) {
       let leftOver = [];
       let i2 = 0;
       function split() {
-        if (i2 === data2.length) {
+        if (i2 === data.length) {
           throw new Error("Ran out of data");
         }
-        let byte = data2[i2];
+        let byte = data[i2];
         i2++;
         let byte8, byte7, byte6, byte5, byte4, byte3, byte2, byte1;
         switch (depth) {
           default:
             throw new Error("unrecognised depth");
           case 16:
-            byte2 = data2[i2];
+            byte2 = data[i2];
             i2++;
             leftOver.push((byte << 8) + byte2);
             break;
@@ -2105,20 +2105,20 @@ var require_bitmapper = __commonJS({
           leftOver.length = 0;
         },
         end: function() {
-          if (i2 !== data2.length) {
+          if (i2 !== data.length) {
             throw new Error("extra data found");
           }
         }
       };
     }
-    function mapImage8Bit(image, pxData, getPxPos, bpp, data2, rawPos) {
+    function mapImage8Bit(image, pxData, getPxPos, bpp, data, rawPos) {
       let imageWidth = image.width;
       let imageHeight = image.height;
       let imagePass = image.index;
       for (let y3 = 0; y3 < imageHeight; y3++) {
         for (let x2 = 0; x2 < imageWidth; x2++) {
           let pxPos = getPxPos(x2, y3, imagePass);
-          pixelBppMapper[bpp](pxData, data2, pxPos, rawPos);
+          pixelBppMapper[bpp](pxData, data, pxPos, rawPos);
           rawPos += bpp;
         }
       }
@@ -2137,7 +2137,7 @@ var require_bitmapper = __commonJS({
         bits.resetAfterLine();
       }
     }
-    exports2.dataToBitMap = function(data2, bitmapInfo) {
+    exports2.dataToBitMap = function(data, bitmapInfo) {
       let width = bitmapInfo.width;
       let height = bitmapInfo.height;
       let depth = bitmapInfo.depth;
@@ -2145,7 +2145,7 @@ var require_bitmapper = __commonJS({
       let interlace = bitmapInfo.interlace;
       let bits;
       if (depth !== 8) {
-        bits = bitRetriever(data2, depth);
+        bits = bitRetriever(data, depth);
       }
       let pxData;
       if (depth <= 8) {
@@ -2176,7 +2176,7 @@ var require_bitmapper = __commonJS({
             pxData,
             getPxPos,
             bpp,
-            data2,
+            data,
             rawPos
           );
         } else {
@@ -2191,7 +2191,7 @@ var require_bitmapper = __commonJS({
         }
       }
       if (depth === 8) {
-        if (rawPos !== data2.length) {
+        if (rawPos !== data.length) {
           throw new Error("extra data found");
         }
       } else {
@@ -2202,9 +2202,9 @@ var require_bitmapper = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/format-normaliser.js
+// ../../../../ext/maps/node_modules/pngjs/lib/format-normaliser.js
 var require_format_normaliser = __commonJS({
-  "../node_modules/pngjs/lib/format-normaliser.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/format-normaliser.js"(exports2, module2) {
     "use strict";
     function dePalette(indata, outdata, width, height, palette) {
       let pxPos = 0;
@@ -2283,9 +2283,9 @@ var require_format_normaliser = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/parser-async.js
+// ../../../../ext/maps/node_modules/pngjs/lib/parser-async.js
 var require_parser_async = __commonJS({
-  "../node_modules/pngjs/lib/parser-async.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/parser-async.js"(exports2, module2) {
     "use strict";
     var util = require("util");
     var zlib2 = require("zlib");
@@ -2327,7 +2327,7 @@ var require_parser_async = __commonJS({
       }
       this.errord = true;
     };
-    ParserAsync.prototype._inflateData = function(data2) {
+    ParserAsync.prototype._inflateData = function(data) {
       if (!this._inflate) {
         if (this._bitmapInfo.interlace) {
           this._inflate = zlib2.createInflate();
@@ -2362,7 +2362,7 @@ var require_parser_async = __commonJS({
           this._inflate.on("end", this._filter.end.bind(this._filter));
         }
       }
-      this._inflate.write(data2);
+      this._inflate.write(data);
     };
     ParserAsync.prototype._handleMetaData = function(metaData) {
       this._metaData = metaData;
@@ -2413,9 +2413,9 @@ var require_parser_async = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/bitpacker.js
+// ../../../../ext/maps/node_modules/pngjs/lib/bitpacker.js
 var require_bitpacker = __commonJS({
-  "../node_modules/pngjs/lib/bitpacker.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/bitpacker.js"(exports2, module2) {
     "use strict";
     var constants = require_constants();
     module2.exports = function(dataIn, width, height, options) {
@@ -2423,7 +2423,7 @@ var require_bitpacker = __commonJS({
         options.colorType
       ) !== -1;
       if (options.colorType === options.inputColorType) {
-        let bigEndian = function() {
+        let bigEndian = (function() {
           let buffer = new ArrayBuffer(2);
           new DataView(buffer).setInt16(
             0,
@@ -2432,12 +2432,12 @@ var require_bitpacker = __commonJS({
             /* littleEndian */
           );
           return new Int16Array(buffer)[0] !== 256;
-        }();
+        })();
         if (options.bitDepth === 8 || options.bitDepth === 16 && bigEndian) {
           return dataIn;
         }
       }
-      let data2 = options.bitDepth !== 16 ? dataIn : new Uint16Array(dataIn.buffer);
+      let data = options.bitDepth !== 16 ? dataIn : new Uint16Array(dataIn.buffer);
       let maxValue = 255;
       let inBpp = constants.COLORTYPE_TO_BPP_MAP[options.inputColorType];
       if (inBpp === 4 && !options.inputHasAlpha) {
@@ -2468,24 +2468,24 @@ var require_bitpacker = __commonJS({
         let alpha = maxValue;
         switch (options.inputColorType) {
           case constants.COLORTYPE_COLOR_ALPHA:
-            alpha = data2[inIndex + 3];
-            red = data2[inIndex];
-            green = data2[inIndex + 1];
-            blue = data2[inIndex + 2];
+            alpha = data[inIndex + 3];
+            red = data[inIndex];
+            green = data[inIndex + 1];
+            blue = data[inIndex + 2];
             break;
           case constants.COLORTYPE_COLOR:
-            red = data2[inIndex];
-            green = data2[inIndex + 1];
-            blue = data2[inIndex + 2];
+            red = data[inIndex];
+            green = data[inIndex + 1];
+            blue = data[inIndex + 2];
             break;
           case constants.COLORTYPE_ALPHA:
-            alpha = data2[inIndex + 1];
-            red = data2[inIndex];
+            alpha = data[inIndex + 1];
+            red = data[inIndex];
             green = red;
             blue = red;
             break;
           case constants.COLORTYPE_GRAYSCALE:
-            red = data2[inIndex];
+            red = data[inIndex];
             green = red;
             blue = red;
             break;
@@ -2515,7 +2515,7 @@ var require_bitpacker = __commonJS({
       }
       for (let y3 = 0; y3 < height; y3++) {
         for (let x2 = 0; x2 < width; x2++) {
-          let rgba = getRGBA(data2, inIndex);
+          let rgba = getRGBA(data, inIndex);
           switch (options.colorType) {
             case constants.COLORTYPE_COLOR_ALPHA:
             case constants.COLORTYPE_COLOR:
@@ -2563,9 +2563,9 @@ var require_bitpacker = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/filter-pack.js
+// ../../../../ext/maps/node_modules/pngjs/lib/filter-pack.js
 var require_filter_pack = __commonJS({
-  "../node_modules/pngjs/lib/filter-pack.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/filter-pack.js"(exports2, module2) {
     "use strict";
     var paethPredictor = require_paeth_predictor();
     function filterNone(pxData, pxPos, byteWidth, rawData, rawPos) {
@@ -2705,9 +2705,9 @@ var require_filter_pack = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/packer.js
+// ../../../../ext/maps/node_modules/pngjs/lib/packer.js
 var require_packer = __commonJS({
-  "../node_modules/pngjs/lib/packer.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/packer.js"(exports2, module2) {
     "use strict";
     var constants = require_constants();
     var CrcStream = require_crc();
@@ -2760,19 +2760,19 @@ var require_packer = __commonJS({
     Packer.prototype.createDeflate = function() {
       return this._options.deflateFactory(this.getDeflateOptions());
     };
-    Packer.prototype.filterData = function(data2, width, height) {
-      let packedData = bitPacker(data2, width, height, this._options);
+    Packer.prototype.filterData = function(data, width, height) {
+      let packedData = bitPacker(data, width, height, this._options);
       let bpp = constants.COLORTYPE_TO_BPP_MAP[this._options.colorType];
       let filteredData = filter(packedData, width, height, this._options, bpp);
       return filteredData;
     };
-    Packer.prototype._packChunk = function(type, data2) {
-      let len = data2 ? data2.length : 0;
+    Packer.prototype._packChunk = function(type, data) {
+      let len = data ? data.length : 0;
       let buf = Buffer.alloc(len + 12);
       buf.writeUInt32BE(len, 0);
       buf.writeUInt32BE(type, 4);
-      if (data2) {
-        data2.copy(buf, 8);
+      if (data) {
+        data.copy(buf, 8);
       }
       buf.writeInt32BE(
         CrcStream.crc32(buf.slice(4, buf.length - 4)),
@@ -2796,8 +2796,8 @@ var require_packer = __commonJS({
       buf[12] = 0;
       return this._packChunk(constants.TYPE_IHDR, buf);
     };
-    Packer.prototype.packIDAT = function(data2) {
-      return this._packChunk(constants.TYPE_IDAT, data2);
+    Packer.prototype.packIDAT = function(data) {
+      return this._packChunk(constants.TYPE_IDAT, data);
     };
     Packer.prototype.packIEND = function() {
       return this._packChunk(constants.TYPE_IEND, null);
@@ -2805,9 +2805,9 @@ var require_packer = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/packer-async.js
+// ../../../../ext/maps/node_modules/pngjs/lib/packer-async.js
 var require_packer_async = __commonJS({
-  "../node_modules/pngjs/lib/packer-async.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/packer-async.js"(exports2, module2) {
     "use strict";
     var util = require("util");
     var Stream = require("stream");
@@ -2821,13 +2821,13 @@ var require_packer_async = __commonJS({
       this.readable = true;
     };
     util.inherits(PackerAsync, Stream);
-    PackerAsync.prototype.pack = function(data2, width, height, gamma) {
+    PackerAsync.prototype.pack = function(data, width, height, gamma) {
       this.emit("data", Buffer.from(constants.PNG_SIGNATURE));
       this.emit("data", this._packer.packIHDR(width, height));
       if (gamma) {
         this.emit("data", this._packer.packGAMA(gamma));
       }
-      let filteredData = this._packer.filterData(data2, width, height);
+      let filteredData = this._packer.filterData(data, width, height);
       this._deflate.on("error", this.emit.bind(this, "error"));
       this._deflate.on(
         "data",
@@ -2847,9 +2847,9 @@ var require_packer_async = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/sync-inflate.js
+// ../../../../ext/maps/node_modules/pngjs/lib/sync-inflate.js
 var require_sync_inflate = __commonJS({
-  "../node_modules/pngjs/lib/sync-inflate.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/sync-inflate.js"(exports2, module2) {
     "use strict";
     var assert2 = require("assert").ok;
     var zlib2 = require("zlib");
@@ -2984,9 +2984,9 @@ var require_sync_inflate = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/sync-reader.js
+// ../../../../ext/maps/node_modules/pngjs/lib/sync-reader.js
 var require_sync_reader = __commonJS({
-  "../node_modules/pngjs/lib/sync-reader.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/sync-reader.js"(exports2, module2) {
     "use strict";
     var SyncReader = module2.exports = function(buffer) {
       this._buffer = buffer;
@@ -3022,9 +3022,9 @@ var require_sync_reader = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/filter-parse-sync.js
+// ../../../../ext/maps/node_modules/pngjs/lib/filter-parse-sync.js
 var require_filter_parse_sync = __commonJS({
-  "../node_modules/pngjs/lib/filter-parse-sync.js"(exports2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/filter-parse-sync.js"(exports2) {
     "use strict";
     var SyncReader = require_sync_reader();
     var Filter = require_filter_parse();
@@ -3046,9 +3046,9 @@ var require_filter_parse_sync = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/parser-sync.js
+// ../../../../ext/maps/node_modules/pngjs/lib/parser-sync.js
 var require_parser_sync = __commonJS({
-  "../node_modules/pngjs/lib/parser-sync.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/parser-sync.js"(exports2, module2) {
     "use strict";
     var hasSyncZlib = true;
     var zlib2 = require("zlib");
@@ -3141,9 +3141,9 @@ var require_parser_sync = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/packer-sync.js
+// ../../../../ext/maps/node_modules/pngjs/lib/packer-sync.js
 var require_packer_sync = __commonJS({
-  "../node_modules/pngjs/lib/packer-sync.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/packer-sync.js"(exports2, module2) {
     "use strict";
     var hasSyncZlib = true;
     var zlib2 = require("zlib");
@@ -3186,9 +3186,9 @@ var require_packer_sync = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/png-sync.js
+// ../../../../ext/maps/node_modules/pngjs/lib/png-sync.js
 var require_png_sync = __commonJS({
-  "../node_modules/pngjs/lib/png-sync.js"(exports2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/png-sync.js"(exports2) {
     "use strict";
     var parse = require_parser_sync();
     var pack = require_packer_sync();
@@ -3201,9 +3201,9 @@ var require_png_sync = __commonJS({
   }
 });
 
-// ../node_modules/pngjs/lib/png.js
+// ../../../../ext/maps/node_modules/pngjs/lib/png.js
 var require_png = __commonJS({
-  "../node_modules/pngjs/lib/png.js"(exports2) {
+  "../../../../ext/maps/node_modules/pngjs/lib/png.js"(exports2) {
     "use strict";
     var util = require("util");
     var Stream = require("stream");
@@ -3228,9 +3228,9 @@ var require_png = __commonJS({
       this._parser.on("gamma", this._gamma.bind(this));
       this._parser.on(
         "parsed",
-        function(data2) {
-          this.data = data2;
-          this.emit("parsed", data2);
+        function(data) {
+          this.data = data;
+          this.emit("parsed", data);
         }.bind(this)
       );
       this._packer = new Packer(options);
@@ -3253,7 +3253,7 @@ var require_png = __commonJS({
       );
       return this;
     };
-    PNG3.prototype.parse = function(data2, callback) {
+    PNG3.prototype.parse = function(data, callback) {
       if (callback) {
         let onParsed, onError;
         onParsed = function(parsedData) {
@@ -3268,15 +3268,15 @@ var require_png = __commonJS({
         this.once("parsed", onParsed);
         this.once("error", onError);
       }
-      this.end(data2);
+      this.end(data);
       return this;
     };
-    PNG3.prototype.write = function(data2) {
-      this._parser.write(data2);
+    PNG3.prototype.write = function(data) {
+      this._parser.write(data);
       return true;
     };
-    PNG3.prototype.end = function(data2) {
-      this._parser.end(data2);
+    PNG3.prototype.end = function(data) {
+      this._parser.end(data);
     };
     PNG3.prototype._metadata = function(metadata) {
       this.width = metadata.width;
@@ -3338,7 +3338,7 @@ var require_png = __commonJS({
   }
 });
 
-// ../node_modules/consola/dist/chunks/prompt.mjs
+// ../../../../ext/maps/node_modules/consola/dist/chunks/prompt.mjs
 var prompt_exports = {};
 __export(prompt_exports, {
   kCancel: () => kCancel,
@@ -3624,7 +3624,7 @@ async function prompt(message, opts = {}) {
 }
 var import_node_process, import_node_readline, import_node_tty, src, hasRequiredSrc, srcExports, picocolors, hasRequiredPicocolors, picocolorsExports, e, Q, P$1, X, DD, uD, FD, m, L$1, N, I, r, tD, eD, iD, v, CD, w$1, W$1, rD, R, y, V$1, z, ED, _, nD, oD, aD, c, S, AD, pD, h, x, fD, bD, mD, Y, wD, SD, $D, q, jD, PD, V, u, le, L, W, C, o, d, k, P, A, T, F, w, B, he, ye, ve, fe, kCancel;
 var init_prompt = __esm({
-  "../node_modules/consola/dist/chunks/prompt.mjs"() {
+  "../../../../ext/maps/node_modules/consola/dist/chunks/prompt.mjs"() {
     import_node_process = __toESM(require("node:process"), 1);
     import_node_readline = __toESM(require("node:readline"), 1);
     import_node_tty = require("node:tty");
@@ -3967,23 +3967,23 @@ var init_prompt = __esm({
       }
     };
     B = (t2) => {
-      const { cursor: n2, options: s2, style: r5 } = t2, i2 = t2.maxItems ?? Number.POSITIVE_INFINITY, a2 = Math.max(process.stdout.rows - 4, 0), c3 = Math.min(a2, Math.max(i2, 5));
+      const { cursor: n2, options: s2, style: r4 } = t2, i2 = t2.maxItems ?? Number.POSITIVE_INFINITY, a2 = Math.max(process.stdout.rows - 4, 0), c3 = Math.min(a2, Math.max(i2, 5));
       let l2 = 0;
       n2 >= l2 + c3 - 3 ? l2 = Math.max(Math.min(n2 - c3 + 3, s2.length - c3), 0) : n2 < l2 + 2 && (l2 = Math.max(n2 - 2, 0));
       const $ = c3 < s2.length && l2 > 0, p = c3 < s2.length && l2 + c3 < s2.length;
       return s2.slice(l2, l2 + c3).map((M, v2, x2) => {
         const j = v2 === 0 && $, E = v2 === x2.length - 1 && p;
-        return j || E ? e.dim("...") : r5(M, v2 + l2 === n2);
+        return j || E ? e.dim("...") : r4(M, v2 + l2 === n2);
       });
     };
     he = (t2) => new PD({ validate: t2.validate, placeholder: t2.placeholder, defaultValue: t2.defaultValue, initialValue: t2.initialValue, render() {
       const n2 = `${e.gray(o)}
 ${w(this.state)} ${t2.message}
-`, s2 = t2.placeholder ? e.inverse(t2.placeholder[0]) + e.dim(t2.placeholder.slice(1)) : e.inverse(e.hidden("_")), r5 = this.value ? this.valueWithCursor : s2;
+`, s2 = t2.placeholder ? e.inverse(t2.placeholder[0]) + e.dim(t2.placeholder.slice(1)) : e.inverse(e.hidden("_")), r4 = this.value ? this.valueWithCursor : s2;
       switch (this.state) {
         case "error":
           return `${n2.trim()}
-${e.yellow(o)} ${r5}
+${e.yellow(o)} ${r4}
 ${e.yellow(d)} ${e.yellow(this.error)}
 `;
         case "submit":
@@ -3992,7 +3992,7 @@ ${e.yellow(d)} ${e.yellow(this.error)}
           return `${n2}${e.gray(o)} ${e.strikethrough(e.dim(this.value ?? ""))}${this.value?.trim() ? `
 ${e.gray(o)}` : ""}`;
         default:
-          return `${n2}${e.cyan(o)} ${r5}
+          return `${n2}${e.cyan(o)} ${r4}
 ${e.cyan(d)}
 `;
       }
@@ -4000,26 +4000,26 @@ ${e.cyan(d)}
     ye = (t2) => {
       const n2 = t2.active ?? "Yes", s2 = t2.inactive ?? "No";
       return new fD({ active: n2, inactive: s2, initialValue: t2.initialValue ?? true, render() {
-        const r5 = `${e.gray(o)}
+        const r4 = `${e.gray(o)}
 ${w(this.state)} ${t2.message}
 `, i2 = this.value ? n2 : s2;
         switch (this.state) {
           case "submit":
-            return `${r5}${e.gray(o)} ${e.dim(i2)}`;
+            return `${r4}${e.gray(o)} ${e.dim(i2)}`;
           case "cancel":
-            return `${r5}${e.gray(o)} ${e.strikethrough(e.dim(i2))}
+            return `${r4}${e.gray(o)} ${e.strikethrough(e.dim(i2))}
 ${e.gray(o)}`;
           default:
-            return `${r5}${e.cyan(o)} ${this.value ? `${e.green(k)} ${n2}` : `${e.dim(P)} ${e.dim(n2)}`} ${e.dim("/")} ${this.value ? `${e.dim(P)} ${e.dim(s2)}` : `${e.green(k)} ${s2}`}
+            return `${r4}${e.cyan(o)} ${this.value ? `${e.green(k)} ${n2}` : `${e.dim(P)} ${e.dim(n2)}`} ${e.dim("/")} ${this.value ? `${e.dim(P)} ${e.dim(s2)}` : `${e.green(k)} ${s2}`}
 ${e.cyan(d)}
 `;
         }
       } }).prompt();
     };
     ve = (t2) => {
-      const n2 = (s2, r5) => {
+      const n2 = (s2, r4) => {
         const i2 = s2.label ?? String(s2.value);
-        switch (r5) {
+        switch (r4) {
           case "selected":
             return `${e.dim(i2)}`;
           case "active":
@@ -4041,7 +4041,7 @@ ${w(this.state)} ${t2.message}
             return `${s2}${e.gray(o)} ${n2(this.options[this.cursor], "cancelled")}
 ${e.gray(o)}`;
           default:
-            return `${s2}${e.cyan(o)} ${B({ cursor: this.cursor, options: this.options, maxItems: t2.maxItems, style: (r5, i2) => n2(r5, i2 ? "active" : "inactive") }).join(`
+            return `${s2}${e.cyan(o)} ${B({ cursor: this.cursor, options: this.options, maxItems: t2.maxItems, style: (r4, i2) => n2(r4, i2 ? "active" : "inactive") }).join(`
 ${e.cyan(o)}  `)}
 ${e.cyan(d)}
 `;
@@ -4049,9 +4049,9 @@ ${e.cyan(d)}
       } }).prompt();
     };
     fe = (t2) => {
-      const n2 = (s2, r5) => {
+      const n2 = (s2, r4) => {
         const i2 = s2.label ?? String(s2.value);
-        return r5 === "active" ? `${e.cyan(A)} ${i2} ${s2.hint ? e.dim(`(${s2.hint})`) : ""}` : r5 === "selected" ? `${e.green(T)} ${e.dim(i2)}` : r5 === "cancelled" ? `${e.strikethrough(e.dim(i2))}` : r5 === "active-selected" ? `${e.green(T)} ${i2} ${s2.hint ? e.dim(`(${s2.hint})`) : ""}` : r5 === "submitted" ? `${e.dim(i2)}` : `${e.dim(F)} ${e.dim(i2)}`;
+        return r4 === "active" ? `${e.cyan(A)} ${i2} ${s2.hint ? e.dim(`(${s2.hint})`) : ""}` : r4 === "selected" ? `${e.green(T)} ${e.dim(i2)}` : r4 === "cancelled" ? `${e.strikethrough(e.dim(i2))}` : r4 === "active-selected" ? `${e.green(T)} ${i2} ${s2.hint ? e.dim(`(${s2.hint})`) : ""}` : r4 === "submitted" ? `${e.dim(i2)}` : `${e.dim(F)} ${e.dim(i2)}`;
       };
       return new wD({ options: t2.options, initialValues: t2.initialValues, required: t2.required ?? true, cursorAt: t2.cursorAt, validate(s2) {
         if (this.required && s2.length === 0) return `Please select at least one option.
@@ -4059,7 +4059,7 @@ ${e.reset(e.dim(`Press ${e.gray(e.bgWhite(e.inverse(" space ")))} to select, ${e
       }, render() {
         const s2 = `${e.gray(o)}
 ${w(this.state)} ${t2.message}
-`, r5 = (i2, a2) => {
+`, r4 = (i2, a2) => {
           const c3 = this.value.includes(i2.value);
           return a2 && c3 ? n2(i2, "active-selected") : c3 ? n2(i2, "selected") : n2(i2, a2 ? "active" : "inactive");
         };
@@ -4075,13 +4075,13 @@ ${e.gray(o)}` : ""}`;
             const i2 = this.error.split(`
 `).map((a2, c3) => c3 === 0 ? `${e.yellow(d)} ${e.yellow(a2)}` : `   ${a2}`).join(`
 `);
-            return `${s2 + e.yellow(o)} ${B({ options: this.options, cursor: this.cursor, maxItems: t2.maxItems, style: r5 }).join(`
+            return `${s2 + e.yellow(o)} ${B({ options: this.options, cursor: this.cursor, maxItems: t2.maxItems, style: r4 }).join(`
 ${e.yellow(o)}  `)}
 ${i2}
 `;
           }
           default:
-            return `${s2}${e.cyan(o)} ${B({ options: this.options, cursor: this.cursor, maxItems: t2.maxItems, style: r5 }).join(`
+            return `${s2}${e.cyan(o)} ${B({ options: this.options, cursor: this.cursor, maxItems: t2.maxItems, style: r4 }).join(`
 ${e.cyan(o)}  `)}
 ${e.cyan(d)}
 `;
@@ -4093,9 +4093,9 @@ ${e.cyan(d)}
   }
 });
 
-// ../node_modules/chevrotain/lib/src/version.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/version.js
 var require_version = __commonJS({
-  "../node_modules/chevrotain/lib/src/version.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/version.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.VERSION = void 0;
@@ -4103,9 +4103,9 @@ var require_version = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isPrototype.js
+// ../../../../ext/maps/node_modules/lodash/_isPrototype.js
 var require_isPrototype = __commonJS({
-  "../node_modules/lodash/_isPrototype.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isPrototype.js"(exports2, module2) {
     var objectProto = Object.prototype;
     function isPrototype(value) {
       var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto;
@@ -4115,9 +4115,9 @@ var require_isPrototype = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_overArg.js
+// ../../../../ext/maps/node_modules/lodash/_overArg.js
 var require_overArg = __commonJS({
-  "../node_modules/lodash/_overArg.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_overArg.js"(exports2, module2) {
     function overArg(func, transform) {
       return function(arg) {
         return func(transform(arg));
@@ -4127,18 +4127,18 @@ var require_overArg = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_nativeKeys.js
+// ../../../../ext/maps/node_modules/lodash/_nativeKeys.js
 var require_nativeKeys = __commonJS({
-  "../node_modules/lodash/_nativeKeys.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_nativeKeys.js"(exports2, module2) {
     var overArg = require_overArg();
     var nativeKeys = overArg(Object.keys, Object);
     module2.exports = nativeKeys;
   }
 });
 
-// ../node_modules/lodash/_baseKeys.js
+// ../../../../ext/maps/node_modules/lodash/_baseKeys.js
 var require_baseKeys = __commonJS({
-  "../node_modules/lodash/_baseKeys.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseKeys.js"(exports2, module2) {
     var isPrototype = require_isPrototype();
     var nativeKeys = require_nativeKeys();
     var objectProto = Object.prototype;
@@ -4159,17 +4159,17 @@ var require_baseKeys = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_freeGlobal.js
+// ../../../../ext/maps/node_modules/lodash/_freeGlobal.js
 var require_freeGlobal = __commonJS({
-  "../node_modules/lodash/_freeGlobal.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_freeGlobal.js"(exports2, module2) {
     var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
     module2.exports = freeGlobal;
   }
 });
 
-// ../node_modules/lodash/_root.js
+// ../../../../ext/maps/node_modules/lodash/_root.js
 var require_root = __commonJS({
-  "../node_modules/lodash/_root.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_root.js"(exports2, module2) {
     var freeGlobal = require_freeGlobal();
     var freeSelf = typeof self == "object" && self && self.Object === Object && self;
     var root = freeGlobal || freeSelf || Function("return this")();
@@ -4177,18 +4177,18 @@ var require_root = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_Symbol.js
+// ../../../../ext/maps/node_modules/lodash/_Symbol.js
 var require_Symbol = __commonJS({
-  "../node_modules/lodash/_Symbol.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Symbol.js"(exports2, module2) {
     var root = require_root();
     var Symbol2 = root.Symbol;
     module2.exports = Symbol2;
   }
 });
 
-// ../node_modules/lodash/_getRawTag.js
+// ../../../../ext/maps/node_modules/lodash/_getRawTag.js
 var require_getRawTag = __commonJS({
-  "../node_modules/lodash/_getRawTag.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getRawTag.js"(exports2, module2) {
     var Symbol2 = require_Symbol();
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
@@ -4215,9 +4215,9 @@ var require_getRawTag = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_objectToString.js
+// ../../../../ext/maps/node_modules/lodash/_objectToString.js
 var require_objectToString = __commonJS({
-  "../node_modules/lodash/_objectToString.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_objectToString.js"(exports2, module2) {
     var objectProto = Object.prototype;
     var nativeObjectToString = objectProto.toString;
     function objectToString(value) {
@@ -4227,9 +4227,9 @@ var require_objectToString = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseGetTag.js
+// ../../../../ext/maps/node_modules/lodash/_baseGetTag.js
 var require_baseGetTag = __commonJS({
-  "../node_modules/lodash/_baseGetTag.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseGetTag.js"(exports2, module2) {
     var Symbol2 = require_Symbol();
     var getRawTag = require_getRawTag();
     var objectToString = require_objectToString();
@@ -4246,9 +4246,9 @@ var require_baseGetTag = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isObject.js
+// ../../../../ext/maps/node_modules/lodash/isObject.js
 var require_isObject = __commonJS({
-  "../node_modules/lodash/isObject.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isObject.js"(exports2, module2) {
     function isObject2(value) {
       var type = typeof value;
       return value != null && (type == "object" || type == "function");
@@ -4257,9 +4257,9 @@ var require_isObject = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isFunction.js
+// ../../../../ext/maps/node_modules/lodash/isFunction.js
 var require_isFunction = __commonJS({
-  "../node_modules/lodash/isFunction.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isFunction.js"(exports2, module2) {
     var baseGetTag = require_baseGetTag();
     var isObject2 = require_isObject();
     var asyncTag = "[object AsyncFunction]";
@@ -4277,23 +4277,23 @@ var require_isFunction = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_coreJsData.js
+// ../../../../ext/maps/node_modules/lodash/_coreJsData.js
 var require_coreJsData = __commonJS({
-  "../node_modules/lodash/_coreJsData.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_coreJsData.js"(exports2, module2) {
     var root = require_root();
     var coreJsData = root["__core-js_shared__"];
     module2.exports = coreJsData;
   }
 });
 
-// ../node_modules/lodash/_isMasked.js
+// ../../../../ext/maps/node_modules/lodash/_isMasked.js
 var require_isMasked = __commonJS({
-  "../node_modules/lodash/_isMasked.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isMasked.js"(exports2, module2) {
     var coreJsData = require_coreJsData();
-    var maskSrcKey = function() {
+    var maskSrcKey = (function() {
       var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
       return uid ? "Symbol(src)_1." + uid : "";
-    }();
+    })();
     function isMasked(func) {
       return !!maskSrcKey && maskSrcKey in func;
     }
@@ -4301,9 +4301,9 @@ var require_isMasked = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_toSource.js
+// ../../../../ext/maps/node_modules/lodash/_toSource.js
 var require_toSource = __commonJS({
-  "../node_modules/lodash/_toSource.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_toSource.js"(exports2, module2) {
     var funcProto = Function.prototype;
     var funcToString = funcProto.toString;
     function toSource(func) {
@@ -4323,9 +4323,9 @@ var require_toSource = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsNative.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsNative.js
 var require_baseIsNative = __commonJS({
-  "../node_modules/lodash/_baseIsNative.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsNative.js"(exports2, module2) {
     var isFunction = require_isFunction();
     var isMasked = require_isMasked();
     var isObject2 = require_isObject();
@@ -4350,9 +4350,9 @@ var require_baseIsNative = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getValue.js
+// ../../../../ext/maps/node_modules/lodash/_getValue.js
 var require_getValue = __commonJS({
-  "../node_modules/lodash/_getValue.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getValue.js"(exports2, module2) {
     function getValue(object2, key) {
       return object2 == null ? void 0 : object2[key];
     }
@@ -4360,9 +4360,9 @@ var require_getValue = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getNative.js
+// ../../../../ext/maps/node_modules/lodash/_getNative.js
 var require_getNative = __commonJS({
-  "../node_modules/lodash/_getNative.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getNative.js"(exports2, module2) {
     var baseIsNative = require_baseIsNative();
     var getValue = require_getValue();
     function getNative(object2, key) {
@@ -4373,9 +4373,9 @@ var require_getNative = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_DataView.js
+// ../../../../ext/maps/node_modules/lodash/_DataView.js
 var require_DataView = __commonJS({
-  "../node_modules/lodash/_DataView.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_DataView.js"(exports2, module2) {
     var getNative = require_getNative();
     var root = require_root();
     var DataView2 = getNative(root, "DataView");
@@ -4383,9 +4383,9 @@ var require_DataView = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_Map.js
+// ../../../../ext/maps/node_modules/lodash/_Map.js
 var require_Map = __commonJS({
-  "../node_modules/lodash/_Map.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Map.js"(exports2, module2) {
     var getNative = require_getNative();
     var root = require_root();
     var Map2 = getNative(root, "Map");
@@ -4393,9 +4393,9 @@ var require_Map = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_Promise.js
+// ../../../../ext/maps/node_modules/lodash/_Promise.js
 var require_Promise = __commonJS({
-  "../node_modules/lodash/_Promise.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Promise.js"(exports2, module2) {
     var getNative = require_getNative();
     var root = require_root();
     var Promise2 = getNative(root, "Promise");
@@ -4403,9 +4403,9 @@ var require_Promise = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_Set.js
+// ../../../../ext/maps/node_modules/lodash/_Set.js
 var require_Set = __commonJS({
-  "../node_modules/lodash/_Set.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Set.js"(exports2, module2) {
     var getNative = require_getNative();
     var root = require_root();
     var Set2 = getNative(root, "Set");
@@ -4413,9 +4413,9 @@ var require_Set = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_WeakMap.js
+// ../../../../ext/maps/node_modules/lodash/_WeakMap.js
 var require_WeakMap = __commonJS({
-  "../node_modules/lodash/_WeakMap.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_WeakMap.js"(exports2, module2) {
     var getNative = require_getNative();
     var root = require_root();
     var WeakMap = getNative(root, "WeakMap");
@@ -4423,9 +4423,9 @@ var require_WeakMap = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getTag.js
+// ../../../../ext/maps/node_modules/lodash/_getTag.js
 var require_getTag = __commonJS({
-  "../node_modules/lodash/_getTag.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getTag.js"(exports2, module2) {
     var DataView2 = require_DataView();
     var Map2 = require_Map();
     var Promise2 = require_Promise();
@@ -4469,9 +4469,9 @@ var require_getTag = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isObjectLike.js
+// ../../../../ext/maps/node_modules/lodash/isObjectLike.js
 var require_isObjectLike = __commonJS({
-  "../node_modules/lodash/isObjectLike.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isObjectLike.js"(exports2, module2) {
     function isObjectLike(value) {
       return value != null && typeof value == "object";
     }
@@ -4479,9 +4479,9 @@ var require_isObjectLike = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsArguments.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsArguments.js
 var require_baseIsArguments = __commonJS({
-  "../node_modules/lodash/_baseIsArguments.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsArguments.js"(exports2, module2) {
     var baseGetTag = require_baseGetTag();
     var isObjectLike = require_isObjectLike();
     var argsTag = "[object Arguments]";
@@ -4492,34 +4492,34 @@ var require_baseIsArguments = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isArguments.js
+// ../../../../ext/maps/node_modules/lodash/isArguments.js
 var require_isArguments = __commonJS({
-  "../node_modules/lodash/isArguments.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isArguments.js"(exports2, module2) {
     var baseIsArguments = require_baseIsArguments();
     var isObjectLike = require_isObjectLike();
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
     var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-    var isArguments = baseIsArguments(/* @__PURE__ */ function() {
+    var isArguments = baseIsArguments(/* @__PURE__ */ (function() {
       return arguments;
-    }()) ? baseIsArguments : function(value) {
+    })()) ? baseIsArguments : function(value) {
       return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
     };
     module2.exports = isArguments;
   }
 });
 
-// ../node_modules/lodash/isArray.js
+// ../../../../ext/maps/node_modules/lodash/isArray.js
 var require_isArray = __commonJS({
-  "../node_modules/lodash/isArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isArray.js"(exports2, module2) {
     var isArray = Array.isArray;
     module2.exports = isArray;
   }
 });
 
-// ../node_modules/lodash/isLength.js
+// ../../../../ext/maps/node_modules/lodash/isLength.js
 var require_isLength = __commonJS({
-  "../node_modules/lodash/isLength.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isLength.js"(exports2, module2) {
     var MAX_SAFE_INTEGER = 9007199254740991;
     function isLength(value) {
       return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
@@ -4528,9 +4528,9 @@ var require_isLength = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isArrayLike.js
+// ../../../../ext/maps/node_modules/lodash/isArrayLike.js
 var require_isArrayLike = __commonJS({
-  "../node_modules/lodash/isArrayLike.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isArrayLike.js"(exports2, module2) {
     var isFunction = require_isFunction();
     var isLength = require_isLength();
     function isArrayLike(value) {
@@ -4540,9 +4540,9 @@ var require_isArrayLike = __commonJS({
   }
 });
 
-// ../node_modules/lodash/stubFalse.js
+// ../../../../ext/maps/node_modules/lodash/stubFalse.js
 var require_stubFalse = __commonJS({
-  "../node_modules/lodash/stubFalse.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/stubFalse.js"(exports2, module2) {
     function stubFalse() {
       return false;
     }
@@ -4550,9 +4550,9 @@ var require_stubFalse = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isBuffer.js
+// ../../../../ext/maps/node_modules/lodash/isBuffer.js
 var require_isBuffer = __commonJS({
-  "../node_modules/lodash/isBuffer.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isBuffer.js"(exports2, module2) {
     var root = require_root();
     var stubFalse = require_stubFalse();
     var freeExports = typeof exports2 == "object" && exports2 && !exports2.nodeType && exports2;
@@ -4565,9 +4565,9 @@ var require_isBuffer = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsTypedArray.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsTypedArray.js
 var require_baseIsTypedArray = __commonJS({
-  "../node_modules/lodash/_baseIsTypedArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsTypedArray.js"(exports2, module2) {
     var baseGetTag = require_baseGetTag();
     var isLength = require_isLength();
     var isObjectLike = require_isObjectLike();
@@ -4605,9 +4605,9 @@ var require_baseIsTypedArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseUnary.js
+// ../../../../ext/maps/node_modules/lodash/_baseUnary.js
 var require_baseUnary = __commonJS({
-  "../node_modules/lodash/_baseUnary.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseUnary.js"(exports2, module2) {
     function baseUnary(func) {
       return function(value) {
         return func(value);
@@ -4617,31 +4617,31 @@ var require_baseUnary = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_nodeUtil.js
+// ../../../../ext/maps/node_modules/lodash/_nodeUtil.js
 var require_nodeUtil = __commonJS({
-  "../node_modules/lodash/_nodeUtil.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_nodeUtil.js"(exports2, module2) {
     var freeGlobal = require_freeGlobal();
     var freeExports = typeof exports2 == "object" && exports2 && !exports2.nodeType && exports2;
     var freeModule = freeExports && typeof module2 == "object" && module2 && !module2.nodeType && module2;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var freeProcess = moduleExports && freeGlobal.process;
-    var nodeUtil = function() {
+    var nodeUtil = (function() {
       try {
-        var types2 = freeModule && freeModule.require && freeModule.require("util").types;
-        if (types2) {
-          return types2;
+        var types = freeModule && freeModule.require && freeModule.require("util").types;
+        if (types) {
+          return types;
         }
         return freeProcess && freeProcess.binding && freeProcess.binding("util");
       } catch (e2) {
       }
-    }();
+    })();
     module2.exports = nodeUtil;
   }
 });
 
-// ../node_modules/lodash/isTypedArray.js
+// ../../../../ext/maps/node_modules/lodash/isTypedArray.js
 var require_isTypedArray = __commonJS({
-  "../node_modules/lodash/isTypedArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isTypedArray.js"(exports2, module2) {
     var baseIsTypedArray = require_baseIsTypedArray();
     var baseUnary = require_baseUnary();
     var nodeUtil = require_nodeUtil();
@@ -4651,9 +4651,9 @@ var require_isTypedArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isEmpty.js
+// ../../../../ext/maps/node_modules/lodash/isEmpty.js
 var require_isEmpty = __commonJS({
-  "../node_modules/lodash/isEmpty.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isEmpty.js"(exports2, module2) {
     var baseKeys = require_baseKeys();
     var getTag = require_getTag();
     var isArguments = require_isArguments();
@@ -4691,9 +4691,9 @@ var require_isEmpty = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayMap.js
+// ../../../../ext/maps/node_modules/lodash/_arrayMap.js
 var require_arrayMap = __commonJS({
-  "../node_modules/lodash/_arrayMap.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayMap.js"(exports2, module2) {
     function arrayMap(array, iteratee) {
       var index = -1, length = array == null ? 0 : array.length, result = Array(length);
       while (++index < length) {
@@ -4705,9 +4705,9 @@ var require_arrayMap = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_listCacheClear.js
+// ../../../../ext/maps/node_modules/lodash/_listCacheClear.js
 var require_listCacheClear = __commonJS({
-  "../node_modules/lodash/_listCacheClear.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_listCacheClear.js"(exports2, module2) {
     function listCacheClear() {
       this.__data__ = [];
       this.size = 0;
@@ -4716,9 +4716,9 @@ var require_listCacheClear = __commonJS({
   }
 });
 
-// ../node_modules/lodash/eq.js
+// ../../../../ext/maps/node_modules/lodash/eq.js
 var require_eq = __commonJS({
-  "../node_modules/lodash/eq.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/eq.js"(exports2, module2) {
     function eq(value, other) {
       return value === other || value !== value && other !== other;
     }
@@ -4726,9 +4726,9 @@ var require_eq = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_assocIndexOf.js
+// ../../../../ext/maps/node_modules/lodash/_assocIndexOf.js
 var require_assocIndexOf = __commonJS({
-  "../node_modules/lodash/_assocIndexOf.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_assocIndexOf.js"(exports2, module2) {
     var eq = require_eq();
     function assocIndexOf(array, key) {
       var length = array.length;
@@ -4743,22 +4743,22 @@ var require_assocIndexOf = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_listCacheDelete.js
+// ../../../../ext/maps/node_modules/lodash/_listCacheDelete.js
 var require_listCacheDelete = __commonJS({
-  "../node_modules/lodash/_listCacheDelete.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_listCacheDelete.js"(exports2, module2) {
     var assocIndexOf = require_assocIndexOf();
     var arrayProto = Array.prototype;
     var splice = arrayProto.splice;
     function listCacheDelete(key) {
-      var data2 = this.__data__, index = assocIndexOf(data2, key);
+      var data = this.__data__, index = assocIndexOf(data, key);
       if (index < 0) {
         return false;
       }
-      var lastIndex = data2.length - 1;
+      var lastIndex = data.length - 1;
       if (index == lastIndex) {
-        data2.pop();
+        data.pop();
       } else {
-        splice.call(data2, index, 1);
+        splice.call(data, index, 1);
       }
       --this.size;
       return true;
@@ -4767,21 +4767,21 @@ var require_listCacheDelete = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_listCacheGet.js
+// ../../../../ext/maps/node_modules/lodash/_listCacheGet.js
 var require_listCacheGet = __commonJS({
-  "../node_modules/lodash/_listCacheGet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_listCacheGet.js"(exports2, module2) {
     var assocIndexOf = require_assocIndexOf();
     function listCacheGet(key) {
-      var data2 = this.__data__, index = assocIndexOf(data2, key);
-      return index < 0 ? void 0 : data2[index][1];
+      var data = this.__data__, index = assocIndexOf(data, key);
+      return index < 0 ? void 0 : data[index][1];
     }
     module2.exports = listCacheGet;
   }
 });
 
-// ../node_modules/lodash/_listCacheHas.js
+// ../../../../ext/maps/node_modules/lodash/_listCacheHas.js
 var require_listCacheHas = __commonJS({
-  "../node_modules/lodash/_listCacheHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_listCacheHas.js"(exports2, module2) {
     var assocIndexOf = require_assocIndexOf();
     function listCacheHas(key) {
       return assocIndexOf(this.__data__, key) > -1;
@@ -4790,17 +4790,17 @@ var require_listCacheHas = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_listCacheSet.js
+// ../../../../ext/maps/node_modules/lodash/_listCacheSet.js
 var require_listCacheSet = __commonJS({
-  "../node_modules/lodash/_listCacheSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_listCacheSet.js"(exports2, module2) {
     var assocIndexOf = require_assocIndexOf();
     function listCacheSet(key, value) {
-      var data2 = this.__data__, index = assocIndexOf(data2, key);
+      var data = this.__data__, index = assocIndexOf(data, key);
       if (index < 0) {
         ++this.size;
-        data2.push([key, value]);
+        data.push([key, value]);
       } else {
-        data2[index][1] = value;
+        data[index][1] = value;
       }
       return this;
     }
@@ -4808,9 +4808,9 @@ var require_listCacheSet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_ListCache.js
+// ../../../../ext/maps/node_modules/lodash/_ListCache.js
 var require_ListCache = __commonJS({
-  "../node_modules/lodash/_ListCache.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_ListCache.js"(exports2, module2) {
     var listCacheClear = require_listCacheClear();
     var listCacheDelete = require_listCacheDelete();
     var listCacheGet = require_listCacheGet();
@@ -4833,9 +4833,9 @@ var require_ListCache = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_stackClear.js
+// ../../../../ext/maps/node_modules/lodash/_stackClear.js
 var require_stackClear = __commonJS({
-  "../node_modules/lodash/_stackClear.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stackClear.js"(exports2, module2) {
     var ListCache = require_ListCache();
     function stackClear() {
       this.__data__ = new ListCache();
@@ -4845,21 +4845,21 @@ var require_stackClear = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_stackDelete.js
+// ../../../../ext/maps/node_modules/lodash/_stackDelete.js
 var require_stackDelete = __commonJS({
-  "../node_modules/lodash/_stackDelete.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stackDelete.js"(exports2, module2) {
     function stackDelete(key) {
-      var data2 = this.__data__, result = data2["delete"](key);
-      this.size = data2.size;
+      var data = this.__data__, result = data["delete"](key);
+      this.size = data.size;
       return result;
     }
     module2.exports = stackDelete;
   }
 });
 
-// ../node_modules/lodash/_stackGet.js
+// ../../../../ext/maps/node_modules/lodash/_stackGet.js
 var require_stackGet = __commonJS({
-  "../node_modules/lodash/_stackGet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stackGet.js"(exports2, module2) {
     function stackGet(key) {
       return this.__data__.get(key);
     }
@@ -4867,9 +4867,9 @@ var require_stackGet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_stackHas.js
+// ../../../../ext/maps/node_modules/lodash/_stackHas.js
 var require_stackHas = __commonJS({
-  "../node_modules/lodash/_stackHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stackHas.js"(exports2, module2) {
     function stackHas(key) {
       return this.__data__.has(key);
     }
@@ -4877,18 +4877,18 @@ var require_stackHas = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_nativeCreate.js
+// ../../../../ext/maps/node_modules/lodash/_nativeCreate.js
 var require_nativeCreate = __commonJS({
-  "../node_modules/lodash/_nativeCreate.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_nativeCreate.js"(exports2, module2) {
     var getNative = require_getNative();
     var nativeCreate = getNative(Object, "create");
     module2.exports = nativeCreate;
   }
 });
 
-// ../node_modules/lodash/_hashClear.js
+// ../../../../ext/maps/node_modules/lodash/_hashClear.js
 var require_hashClear = __commonJS({
-  "../node_modules/lodash/_hashClear.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hashClear.js"(exports2, module2) {
     var nativeCreate = require_nativeCreate();
     function hashClear() {
       this.__data__ = nativeCreate ? nativeCreate(null) : {};
@@ -4898,9 +4898,9 @@ var require_hashClear = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_hashDelete.js
+// ../../../../ext/maps/node_modules/lodash/_hashDelete.js
 var require_hashDelete = __commonJS({
-  "../node_modules/lodash/_hashDelete.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hashDelete.js"(exports2, module2) {
     function hashDelete(key) {
       var result = this.has(key) && delete this.__data__[key];
       this.size -= result ? 1 : 0;
@@ -4910,57 +4910,57 @@ var require_hashDelete = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_hashGet.js
+// ../../../../ext/maps/node_modules/lodash/_hashGet.js
 var require_hashGet = __commonJS({
-  "../node_modules/lodash/_hashGet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hashGet.js"(exports2, module2) {
     var nativeCreate = require_nativeCreate();
     var HASH_UNDEFINED = "__lodash_hash_undefined__";
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
     function hashGet(key) {
-      var data2 = this.__data__;
+      var data = this.__data__;
       if (nativeCreate) {
-        var result = data2[key];
+        var result = data[key];
         return result === HASH_UNDEFINED ? void 0 : result;
       }
-      return hasOwnProperty.call(data2, key) ? data2[key] : void 0;
+      return hasOwnProperty.call(data, key) ? data[key] : void 0;
     }
     module2.exports = hashGet;
   }
 });
 
-// ../node_modules/lodash/_hashHas.js
+// ../../../../ext/maps/node_modules/lodash/_hashHas.js
 var require_hashHas = __commonJS({
-  "../node_modules/lodash/_hashHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hashHas.js"(exports2, module2) {
     var nativeCreate = require_nativeCreate();
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
     function hashHas(key) {
-      var data2 = this.__data__;
-      return nativeCreate ? data2[key] !== void 0 : hasOwnProperty.call(data2, key);
+      var data = this.__data__;
+      return nativeCreate ? data[key] !== void 0 : hasOwnProperty.call(data, key);
     }
     module2.exports = hashHas;
   }
 });
 
-// ../node_modules/lodash/_hashSet.js
+// ../../../../ext/maps/node_modules/lodash/_hashSet.js
 var require_hashSet = __commonJS({
-  "../node_modules/lodash/_hashSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hashSet.js"(exports2, module2) {
     var nativeCreate = require_nativeCreate();
     var HASH_UNDEFINED = "__lodash_hash_undefined__";
     function hashSet(key, value) {
-      var data2 = this.__data__;
+      var data = this.__data__;
       this.size += this.has(key) ? 0 : 1;
-      data2[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED : value;
+      data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED : value;
       return this;
     }
     module2.exports = hashSet;
   }
 });
 
-// ../node_modules/lodash/_Hash.js
+// ../../../../ext/maps/node_modules/lodash/_Hash.js
 var require_Hash = __commonJS({
-  "../node_modules/lodash/_Hash.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Hash.js"(exports2, module2) {
     var hashClear = require_hashClear();
     var hashDelete = require_hashDelete();
     var hashGet = require_hashGet();
@@ -4983,9 +4983,9 @@ var require_Hash = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_mapCacheClear.js
+// ../../../../ext/maps/node_modules/lodash/_mapCacheClear.js
 var require_mapCacheClear = __commonJS({
-  "../node_modules/lodash/_mapCacheClear.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_mapCacheClear.js"(exports2, module2) {
     var Hash = require_Hash();
     var ListCache = require_ListCache();
     var Map2 = require_Map();
@@ -5001,9 +5001,9 @@ var require_mapCacheClear = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isKeyable.js
+// ../../../../ext/maps/node_modules/lodash/_isKeyable.js
 var require_isKeyable = __commonJS({
-  "../node_modules/lodash/_isKeyable.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isKeyable.js"(exports2, module2) {
     function isKeyable(value) {
       var type = typeof value;
       return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
@@ -5012,21 +5012,21 @@ var require_isKeyable = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getMapData.js
+// ../../../../ext/maps/node_modules/lodash/_getMapData.js
 var require_getMapData = __commonJS({
-  "../node_modules/lodash/_getMapData.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getMapData.js"(exports2, module2) {
     var isKeyable = require_isKeyable();
     function getMapData(map, key) {
-      var data2 = map.__data__;
-      return isKeyable(key) ? data2[typeof key == "string" ? "string" : "hash"] : data2.map;
+      var data = map.__data__;
+      return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
     }
     module2.exports = getMapData;
   }
 });
 
-// ../node_modules/lodash/_mapCacheDelete.js
+// ../../../../ext/maps/node_modules/lodash/_mapCacheDelete.js
 var require_mapCacheDelete = __commonJS({
-  "../node_modules/lodash/_mapCacheDelete.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_mapCacheDelete.js"(exports2, module2) {
     var getMapData = require_getMapData();
     function mapCacheDelete(key) {
       var result = getMapData(this, key)["delete"](key);
@@ -5037,9 +5037,9 @@ var require_mapCacheDelete = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_mapCacheGet.js
+// ../../../../ext/maps/node_modules/lodash/_mapCacheGet.js
 var require_mapCacheGet = __commonJS({
-  "../node_modules/lodash/_mapCacheGet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_mapCacheGet.js"(exports2, module2) {
     var getMapData = require_getMapData();
     function mapCacheGet(key) {
       return getMapData(this, key).get(key);
@@ -5048,9 +5048,9 @@ var require_mapCacheGet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_mapCacheHas.js
+// ../../../../ext/maps/node_modules/lodash/_mapCacheHas.js
 var require_mapCacheHas = __commonJS({
-  "../node_modules/lodash/_mapCacheHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_mapCacheHas.js"(exports2, module2) {
     var getMapData = require_getMapData();
     function mapCacheHas(key) {
       return getMapData(this, key).has(key);
@@ -5059,23 +5059,23 @@ var require_mapCacheHas = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_mapCacheSet.js
+// ../../../../ext/maps/node_modules/lodash/_mapCacheSet.js
 var require_mapCacheSet = __commonJS({
-  "../node_modules/lodash/_mapCacheSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_mapCacheSet.js"(exports2, module2) {
     var getMapData = require_getMapData();
     function mapCacheSet(key, value) {
-      var data2 = getMapData(this, key), size = data2.size;
-      data2.set(key, value);
-      this.size += data2.size == size ? 0 : 1;
+      var data = getMapData(this, key), size = data.size;
+      data.set(key, value);
+      this.size += data.size == size ? 0 : 1;
       return this;
     }
     module2.exports = mapCacheSet;
   }
 });
 
-// ../node_modules/lodash/_MapCache.js
+// ../../../../ext/maps/node_modules/lodash/_MapCache.js
 var require_MapCache = __commonJS({
-  "../node_modules/lodash/_MapCache.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_MapCache.js"(exports2, module2) {
     var mapCacheClear = require_mapCacheClear();
     var mapCacheDelete = require_mapCacheDelete();
     var mapCacheGet = require_mapCacheGet();
@@ -5098,35 +5098,35 @@ var require_MapCache = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_stackSet.js
+// ../../../../ext/maps/node_modules/lodash/_stackSet.js
 var require_stackSet = __commonJS({
-  "../node_modules/lodash/_stackSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stackSet.js"(exports2, module2) {
     var ListCache = require_ListCache();
     var Map2 = require_Map();
     var MapCache = require_MapCache();
     var LARGE_ARRAY_SIZE = 200;
     function stackSet(key, value) {
-      var data2 = this.__data__;
-      if (data2 instanceof ListCache) {
-        var pairs = data2.__data__;
+      var data = this.__data__;
+      if (data instanceof ListCache) {
+        var pairs = data.__data__;
         if (!Map2 || pairs.length < LARGE_ARRAY_SIZE - 1) {
           pairs.push([key, value]);
-          this.size = ++data2.size;
+          this.size = ++data.size;
           return this;
         }
-        data2 = this.__data__ = new MapCache(pairs);
+        data = this.__data__ = new MapCache(pairs);
       }
-      data2.set(key, value);
-      this.size = data2.size;
+      data.set(key, value);
+      this.size = data.size;
       return this;
     }
     module2.exports = stackSet;
   }
 });
 
-// ../node_modules/lodash/_Stack.js
+// ../../../../ext/maps/node_modules/lodash/_Stack.js
 var require_Stack = __commonJS({
-  "../node_modules/lodash/_Stack.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Stack.js"(exports2, module2) {
     var ListCache = require_ListCache();
     var stackClear = require_stackClear();
     var stackDelete = require_stackDelete();
@@ -5134,8 +5134,8 @@ var require_Stack = __commonJS({
     var stackHas = require_stackHas();
     var stackSet = require_stackSet();
     function Stack(entries) {
-      var data2 = this.__data__ = new ListCache(entries);
-      this.size = data2.size;
+      var data = this.__data__ = new ListCache(entries);
+      this.size = data.size;
     }
     Stack.prototype.clear = stackClear;
     Stack.prototype["delete"] = stackDelete;
@@ -5146,9 +5146,9 @@ var require_Stack = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_setCacheAdd.js
+// ../../../../ext/maps/node_modules/lodash/_setCacheAdd.js
 var require_setCacheAdd = __commonJS({
-  "../node_modules/lodash/_setCacheAdd.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_setCacheAdd.js"(exports2, module2) {
     var HASH_UNDEFINED = "__lodash_hash_undefined__";
     function setCacheAdd(value) {
       this.__data__.set(value, HASH_UNDEFINED);
@@ -5158,9 +5158,9 @@ var require_setCacheAdd = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_setCacheHas.js
+// ../../../../ext/maps/node_modules/lodash/_setCacheHas.js
 var require_setCacheHas = __commonJS({
-  "../node_modules/lodash/_setCacheHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_setCacheHas.js"(exports2, module2) {
     function setCacheHas(value) {
       return this.__data__.has(value);
     }
@@ -5168,9 +5168,9 @@ var require_setCacheHas = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_SetCache.js
+// ../../../../ext/maps/node_modules/lodash/_SetCache.js
 var require_SetCache = __commonJS({
-  "../node_modules/lodash/_SetCache.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_SetCache.js"(exports2, module2) {
     var MapCache = require_MapCache();
     var setCacheAdd = require_setCacheAdd();
     var setCacheHas = require_setCacheHas();
@@ -5187,9 +5187,9 @@ var require_SetCache = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arraySome.js
+// ../../../../ext/maps/node_modules/lodash/_arraySome.js
 var require_arraySome = __commonJS({
-  "../node_modules/lodash/_arraySome.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arraySome.js"(exports2, module2) {
     function arraySome(array, predicate) {
       var index = -1, length = array == null ? 0 : array.length;
       while (++index < length) {
@@ -5203,9 +5203,9 @@ var require_arraySome = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cacheHas.js
+// ../../../../ext/maps/node_modules/lodash/_cacheHas.js
 var require_cacheHas = __commonJS({
-  "../node_modules/lodash/_cacheHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cacheHas.js"(exports2, module2) {
     function cacheHas(cache, key) {
       return cache.has(key);
     }
@@ -5213,9 +5213,9 @@ var require_cacheHas = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_equalArrays.js
+// ../../../../ext/maps/node_modules/lodash/_equalArrays.js
 var require_equalArrays = __commonJS({
-  "../node_modules/lodash/_equalArrays.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_equalArrays.js"(exports2, module2) {
     var SetCache = require_SetCache();
     var arraySome = require_arraySome();
     var cacheHas = require_cacheHas();
@@ -5268,18 +5268,18 @@ var require_equalArrays = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_Uint8Array.js
+// ../../../../ext/maps/node_modules/lodash/_Uint8Array.js
 var require_Uint8Array = __commonJS({
-  "../node_modules/lodash/_Uint8Array.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_Uint8Array.js"(exports2, module2) {
     var root = require_root();
     var Uint8Array2 = root.Uint8Array;
     module2.exports = Uint8Array2;
   }
 });
 
-// ../node_modules/lodash/_mapToArray.js
+// ../../../../ext/maps/node_modules/lodash/_mapToArray.js
 var require_mapToArray = __commonJS({
-  "../node_modules/lodash/_mapToArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_mapToArray.js"(exports2, module2) {
     function mapToArray(map) {
       var index = -1, result = Array(map.size);
       map.forEach(function(value, key) {
@@ -5291,9 +5291,9 @@ var require_mapToArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_setToArray.js
+// ../../../../ext/maps/node_modules/lodash/_setToArray.js
 var require_setToArray = __commonJS({
-  "../node_modules/lodash/_setToArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_setToArray.js"(exports2, module2) {
     function setToArray(set) {
       var index = -1, result = Array(set.size);
       set.forEach(function(value) {
@@ -5305,9 +5305,9 @@ var require_setToArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_equalByTag.js
+// ../../../../ext/maps/node_modules/lodash/_equalByTag.js
 var require_equalByTag = __commonJS({
-  "../node_modules/lodash/_equalByTag.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_equalByTag.js"(exports2, module2) {
     var Symbol2 = require_Symbol();
     var Uint8Array2 = require_Uint8Array();
     var eq = require_eq();
@@ -5379,9 +5379,9 @@ var require_equalByTag = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayPush.js
+// ../../../../ext/maps/node_modules/lodash/_arrayPush.js
 var require_arrayPush = __commonJS({
-  "../node_modules/lodash/_arrayPush.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayPush.js"(exports2, module2) {
     function arrayPush(array, values) {
       var index = -1, length = values.length, offset = array.length;
       while (++index < length) {
@@ -5393,9 +5393,9 @@ var require_arrayPush = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseGetAllKeys.js
+// ../../../../ext/maps/node_modules/lodash/_baseGetAllKeys.js
 var require_baseGetAllKeys = __commonJS({
-  "../node_modules/lodash/_baseGetAllKeys.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseGetAllKeys.js"(exports2, module2) {
     var arrayPush = require_arrayPush();
     var isArray = require_isArray();
     function baseGetAllKeys(object2, keysFunc, symbolsFunc) {
@@ -5406,9 +5406,9 @@ var require_baseGetAllKeys = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayFilter.js
+// ../../../../ext/maps/node_modules/lodash/_arrayFilter.js
 var require_arrayFilter = __commonJS({
-  "../node_modules/lodash/_arrayFilter.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayFilter.js"(exports2, module2) {
     function arrayFilter(array, predicate) {
       var index = -1, length = array == null ? 0 : array.length, resIndex = 0, result = [];
       while (++index < length) {
@@ -5423,9 +5423,9 @@ var require_arrayFilter = __commonJS({
   }
 });
 
-// ../node_modules/lodash/stubArray.js
+// ../../../../ext/maps/node_modules/lodash/stubArray.js
 var require_stubArray = __commonJS({
-  "../node_modules/lodash/stubArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/stubArray.js"(exports2, module2) {
     function stubArray() {
       return [];
     }
@@ -5433,9 +5433,9 @@ var require_stubArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getSymbols.js
+// ../../../../ext/maps/node_modules/lodash/_getSymbols.js
 var require_getSymbols = __commonJS({
-  "../node_modules/lodash/_getSymbols.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getSymbols.js"(exports2, module2) {
     var arrayFilter = require_arrayFilter();
     var stubArray = require_stubArray();
     var objectProto = Object.prototype;
@@ -5454,9 +5454,9 @@ var require_getSymbols = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseTimes.js
+// ../../../../ext/maps/node_modules/lodash/_baseTimes.js
 var require_baseTimes = __commonJS({
-  "../node_modules/lodash/_baseTimes.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseTimes.js"(exports2, module2) {
     function baseTimes(n2, iteratee) {
       var index = -1, result = Array(n2);
       while (++index < n2) {
@@ -5468,9 +5468,9 @@ var require_baseTimes = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isIndex.js
+// ../../../../ext/maps/node_modules/lodash/_isIndex.js
 var require_isIndex = __commonJS({
-  "../node_modules/lodash/_isIndex.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isIndex.js"(exports2, module2) {
     var MAX_SAFE_INTEGER = 9007199254740991;
     var reIsUint = /^(?:0|[1-9]\d*)$/;
     function isIndex(value, length) {
@@ -5482,9 +5482,9 @@ var require_isIndex = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayLikeKeys.js
+// ../../../../ext/maps/node_modules/lodash/_arrayLikeKeys.js
 var require_arrayLikeKeys = __commonJS({
-  "../node_modules/lodash/_arrayLikeKeys.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayLikeKeys.js"(exports2, module2) {
     var baseTimes = require_baseTimes();
     var isArguments = require_isArguments();
     var isArray = require_isArray();
@@ -5510,9 +5510,9 @@ var require_arrayLikeKeys = __commonJS({
   }
 });
 
-// ../node_modules/lodash/keys.js
+// ../../../../ext/maps/node_modules/lodash/keys.js
 var require_keys = __commonJS({
-  "../node_modules/lodash/keys.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/keys.js"(exports2, module2) {
     var arrayLikeKeys = require_arrayLikeKeys();
     var baseKeys = require_baseKeys();
     var isArrayLike = require_isArrayLike();
@@ -5523,9 +5523,9 @@ var require_keys = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getAllKeys.js
+// ../../../../ext/maps/node_modules/lodash/_getAllKeys.js
 var require_getAllKeys = __commonJS({
-  "../node_modules/lodash/_getAllKeys.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getAllKeys.js"(exports2, module2) {
     var baseGetAllKeys = require_baseGetAllKeys();
     var getSymbols = require_getSymbols();
     var keys = require_keys();
@@ -5536,9 +5536,9 @@ var require_getAllKeys = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_equalObjects.js
+// ../../../../ext/maps/node_modules/lodash/_equalObjects.js
 var require_equalObjects = __commonJS({
-  "../node_modules/lodash/_equalObjects.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_equalObjects.js"(exports2, module2) {
     var getAllKeys = require_getAllKeys();
     var COMPARE_PARTIAL_FLAG = 1;
     var objectProto = Object.prototype;
@@ -5590,9 +5590,9 @@ var require_equalObjects = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsEqualDeep.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsEqualDeep.js
 var require_baseIsEqualDeep = __commonJS({
-  "../node_modules/lodash/_baseIsEqualDeep.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsEqualDeep.js"(exports2, module2) {
     var Stack = require_Stack();
     var equalArrays = require_equalArrays();
     var equalByTag = require_equalByTag();
@@ -5641,9 +5641,9 @@ var require_baseIsEqualDeep = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsEqual.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsEqual.js
 var require_baseIsEqual = __commonJS({
-  "../node_modules/lodash/_baseIsEqual.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsEqual.js"(exports2, module2) {
     var baseIsEqualDeep = require_baseIsEqualDeep();
     var isObjectLike = require_isObjectLike();
     function baseIsEqual(value, other, bitmask, customizer, stack) {
@@ -5659,9 +5659,9 @@ var require_baseIsEqual = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsMatch.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsMatch.js
 var require_baseIsMatch = __commonJS({
-  "../node_modules/lodash/_baseIsMatch.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsMatch.js"(exports2, module2) {
     var Stack = require_Stack();
     var baseIsEqual = require_baseIsEqual();
     var COMPARE_PARTIAL_FLAG = 1;
@@ -5673,15 +5673,15 @@ var require_baseIsMatch = __commonJS({
       }
       object2 = Object(object2);
       while (index--) {
-        var data2 = matchData[index];
-        if (noCustomizer && data2[2] ? data2[1] !== object2[data2[0]] : !(data2[0] in object2)) {
+        var data = matchData[index];
+        if (noCustomizer && data[2] ? data[1] !== object2[data[0]] : !(data[0] in object2)) {
           return false;
         }
       }
       while (++index < length) {
-        data2 = matchData[index];
-        var key = data2[0], objValue = object2[key], srcValue = data2[1];
-        if (noCustomizer && data2[2]) {
+        data = matchData[index];
+        var key = data[0], objValue = object2[key], srcValue = data[1];
+        if (noCustomizer && data[2]) {
           if (objValue === void 0 && !(key in object2)) {
             return false;
           }
@@ -5701,9 +5701,9 @@ var require_baseIsMatch = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isStrictComparable.js
+// ../../../../ext/maps/node_modules/lodash/_isStrictComparable.js
 var require_isStrictComparable = __commonJS({
-  "../node_modules/lodash/_isStrictComparable.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isStrictComparable.js"(exports2, module2) {
     var isObject2 = require_isObject();
     function isStrictComparable(value) {
       return value === value && !isObject2(value);
@@ -5712,9 +5712,9 @@ var require_isStrictComparable = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getMatchData.js
+// ../../../../ext/maps/node_modules/lodash/_getMatchData.js
 var require_getMatchData = __commonJS({
-  "../node_modules/lodash/_getMatchData.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getMatchData.js"(exports2, module2) {
     var isStrictComparable = require_isStrictComparable();
     var keys = require_keys();
     function getMatchData(object2) {
@@ -5729,9 +5729,9 @@ var require_getMatchData = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_matchesStrictComparable.js
+// ../../../../ext/maps/node_modules/lodash/_matchesStrictComparable.js
 var require_matchesStrictComparable = __commonJS({
-  "../node_modules/lodash/_matchesStrictComparable.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_matchesStrictComparable.js"(exports2, module2) {
     function matchesStrictComparable(key, srcValue) {
       return function(object2) {
         if (object2 == null) {
@@ -5744,9 +5744,9 @@ var require_matchesStrictComparable = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseMatches.js
+// ../../../../ext/maps/node_modules/lodash/_baseMatches.js
 var require_baseMatches = __commonJS({
-  "../node_modules/lodash/_baseMatches.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseMatches.js"(exports2, module2) {
     var baseIsMatch = require_baseIsMatch();
     var getMatchData = require_getMatchData();
     var matchesStrictComparable = require_matchesStrictComparable();
@@ -5763,9 +5763,9 @@ var require_baseMatches = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isSymbol.js
+// ../../../../ext/maps/node_modules/lodash/isSymbol.js
 var require_isSymbol = __commonJS({
-  "../node_modules/lodash/isSymbol.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isSymbol.js"(exports2, module2) {
     var baseGetTag = require_baseGetTag();
     var isObjectLike = require_isObjectLike();
     var symbolTag = "[object Symbol]";
@@ -5776,9 +5776,9 @@ var require_isSymbol = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isKey.js
+// ../../../../ext/maps/node_modules/lodash/_isKey.js
 var require_isKey = __commonJS({
-  "../node_modules/lodash/_isKey.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isKey.js"(exports2, module2) {
     var isArray = require_isArray();
     var isSymbol = require_isSymbol();
     var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
@@ -5797,9 +5797,9 @@ var require_isKey = __commonJS({
   }
 });
 
-// ../node_modules/lodash/memoize.js
+// ../../../../ext/maps/node_modules/lodash/memoize.js
 var require_memoize = __commonJS({
-  "../node_modules/lodash/memoize.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/memoize.js"(exports2, module2) {
     var MapCache = require_MapCache();
     var FUNC_ERROR_TEXT = "Expected a function";
     function memoize(func, resolver) {
@@ -5823,9 +5823,9 @@ var require_memoize = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_memoizeCapped.js
+// ../../../../ext/maps/node_modules/lodash/_memoizeCapped.js
 var require_memoizeCapped = __commonJS({
-  "../node_modules/lodash/_memoizeCapped.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_memoizeCapped.js"(exports2, module2) {
     var memoize = require_memoize();
     var MAX_MEMOIZE_SIZE = 500;
     function memoizeCapped(func) {
@@ -5842,9 +5842,9 @@ var require_memoizeCapped = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_stringToPath.js
+// ../../../../ext/maps/node_modules/lodash/_stringToPath.js
 var require_stringToPath = __commonJS({
-  "../node_modules/lodash/_stringToPath.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stringToPath.js"(exports2, module2) {
     var memoizeCapped = require_memoizeCapped();
     var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
     var reEscapeChar = /\\(\\)?/g;
@@ -5862,9 +5862,9 @@ var require_stringToPath = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseToString.js
+// ../../../../ext/maps/node_modules/lodash/_baseToString.js
 var require_baseToString = __commonJS({
-  "../node_modules/lodash/_baseToString.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseToString.js"(exports2, module2) {
     var Symbol2 = require_Symbol();
     var arrayMap = require_arrayMap();
     var isArray = require_isArray();
@@ -5889,9 +5889,9 @@ var require_baseToString = __commonJS({
   }
 });
 
-// ../node_modules/lodash/toString.js
+// ../../../../ext/maps/node_modules/lodash/toString.js
 var require_toString = __commonJS({
-  "../node_modules/lodash/toString.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/toString.js"(exports2, module2) {
     var baseToString = require_baseToString();
     function toString(value) {
       return value == null ? "" : baseToString(value);
@@ -5900,9 +5900,9 @@ var require_toString = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_castPath.js
+// ../../../../ext/maps/node_modules/lodash/_castPath.js
 var require_castPath = __commonJS({
-  "../node_modules/lodash/_castPath.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_castPath.js"(exports2, module2) {
     var isArray = require_isArray();
     var isKey = require_isKey();
     var stringToPath = require_stringToPath();
@@ -5917,9 +5917,9 @@ var require_castPath = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_toKey.js
+// ../../../../ext/maps/node_modules/lodash/_toKey.js
 var require_toKey = __commonJS({
-  "../node_modules/lodash/_toKey.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_toKey.js"(exports2, module2) {
     var isSymbol = require_isSymbol();
     var INFINITY = 1 / 0;
     function toKey(value) {
@@ -5933,16 +5933,16 @@ var require_toKey = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseGet.js
+// ../../../../ext/maps/node_modules/lodash/_baseGet.js
 var require_baseGet = __commonJS({
-  "../node_modules/lodash/_baseGet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseGet.js"(exports2, module2) {
     var castPath = require_castPath();
     var toKey = require_toKey();
-    function baseGet(object2, path7) {
-      path7 = castPath(path7, object2);
-      var index = 0, length = path7.length;
+    function baseGet(object2, path8) {
+      path8 = castPath(path8, object2);
+      var index = 0, length = path8.length;
       while (object2 != null && index < length) {
-        object2 = object2[toKey(path7[index++])];
+        object2 = object2[toKey(path8[index++])];
       }
       return index && index == length ? object2 : void 0;
     }
@@ -5950,21 +5950,21 @@ var require_baseGet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/get.js
+// ../../../../ext/maps/node_modules/lodash/get.js
 var require_get = __commonJS({
-  "../node_modules/lodash/get.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/get.js"(exports2, module2) {
     var baseGet = require_baseGet();
-    function get(object2, path7, defaultValue) {
-      var result = object2 == null ? void 0 : baseGet(object2, path7);
+    function get(object2, path8, defaultValue) {
+      var result = object2 == null ? void 0 : baseGet(object2, path8);
       return result === void 0 ? defaultValue : result;
     }
     module2.exports = get;
   }
 });
 
-// ../node_modules/lodash/_baseHasIn.js
+// ../../../../ext/maps/node_modules/lodash/_baseHasIn.js
 var require_baseHasIn = __commonJS({
-  "../node_modules/lodash/_baseHasIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseHasIn.js"(exports2, module2) {
     function baseHasIn(object2, key) {
       return object2 != null && key in Object(object2);
     }
@@ -5972,20 +5972,20 @@ var require_baseHasIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_hasPath.js
+// ../../../../ext/maps/node_modules/lodash/_hasPath.js
 var require_hasPath = __commonJS({
-  "../node_modules/lodash/_hasPath.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hasPath.js"(exports2, module2) {
     var castPath = require_castPath();
     var isArguments = require_isArguments();
     var isArray = require_isArray();
     var isIndex = require_isIndex();
     var isLength = require_isLength();
     var toKey = require_toKey();
-    function hasPath(object2, path7, hasFunc) {
-      path7 = castPath(path7, object2);
-      var index = -1, length = path7.length, result = false;
+    function hasPath(object2, path8, hasFunc) {
+      path8 = castPath(path8, object2);
+      var index = -1, length = path8.length, result = false;
       while (++index < length) {
-        var key = toKey(path7[index]);
+        var key = toKey(path8[index]);
         if (!(result = object2 != null && hasFunc(object2, key))) {
           break;
         }
@@ -6001,21 +6001,21 @@ var require_hasPath = __commonJS({
   }
 });
 
-// ../node_modules/lodash/hasIn.js
+// ../../../../ext/maps/node_modules/lodash/hasIn.js
 var require_hasIn = __commonJS({
-  "../node_modules/lodash/hasIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/hasIn.js"(exports2, module2) {
     var baseHasIn = require_baseHasIn();
     var hasPath = require_hasPath();
-    function hasIn(object2, path7) {
-      return object2 != null && hasPath(object2, path7, baseHasIn);
+    function hasIn(object2, path8) {
+      return object2 != null && hasPath(object2, path8, baseHasIn);
     }
     module2.exports = hasIn;
   }
 });
 
-// ../node_modules/lodash/_baseMatchesProperty.js
+// ../../../../ext/maps/node_modules/lodash/_baseMatchesProperty.js
 var require_baseMatchesProperty = __commonJS({
-  "../node_modules/lodash/_baseMatchesProperty.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseMatchesProperty.js"(exports2, module2) {
     var baseIsEqual = require_baseIsEqual();
     var get = require_get();
     var hasIn = require_hasIn();
@@ -6025,22 +6025,22 @@ var require_baseMatchesProperty = __commonJS({
     var toKey = require_toKey();
     var COMPARE_PARTIAL_FLAG = 1;
     var COMPARE_UNORDERED_FLAG = 2;
-    function baseMatchesProperty(path7, srcValue) {
-      if (isKey(path7) && isStrictComparable(srcValue)) {
-        return matchesStrictComparable(toKey(path7), srcValue);
+    function baseMatchesProperty(path8, srcValue) {
+      if (isKey(path8) && isStrictComparable(srcValue)) {
+        return matchesStrictComparable(toKey(path8), srcValue);
       }
       return function(object2) {
-        var objValue = get(object2, path7);
-        return objValue === void 0 && objValue === srcValue ? hasIn(object2, path7) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+        var objValue = get(object2, path8);
+        return objValue === void 0 && objValue === srcValue ? hasIn(object2, path8) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
       };
     }
     module2.exports = baseMatchesProperty;
   }
 });
 
-// ../node_modules/lodash/identity.js
+// ../../../../ext/maps/node_modules/lodash/identity.js
 var require_identity = __commonJS({
-  "../node_modules/lodash/identity.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/identity.js"(exports2, module2) {
     function identity(value) {
       return value;
     }
@@ -6048,9 +6048,9 @@ var require_identity = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseProperty.js
+// ../../../../ext/maps/node_modules/lodash/_baseProperty.js
 var require_baseProperty = __commonJS({
-  "../node_modules/lodash/_baseProperty.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseProperty.js"(exports2, module2) {
     function baseProperty(key) {
       return function(object2) {
         return object2 == null ? void 0 : object2[key];
@@ -6060,36 +6060,36 @@ var require_baseProperty = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_basePropertyDeep.js
+// ../../../../ext/maps/node_modules/lodash/_basePropertyDeep.js
 var require_basePropertyDeep = __commonJS({
-  "../node_modules/lodash/_basePropertyDeep.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_basePropertyDeep.js"(exports2, module2) {
     var baseGet = require_baseGet();
-    function basePropertyDeep(path7) {
+    function basePropertyDeep(path8) {
       return function(object2) {
-        return baseGet(object2, path7);
+        return baseGet(object2, path8);
       };
     }
     module2.exports = basePropertyDeep;
   }
 });
 
-// ../node_modules/lodash/property.js
+// ../../../../ext/maps/node_modules/lodash/property.js
 var require_property = __commonJS({
-  "../node_modules/lodash/property.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/property.js"(exports2, module2) {
     var baseProperty = require_baseProperty();
     var basePropertyDeep = require_basePropertyDeep();
     var isKey = require_isKey();
     var toKey = require_toKey();
-    function property(path7) {
-      return isKey(path7) ? baseProperty(toKey(path7)) : basePropertyDeep(path7);
+    function property(path8) {
+      return isKey(path8) ? baseProperty(toKey(path8)) : basePropertyDeep(path8);
     }
     module2.exports = property;
   }
 });
 
-// ../node_modules/lodash/_baseIteratee.js
+// ../../../../ext/maps/node_modules/lodash/_baseIteratee.js
 var require_baseIteratee = __commonJS({
-  "../node_modules/lodash/_baseIteratee.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIteratee.js"(exports2, module2) {
     var baseMatches = require_baseMatches();
     var baseMatchesProperty = require_baseMatchesProperty();
     var identity = require_identity();
@@ -6111,9 +6111,9 @@ var require_baseIteratee = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_createBaseFor.js
+// ../../../../ext/maps/node_modules/lodash/_createBaseFor.js
 var require_createBaseFor = __commonJS({
-  "../node_modules/lodash/_createBaseFor.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createBaseFor.js"(exports2, module2) {
     function createBaseFor(fromRight) {
       return function(object2, iteratee, keysFunc) {
         var index = -1, iterable = Object(object2), props = keysFunc(object2), length = props.length;
@@ -6130,18 +6130,18 @@ var require_createBaseFor = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseFor.js
+// ../../../../ext/maps/node_modules/lodash/_baseFor.js
 var require_baseFor = __commonJS({
-  "../node_modules/lodash/_baseFor.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseFor.js"(exports2, module2) {
     var createBaseFor = require_createBaseFor();
     var baseFor = createBaseFor();
     module2.exports = baseFor;
   }
 });
 
-// ../node_modules/lodash/_baseForOwn.js
+// ../../../../ext/maps/node_modules/lodash/_baseForOwn.js
 var require_baseForOwn = __commonJS({
-  "../node_modules/lodash/_baseForOwn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseForOwn.js"(exports2, module2) {
     var baseFor = require_baseFor();
     var keys = require_keys();
     function baseForOwn(object2, iteratee) {
@@ -6151,9 +6151,9 @@ var require_baseForOwn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_createBaseEach.js
+// ../../../../ext/maps/node_modules/lodash/_createBaseEach.js
 var require_createBaseEach = __commonJS({
-  "../node_modules/lodash/_createBaseEach.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createBaseEach.js"(exports2, module2) {
     var isArrayLike = require_isArrayLike();
     function createBaseEach(eachFunc, fromRight) {
       return function(collection, iteratee) {
@@ -6176,9 +6176,9 @@ var require_createBaseEach = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseEach.js
+// ../../../../ext/maps/node_modules/lodash/_baseEach.js
 var require_baseEach = __commonJS({
-  "../node_modules/lodash/_baseEach.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseEach.js"(exports2, module2) {
     var baseForOwn = require_baseForOwn();
     var createBaseEach = require_createBaseEach();
     var baseEach = createBaseEach(baseForOwn);
@@ -6186,9 +6186,9 @@ var require_baseEach = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseMap.js
+// ../../../../ext/maps/node_modules/lodash/_baseMap.js
 var require_baseMap = __commonJS({
-  "../node_modules/lodash/_baseMap.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseMap.js"(exports2, module2) {
     var baseEach = require_baseEach();
     var isArrayLike = require_isArrayLike();
     function baseMap(collection, iteratee) {
@@ -6202,9 +6202,9 @@ var require_baseMap = __commonJS({
   }
 });
 
-// ../node_modules/lodash/map.js
+// ../../../../ext/maps/node_modules/lodash/map.js
 var require_map = __commonJS({
-  "../node_modules/lodash/map.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/map.js"(exports2, module2) {
     var arrayMap = require_arrayMap();
     var baseIteratee = require_baseIteratee();
     var baseMap = require_baseMap();
@@ -6217,9 +6217,9 @@ var require_map = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayEach.js
+// ../../../../ext/maps/node_modules/lodash/_arrayEach.js
 var require_arrayEach = __commonJS({
-  "../node_modules/lodash/_arrayEach.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayEach.js"(exports2, module2) {
     function arrayEach(array, iteratee) {
       var index = -1, length = array == null ? 0 : array.length;
       while (++index < length) {
@@ -6233,9 +6233,9 @@ var require_arrayEach = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_castFunction.js
+// ../../../../ext/maps/node_modules/lodash/_castFunction.js
 var require_castFunction = __commonJS({
-  "../node_modules/lodash/_castFunction.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_castFunction.js"(exports2, module2) {
     var identity = require_identity();
     function castFunction(value) {
       return typeof value == "function" ? value : identity;
@@ -6244,9 +6244,9 @@ var require_castFunction = __commonJS({
   }
 });
 
-// ../node_modules/lodash/forEach.js
+// ../../../../ext/maps/node_modules/lodash/forEach.js
 var require_forEach = __commonJS({
-  "../node_modules/lodash/forEach.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/forEach.js"(exports2, module2) {
     var arrayEach = require_arrayEach();
     var baseEach = require_baseEach();
     var castFunction = require_castFunction();
@@ -6259,9 +6259,9 @@ var require_forEach = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseValues.js
+// ../../../../ext/maps/node_modules/lodash/_baseValues.js
 var require_baseValues = __commonJS({
-  "../node_modules/lodash/_baseValues.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseValues.js"(exports2, module2) {
     var arrayMap = require_arrayMap();
     function baseValues(object2, props) {
       return arrayMap(props, function(key) {
@@ -6272,9 +6272,9 @@ var require_baseValues = __commonJS({
   }
 });
 
-// ../node_modules/lodash/values.js
+// ../../../../ext/maps/node_modules/lodash/values.js
 var require_values = __commonJS({
-  "../node_modules/lodash/values.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/values.js"(exports2, module2) {
     var baseValues = require_baseValues();
     var keys = require_keys();
     function values(object2) {
@@ -6284,9 +6284,9 @@ var require_values = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseHas.js
+// ../../../../ext/maps/node_modules/lodash/_baseHas.js
 var require_baseHas = __commonJS({
-  "../node_modules/lodash/_baseHas.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseHas.js"(exports2, module2) {
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
     function baseHas(object2, key) {
@@ -6296,37 +6296,37 @@ var require_baseHas = __commonJS({
   }
 });
 
-// ../node_modules/lodash/has.js
+// ../../../../ext/maps/node_modules/lodash/has.js
 var require_has = __commonJS({
-  "../node_modules/lodash/has.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/has.js"(exports2, module2) {
     var baseHas = require_baseHas();
     var hasPath = require_hasPath();
-    function has(object2, path7) {
-      return object2 != null && hasPath(object2, path7, baseHas);
+    function has(object2, path8) {
+      return object2 != null && hasPath(object2, path8, baseHas);
     }
     module2.exports = has;
   }
 });
 
-// ../node_modules/lodash/_defineProperty.js
+// ../../../../ext/maps/node_modules/lodash/_defineProperty.js
 var require_defineProperty = __commonJS({
-  "../node_modules/lodash/_defineProperty.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_defineProperty.js"(exports2, module2) {
     var getNative = require_getNative();
-    var defineProperty = function() {
+    var defineProperty = (function() {
       try {
         var func = getNative(Object, "defineProperty");
         func({}, "", {});
         return func;
       } catch (e2) {
       }
-    }();
+    })();
     module2.exports = defineProperty;
   }
 });
 
-// ../node_modules/lodash/_baseAssignValue.js
+// ../../../../ext/maps/node_modules/lodash/_baseAssignValue.js
 var require_baseAssignValue = __commonJS({
-  "../node_modules/lodash/_baseAssignValue.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseAssignValue.js"(exports2, module2) {
     var defineProperty = require_defineProperty();
     function baseAssignValue(object2, key, value) {
       if (key == "__proto__" && defineProperty) {
@@ -6344,9 +6344,9 @@ var require_baseAssignValue = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_assignValue.js
+// ../../../../ext/maps/node_modules/lodash/_assignValue.js
 var require_assignValue = __commonJS({
-  "../node_modules/lodash/_assignValue.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_assignValue.js"(exports2, module2) {
     var baseAssignValue = require_baseAssignValue();
     var eq = require_eq();
     var objectProto = Object.prototype;
@@ -6361,9 +6361,9 @@ var require_assignValue = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_copyObject.js
+// ../../../../ext/maps/node_modules/lodash/_copyObject.js
 var require_copyObject = __commonJS({
-  "../node_modules/lodash/_copyObject.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_copyObject.js"(exports2, module2) {
     var assignValue = require_assignValue();
     var baseAssignValue = require_baseAssignValue();
     function copyObject(source, props, object2, customizer) {
@@ -6388,9 +6388,9 @@ var require_copyObject = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseAssign.js
+// ../../../../ext/maps/node_modules/lodash/_baseAssign.js
 var require_baseAssign = __commonJS({
-  "../node_modules/lodash/_baseAssign.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseAssign.js"(exports2, module2) {
     var copyObject = require_copyObject();
     var keys = require_keys();
     function baseAssign(object2, source) {
@@ -6400,9 +6400,9 @@ var require_baseAssign = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_nativeKeysIn.js
+// ../../../../ext/maps/node_modules/lodash/_nativeKeysIn.js
 var require_nativeKeysIn = __commonJS({
-  "../node_modules/lodash/_nativeKeysIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_nativeKeysIn.js"(exports2, module2) {
     function nativeKeysIn(object2) {
       var result = [];
       if (object2 != null) {
@@ -6416,9 +6416,9 @@ var require_nativeKeysIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseKeysIn.js
+// ../../../../ext/maps/node_modules/lodash/_baseKeysIn.js
 var require_baseKeysIn = __commonJS({
-  "../node_modules/lodash/_baseKeysIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseKeysIn.js"(exports2, module2) {
     var isObject2 = require_isObject();
     var isPrototype = require_isPrototype();
     var nativeKeysIn = require_nativeKeysIn();
@@ -6440,9 +6440,9 @@ var require_baseKeysIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/keysIn.js
+// ../../../../ext/maps/node_modules/lodash/keysIn.js
 var require_keysIn = __commonJS({
-  "../node_modules/lodash/keysIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/keysIn.js"(exports2, module2) {
     var arrayLikeKeys = require_arrayLikeKeys();
     var baseKeysIn = require_baseKeysIn();
     var isArrayLike = require_isArrayLike();
@@ -6453,9 +6453,9 @@ var require_keysIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseAssignIn.js
+// ../../../../ext/maps/node_modules/lodash/_baseAssignIn.js
 var require_baseAssignIn = __commonJS({
-  "../node_modules/lodash/_baseAssignIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseAssignIn.js"(exports2, module2) {
     var copyObject = require_copyObject();
     var keysIn = require_keysIn();
     function baseAssignIn(object2, source) {
@@ -6465,9 +6465,9 @@ var require_baseAssignIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cloneBuffer.js
+// ../../../../ext/maps/node_modules/lodash/_cloneBuffer.js
 var require_cloneBuffer = __commonJS({
-  "../node_modules/lodash/_cloneBuffer.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cloneBuffer.js"(exports2, module2) {
     var root = require_root();
     var freeExports = typeof exports2 == "object" && exports2 && !exports2.nodeType && exports2;
     var freeModule = freeExports && typeof module2 == "object" && module2 && !module2.nodeType && module2;
@@ -6486,9 +6486,9 @@ var require_cloneBuffer = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_copyArray.js
+// ../../../../ext/maps/node_modules/lodash/_copyArray.js
 var require_copyArray = __commonJS({
-  "../node_modules/lodash/_copyArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_copyArray.js"(exports2, module2) {
     function copyArray(source, array) {
       var index = -1, length = source.length;
       array || (array = Array(length));
@@ -6501,9 +6501,9 @@ var require_copyArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_copySymbols.js
+// ../../../../ext/maps/node_modules/lodash/_copySymbols.js
 var require_copySymbols = __commonJS({
-  "../node_modules/lodash/_copySymbols.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_copySymbols.js"(exports2, module2) {
     var copyObject = require_copyObject();
     var getSymbols = require_getSymbols();
     function copySymbols(source, object2) {
@@ -6513,18 +6513,18 @@ var require_copySymbols = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getPrototype.js
+// ../../../../ext/maps/node_modules/lodash/_getPrototype.js
 var require_getPrototype = __commonJS({
-  "../node_modules/lodash/_getPrototype.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getPrototype.js"(exports2, module2) {
     var overArg = require_overArg();
     var getPrototype = overArg(Object.getPrototypeOf, Object);
     module2.exports = getPrototype;
   }
 });
 
-// ../node_modules/lodash/_getSymbolsIn.js
+// ../../../../ext/maps/node_modules/lodash/_getSymbolsIn.js
 var require_getSymbolsIn = __commonJS({
-  "../node_modules/lodash/_getSymbolsIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getSymbolsIn.js"(exports2, module2) {
     var arrayPush = require_arrayPush();
     var getPrototype = require_getPrototype();
     var getSymbols = require_getSymbols();
@@ -6542,9 +6542,9 @@ var require_getSymbolsIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_copySymbolsIn.js
+// ../../../../ext/maps/node_modules/lodash/_copySymbolsIn.js
 var require_copySymbolsIn = __commonJS({
-  "../node_modules/lodash/_copySymbolsIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_copySymbolsIn.js"(exports2, module2) {
     var copyObject = require_copyObject();
     var getSymbolsIn = require_getSymbolsIn();
     function copySymbolsIn(source, object2) {
@@ -6554,9 +6554,9 @@ var require_copySymbolsIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_getAllKeysIn.js
+// ../../../../ext/maps/node_modules/lodash/_getAllKeysIn.js
 var require_getAllKeysIn = __commonJS({
-  "../node_modules/lodash/_getAllKeysIn.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_getAllKeysIn.js"(exports2, module2) {
     var baseGetAllKeys = require_baseGetAllKeys();
     var getSymbolsIn = require_getSymbolsIn();
     var keysIn = require_keysIn();
@@ -6567,9 +6567,9 @@ var require_getAllKeysIn = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_initCloneArray.js
+// ../../../../ext/maps/node_modules/lodash/_initCloneArray.js
 var require_initCloneArray = __commonJS({
-  "../node_modules/lodash/_initCloneArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_initCloneArray.js"(exports2, module2) {
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
     function initCloneArray(array) {
@@ -6584,9 +6584,9 @@ var require_initCloneArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cloneArrayBuffer.js
+// ../../../../ext/maps/node_modules/lodash/_cloneArrayBuffer.js
 var require_cloneArrayBuffer = __commonJS({
-  "../node_modules/lodash/_cloneArrayBuffer.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cloneArrayBuffer.js"(exports2, module2) {
     var Uint8Array2 = require_Uint8Array();
     function cloneArrayBuffer(arrayBuffer) {
       var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
@@ -6597,9 +6597,9 @@ var require_cloneArrayBuffer = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cloneDataView.js
+// ../../../../ext/maps/node_modules/lodash/_cloneDataView.js
 var require_cloneDataView = __commonJS({
-  "../node_modules/lodash/_cloneDataView.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cloneDataView.js"(exports2, module2) {
     var cloneArrayBuffer = require_cloneArrayBuffer();
     function cloneDataView(dataView, isDeep) {
       var buffer = isDeep ? cloneArrayBuffer(dataView.buffer) : dataView.buffer;
@@ -6609,9 +6609,9 @@ var require_cloneDataView = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cloneRegExp.js
+// ../../../../ext/maps/node_modules/lodash/_cloneRegExp.js
 var require_cloneRegExp = __commonJS({
-  "../node_modules/lodash/_cloneRegExp.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cloneRegExp.js"(exports2, module2) {
     var reFlags = /\w*$/;
     function cloneRegExp(regexp) {
       var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
@@ -6622,9 +6622,9 @@ var require_cloneRegExp = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cloneSymbol.js
+// ../../../../ext/maps/node_modules/lodash/_cloneSymbol.js
 var require_cloneSymbol = __commonJS({
-  "../node_modules/lodash/_cloneSymbol.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cloneSymbol.js"(exports2, module2) {
     var Symbol2 = require_Symbol();
     var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
     var symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
@@ -6635,9 +6635,9 @@ var require_cloneSymbol = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_cloneTypedArray.js
+// ../../../../ext/maps/node_modules/lodash/_cloneTypedArray.js
 var require_cloneTypedArray = __commonJS({
-  "../node_modules/lodash/_cloneTypedArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_cloneTypedArray.js"(exports2, module2) {
     var cloneArrayBuffer = require_cloneArrayBuffer();
     function cloneTypedArray(typedArray, isDeep) {
       var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
@@ -6647,9 +6647,9 @@ var require_cloneTypedArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_initCloneByTag.js
+// ../../../../ext/maps/node_modules/lodash/_initCloneByTag.js
 var require_initCloneByTag = __commonJS({
-  "../node_modules/lodash/_initCloneByTag.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_initCloneByTag.js"(exports2, module2) {
     var cloneArrayBuffer = require_cloneArrayBuffer();
     var cloneDataView = require_cloneDataView();
     var cloneRegExp = require_cloneRegExp();
@@ -6711,12 +6711,12 @@ var require_initCloneByTag = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseCreate.js
+// ../../../../ext/maps/node_modules/lodash/_baseCreate.js
 var require_baseCreate = __commonJS({
-  "../node_modules/lodash/_baseCreate.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseCreate.js"(exports2, module2) {
     var isObject2 = require_isObject();
     var objectCreate = Object.create;
-    var baseCreate = /* @__PURE__ */ function() {
+    var baseCreate = /* @__PURE__ */ (function() {
       function object2() {
       }
       return function(proto) {
@@ -6731,14 +6731,14 @@ var require_baseCreate = __commonJS({
         object2.prototype = void 0;
         return result;
       };
-    }();
+    })();
     module2.exports = baseCreate;
   }
 });
 
-// ../node_modules/lodash/_initCloneObject.js
+// ../../../../ext/maps/node_modules/lodash/_initCloneObject.js
 var require_initCloneObject = __commonJS({
-  "../node_modules/lodash/_initCloneObject.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_initCloneObject.js"(exports2, module2) {
     var baseCreate = require_baseCreate();
     var getPrototype = require_getPrototype();
     var isPrototype = require_isPrototype();
@@ -6749,9 +6749,9 @@ var require_initCloneObject = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsMap.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsMap.js
 var require_baseIsMap = __commonJS({
-  "../node_modules/lodash/_baseIsMap.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsMap.js"(exports2, module2) {
     var getTag = require_getTag();
     var isObjectLike = require_isObjectLike();
     var mapTag = "[object Map]";
@@ -6762,9 +6762,9 @@ var require_baseIsMap = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isMap.js
+// ../../../../ext/maps/node_modules/lodash/isMap.js
 var require_isMap = __commonJS({
-  "../node_modules/lodash/isMap.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isMap.js"(exports2, module2) {
     var baseIsMap = require_baseIsMap();
     var baseUnary = require_baseUnary();
     var nodeUtil = require_nodeUtil();
@@ -6774,9 +6774,9 @@ var require_isMap = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsSet.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsSet.js
 var require_baseIsSet = __commonJS({
-  "../node_modules/lodash/_baseIsSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsSet.js"(exports2, module2) {
     var getTag = require_getTag();
     var isObjectLike = require_isObjectLike();
     var setTag = "[object Set]";
@@ -6787,9 +6787,9 @@ var require_baseIsSet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isSet.js
+// ../../../../ext/maps/node_modules/lodash/isSet.js
 var require_isSet = __commonJS({
-  "../node_modules/lodash/isSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isSet.js"(exports2, module2) {
     var baseIsSet = require_baseIsSet();
     var baseUnary = require_baseUnary();
     var nodeUtil = require_nodeUtil();
@@ -6799,9 +6799,9 @@ var require_isSet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseClone.js
+// ../../../../ext/maps/node_modules/lodash/_baseClone.js
 var require_baseClone = __commonJS({
-  "../node_modules/lodash/_baseClone.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseClone.js"(exports2, module2) {
     var Stack = require_Stack();
     var arrayEach = require_arrayEach();
     var assignValue = require_assignValue();
@@ -6920,9 +6920,9 @@ var require_baseClone = __commonJS({
   }
 });
 
-// ../node_modules/lodash/clone.js
+// ../../../../ext/maps/node_modules/lodash/clone.js
 var require_clone = __commonJS({
-  "../node_modules/lodash/clone.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/clone.js"(exports2, module2) {
     var baseClone = require_baseClone();
     var CLONE_SYMBOLS_FLAG = 4;
     function clone(value) {
@@ -6932,9 +6932,9 @@ var require_clone = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/utils/lib/src/print.js
+// ../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/print.js
 var require_print = __commonJS({
-  "../node_modules/@chevrotain/utils/lib/src/print.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/print.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PRINT_WARNING = exports2.PRINT_ERROR = void 0;
@@ -6953,9 +6953,9 @@ var require_print = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/utils/lib/src/timer.js
+// ../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/timer.js
 var require_timer = __commonJS({
-  "../node_modules/@chevrotain/utils/lib/src/timer.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/timer.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.timer = void 0;
@@ -6970,9 +6970,9 @@ var require_timer = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/utils/lib/src/to-fast-properties.js
+// ../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/to-fast-properties.js
 var require_to_fast_properties = __commonJS({
-  "../node_modules/@chevrotain/utils/lib/src/to-fast-properties.js"(exports, module) {
+  "../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/to-fast-properties.js"(exports, module) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.toFastProperties = void 0;
@@ -6994,9 +6994,9 @@ var require_to_fast_properties = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/utils/lib/src/api.js
+// ../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/api.js
 var require_api = __commonJS({
-  "../node_modules/@chevrotain/utils/lib/src/api.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/utils/lib/src/api.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.toFastProperties = exports2.timer = exports2.PRINT_ERROR = exports2.PRINT_WARNING = void 0;
@@ -7018,9 +7018,9 @@ var require_api = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseSlice.js
+// ../../../../ext/maps/node_modules/lodash/_baseSlice.js
 var require_baseSlice = __commonJS({
-  "../node_modules/lodash/_baseSlice.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseSlice.js"(exports2, module2) {
     function baseSlice(array, start, end) {
       var index = -1, length = array.length;
       if (start < 0) {
@@ -7042,9 +7042,9 @@ var require_baseSlice = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_trimmedEndIndex.js
+// ../../../../ext/maps/node_modules/lodash/_trimmedEndIndex.js
 var require_trimmedEndIndex = __commonJS({
-  "../node_modules/lodash/_trimmedEndIndex.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_trimmedEndIndex.js"(exports2, module2) {
     var reWhitespace = /\s/;
     function trimmedEndIndex(string2) {
       var index = string2.length;
@@ -7056,9 +7056,9 @@ var require_trimmedEndIndex = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseTrim.js
+// ../../../../ext/maps/node_modules/lodash/_baseTrim.js
 var require_baseTrim = __commonJS({
-  "../node_modules/lodash/_baseTrim.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseTrim.js"(exports2, module2) {
     var trimmedEndIndex = require_trimmedEndIndex();
     var reTrimStart = /^\s+/;
     function baseTrim(string2) {
@@ -7068,9 +7068,9 @@ var require_baseTrim = __commonJS({
   }
 });
 
-// ../node_modules/lodash/toNumber.js
+// ../../../../ext/maps/node_modules/lodash/toNumber.js
 var require_toNumber = __commonJS({
-  "../node_modules/lodash/toNumber.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/toNumber.js"(exports2, module2) {
     var baseTrim = require_baseTrim();
     var isObject2 = require_isObject();
     var isSymbol = require_isSymbol();
@@ -7101,9 +7101,9 @@ var require_toNumber = __commonJS({
   }
 });
 
-// ../node_modules/lodash/toFinite.js
+// ../../../../ext/maps/node_modules/lodash/toFinite.js
 var require_toFinite = __commonJS({
-  "../node_modules/lodash/toFinite.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/toFinite.js"(exports2, module2) {
     var toNumber2 = require_toNumber();
     var INFINITY = 1 / 0;
     var MAX_INTEGER = 17976931348623157e292;
@@ -7122,9 +7122,9 @@ var require_toFinite = __commonJS({
   }
 });
 
-// ../node_modules/lodash/toInteger.js
+// ../../../../ext/maps/node_modules/lodash/toInteger.js
 var require_toInteger = __commonJS({
-  "../node_modules/lodash/toInteger.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/toInteger.js"(exports2, module2) {
     var toFinite = require_toFinite();
     function toInteger(value) {
       var result = toFinite(value), remainder = result % 1;
@@ -7134,9 +7134,9 @@ var require_toInteger = __commonJS({
   }
 });
 
-// ../node_modules/lodash/drop.js
+// ../../../../ext/maps/node_modules/lodash/drop.js
 var require_drop = __commonJS({
-  "../node_modules/lodash/drop.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/drop.js"(exports2, module2) {
     var baseSlice = require_baseSlice();
     var toInteger = require_toInteger();
     function drop(array, n2, guard) {
@@ -7151,9 +7151,9 @@ var require_drop = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isString.js
+// ../../../../ext/maps/node_modules/lodash/isString.js
 var require_isString = __commonJS({
-  "../node_modules/lodash/isString.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isString.js"(exports2, module2) {
     var baseGetTag = require_baseGetTag();
     var isArray = require_isArray();
     var isObjectLike = require_isObjectLike();
@@ -7165,9 +7165,9 @@ var require_isString = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsRegExp.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsRegExp.js
 var require_baseIsRegExp = __commonJS({
-  "../node_modules/lodash/_baseIsRegExp.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsRegExp.js"(exports2, module2) {
     var baseGetTag = require_baseGetTag();
     var isObjectLike = require_isObjectLike();
     var regexpTag = "[object RegExp]";
@@ -7178,9 +7178,9 @@ var require_baseIsRegExp = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isRegExp.js
+// ../../../../ext/maps/node_modules/lodash/isRegExp.js
 var require_isRegExp = __commonJS({
-  "../node_modules/lodash/isRegExp.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isRegExp.js"(exports2, module2) {
     var baseIsRegExp = require_baseIsRegExp();
     var baseUnary = require_baseUnary();
     var nodeUtil = require_nodeUtil();
@@ -7190,22 +7190,22 @@ var require_isRegExp = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseSet.js
+// ../../../../ext/maps/node_modules/lodash/_baseSet.js
 var require_baseSet = __commonJS({
-  "../node_modules/lodash/_baseSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseSet.js"(exports2, module2) {
     var assignValue = require_assignValue();
     var castPath = require_castPath();
     var isIndex = require_isIndex();
     var isObject2 = require_isObject();
     var toKey = require_toKey();
-    function baseSet(object2, path7, value, customizer) {
+    function baseSet(object2, path8, value, customizer) {
       if (!isObject2(object2)) {
         return object2;
       }
-      path7 = castPath(path7, object2);
-      var index = -1, length = path7.length, lastIndex = length - 1, nested = object2;
+      path8 = castPath(path8, object2);
+      var index = -1, length = path8.length, lastIndex = length - 1, nested = object2;
       while (nested != null && ++index < length) {
-        var key = toKey(path7[index]), newValue = value;
+        var key = toKey(path8[index]), newValue = value;
         if (key === "__proto__" || key === "constructor" || key === "prototype") {
           return object2;
         }
@@ -7213,7 +7213,7 @@ var require_baseSet = __commonJS({
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : void 0;
           if (newValue === void 0) {
-            newValue = isObject2(objValue) ? objValue : isIndex(path7[index + 1]) ? [] : {};
+            newValue = isObject2(objValue) ? objValue : isIndex(path8[index + 1]) ? [] : {};
           }
         }
         assignValue(nested, key, newValue);
@@ -7225,18 +7225,18 @@ var require_baseSet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_basePickBy.js
+// ../../../../ext/maps/node_modules/lodash/_basePickBy.js
 var require_basePickBy = __commonJS({
-  "../node_modules/lodash/_basePickBy.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_basePickBy.js"(exports2, module2) {
     var baseGet = require_baseGet();
     var baseSet = require_baseSet();
     var castPath = require_castPath();
     function basePickBy(object2, paths, predicate) {
       var index = -1, length = paths.length, result = {};
       while (++index < length) {
-        var path7 = paths[index], value = baseGet(object2, path7);
-        if (predicate(value, path7)) {
-          baseSet(result, castPath(path7, object2), value);
+        var path8 = paths[index], value = baseGet(object2, path8);
+        if (predicate(value, path8)) {
+          baseSet(result, castPath(path8, object2), value);
         }
       }
       return result;
@@ -7245,9 +7245,9 @@ var require_basePickBy = __commonJS({
   }
 });
 
-// ../node_modules/lodash/pickBy.js
+// ../../../../ext/maps/node_modules/lodash/pickBy.js
 var require_pickBy = __commonJS({
-  "../node_modules/lodash/pickBy.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/pickBy.js"(exports2, module2) {
     var arrayMap = require_arrayMap();
     var baseIteratee = require_baseIteratee();
     var basePickBy = require_basePickBy();
@@ -7260,17 +7260,17 @@ var require_pickBy = __commonJS({
         return [prop];
       });
       predicate = baseIteratee(predicate);
-      return basePickBy(object2, props, function(value, path7) {
-        return predicate(value, path7[0]);
+      return basePickBy(object2, props, function(value, path8) {
+        return predicate(value, path8[0]);
       });
     }
     module2.exports = pickBy;
   }
 });
 
-// ../node_modules/lodash/_apply.js
+// ../../../../ext/maps/node_modules/lodash/_apply.js
 var require_apply = __commonJS({
-  "../node_modules/lodash/_apply.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_apply.js"(exports2, module2) {
     function apply(func, thisArg, args) {
       switch (args.length) {
         case 0:
@@ -7288,9 +7288,9 @@ var require_apply = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_overRest.js
+// ../../../../ext/maps/node_modules/lodash/_overRest.js
 var require_overRest = __commonJS({
-  "../node_modules/lodash/_overRest.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_overRest.js"(exports2, module2) {
     var apply = require_apply();
     var nativeMax = Math.max;
     function overRest(func, start, transform) {
@@ -7313,9 +7313,9 @@ var require_overRest = __commonJS({
   }
 });
 
-// ../node_modules/lodash/constant.js
+// ../../../../ext/maps/node_modules/lodash/constant.js
 var require_constant = __commonJS({
-  "../node_modules/lodash/constant.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/constant.js"(exports2, module2) {
     function constant(value) {
       return function() {
         return value;
@@ -7325,9 +7325,9 @@ var require_constant = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseSetToString.js
+// ../../../../ext/maps/node_modules/lodash/_baseSetToString.js
 var require_baseSetToString = __commonJS({
-  "../node_modules/lodash/_baseSetToString.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseSetToString.js"(exports2, module2) {
     var constant = require_constant();
     var defineProperty = require_defineProperty();
     var identity = require_identity();
@@ -7343,9 +7343,9 @@ var require_baseSetToString = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_shortOut.js
+// ../../../../ext/maps/node_modules/lodash/_shortOut.js
 var require_shortOut = __commonJS({
-  "../node_modules/lodash/_shortOut.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_shortOut.js"(exports2, module2) {
     var HOT_COUNT = 800;
     var HOT_SPAN = 16;
     var nativeNow = Date.now;
@@ -7368,9 +7368,9 @@ var require_shortOut = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_setToString.js
+// ../../../../ext/maps/node_modules/lodash/_setToString.js
 var require_setToString = __commonJS({
-  "../node_modules/lodash/_setToString.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_setToString.js"(exports2, module2) {
     var baseSetToString = require_baseSetToString();
     var shortOut = require_shortOut();
     var setToString = shortOut(baseSetToString);
@@ -7378,9 +7378,9 @@ var require_setToString = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseRest.js
+// ../../../../ext/maps/node_modules/lodash/_baseRest.js
 var require_baseRest = __commonJS({
-  "../node_modules/lodash/_baseRest.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseRest.js"(exports2, module2) {
     var identity = require_identity();
     var overRest = require_overRest();
     var setToString = require_setToString();
@@ -7391,9 +7391,9 @@ var require_baseRest = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isIterateeCall.js
+// ../../../../ext/maps/node_modules/lodash/_isIterateeCall.js
 var require_isIterateeCall = __commonJS({
-  "../node_modules/lodash/_isIterateeCall.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isIterateeCall.js"(exports2, module2) {
     var eq = require_eq();
     var isArrayLike = require_isArrayLike();
     var isIndex = require_isIndex();
@@ -7412,9 +7412,9 @@ var require_isIterateeCall = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_createAssigner.js
+// ../../../../ext/maps/node_modules/lodash/_createAssigner.js
 var require_createAssigner = __commonJS({
-  "../node_modules/lodash/_createAssigner.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createAssigner.js"(exports2, module2) {
     var baseRest = require_baseRest();
     var isIterateeCall = require_isIterateeCall();
     function createAssigner(assigner) {
@@ -7439,9 +7439,9 @@ var require_createAssigner = __commonJS({
   }
 });
 
-// ../node_modules/lodash/assign.js
+// ../../../../ext/maps/node_modules/lodash/assign.js
 var require_assign = __commonJS({
-  "../node_modules/lodash/assign.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/assign.js"(exports2, module2) {
     var assignValue = require_assignValue();
     var copyObject = require_copyObject();
     var createAssigner = require_createAssigner();
@@ -7465,11 +7465,11 @@ var require_assign = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/gast/lib/src/model.js
+// ../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/model.js
 var require_model = __commonJS({
-  "../node_modules/@chevrotain/gast/lib/src/model.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/model.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -7487,7 +7487,7 @@ var require_model = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -7511,7 +7511,7 @@ var require_model = __commonJS({
     }
     var AbstractProduction = (
       /** @class */
-      function() {
+      (function() {
         function AbstractProduction2(_definition) {
           this._definition = _definition;
         }
@@ -7532,12 +7532,12 @@ var require_model = __commonJS({
           });
         };
         return AbstractProduction2;
-      }()
+      })()
     );
     exports2.AbstractProduction = AbstractProduction;
     var NonTerminal2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NonTerminal3, _super);
         function NonTerminal3(options) {
           var _this = _super.call(this, []) || this;
@@ -7563,12 +7563,12 @@ var require_model = __commonJS({
           visitor.visit(this);
         };
         return NonTerminal3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.NonTerminal = NonTerminal2;
     var Rule2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Rule3, _super);
         function Rule3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7579,12 +7579,12 @@ var require_model = __commonJS({
           return _this;
         }
         return Rule3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.Rule = Rule2;
     var Alternative2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Alternative3, _super);
         function Alternative3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7595,12 +7595,12 @@ var require_model = __commonJS({
           return _this;
         }
         return Alternative3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.Alternative = Alternative2;
     var Option2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Option3, _super);
         function Option3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7611,12 +7611,12 @@ var require_model = __commonJS({
           return _this;
         }
         return Option3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.Option = Option2;
     var RepetitionMandatory2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(RepetitionMandatory3, _super);
         function RepetitionMandatory3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7627,12 +7627,12 @@ var require_model = __commonJS({
           return _this;
         }
         return RepetitionMandatory3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.RepetitionMandatory = RepetitionMandatory2;
     var RepetitionMandatoryWithSeparator2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(RepetitionMandatoryWithSeparator3, _super);
         function RepetitionMandatoryWithSeparator3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7643,12 +7643,12 @@ var require_model = __commonJS({
           return _this;
         }
         return RepetitionMandatoryWithSeparator3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.RepetitionMandatoryWithSeparator = RepetitionMandatoryWithSeparator2;
     var Repetition2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Repetition3, _super);
         function Repetition3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7659,12 +7659,12 @@ var require_model = __commonJS({
           return _this;
         }
         return Repetition3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.Repetition = Repetition2;
     var RepetitionWithSeparator2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(RepetitionWithSeparator3, _super);
         function RepetitionWithSeparator3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7675,12 +7675,12 @@ var require_model = __commonJS({
           return _this;
         }
         return RepetitionWithSeparator3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.RepetitionWithSeparator = RepetitionWithSeparator2;
     var Alternation2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(Alternation3, _super);
         function Alternation3(options) {
           var _this = _super.call(this, options.definition) || this;
@@ -7703,12 +7703,12 @@ var require_model = __commonJS({
           configurable: true
         });
         return Alternation3;
-      }(AbstractProduction)
+      })(AbstractProduction)
     );
     exports2.Alternation = Alternation2;
     var Terminal2 = (
       /** @class */
-      function() {
+      (function() {
         function Terminal3(options) {
           this.idx = 1;
           (0, assign_1.default)(this, (0, pickBy_1.default)(options, function(v2) {
@@ -7719,7 +7719,7 @@ var require_model = __commonJS({
           visitor.visit(this);
         };
         return Terminal3;
-      }()
+      })()
     );
     exports2.Terminal = Terminal2;
     function serializeGrammar2(topRules) {
@@ -7813,16 +7813,16 @@ var require_model = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/gast/lib/src/visitor.js
+// ../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/visitor.js
 var require_visitor = __commonJS({
-  "../node_modules/@chevrotain/gast/lib/src/visitor.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/visitor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GAstVisitor = void 0;
     var model_1 = require_model();
     var GAstVisitor2 = (
       /** @class */
-      function() {
+      (function() {
         function GAstVisitor3() {
         }
         GAstVisitor3.prototype.visit = function(node) {
@@ -7874,15 +7874,15 @@ var require_visitor = __commonJS({
         GAstVisitor3.prototype.visitRule = function(node) {
         };
         return GAstVisitor3;
-      }()
+      })()
     );
     exports2.GAstVisitor = GAstVisitor2;
   }
 });
 
-// ../node_modules/lodash/_baseSome.js
+// ../../../../ext/maps/node_modules/lodash/_baseSome.js
 var require_baseSome = __commonJS({
-  "../node_modules/lodash/_baseSome.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseSome.js"(exports2, module2) {
     var baseEach = require_baseEach();
     function baseSome(collection, predicate) {
       var result;
@@ -7896,9 +7896,9 @@ var require_baseSome = __commonJS({
   }
 });
 
-// ../node_modules/lodash/some.js
+// ../../../../ext/maps/node_modules/lodash/some.js
 var require_some = __commonJS({
-  "../node_modules/lodash/some.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/some.js"(exports2, module2) {
     var arraySome = require_arraySome();
     var baseIteratee = require_baseIteratee();
     var baseSome = require_baseSome();
@@ -7915,9 +7915,9 @@ var require_some = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayEvery.js
+// ../../../../ext/maps/node_modules/lodash/_arrayEvery.js
 var require_arrayEvery = __commonJS({
-  "../node_modules/lodash/_arrayEvery.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayEvery.js"(exports2, module2) {
     function arrayEvery(array, predicate) {
       var index = -1, length = array == null ? 0 : array.length;
       while (++index < length) {
@@ -7931,9 +7931,9 @@ var require_arrayEvery = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseEvery.js
+// ../../../../ext/maps/node_modules/lodash/_baseEvery.js
 var require_baseEvery = __commonJS({
-  "../node_modules/lodash/_baseEvery.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseEvery.js"(exports2, module2) {
     var baseEach = require_baseEach();
     function baseEvery(collection, predicate) {
       var result = true;
@@ -7947,9 +7947,9 @@ var require_baseEvery = __commonJS({
   }
 });
 
-// ../node_modules/lodash/every.js
+// ../../../../ext/maps/node_modules/lodash/every.js
 var require_every = __commonJS({
-  "../node_modules/lodash/every.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/every.js"(exports2, module2) {
     var arrayEvery = require_arrayEvery();
     var baseEvery = require_baseEvery();
     var baseIteratee = require_baseIteratee();
@@ -7966,9 +7966,9 @@ var require_every = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseFindIndex.js
+// ../../../../ext/maps/node_modules/lodash/_baseFindIndex.js
 var require_baseFindIndex = __commonJS({
-  "../node_modules/lodash/_baseFindIndex.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseFindIndex.js"(exports2, module2) {
     function baseFindIndex(array, predicate, fromIndex, fromRight) {
       var length = array.length, index = fromIndex + (fromRight ? 1 : -1);
       while (fromRight ? index-- : ++index < length) {
@@ -7982,9 +7982,9 @@ var require_baseFindIndex = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIsNaN.js
+// ../../../../ext/maps/node_modules/lodash/_baseIsNaN.js
 var require_baseIsNaN = __commonJS({
-  "../node_modules/lodash/_baseIsNaN.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIsNaN.js"(exports2, module2) {
     function baseIsNaN(value) {
       return value !== value;
     }
@@ -7992,9 +7992,9 @@ var require_baseIsNaN = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_strictIndexOf.js
+// ../../../../ext/maps/node_modules/lodash/_strictIndexOf.js
 var require_strictIndexOf = __commonJS({
-  "../node_modules/lodash/_strictIndexOf.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_strictIndexOf.js"(exports2, module2) {
     function strictIndexOf(array, value, fromIndex) {
       var index = fromIndex - 1, length = array.length;
       while (++index < length) {
@@ -8008,9 +8008,9 @@ var require_strictIndexOf = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseIndexOf.js
+// ../../../../ext/maps/node_modules/lodash/_baseIndexOf.js
 var require_baseIndexOf = __commonJS({
-  "../node_modules/lodash/_baseIndexOf.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseIndexOf.js"(exports2, module2) {
     var baseFindIndex = require_baseFindIndex();
     var baseIsNaN = require_baseIsNaN();
     var strictIndexOf = require_strictIndexOf();
@@ -8021,9 +8021,9 @@ var require_baseIndexOf = __commonJS({
   }
 });
 
-// ../node_modules/lodash/includes.js
+// ../../../../ext/maps/node_modules/lodash/includes.js
 var require_includes = __commonJS({
-  "../node_modules/lodash/includes.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/includes.js"(exports2, module2) {
     var baseIndexOf = require_baseIndexOf();
     var isArrayLike = require_isArrayLike();
     var isString = require_isString();
@@ -8043,9 +8043,9 @@ var require_includes = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/gast/lib/src/helpers.js
+// ../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/helpers.js
 var require_helpers = __commonJS({
-  "../node_modules/@chevrotain/gast/lib/src/helpers.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/helpers.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -8115,9 +8115,9 @@ var require_helpers = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/gast/lib/src/api.js
+// ../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/api.js
 var require_api2 = __commonJS({
-  "../node_modules/@chevrotain/gast/lib/src/api.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/gast/lib/src/api.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isSequenceProd = exports2.isBranchingProd = exports2.isOptionalProd = exports2.getProductionDslName = exports2.GAstVisitor = exports2.serializeProduction = exports2.serializeGrammar = exports2.Alternative = exports2.Alternation = exports2.RepetitionWithSeparator = exports2.RepetitionMandatoryWithSeparator = exports2.RepetitionMandatory = exports2.Repetition = exports2.Option = exports2.NonTerminal = exports2.Terminal = exports2.Rule = void 0;
@@ -8178,9 +8178,9 @@ var require_api2 = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/rest.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/rest.js
 var require_rest = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/rest.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/rest.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -8192,7 +8192,7 @@ var require_rest = __commonJS({
     var gast_1 = require_api2();
     var RestWalker = (
       /** @class */
-      function() {
+      (function() {
         function RestWalker2() {
         }
         RestWalker2.prototype.walk = function(prod, prevRest) {
@@ -8266,7 +8266,7 @@ var require_rest = __commonJS({
           });
         };
         return RestWalker2;
-      }()
+      })()
     );
     exports2.RestWalker = RestWalker;
     function restForRepetitionWithSeparator(repSepProd, currRest, prevRest) {
@@ -8283,9 +8283,9 @@ var require_rest = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_isFlattenable.js
+// ../../../../ext/maps/node_modules/lodash/_isFlattenable.js
 var require_isFlattenable = __commonJS({
-  "../node_modules/lodash/_isFlattenable.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_isFlattenable.js"(exports2, module2) {
     var Symbol2 = require_Symbol();
     var isArguments = require_isArguments();
     var isArray = require_isArray();
@@ -8297,9 +8297,9 @@ var require_isFlattenable = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseFlatten.js
+// ../../../../ext/maps/node_modules/lodash/_baseFlatten.js
 var require_baseFlatten = __commonJS({
-  "../node_modules/lodash/_baseFlatten.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseFlatten.js"(exports2, module2) {
     var arrayPush = require_arrayPush();
     var isFlattenable = require_isFlattenable();
     function baseFlatten(array, depth, predicate, isStrict, result) {
@@ -8324,9 +8324,9 @@ var require_baseFlatten = __commonJS({
   }
 });
 
-// ../node_modules/lodash/flatten.js
+// ../../../../ext/maps/node_modules/lodash/flatten.js
 var require_flatten = __commonJS({
-  "../node_modules/lodash/flatten.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/flatten.js"(exports2, module2) {
     var baseFlatten = require_baseFlatten();
     function flatten(array) {
       var length = array == null ? 0 : array.length;
@@ -8336,9 +8336,9 @@ var require_flatten = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayIncludes.js
+// ../../../../ext/maps/node_modules/lodash/_arrayIncludes.js
 var require_arrayIncludes = __commonJS({
-  "../node_modules/lodash/_arrayIncludes.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayIncludes.js"(exports2, module2) {
     var baseIndexOf = require_baseIndexOf();
     function arrayIncludes(array, value) {
       var length = array == null ? 0 : array.length;
@@ -8348,9 +8348,9 @@ var require_arrayIncludes = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayIncludesWith.js
+// ../../../../ext/maps/node_modules/lodash/_arrayIncludesWith.js
 var require_arrayIncludesWith = __commonJS({
-  "../node_modules/lodash/_arrayIncludesWith.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayIncludesWith.js"(exports2, module2) {
     function arrayIncludesWith(array, value, comparator) {
       var index = -1, length = array == null ? 0 : array.length;
       while (++index < length) {
@@ -8364,18 +8364,18 @@ var require_arrayIncludesWith = __commonJS({
   }
 });
 
-// ../node_modules/lodash/noop.js
+// ../../../../ext/maps/node_modules/lodash/noop.js
 var require_noop = __commonJS({
-  "../node_modules/lodash/noop.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/noop.js"(exports2, module2) {
     function noop() {
     }
     module2.exports = noop;
   }
 });
 
-// ../node_modules/lodash/_createSet.js
+// ../../../../ext/maps/node_modules/lodash/_createSet.js
 var require_createSet = __commonJS({
-  "../node_modules/lodash/_createSet.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createSet.js"(exports2, module2) {
     var Set2 = require_Set();
     var noop = require_noop();
     var setToArray = require_setToArray();
@@ -8387,9 +8387,9 @@ var require_createSet = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseUniq.js
+// ../../../../ext/maps/node_modules/lodash/_baseUniq.js
 var require_baseUniq = __commonJS({
-  "../node_modules/lodash/_baseUniq.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseUniq.js"(exports2, module2) {
     var SetCache = require_SetCache();
     var arrayIncludes = require_arrayIncludes();
     var arrayIncludesWith = require_arrayIncludesWith();
@@ -8441,9 +8441,9 @@ var require_baseUniq = __commonJS({
   }
 });
 
-// ../node_modules/lodash/uniq.js
+// ../../../../ext/maps/node_modules/lodash/uniq.js
 var require_uniq = __commonJS({
-  "../node_modules/lodash/uniq.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/uniq.js"(exports2, module2) {
     var baseUniq = require_baseUniq();
     function uniq(array) {
       return array && array.length ? baseUniq(array) : [];
@@ -8452,9 +8452,9 @@ var require_uniq = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/first.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/first.js
 var require_first = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/first.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/first.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -8511,9 +8511,9 @@ var require_first = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/constants.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/constants.js
 var require_constants2 = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/constants.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.IN = void 0;
@@ -8521,11 +8521,11 @@ var require_constants2 = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/follow.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/follow.js
 var require_follow = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/follow.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/follow.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -8543,7 +8543,7 @@ var require_follow = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -8557,7 +8557,7 @@ var require_follow = __commonJS({
     var gast_1 = require_api2();
     var ResyncFollowsWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(ResyncFollowsWalker2, _super);
         function ResyncFollowsWalker2(topProd) {
           var _this = _super.call(this) || this;
@@ -8579,7 +8579,7 @@ var require_follow = __commonJS({
           this.follows[followName] = t_in_topProd_follows;
         };
         return ResyncFollowsWalker2;
-      }(rest_1.RestWalker)
+      })(rest_1.RestWalker)
     );
     exports2.ResyncFollowsWalker = ResyncFollowsWalker;
     function computeAllProdsFollows(topProductions) {
@@ -8603,9 +8603,9 @@ var require_follow = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isUndefined.js
+// ../../../../ext/maps/node_modules/lodash/isUndefined.js
 var require_isUndefined = __commonJS({
-  "../node_modules/lodash/isUndefined.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isUndefined.js"(exports2, module2) {
     function isUndefined(value) {
       return value === void 0;
     }
@@ -8613,9 +8613,9 @@ var require_isUndefined = __commonJS({
   }
 });
 
-// ../node_modules/regexp-to-ast/lib/regexp-to-ast.js
+// ../../../../ext/maps/node_modules/regexp-to-ast/lib/regexp-to-ast.js
 var require_regexp_to_ast = __commonJS({
-  "../node_modules/regexp-to-ast/lib/regexp-to-ast.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/regexp-to-ast/lib/regexp-to-ast.js"(exports2, module2) {
     (function(root, factory) {
       if (typeof define === "function" && define.amd) {
         define([], factory);
@@ -9491,9 +9491,9 @@ var require_regexp_to_ast = __commonJS({
   }
 });
 
-// ../node_modules/lodash/head.js
+// ../../../../ext/maps/node_modules/lodash/head.js
 var require_head = __commonJS({
-  "../node_modules/lodash/head.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/head.js"(exports2, module2) {
     function head(array) {
       return array && array.length ? array[0] : void 0;
     }
@@ -9501,16 +9501,16 @@ var require_head = __commonJS({
   }
 });
 
-// ../node_modules/lodash/first.js
+// ../../../../ext/maps/node_modules/lodash/first.js
 var require_first2 = __commonJS({
-  "../node_modules/lodash/first.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/first.js"(exports2, module2) {
     module2.exports = require_head();
   }
 });
 
-// ../node_modules/lodash/compact.js
+// ../../../../ext/maps/node_modules/lodash/compact.js
 var require_compact = __commonJS({
-  "../node_modules/lodash/compact.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/compact.js"(exports2, module2) {
     function compact(array) {
       var index = -1, length = array == null ? 0 : array.length, resIndex = 0, result = [];
       while (++index < length) {
@@ -9525,9 +9525,9 @@ var require_compact = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseFilter.js
+// ../../../../ext/maps/node_modules/lodash/_baseFilter.js
 var require_baseFilter = __commonJS({
-  "../node_modules/lodash/_baseFilter.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseFilter.js"(exports2, module2) {
     var baseEach = require_baseEach();
     function baseFilter(collection, predicate) {
       var result = [];
@@ -9542,9 +9542,9 @@ var require_baseFilter = __commonJS({
   }
 });
 
-// ../node_modules/lodash/negate.js
+// ../../../../ext/maps/node_modules/lodash/negate.js
 var require_negate = __commonJS({
-  "../node_modules/lodash/negate.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/negate.js"(exports2, module2) {
     var FUNC_ERROR_TEXT = "Expected a function";
     function negate(predicate) {
       if (typeof predicate != "function") {
@@ -9569,9 +9569,9 @@ var require_negate = __commonJS({
   }
 });
 
-// ../node_modules/lodash/reject.js
+// ../../../../ext/maps/node_modules/lodash/reject.js
 var require_reject = __commonJS({
-  "../node_modules/lodash/reject.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/reject.js"(exports2, module2) {
     var arrayFilter = require_arrayFilter();
     var baseFilter = require_baseFilter();
     var baseIteratee = require_baseIteratee();
@@ -9585,9 +9585,9 @@ var require_reject = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseDifference.js
+// ../../../../ext/maps/node_modules/lodash/_baseDifference.js
 var require_baseDifference = __commonJS({
-  "../node_modules/lodash/_baseDifference.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseDifference.js"(exports2, module2) {
     var SetCache = require_SetCache();
     var arrayIncludes = require_arrayIncludes();
     var arrayIncludesWith = require_arrayIncludesWith();
@@ -9633,9 +9633,9 @@ var require_baseDifference = __commonJS({
   }
 });
 
-// ../node_modules/lodash/isArrayLikeObject.js
+// ../../../../ext/maps/node_modules/lodash/isArrayLikeObject.js
 var require_isArrayLikeObject = __commonJS({
-  "../node_modules/lodash/isArrayLikeObject.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/isArrayLikeObject.js"(exports2, module2) {
     var isArrayLike = require_isArrayLike();
     var isObjectLike = require_isObjectLike();
     function isArrayLikeObject(value) {
@@ -9645,9 +9645,9 @@ var require_isArrayLikeObject = __commonJS({
   }
 });
 
-// ../node_modules/lodash/difference.js
+// ../../../../ext/maps/node_modules/lodash/difference.js
 var require_difference = __commonJS({
-  "../node_modules/lodash/difference.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/difference.js"(exports2, module2) {
     var baseDifference = require_baseDifference();
     var baseFlatten = require_baseFlatten();
     var baseRest = require_baseRest();
@@ -9659,9 +9659,9 @@ var require_difference = __commonJS({
   }
 });
 
-// ../node_modules/lodash/indexOf.js
+// ../../../../ext/maps/node_modules/lodash/indexOf.js
 var require_indexOf = __commonJS({
-  "../node_modules/lodash/indexOf.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/indexOf.js"(exports2, module2) {
     var baseIndexOf = require_baseIndexOf();
     var toInteger = require_toInteger();
     var nativeMax = Math.max;
@@ -9680,9 +9680,9 @@ var require_indexOf = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_createFind.js
+// ../../../../ext/maps/node_modules/lodash/_createFind.js
 var require_createFind = __commonJS({
-  "../node_modules/lodash/_createFind.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createFind.js"(exports2, module2) {
     var baseIteratee = require_baseIteratee();
     var isArrayLike = require_isArrayLike();
     var keys = require_keys();
@@ -9704,9 +9704,9 @@ var require_createFind = __commonJS({
   }
 });
 
-// ../node_modules/lodash/findIndex.js
+// ../../../../ext/maps/node_modules/lodash/findIndex.js
 var require_findIndex = __commonJS({
-  "../node_modules/lodash/findIndex.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/findIndex.js"(exports2, module2) {
     var baseFindIndex = require_baseFindIndex();
     var baseIteratee = require_baseIteratee();
     var toInteger = require_toInteger();
@@ -9726,9 +9726,9 @@ var require_findIndex = __commonJS({
   }
 });
 
-// ../node_modules/lodash/find.js
+// ../../../../ext/maps/node_modules/lodash/find.js
 var require_find = __commonJS({
-  "../node_modules/lodash/find.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/find.js"(exports2, module2) {
     var createFind = require_createFind();
     var findIndex = require_findIndex();
     var find = createFind(findIndex);
@@ -9736,9 +9736,9 @@ var require_find = __commonJS({
   }
 });
 
-// ../node_modules/lodash/filter.js
+// ../../../../ext/maps/node_modules/lodash/filter.js
 var require_filter = __commonJS({
-  "../node_modules/lodash/filter.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/filter.js"(exports2, module2) {
     var arrayFilter = require_arrayFilter();
     var baseFilter = require_baseFilter();
     var baseIteratee = require_baseIteratee();
@@ -9751,9 +9751,9 @@ var require_filter = __commonJS({
   }
 });
 
-// ../node_modules/lodash/defaults.js
+// ../../../../ext/maps/node_modules/lodash/defaults.js
 var require_defaults = __commonJS({
-  "../node_modules/lodash/defaults.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/defaults.js"(exports2, module2) {
     var baseRest = require_baseRest();
     var eq = require_eq();
     var isIterateeCall = require_isIterateeCall();
@@ -9787,9 +9787,9 @@ var require_defaults = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_arrayReduce.js
+// ../../../../ext/maps/node_modules/lodash/_arrayReduce.js
 var require_arrayReduce = __commonJS({
-  "../node_modules/lodash/_arrayReduce.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayReduce.js"(exports2, module2) {
     function arrayReduce(array, iteratee, accumulator, initAccum) {
       var index = -1, length = array == null ? 0 : array.length;
       if (initAccum && length) {
@@ -9804,9 +9804,9 @@ var require_arrayReduce = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseReduce.js
+// ../../../../ext/maps/node_modules/lodash/_baseReduce.js
 var require_baseReduce = __commonJS({
-  "../node_modules/lodash/_baseReduce.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseReduce.js"(exports2, module2) {
     function baseReduce(collection, iteratee, accumulator, initAccum, eachFunc) {
       eachFunc(collection, function(value, index, collection2) {
         accumulator = initAccum ? (initAccum = false, value) : iteratee(accumulator, value, index, collection2);
@@ -9817,9 +9817,9 @@ var require_baseReduce = __commonJS({
   }
 });
 
-// ../node_modules/lodash/reduce.js
+// ../../../../ext/maps/node_modules/lodash/reduce.js
 var require_reduce = __commonJS({
-  "../node_modules/lodash/reduce.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/reduce.js"(exports2, module2) {
     var arrayReduce = require_arrayReduce();
     var baseEach = require_baseEach();
     var baseIteratee = require_baseIteratee();
@@ -9833,9 +9833,9 @@ var require_reduce = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/reg_exp_parser.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/reg_exp_parser.js
 var require_reg_exp_parser = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/reg_exp_parser.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/reg_exp_parser.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.clearRegExpParserCache = exports2.getRegExpAst = void 0;
@@ -9860,11 +9860,11 @@ var require_reg_exp_parser = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/reg_exp.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/reg_exp.js
 var require_reg_exp = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/reg_exp.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/reg_exp.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -9882,7 +9882,7 @@ var require_reg_exp = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -10054,7 +10054,7 @@ var require_reg_exp = __commonJS({
     }
     var CharCodeFinder = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(CharCodeFinder2, _super);
         function CharCodeFinder2(targetCharCodes) {
           var _this = _super.call(this) || this;
@@ -10093,7 +10093,7 @@ var require_reg_exp = __commonJS({
           }
         };
         return CharCodeFinder2;
-      }(regexp_to_ast_1.BaseRegExpVisitor)
+      })(regexp_to_ast_1.BaseRegExpVisitor)
     );
     function canMatchCharCode(charCodes, pattern) {
       if (pattern instanceof RegExp) {
@@ -10111,11 +10111,11 @@ var require_reg_exp = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/lexer.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/lexer.js
 var require_lexer = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/lexer.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/lexer.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -10133,7 +10133,7 @@ var require_lexer = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -10448,7 +10448,7 @@ var require_lexer = __commonJS({
     function findEndOfInputAnchor(tokenTypes) {
       var EndAnchorFinder = (
         /** @class */
-        function(_super) {
+        (function(_super) {
           __extends(EndAnchorFinder2, _super);
           function EndAnchorFinder2() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -10459,7 +10459,7 @@ var require_lexer = __commonJS({
             this.found = true;
           };
           return EndAnchorFinder2;
-        }(regexp_to_ast_1.BaseRegExpVisitor)
+        })(regexp_to_ast_1.BaseRegExpVisitor)
       );
       var invalidRegex = (0, filter_1.default)(tokenTypes, function(currType) {
         var pattern = currType.PATTERN;
@@ -10501,7 +10501,7 @@ var require_lexer = __commonJS({
     function findStartOfInputAnchor(tokenTypes) {
       var StartAnchorFinder = (
         /** @class */
-        function(_super) {
+        (function(_super) {
           __extends(StartAnchorFinder2, _super);
           function StartAnchorFinder2() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -10512,7 +10512,7 @@ var require_lexer = __commonJS({
             this.found = true;
           };
           return StartAnchorFinder2;
-        }(regexp_to_ast_1.BaseRegExpVisitor)
+        })(regexp_to_ast_1.BaseRegExpVisitor)
       );
       var invalidRegex = (0, filter_1.default)(tokenTypes, function(currType) {
         var pattern = currType.PATTERN;
@@ -10899,9 +10899,9 @@ var require_lexer = __commonJS({
   }
 });
 
-// ../node_modules/lodash/last.js
+// ../../../../ext/maps/node_modules/lodash/last.js
 var require_last = __commonJS({
-  "../node_modules/lodash/last.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/last.js"(exports2, module2) {
     function last(array) {
       var length = array == null ? 0 : array.length;
       return length ? array[length - 1] : void 0;
@@ -10910,9 +10910,9 @@ var require_last = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/tokens.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/tokens.js
 var require_tokens = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/tokens.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/tokens.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -11009,12 +11009,12 @@ var require_tokens = __commonJS({
       });
     }
     exports2.assignCategoriesMapProp = assignCategoriesMapProp;
-    function singleAssignCategoriesToksMap(path7, nextNode) {
-      (0, forEach_1.default)(path7, function(pathNode) {
+    function singleAssignCategoriesToksMap(path8, nextNode) {
+      (0, forEach_1.default)(path8, function(pathNode) {
         nextNode.categoryMatchesMap[pathNode.tokenTypeIdx] = true;
       });
       (0, forEach_1.default)(nextNode.CATEGORIES, function(nextCategory) {
-        var newPath = path7.concat(nextNode);
+        var newPath = path8.concat(nextNode);
         if (!(0, includes_1.default)(newPath, nextCategory)) {
           singleAssignCategoriesToksMap(newPath, nextCategory);
         }
@@ -11044,9 +11044,9 @@ var require_tokens = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/lexer_errors_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/lexer_errors_public.js
 var require_lexer_errors_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/lexer_errors_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/lexer_errors_public.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.defaultLexerErrorProvider = void 0;
@@ -11061,9 +11061,9 @@ var require_lexer_errors_public = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/lexer_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/lexer_public.js
 var require_lexer_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/lexer_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/lexer_public.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -11124,7 +11124,7 @@ var require_lexer_public = __commonJS({
     Object.freeze(DEFAULT_LEXER_CONFIG);
     var Lexer2 = (
       /** @class */
-      function() {
+      (function() {
         function Lexer3(lexerDefinition, config) {
           if (config === void 0) {
             config = DEFAULT_LEXER_CONFIG;
@@ -11632,15 +11632,15 @@ var require_lexer_public = __commonJS({
         Lexer3.SKIPPED = "This marks a skipped Token pattern, this means each token identified by it willbe consumed and then thrown into oblivion, this can be used to for example to completely ignore whitespace.";
         Lexer3.NA = /NOT_APPLICABLE/;
         return Lexer3;
-      }()
+      })()
     );
     exports2.Lexer = Lexer2;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/scan/tokens_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/scan/tokens_public.js
 var require_tokens_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/scan/tokens_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/scan/tokens_public.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -11741,9 +11741,9 @@ var require_tokens_public = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/errors_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/errors_public.js
 var require_errors_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/errors_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/errors_public.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -11908,11 +11908,11 @@ var require_errors_public = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/resolver.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/resolver.js
 var require_resolver = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/resolver.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/resolver.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -11930,7 +11930,7 @@ var require_resolver = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -11948,7 +11948,7 @@ var require_resolver = __commonJS({
     exports2.resolveGrammar = resolveGrammar;
     var GastRefResolverVisitor = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(GastRefResolverVisitor2, _super);
         function GastRefResolverVisitor2(nameToTopRule, errMsgProvider) {
           var _this = _super.call(this) || this;
@@ -11979,15 +11979,15 @@ var require_resolver = __commonJS({
           }
         };
         return GastRefResolverVisitor2;
-      }(gast_1.GAstVisitor)
+      })(gast_1.GAstVisitor)
     );
     exports2.GastRefResolverVisitor = GastRefResolverVisitor;
   }
 });
 
-// ../node_modules/lodash/_arrayAggregator.js
+// ../../../../ext/maps/node_modules/lodash/_arrayAggregator.js
 var require_arrayAggregator = __commonJS({
-  "../node_modules/lodash/_arrayAggregator.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_arrayAggregator.js"(exports2, module2) {
     function arrayAggregator(array, setter, iteratee, accumulator) {
       var index = -1, length = array == null ? 0 : array.length;
       while (++index < length) {
@@ -12000,9 +12000,9 @@ var require_arrayAggregator = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_baseAggregator.js
+// ../../../../ext/maps/node_modules/lodash/_baseAggregator.js
 var require_baseAggregator = __commonJS({
-  "../node_modules/lodash/_baseAggregator.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_baseAggregator.js"(exports2, module2) {
     var baseEach = require_baseEach();
     function baseAggregator(collection, setter, iteratee, accumulator) {
       baseEach(collection, function(value, key, collection2) {
@@ -12014,9 +12014,9 @@ var require_baseAggregator = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_createAggregator.js
+// ../../../../ext/maps/node_modules/lodash/_createAggregator.js
 var require_createAggregator = __commonJS({
-  "../node_modules/lodash/_createAggregator.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createAggregator.js"(exports2, module2) {
     var arrayAggregator = require_arrayAggregator();
     var baseAggregator = require_baseAggregator();
     var baseIteratee = require_baseIteratee();
@@ -12031,9 +12031,9 @@ var require_createAggregator = __commonJS({
   }
 });
 
-// ../node_modules/lodash/groupBy.js
+// ../../../../ext/maps/node_modules/lodash/groupBy.js
 var require_groupBy = __commonJS({
-  "../node_modules/lodash/groupBy.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/groupBy.js"(exports2, module2) {
     var baseAssignValue = require_baseAssignValue();
     var createAggregator = require_createAggregator();
     var objectProto = Object.prototype;
@@ -12049,9 +12049,9 @@ var require_groupBy = __commonJS({
   }
 });
 
-// ../node_modules/lodash/flatMap.js
+// ../../../../ext/maps/node_modules/lodash/flatMap.js
 var require_flatMap = __commonJS({
-  "../node_modules/lodash/flatMap.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/flatMap.js"(exports2, module2) {
     var baseFlatten = require_baseFlatten();
     var map = require_map();
     function flatMap(collection, iteratee) {
@@ -12061,9 +12061,9 @@ var require_flatMap = __commonJS({
   }
 });
 
-// ../node_modules/lodash/dropRight.js
+// ../../../../ext/maps/node_modules/lodash/dropRight.js
 var require_dropRight = __commonJS({
-  "../node_modules/lodash/dropRight.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/dropRight.js"(exports2, module2) {
     var baseSlice = require_baseSlice();
     var toInteger = require_toInteger();
     function dropRight(array, n2, guard) {
@@ -12079,11 +12079,11 @@ var require_dropRight = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/interpreter.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/interpreter.js
 var require_interpreter = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/interpreter.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/interpreter.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -12101,7 +12101,7 @@ var require_interpreter = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -12119,12 +12119,12 @@ var require_interpreter = __commonJS({
     var gast_1 = require_api2();
     var AbstractNextPossibleTokensWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(AbstractNextPossibleTokensWalker2, _super);
-        function AbstractNextPossibleTokensWalker2(topProd, path7) {
+        function AbstractNextPossibleTokensWalker2(topProd, path8) {
           var _this = _super.call(this) || this;
           _this.topProd = topProd;
-          _this.path = path7;
+          _this.path = path8;
           _this.possibleTokTypes = [];
           _this.nextProductionName = "";
           _this.nextProductionOccurrence = 0;
@@ -12171,16 +12171,16 @@ var require_interpreter = __commonJS({
           }
         };
         return AbstractNextPossibleTokensWalker2;
-      }(rest_1.RestWalker)
+      })(rest_1.RestWalker)
     );
     exports2.AbstractNextPossibleTokensWalker = AbstractNextPossibleTokensWalker;
     var NextAfterTokenWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NextAfterTokenWalker2, _super);
-        function NextAfterTokenWalker2(topProd, path7) {
-          var _this = _super.call(this, topProd, path7) || this;
-          _this.path = path7;
+        function NextAfterTokenWalker2(topProd, path8) {
+          var _this = _super.call(this, topProd, path8) || this;
+          _this.path = path8;
           _this.nextTerminalName = "";
           _this.nextTerminalOccurrence = 0;
           _this.nextTerminalName = _this.path.lastTok.name;
@@ -12196,12 +12196,12 @@ var require_interpreter = __commonJS({
           }
         };
         return NextAfterTokenWalker2;
-      }(AbstractNextPossibleTokensWalker)
+      })(AbstractNextPossibleTokensWalker)
     );
     exports2.NextAfterTokenWalker = NextAfterTokenWalker;
     var AbstractNextTerminalAfterProductionWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(AbstractNextTerminalAfterProductionWalker2, _super);
         function AbstractNextTerminalAfterProductionWalker2(topRule, occurrence) {
           var _this = _super.call(this) || this;
@@ -12219,12 +12219,12 @@ var require_interpreter = __commonJS({
           return this.result;
         };
         return AbstractNextTerminalAfterProductionWalker2;
-      }(rest_1.RestWalker)
+      })(rest_1.RestWalker)
     );
     exports2.AbstractNextTerminalAfterProductionWalker = AbstractNextTerminalAfterProductionWalker;
     var NextTerminalAfterManyWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NextTerminalAfterManyWalker2, _super);
         function NextTerminalAfterManyWalker2() {
           return _super !== null && _super.apply(this, arguments) || this;
@@ -12242,12 +12242,12 @@ var require_interpreter = __commonJS({
           }
         };
         return NextTerminalAfterManyWalker2;
-      }(AbstractNextTerminalAfterProductionWalker)
+      })(AbstractNextTerminalAfterProductionWalker)
     );
     exports2.NextTerminalAfterManyWalker = NextTerminalAfterManyWalker;
     var NextTerminalAfterManySepWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NextTerminalAfterManySepWalker2, _super);
         function NextTerminalAfterManySepWalker2() {
           return _super !== null && _super.apply(this, arguments) || this;
@@ -12265,12 +12265,12 @@ var require_interpreter = __commonJS({
           }
         };
         return NextTerminalAfterManySepWalker2;
-      }(AbstractNextTerminalAfterProductionWalker)
+      })(AbstractNextTerminalAfterProductionWalker)
     );
     exports2.NextTerminalAfterManySepWalker = NextTerminalAfterManySepWalker;
     var NextTerminalAfterAtLeastOneWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NextTerminalAfterAtLeastOneWalker2, _super);
         function NextTerminalAfterAtLeastOneWalker2() {
           return _super !== null && _super.apply(this, arguments) || this;
@@ -12288,12 +12288,12 @@ var require_interpreter = __commonJS({
           }
         };
         return NextTerminalAfterAtLeastOneWalker2;
-      }(AbstractNextTerminalAfterProductionWalker)
+      })(AbstractNextTerminalAfterProductionWalker)
     );
     exports2.NextTerminalAfterAtLeastOneWalker = NextTerminalAfterAtLeastOneWalker;
     var NextTerminalAfterAtLeastOneSepWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NextTerminalAfterAtLeastOneSepWalker2, _super);
         function NextTerminalAfterAtLeastOneSepWalker2() {
           return _super !== null && _super.apply(this, arguments) || this;
@@ -12311,7 +12311,7 @@ var require_interpreter = __commonJS({
           }
         };
         return NextTerminalAfterAtLeastOneSepWalker2;
-      }(AbstractNextTerminalAfterProductionWalker)
+      })(AbstractNextTerminalAfterProductionWalker)
     );
     exports2.NextTerminalAfterAtLeastOneSepWalker = NextTerminalAfterAtLeastOneSepWalker;
     function possiblePathsFrom(targetDef, maxLength, currPath) {
@@ -12594,11 +12594,11 @@ var require_interpreter = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/lookahead.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/lookahead.js
 var require_lookahead = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/lookahead.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/lookahead.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -12616,7 +12616,7 @@ var require_lookahead = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -12805,7 +12805,7 @@ var require_lookahead = __commonJS({
     exports2.buildSingleAlternativeLookaheadFunction = buildSingleAlternativeLookaheadFunction;
     var RestDefinitionFinderWalker = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(RestDefinitionFinderWalker2, _super);
         function RestDefinitionFinderWalker2(topProd, targetOccurrence, targetProdType) {
           var _this = _super.call(this) || this;
@@ -12851,11 +12851,11 @@ var require_lookahead = __commonJS({
           }
         };
         return RestDefinitionFinderWalker2;
-      }(rest_1.RestWalker)
+      })(rest_1.RestWalker)
     );
     var InsideDefinitionFinderVisitor = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(InsideDefinitionFinderVisitor2, _super);
         function InsideDefinitionFinderVisitor2(targetOccurrence, targetProdType, targetRef) {
           var _this = _super.call(this) || this;
@@ -12889,7 +12889,7 @@ var require_lookahead = __commonJS({
           this.checkIsTarget(node, PROD_TYPE.ALTERNATION);
         };
         return InsideDefinitionFinderVisitor2;
-      }(gast_2.GAstVisitor)
+      })(gast_2.GAstVisitor)
     );
     function initializeArrayOfArrays(size) {
       var result = new Array(size);
@@ -12898,10 +12898,10 @@ var require_lookahead = __commonJS({
       }
       return result;
     }
-    function pathToHashKeys(path7) {
+    function pathToHashKeys(path8) {
       var keys = [""];
-      for (var i2 = 0; i2 < path7.length; i2++) {
-        var tokType = path7[i2];
+      for (var i2 = 0; i2 < path8.length; i2++) {
+        var tokType = path8[i2];
         var longerKeys = [];
         for (var j = 0; j < keys.length; j++) {
           var currShorterKey = keys[j];
@@ -13040,11 +13040,11 @@ var require_lookahead = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/checks.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/checks.js
 var require_checks = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/checks.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/checks.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -13062,7 +13062,7 @@ var require_checks = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __assign = exports2 && exports2.__assign || function() {
       __assign = Object.assign || function(t2) {
         for (var s2, i2 = 1, n2 = arguments.length; i2 < n2; i2++) {
@@ -13171,7 +13171,7 @@ var require_checks = __commonJS({
     }
     var OccurrenceValidationCollector = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(OccurrenceValidationCollector2, _super);
         function OccurrenceValidationCollector2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -13203,7 +13203,7 @@ var require_checks = __commonJS({
           this.allProductions.push(terminal);
         };
         return OccurrenceValidationCollector2;
-      }(gast_3.GAstVisitor)
+      })(gast_3.GAstVisitor)
     );
     exports2.OccurrenceValidationCollector = OccurrenceValidationCollector;
     function validateRuleDoesNotAlreadyExist(rule, allRules, className, errMsgProvider) {
@@ -13242,9 +13242,9 @@ var require_checks = __commonJS({
       return errors;
     }
     exports2.validateRuleIsOverridden = validateRuleIsOverridden;
-    function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path7) {
-      if (path7 === void 0) {
-        path7 = [];
+    function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path8) {
+      if (path8 === void 0) {
+        path8 = [];
       }
       var errors = [];
       var nextNonTerminals = getFirstNoneTerminal(currRule.definition);
@@ -13257,15 +13257,15 @@ var require_checks = __commonJS({
           errors.push({
             message: errMsgProvider.buildLeftRecursionError({
               topLevelRule: topRule,
-              leftRecursionPath: path7
+              leftRecursionPath: path8
             }),
             type: parser_1.ParserDefinitionErrorType.LEFT_RECURSION,
             ruleName
           });
         }
-        var validNextSteps = (0, difference_1.default)(nextNonTerminals, path7.concat([topRule]));
+        var validNextSteps = (0, difference_1.default)(nextNonTerminals, path8.concat([topRule]));
         var errorsFromNextSteps = (0, flatMap_1.default)(validNextSteps, function(currRefRule) {
-          var newPath = (0, clone_1.default)(path7);
+          var newPath = (0, clone_1.default)(path8);
           newPath.push(currRefRule);
           return validateNoLeftRecursion(topRule, currRefRule, errMsgProvider, newPath);
         });
@@ -13303,7 +13303,7 @@ var require_checks = __commonJS({
     exports2.getFirstNoneTerminal = getFirstNoneTerminal;
     var OrCollector = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(OrCollector2, _super);
         function OrCollector2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -13314,7 +13314,7 @@ var require_checks = __commonJS({
           this.alternations.push(node);
         };
         return OrCollector2;
-      }(gast_3.GAstVisitor)
+      })(gast_3.GAstVisitor)
     );
     function validateEmptyOrAlternative(topLevelRule, errMsgProvider) {
       var orCollector = new OrCollector();
@@ -13366,7 +13366,7 @@ var require_checks = __commonJS({
     exports2.validateAmbiguousAlternationAlternatives = validateAmbiguousAlternationAlternatives;
     var RepetitionCollector = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(RepetitionCollector2, _super);
         function RepetitionCollector2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -13386,7 +13386,7 @@ var require_checks = __commonJS({
           this.allProductions.push(many);
         };
         return RepetitionCollector2;
-      }(gast_3.GAstVisitor)
+      })(gast_3.GAstVisitor)
     );
     exports2.RepetitionCollector = RepetitionCollector;
     function validateTooManyAlts(topLevelRule, errMsgProvider) {
@@ -13550,9 +13550,9 @@ var require_checks = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/gast/gast_resolver_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/gast/gast_resolver_public.js
 var require_gast_resolver_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/gast/gast_resolver_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/gast/gast_resolver_public.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -13585,11 +13585,11 @@ var require_gast_resolver_public = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/exceptions_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/exceptions_public.js
 var require_exceptions_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/exceptions_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/exceptions_public.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -13607,7 +13607,7 @@ var require_exceptions_public = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -13631,7 +13631,7 @@ var require_exceptions_public = __commonJS({
     exports2.isRecognitionException = isRecognitionException2;
     var RecognitionException = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(RecognitionException2, _super);
         function RecognitionException2(message, token2) {
           var _newTarget = this.constructor;
@@ -13645,11 +13645,11 @@ var require_exceptions_public = __commonJS({
           return _this;
         }
         return RecognitionException2;
-      }(Error)
+      })(Error)
     );
     var MismatchedTokenException2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(MismatchedTokenException3, _super);
         function MismatchedTokenException3(message, token2, previousToken) {
           var _this = _super.call(this, message, token2) || this;
@@ -13658,12 +13658,12 @@ var require_exceptions_public = __commonJS({
           return _this;
         }
         return MismatchedTokenException3;
-      }(RecognitionException)
+      })(RecognitionException)
     );
     exports2.MismatchedTokenException = MismatchedTokenException2;
     var NoViableAltException2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NoViableAltException3, _super);
         function NoViableAltException3(message, token2, previousToken) {
           var _this = _super.call(this, message, token2) || this;
@@ -13672,12 +13672,12 @@ var require_exceptions_public = __commonJS({
           return _this;
         }
         return NoViableAltException3;
-      }(RecognitionException)
+      })(RecognitionException)
     );
     exports2.NoViableAltException = NoViableAltException2;
     var NotAllInputParsedException2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(NotAllInputParsedException3, _super);
         function NotAllInputParsedException3(message, token2) {
           var _this = _super.call(this, message, token2) || this;
@@ -13685,12 +13685,12 @@ var require_exceptions_public = __commonJS({
           return _this;
         }
         return NotAllInputParsedException3;
-      }(RecognitionException)
+      })(RecognitionException)
     );
     exports2.NotAllInputParsedException = NotAllInputParsedException2;
     var EarlyExitException2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(EarlyExitException3, _super);
         function EarlyExitException3(message, token2, previousToken) {
           var _this = _super.call(this, message, token2) || this;
@@ -13699,17 +13699,17 @@ var require_exceptions_public = __commonJS({
           return _this;
         }
         return EarlyExitException3;
-      }(RecognitionException)
+      })(RecognitionException)
     );
     exports2.EarlyExitException = EarlyExitException2;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/recoverable.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/recoverable.js
 var require_recoverable = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/recoverable.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/recoverable.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -13727,7 +13727,7 @@ var require_recoverable = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -13749,7 +13749,7 @@ var require_recoverable = __commonJS({
     exports2.IN_RULE_RECOVERY_EXCEPTION = "InRuleRecoveryException";
     var InRuleRecoveryException = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(InRuleRecoveryException2, _super);
         function InRuleRecoveryException2(message) {
           var _this = _super.call(this, message) || this;
@@ -13757,12 +13757,12 @@ var require_recoverable = __commonJS({
           return _this;
         }
         return InRuleRecoveryException2;
-      }(Error)
+      })(Error)
     );
     exports2.InRuleRecoveryException = InRuleRecoveryException;
     var Recoverable = (
       /** @class */
-      function() {
+      (function() {
         function Recoverable2() {
         }
         Recoverable2.prototype.initRecoverable = function(config) {
@@ -13975,7 +13975,7 @@ var require_recoverable = __commonJS({
           });
         };
         return Recoverable2;
-      }()
+      })()
     );
     exports2.Recoverable = Recoverable;
     function attemptInRepetitionRecovery(prodFunc, args, lookaheadFunc, dslMethodIdx, prodOccurrence, nextToksWalker, notStuck) {
@@ -14006,9 +14006,9 @@ var require_recoverable = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/keys.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/keys.js
 var require_keys2 = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/keys.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/keys.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getKeyForAutomaticLookahead = exports2.AT_LEAST_ONE_SEP_IDX = exports2.MANY_SEP_IDX = exports2.AT_LEAST_ONE_IDX = exports2.MANY_IDX = exports2.OPTION_IDX = exports2.OR_IDX = exports2.BITS_FOR_ALT_IDX = exports2.BITS_FOR_RULE_IDX = exports2.BITS_FOR_OCCURRENCE_IDX = exports2.BITS_FOR_METHOD_TYPE = void 0;
@@ -14030,9 +14030,9 @@ var require_keys2 = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/grammar/llk_lookahead.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/llk_lookahead.js
 var require_llk_lookahead = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/grammar/llk_lookahead.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/grammar/llk_lookahead.js"(exports2) {
     "use strict";
     var __spreadArray = exports2 && exports2.__spreadArray || function(to, from, pack) {
       if (pack || arguments.length === 2) for (var i2 = 0, l2 = from.length, ar; i2 < l2; i2++) {
@@ -14056,7 +14056,7 @@ var require_llk_lookahead = __commonJS({
     var lookahead_1 = require_lookahead();
     var LLkLookaheadStrategy2 = (
       /** @class */
-      function() {
+      (function() {
         function LLkLookaheadStrategy3(options) {
           var _a;
           this.maxLookahead = (_a = options === null || options === void 0 ? void 0 : options.maxLookahead) !== null && _a !== void 0 ? _a : parser_1.DEFAULT_PARSER_CONFIG.maxLookahead;
@@ -14097,17 +14097,17 @@ var require_llk_lookahead = __commonJS({
           return (0, lookahead_1.buildLookaheadFuncForOptionalProd)(options.prodOccurrence, options.rule, options.maxLookahead, options.dynamicTokensEnabled, (0, lookahead_1.getProdType)(options.prodType), lookahead_1.buildSingleAlternativeLookaheadFunction);
         };
         return LLkLookaheadStrategy3;
-      }()
+      })()
     );
     exports2.LLkLookaheadStrategy = LLkLookaheadStrategy2;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/looksahead.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/looksahead.js
 var require_looksahead = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/looksahead.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/looksahead.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -14125,7 +14125,7 @@ var require_looksahead = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -14140,7 +14140,7 @@ var require_looksahead = __commonJS({
     var llk_lookahead_1 = require_llk_lookahead();
     var LooksAhead = (
       /** @class */
-      function() {
+      (function() {
         function LooksAhead2() {
         }
         LooksAhead2.prototype.initLooksAhead = function(config) {
@@ -14211,12 +14211,12 @@ var require_looksahead = __commonJS({
           this.lookAheadFuncsCache.set(key, value);
         };
         return LooksAhead2;
-      }()
+      })()
     );
     exports2.LooksAhead = LooksAhead;
     var DslMethodsCollectorVisitor = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(DslMethodsCollectorVisitor2, _super);
         function DslMethodsCollectorVisitor2() {
           var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -14259,7 +14259,7 @@ var require_looksahead = __commonJS({
           this.dslMethods.alternation.push(or);
         };
         return DslMethodsCollectorVisitor2;
-      }(gast_1.GAstVisitor)
+      })(gast_1.GAstVisitor)
     );
     var collectorVisitor = new DslMethodsCollectorVisitor();
     function collectMethods(rule) {
@@ -14273,9 +14273,9 @@ var require_looksahead = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/cst/cst.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/cst/cst.js
 var require_cst = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/cst/cst.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/cst/cst.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.addNoneTerminalToCst = exports2.addTerminalToCst = exports2.setNodeLocationFull = exports2.setNodeLocationOnlyOffset = void 0;
@@ -14322,9 +14322,9 @@ var require_cst = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/lang/lang_extensions.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/lang/lang_extensions.js
 var require_lang_extensions = __commonJS({
-  "../node_modules/chevrotain/lib/src/lang/lang_extensions.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/lang/lang_extensions.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.defineNameProp = void 0;
@@ -14341,9 +14341,9 @@ var require_lang_extensions = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/cst/cst_visitor.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/cst/cst_visitor.js
 var require_cst_visitor = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/cst/cst_visitor.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/cst/cst_visitor.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -14446,9 +14446,9 @@ var require_cst_visitor = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/tree_builder.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/tree_builder.js
 var require_tree_builder = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/tree_builder.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/tree_builder.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -14464,7 +14464,7 @@ var require_tree_builder = __commonJS({
     var parser_1 = require_parser2();
     var TreeBuilder = (
       /** @class */
-      function() {
+      (function() {
         function TreeBuilder2() {
         }
         TreeBuilder2.prototype.initTreeBuilder = function(config) {
@@ -14621,22 +14621,22 @@ var require_tree_builder = __commonJS({
           return occurrenceStack[occurrenceStack.length - 1];
         };
         return TreeBuilder2;
-      }()
+      })()
     );
     exports2.TreeBuilder = TreeBuilder;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/lexer_adapter.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/lexer_adapter.js
 var require_lexer_adapter = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/lexer_adapter.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/lexer_adapter.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.LexerAdapter = void 0;
     var parser_1 = require_parser2();
     var LexerAdapter = (
       /** @class */
-      function() {
+      (function() {
         function LexerAdapter2() {
         }
         LexerAdapter2.prototype.initLexerAdapter = function() {
@@ -14694,15 +14694,15 @@ var require_lexer_adapter = __commonJS({
           return this.exportLexerState();
         };
         return LexerAdapter2;
-      }()
+      })()
     );
     exports2.LexerAdapter = LexerAdapter;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_api.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_api.js
 var require_recognizer_api = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_api.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_api.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -14718,7 +14718,7 @@ var require_recognizer_api = __commonJS({
     var gast_1 = require_api2();
     var RecognizerApi = (
       /** @class */
-      function() {
+      (function() {
         function RecognizerApi2() {
         }
         RecognizerApi2.prototype.ACTION = function(impl) {
@@ -15039,15 +15039,15 @@ var require_recognizer_api = __commonJS({
           return (0, gast_1.serializeGrammar)((0, values_1.default)(this.gastProductionsCache));
         };
         return RecognizerApi2;
-      }()
+      })()
     );
     exports2.RecognizerApi = RecognizerApi;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_engine.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_engine.js
 var require_recognizer_engine = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_engine.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/recognizer_engine.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -15074,7 +15074,7 @@ var require_recognizer_engine = __commonJS({
     var tokens_1 = require_tokens();
     var RecognizerEngine = (
       /** @class */
-      function() {
+      (function() {
         function RecognizerEngine2() {
         }
         RecognizerEngine2.prototype.initRecognizerEngine = function(tokenVocabulary, config) {
@@ -15512,15 +15512,15 @@ var require_recognizer_engine = __commonJS({
           this.RULE_OCCURRENCE_STACK = [];
         };
         return RecognizerEngine2;
-      }()
+      })()
     );
     exports2.RecognizerEngine = RecognizerEngine;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/error_handler.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/error_handler.js
 var require_error_handler = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/error_handler.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/error_handler.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -15534,7 +15534,7 @@ var require_error_handler = __commonJS({
     var parser_1 = require_parser2();
     var ErrorHandler = (
       /** @class */
-      function() {
+      (function() {
         function ErrorHandler2() {
         }
         ErrorHandler2.prototype.initErrorHandler = function(config) {
@@ -15600,15 +15600,15 @@ var require_error_handler = __commonJS({
           throw this.SAVE_ERROR(new exceptions_public_1.NoViableAltException(errMsg, this.LA(1), previousToken));
         };
         return ErrorHandler2;
-      }()
+      })()
     );
     exports2.ErrorHandler = ErrorHandler;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/context_assist.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/context_assist.js
 var require_context_assist = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/context_assist.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/context_assist.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -15620,7 +15620,7 @@ var require_context_assist = __commonJS({
     var isUndefined_1 = __importDefault(require_isUndefined());
     var ContentAssist = (
       /** @class */
-      function() {
+      (function() {
         function ContentAssist2() {
         }
         ContentAssist2.prototype.initContentAssist = function() {
@@ -15640,15 +15640,15 @@ var require_context_assist = __commonJS({
           return nextPossibleTokenTypes;
         };
         return ContentAssist2;
-      }()
+      })()
     );
     exports2.ContentAssist = ContentAssist;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/gast_recorder.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/gast_recorder.js
 var require_gast_recorder = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/gast_recorder.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/gast_recorder.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -15694,7 +15694,7 @@ var require_gast_recorder = __commonJS({
     };
     var GastRecorder = (
       /** @class */
-      function() {
+      (function() {
         function GastRecorder2() {
         }
         GastRecorder2.prototype.initGastRecorder = function(config) {
@@ -15868,7 +15868,7 @@ var require_gast_recorder = __commonJS({
           return RECORDING_PHASE_TOKEN;
         };
         return GastRecorder2;
-      }()
+      })()
     );
     exports2.GastRecorder = GastRecorder;
     function recordProd(prodConstructor, mainProdArg, occurrence, handleSep) {
@@ -15940,9 +15940,9 @@ var require_gast_recorder = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/traits/perf_tracer.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/perf_tracer.js
 var require_perf_tracer = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/traits/perf_tracer.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/traits/perf_tracer.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -15954,7 +15954,7 @@ var require_perf_tracer = __commonJS({
     var parser_1 = require_parser2();
     var PerformanceTracer = (
       /** @class */
-      function() {
+      (function() {
         function PerformanceTracer2() {
         }
         PerformanceTracer2.prototype.initPerformanceTracer = function(config) {
@@ -15988,15 +15988,15 @@ var require_perf_tracer = __commonJS({
           }
         };
         return PerformanceTracer2;
-      }()
+      })()
     );
     exports2.PerformanceTracer = PerformanceTracer;
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/utils/apply_mixins.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/utils/apply_mixins.js
 var require_apply_mixins = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/utils/apply_mixins.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/utils/apply_mixins.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.applyMixins = void 0;
@@ -16020,11 +16020,11 @@ var require_apply_mixins = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/parse/parser/parser.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/parser.js
 var require_parser2 = __commonJS({
-  "../node_modules/chevrotain/lib/src/parse/parser/parser.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/parse/parser/parser.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -16042,7 +16042,7 @@ var require_parser2 = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -16117,7 +16117,7 @@ var require_parser2 = __commonJS({
     exports2.EMPTY_ALT = EMPTY_ALT2;
     var Parser3 = (
       /** @class */
-      function() {
+      (function() {
         function Parser4(tokenVocabulary, config) {
           this.definitionErrors = [];
           this.selfAnalysisDone = false;
@@ -16213,7 +16213,7 @@ var require_parser2 = __commonJS({
         };
         Parser4.DEFER_DEFINITION_ERRORS_HANDLING = false;
         return Parser4;
-      }()
+      })()
     );
     exports2.Parser = Parser3;
     (0, apply_mixins_1.applyMixins)(Parser3, [
@@ -16230,7 +16230,7 @@ var require_parser2 = __commonJS({
     ]);
     var CstParser2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(CstParser3, _super);
         function CstParser3(tokenVocabulary, config) {
           if (config === void 0) {
@@ -16241,12 +16241,12 @@ var require_parser2 = __commonJS({
           return _super.call(this, tokenVocabulary, configClone) || this;
         }
         return CstParser3;
-      }(Parser3)
+      })(Parser3)
     );
     exports2.CstParser = CstParser2;
     var EmbeddedActionsParser2 = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(EmbeddedActionsParser3, _super);
         function EmbeddedActionsParser3(tokenVocabulary, config) {
           if (config === void 0) {
@@ -16257,17 +16257,17 @@ var require_parser2 = __commonJS({
           return _super.call(this, tokenVocabulary, configClone) || this;
         }
         return EmbeddedActionsParser3;
-      }(Parser3)
+      })(Parser3)
     );
     exports2.EmbeddedActionsParser = EmbeddedActionsParser2;
   }
 });
 
-// ../node_modules/@chevrotain/cst-dts-gen/lib/src/model.js
+// ../../../../ext/maps/node_modules/@chevrotain/cst-dts-gen/lib/src/model.js
 var require_model2 = __commonJS({
-  "../node_modules/@chevrotain/cst-dts-gen/lib/src/model.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/cst-dts-gen/lib/src/model.js"(exports2) {
     "use strict";
-    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ function() {
+    var __extends = exports2 && exports2.__extends || /* @__PURE__ */ (function() {
       var extendStatics = function(d2, b2) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d3, b3) {
           d3.__proto__ = b3;
@@ -16285,7 +16285,7 @@ var require_model2 = __commonJS({
         }
         d2.prototype = b2 === null ? Object.create(b2) : (__.prototype = b2.prototype, new __());
       };
-    }();
+    })();
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
@@ -16308,7 +16308,7 @@ var require_model2 = __commonJS({
     exports2.buildModel = buildModel;
     var CstNodeDefinitionGenerator = (
       /** @class */
-      function(_super) {
+      (function(_super) {
         __extends(CstNodeDefinitionGenerator2, _super);
         function CstNodeDefinitionGenerator2() {
           return _super !== null && _super.apply(this, arguments) || this;
@@ -16400,7 +16400,7 @@ var require_model2 = __commonJS({
           }));
         };
         return CstNodeDefinitionGenerator2;
-      }(gast_1.GAstVisitor)
+      })(gast_1.GAstVisitor)
     );
     function getType2(production) {
       if (production instanceof gast_1.NonTerminal) {
@@ -16414,9 +16414,9 @@ var require_model2 = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_castSlice.js
+// ../../../../ext/maps/node_modules/lodash/_castSlice.js
 var require_castSlice = __commonJS({
-  "../node_modules/lodash/_castSlice.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_castSlice.js"(exports2, module2) {
     var baseSlice = require_baseSlice();
     function castSlice(array, start, end) {
       var length = array.length;
@@ -16427,9 +16427,9 @@ var require_castSlice = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_hasUnicode.js
+// ../../../../ext/maps/node_modules/lodash/_hasUnicode.js
 var require_hasUnicode = __commonJS({
-  "../node_modules/lodash/_hasUnicode.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_hasUnicode.js"(exports2, module2) {
     var rsAstralRange = "\\ud800-\\udfff";
     var rsComboMarksRange = "\\u0300-\\u036f";
     var reComboHalfMarksRange = "\\ufe20-\\ufe2f";
@@ -16445,9 +16445,9 @@ var require_hasUnicode = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_asciiToArray.js
+// ../../../../ext/maps/node_modules/lodash/_asciiToArray.js
 var require_asciiToArray = __commonJS({
-  "../node_modules/lodash/_asciiToArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_asciiToArray.js"(exports2, module2) {
     function asciiToArray(string2) {
       return string2.split("");
     }
@@ -16455,9 +16455,9 @@ var require_asciiToArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_unicodeToArray.js
+// ../../../../ext/maps/node_modules/lodash/_unicodeToArray.js
 var require_unicodeToArray = __commonJS({
-  "../node_modules/lodash/_unicodeToArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_unicodeToArray.js"(exports2, module2) {
     var rsAstralRange = "\\ud800-\\udfff";
     var rsComboMarksRange = "\\u0300-\\u036f";
     var reComboHalfMarksRange = "\\ufe20-\\ufe2f";
@@ -16485,9 +16485,9 @@ var require_unicodeToArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_stringToArray.js
+// ../../../../ext/maps/node_modules/lodash/_stringToArray.js
 var require_stringToArray = __commonJS({
-  "../node_modules/lodash/_stringToArray.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_stringToArray.js"(exports2, module2) {
     var asciiToArray = require_asciiToArray();
     var hasUnicode = require_hasUnicode();
     var unicodeToArray = require_unicodeToArray();
@@ -16498,9 +16498,9 @@ var require_stringToArray = __commonJS({
   }
 });
 
-// ../node_modules/lodash/_createCaseFirst.js
+// ../../../../ext/maps/node_modules/lodash/_createCaseFirst.js
 var require_createCaseFirst = __commonJS({
-  "../node_modules/lodash/_createCaseFirst.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/_createCaseFirst.js"(exports2, module2) {
     var castSlice = require_castSlice();
     var hasUnicode = require_hasUnicode();
     var stringToArray = require_stringToArray();
@@ -16518,18 +16518,18 @@ var require_createCaseFirst = __commonJS({
   }
 });
 
-// ../node_modules/lodash/upperFirst.js
+// ../../../../ext/maps/node_modules/lodash/upperFirst.js
 var require_upperFirst = __commonJS({
-  "../node_modules/lodash/upperFirst.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/lodash/upperFirst.js"(exports2, module2) {
     var createCaseFirst = require_createCaseFirst();
     var upperFirst = createCaseFirst("toUpperCase");
     module2.exports = upperFirst;
   }
 });
 
-// ../node_modules/@chevrotain/cst-dts-gen/lib/src/generate.js
+// ../../../../ext/maps/node_modules/@chevrotain/cst-dts-gen/lib/src/generate.js
 var require_generate = __commonJS({
-  "../node_modules/@chevrotain/cst-dts-gen/lib/src/generate.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/cst-dts-gen/lib/src/generate.js"(exports2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -16611,9 +16611,9 @@ var require_generate = __commonJS({
   }
 });
 
-// ../node_modules/@chevrotain/cst-dts-gen/lib/src/api.js
+// ../../../../ext/maps/node_modules/@chevrotain/cst-dts-gen/lib/src/api.js
 var require_api3 = __commonJS({
-  "../node_modules/@chevrotain/cst-dts-gen/lib/src/api.js"(exports2) {
+  "../../../../ext/maps/node_modules/@chevrotain/cst-dts-gen/lib/src/api.js"(exports2) {
     "use strict";
     var __assign = exports2 && exports2.__assign || function() {
       __assign = Object.assign || function(t2) {
@@ -16643,9 +16643,9 @@ var require_api3 = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/diagrams/render_public.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/diagrams/render_public.js
 var require_render_public = __commonJS({
-  "../node_modules/chevrotain/lib/src/diagrams/render_public.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/diagrams/render_public.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.createSyntaxDiagramsCode = void 0;
@@ -16664,9 +16664,9 @@ var require_render_public = __commonJS({
   }
 });
 
-// ../node_modules/chevrotain/lib/src/api.js
+// ../../../../ext/maps/node_modules/chevrotain/lib/src/api.js
 var require_api4 = __commonJS({
-  "../node_modules/chevrotain/lib/src/api.js"(exports2) {
+  "../../../../ext/maps/node_modules/chevrotain/lib/src/api.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Parser = exports2.createSyntaxDiagramsCode = exports2.clearCache = exports2.generateCstDts = exports2.GAstVisitor = exports2.serializeProduction = exports2.serializeGrammar = exports2.Terminal = exports2.Rule = exports2.RepetitionWithSeparator = exports2.RepetitionMandatoryWithSeparator = exports2.RepetitionMandatory = exports2.Repetition = exports2.Option = exports2.NonTerminal = exports2.Alternative = exports2.Alternation = exports2.defaultLexerErrorProvider = exports2.NoViableAltException = exports2.NotAllInputParsedException = exports2.MismatchedTokenException = exports2.isRecognitionException = exports2.EarlyExitException = exports2.defaultParserErrorProvider = exports2.LLkLookaheadStrategy = exports2.getLookaheadPaths = exports2.tokenName = exports2.tokenMatcher = exports2.tokenLabel = exports2.EOF = exports2.createTokenInstance = exports2.createToken = exports2.LexerDefinitionErrorType = exports2.Lexer = exports2.EMPTY_ALT = exports2.ParserDefinitionErrorType = exports2.EmbeddedActionsParser = exports2.CstParser = exports2.VERSION = void 0;
@@ -16800,20 +16800,20 @@ var require_api4 = __commonJS({
     } });
     var Parser3 = (
       /** @class */
-      /* @__PURE__ */ function() {
+      /* @__PURE__ */ (function() {
         function Parser4() {
           throw new Error("The Parser class has been deprecated, use CstParser or EmbeddedActionsParser instead.	\nSee: https://chevrotain.io/docs/changes/BREAKING_CHANGES.html#_7-0-0");
         }
         return Parser4;
-      }()
+      })()
     );
     exports2.Parser = Parser3;
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/codegen/code.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/codegen/code.js
 var require_code = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/codegen/code.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/codegen/code.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.regexpCode = exports2.getEsmExportName = exports2.getProperty = exports2.safeStringify = exports2.stringify = exports2.strConcat = exports2.addCodeArg = exports2.str = exports2._ = exports2.nil = exports2._Code = exports2.Name = exports2.IDENTIFIER = exports2._CodeOrName = void 0;
@@ -16965,9 +16965,9 @@ var require_code = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/codegen/scope.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/codegen/scope.js
 var require_scope = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/codegen/scope.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/codegen/scope.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ValueScope = exports2.ValueScopeName = exports2.Scope = exports2.varKinds = exports2.UsedValueState = void 0;
@@ -17110,9 +17110,9 @@ var require_scope = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/codegen/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/codegen/index.js
 var require_codegen = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/codegen/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/codegen/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.or = exports2.and = exports2.not = exports2.CodeGen = exports2.operators = exports2.varKinds = exports2.ValueScopeName = exports2.ValueScope = exports2.Scope = exports2.Name = exports2.regexpCode = exports2.stringify = exports2.getProperty = exports2.nil = exports2.strConcat = exports2.str = exports2._ = void 0;
@@ -17830,9 +17830,9 @@ var require_codegen = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/util.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/util.js
 var require_util = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/util.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/util.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.checkStrictMode = exports2.getErrorPath = exports2.Type = exports2.useFunc = exports2.setEvaluated = exports2.evaluatedPropsToName = exports2.mergeEvaluated = exports2.eachItem = exports2.unescapeJsonPointer = exports2.escapeJsonPointer = exports2.escapeFragment = exports2.unescapeFragment = exports2.schemaRefOrVal = exports2.schemaHasRulesButRef = exports2.schemaHasRules = exports2.checkUnknownRules = exports2.alwaysValidSchema = exports2.toHash = void 0;
@@ -17997,9 +17997,9 @@ var require_util = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/names.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/names.js
 var require_names = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/names.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/names.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -18036,9 +18036,9 @@ var require_names = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/errors.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/errors.js
 var require_errors = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/errors.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/errors.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.extendErrors = exports2.resetErrorsCount = exports2.reportExtraError = exports2.reportError = exports2.keyword$DataError = exports2.keywordError = void 0;
@@ -18077,7 +18077,7 @@ var require_errors = __commonJS({
       gen.if((0, codegen_1._)`${names_1.default.vErrors} !== null`, () => gen.if(errsCount, () => gen.assign((0, codegen_1._)`${names_1.default.vErrors}.length`, errsCount), () => gen.assign(names_1.default.vErrors, null)));
     }
     exports2.resetErrorsCount = resetErrorsCount;
-    function extendErrors({ gen, keyword, schemaValue, data: data2, errsCount, it }) {
+    function extendErrors({ gen, keyword, schemaValue, data, errsCount, it }) {
       if (errsCount === void 0)
         throw new Error("ajv implementation error");
       const err = gen.name("err");
@@ -18087,7 +18087,7 @@ var require_errors = __commonJS({
         gen.assign((0, codegen_1._)`${err}.schemaPath`, (0, codegen_1.str)`${it.errSchemaPath}/${keyword}`);
         if (it.opts.verbose) {
           gen.assign((0, codegen_1._)`${err}.schema`, schemaValue);
-          gen.assign((0, codegen_1._)`${err}.data`, data2);
+          gen.assign((0, codegen_1._)`${err}.data`, data);
         }
       });
     }
@@ -18143,14 +18143,14 @@ var require_errors = __commonJS({
       return [E.schemaPath, schPath];
     }
     function extraErrorProps(cxt, { params, message }, keyValues) {
-      const { keyword, data: data2, schemaValue, it } = cxt;
+      const { keyword, data, schemaValue, it } = cxt;
       const { opts, propertyName, topSchemaRef, schemaPath } = it;
       keyValues.push([E.keyword, keyword], [E.params, typeof params == "function" ? params(cxt) : params || (0, codegen_1._)`{}`]);
       if (opts.messages) {
         keyValues.push([E.message, typeof message == "function" ? message(cxt) : message]);
       }
       if (opts.verbose) {
-        keyValues.push([E.schema, schemaValue], [E.parentSchema, (0, codegen_1._)`${topSchemaRef}${schemaPath}`], [names_1.default.data, data2]);
+        keyValues.push([E.schema, schemaValue], [E.parentSchema, (0, codegen_1._)`${topSchemaRef}${schemaPath}`], [names_1.default.data, data]);
       }
       if (propertyName)
         keyValues.push([E.propertyName, propertyName]);
@@ -18158,9 +18158,9 @@ var require_errors = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/boolSchema.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/boolSchema.js
 var require_boolSchema = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/boolSchema.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/boolSchema.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.boolOrEmptySchema = exports2.topBoolOrEmptySchema = void 0;
@@ -18193,11 +18193,11 @@ var require_boolSchema = __commonJS({
     }
     exports2.boolOrEmptySchema = boolOrEmptySchema;
     function falseSchemaError(it, overrideAllErrors) {
-      const { gen, data: data2 } = it;
+      const { gen, data } = it;
       const cxt = {
         gen,
         keyword: "false schema",
-        data: data2,
+        data,
         schema: false,
         schemaCode: false,
         schemaValue: false,
@@ -18209,9 +18209,9 @@ var require_boolSchema = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/rules.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/rules.js
 var require_rules = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/rules.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/rules.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getRules = exports2.isJSONType = void 0;
@@ -18240,9 +18240,9 @@ var require_rules = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/applicability.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/applicability.js
 var require_applicability = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/applicability.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/applicability.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.shouldUseRule = exports2.shouldUseGroup = exports2.schemaHasRulesForType = void 0;
@@ -18263,9 +18263,9 @@ var require_applicability = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/dataType.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/dataType.js
 var require_dataType = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/dataType.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/dataType.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.reportTypeError = exports2.checkDataTypes = exports2.checkDataType = exports2.coerceAndCheckDataType = exports2.getJSONTypes = exports2.getSchemaTypes = exports2.DataType = void 0;
@@ -18280,37 +18280,37 @@ var require_dataType = __commonJS({
       DataType2[DataType2["Wrong"] = 1] = "Wrong";
     })(DataType || (exports2.DataType = DataType = {}));
     function getSchemaTypes(schema) {
-      const types2 = getJSONTypes(schema.type);
-      const hasNull = types2.includes("null");
+      const types = getJSONTypes(schema.type);
+      const hasNull = types.includes("null");
       if (hasNull) {
         if (schema.nullable === false)
           throw new Error("type: null contradicts nullable: false");
       } else {
-        if (!types2.length && schema.nullable !== void 0) {
+        if (!types.length && schema.nullable !== void 0) {
           throw new Error('"nullable" cannot be used without "type"');
         }
         if (schema.nullable === true)
-          types2.push("null");
+          types.push("null");
       }
-      return types2;
+      return types;
     }
     exports2.getSchemaTypes = getSchemaTypes;
     function getJSONTypes(ts) {
-      const types2 = Array.isArray(ts) ? ts : ts ? [ts] : [];
-      if (types2.every(rules_1.isJSONType))
-        return types2;
-      throw new Error("type must be JSONType or JSONType[]: " + types2.join(","));
+      const types = Array.isArray(ts) ? ts : ts ? [ts] : [];
+      if (types.every(rules_1.isJSONType))
+        return types;
+      throw new Error("type must be JSONType or JSONType[]: " + types.join(","));
     }
     exports2.getJSONTypes = getJSONTypes;
-    function coerceAndCheckDataType(it, types2) {
-      const { gen, data: data2, opts } = it;
-      const coerceTo = coerceToTypes(types2, opts.coerceTypes);
-      const checkTypes = types2.length > 0 && !(coerceTo.length === 0 && types2.length === 1 && (0, applicability_1.schemaHasRulesForType)(it, types2[0]));
+    function coerceAndCheckDataType(it, types) {
+      const { gen, data, opts } = it;
+      const coerceTo = coerceToTypes(types, opts.coerceTypes);
+      const checkTypes = types.length > 0 && !(coerceTo.length === 0 && types.length === 1 && (0, applicability_1.schemaHasRulesForType)(it, types[0]));
       if (checkTypes) {
-        const wrongType = checkDataTypes(types2, data2, opts.strictNumbers, DataType.Wrong);
+        const wrongType = checkDataTypes(types, data, opts.strictNumbers, DataType.Wrong);
         gen.if(wrongType, () => {
           if (coerceTo.length)
-            coerceData(it, types2, coerceTo);
+            coerceData(it, types, coerceTo);
           else
             reportTypeError(it);
         });
@@ -18319,15 +18319,15 @@ var require_dataType = __commonJS({
     }
     exports2.coerceAndCheckDataType = coerceAndCheckDataType;
     var COERCIBLE = /* @__PURE__ */ new Set(["string", "number", "integer", "boolean", "null"]);
-    function coerceToTypes(types2, coerceTypes) {
-      return coerceTypes ? types2.filter((t2) => COERCIBLE.has(t2) || coerceTypes === "array" && t2 === "array") : [];
+    function coerceToTypes(types, coerceTypes) {
+      return coerceTypes ? types.filter((t2) => COERCIBLE.has(t2) || coerceTypes === "array" && t2 === "array") : [];
     }
-    function coerceData(it, types2, coerceTo) {
-      const { gen, data: data2, opts } = it;
-      const dataType = gen.let("dataType", (0, codegen_1._)`typeof ${data2}`);
+    function coerceData(it, types, coerceTo) {
+      const { gen, data, opts } = it;
+      const dataType = gen.let("dataType", (0, codegen_1._)`typeof ${data}`);
       const coerced = gen.let("coerced", (0, codegen_1._)`undefined`);
       if (opts.coerceTypes === "array") {
-        gen.if((0, codegen_1._)`${dataType} == 'object' && Array.isArray(${data2}) && ${data2}.length == 1`, () => gen.assign(data2, (0, codegen_1._)`${data2}[0]`).assign(dataType, (0, codegen_1._)`typeof ${data2}`).if(checkDataTypes(types2, data2, opts.strictNumbers), () => gen.assign(coerced, data2)));
+        gen.if((0, codegen_1._)`${dataType} == 'object' && Array.isArray(${data}) && ${data}.length == 1`, () => gen.assign(data, (0, codegen_1._)`${data}[0]`).assign(dataType, (0, codegen_1._)`typeof ${data}`).if(checkDataTypes(types, data, opts.strictNumbers), () => gen.assign(coerced, data)));
       }
       gen.if((0, codegen_1._)`${coerced} !== undefined`);
       for (const t2 of coerceTo) {
@@ -18339,84 +18339,84 @@ var require_dataType = __commonJS({
       reportTypeError(it);
       gen.endIf();
       gen.if((0, codegen_1._)`${coerced} !== undefined`, () => {
-        gen.assign(data2, coerced);
+        gen.assign(data, coerced);
         assignParentData(it, coerced);
       });
       function coerceSpecificType(t2) {
         switch (t2) {
           case "string":
-            gen.elseIf((0, codegen_1._)`${dataType} == "number" || ${dataType} == "boolean"`).assign(coerced, (0, codegen_1._)`"" + ${data2}`).elseIf((0, codegen_1._)`${data2} === null`).assign(coerced, (0, codegen_1._)`""`);
+            gen.elseIf((0, codegen_1._)`${dataType} == "number" || ${dataType} == "boolean"`).assign(coerced, (0, codegen_1._)`"" + ${data}`).elseIf((0, codegen_1._)`${data} === null`).assign(coerced, (0, codegen_1._)`""`);
             return;
           case "number":
-            gen.elseIf((0, codegen_1._)`${dataType} == "boolean" || ${data2} === null
-              || (${dataType} == "string" && ${data2} && ${data2} == +${data2})`).assign(coerced, (0, codegen_1._)`+${data2}`);
+            gen.elseIf((0, codegen_1._)`${dataType} == "boolean" || ${data} === null
+              || (${dataType} == "string" && ${data} && ${data} == +${data})`).assign(coerced, (0, codegen_1._)`+${data}`);
             return;
           case "integer":
-            gen.elseIf((0, codegen_1._)`${dataType} === "boolean" || ${data2} === null
-              || (${dataType} === "string" && ${data2} && ${data2} == +${data2} && !(${data2} % 1))`).assign(coerced, (0, codegen_1._)`+${data2}`);
+            gen.elseIf((0, codegen_1._)`${dataType} === "boolean" || ${data} === null
+              || (${dataType} === "string" && ${data} && ${data} == +${data} && !(${data} % 1))`).assign(coerced, (0, codegen_1._)`+${data}`);
             return;
           case "boolean":
-            gen.elseIf((0, codegen_1._)`${data2} === "false" || ${data2} === 0 || ${data2} === null`).assign(coerced, false).elseIf((0, codegen_1._)`${data2} === "true" || ${data2} === 1`).assign(coerced, true);
+            gen.elseIf((0, codegen_1._)`${data} === "false" || ${data} === 0 || ${data} === null`).assign(coerced, false).elseIf((0, codegen_1._)`${data} === "true" || ${data} === 1`).assign(coerced, true);
             return;
           case "null":
-            gen.elseIf((0, codegen_1._)`${data2} === "" || ${data2} === 0 || ${data2} === false`);
+            gen.elseIf((0, codegen_1._)`${data} === "" || ${data} === 0 || ${data} === false`);
             gen.assign(coerced, null);
             return;
           case "array":
             gen.elseIf((0, codegen_1._)`${dataType} === "string" || ${dataType} === "number"
-              || ${dataType} === "boolean" || ${data2} === null`).assign(coerced, (0, codegen_1._)`[${data2}]`);
+              || ${dataType} === "boolean" || ${data} === null`).assign(coerced, (0, codegen_1._)`[${data}]`);
         }
       }
     }
     function assignParentData({ gen, parentData, parentDataProperty }, expr) {
       gen.if((0, codegen_1._)`${parentData} !== undefined`, () => gen.assign((0, codegen_1._)`${parentData}[${parentDataProperty}]`, expr));
     }
-    function checkDataType(dataType, data2, strictNums, correct = DataType.Correct) {
+    function checkDataType(dataType, data, strictNums, correct = DataType.Correct) {
       const EQ = correct === DataType.Correct ? codegen_1.operators.EQ : codegen_1.operators.NEQ;
       let cond;
       switch (dataType) {
         case "null":
-          return (0, codegen_1._)`${data2} ${EQ} null`;
+          return (0, codegen_1._)`${data} ${EQ} null`;
         case "array":
-          cond = (0, codegen_1._)`Array.isArray(${data2})`;
+          cond = (0, codegen_1._)`Array.isArray(${data})`;
           break;
         case "object":
-          cond = (0, codegen_1._)`${data2} && typeof ${data2} == "object" && !Array.isArray(${data2})`;
+          cond = (0, codegen_1._)`${data} && typeof ${data} == "object" && !Array.isArray(${data})`;
           break;
         case "integer":
-          cond = numCond((0, codegen_1._)`!(${data2} % 1) && !isNaN(${data2})`);
+          cond = numCond((0, codegen_1._)`!(${data} % 1) && !isNaN(${data})`);
           break;
         case "number":
           cond = numCond();
           break;
         default:
-          return (0, codegen_1._)`typeof ${data2} ${EQ} ${dataType}`;
+          return (0, codegen_1._)`typeof ${data} ${EQ} ${dataType}`;
       }
       return correct === DataType.Correct ? cond : (0, codegen_1.not)(cond);
       function numCond(_cond = codegen_1.nil) {
-        return (0, codegen_1.and)((0, codegen_1._)`typeof ${data2} == "number"`, _cond, strictNums ? (0, codegen_1._)`isFinite(${data2})` : codegen_1.nil);
+        return (0, codegen_1.and)((0, codegen_1._)`typeof ${data} == "number"`, _cond, strictNums ? (0, codegen_1._)`isFinite(${data})` : codegen_1.nil);
       }
     }
     exports2.checkDataType = checkDataType;
-    function checkDataTypes(dataTypes, data2, strictNums, correct) {
+    function checkDataTypes(dataTypes, data, strictNums, correct) {
       if (dataTypes.length === 1) {
-        return checkDataType(dataTypes[0], data2, strictNums, correct);
+        return checkDataType(dataTypes[0], data, strictNums, correct);
       }
       let cond;
-      const types2 = (0, util_1.toHash)(dataTypes);
-      if (types2.array && types2.object) {
-        const notObj = (0, codegen_1._)`typeof ${data2} != "object"`;
-        cond = types2.null ? notObj : (0, codegen_1._)`!${data2} || ${notObj}`;
-        delete types2.null;
-        delete types2.array;
-        delete types2.object;
+      const types = (0, util_1.toHash)(dataTypes);
+      if (types.array && types.object) {
+        const notObj = (0, codegen_1._)`typeof ${data} != "object"`;
+        cond = types.null ? notObj : (0, codegen_1._)`!${data} || ${notObj}`;
+        delete types.null;
+        delete types.array;
+        delete types.object;
       } else {
         cond = codegen_1.nil;
       }
-      if (types2.number)
-        delete types2.integer;
-      for (const t2 in types2)
-        cond = (0, codegen_1.and)(cond, checkDataType(t2, data2, strictNums, correct));
+      if (types.number)
+        delete types.integer;
+      for (const t2 in types)
+        cond = (0, codegen_1.and)(cond, checkDataType(t2, data, strictNums, correct));
       return cond;
     }
     exports2.checkDataTypes = checkDataTypes;
@@ -18430,12 +18430,12 @@ var require_dataType = __commonJS({
     }
     exports2.reportTypeError = reportTypeError;
     function getTypeErrorContext(it) {
-      const { gen, data: data2, schema } = it;
+      const { gen, data, schema } = it;
       const schemaCode = (0, util_1.schemaRefOrVal)(it, schema, "type");
       return {
         gen,
         keyword: "type",
-        data: data2,
+        data,
         schema: schema.type,
         schemaCode,
         schemaValue: schemaCode,
@@ -18447,9 +18447,9 @@ var require_dataType = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/defaults.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/defaults.js
 var require_defaults2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/defaults.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/defaults.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.assignDefaults = void 0;
@@ -18467,10 +18467,10 @@ var require_defaults2 = __commonJS({
     }
     exports2.assignDefaults = assignDefaults;
     function assignDefault(it, prop, defaultValue) {
-      const { gen, compositeRule, data: data2, opts } = it;
+      const { gen, compositeRule, data, opts } = it;
       if (defaultValue === void 0)
         return;
-      const childData = (0, codegen_1._)`${data2}${(0, codegen_1.getProperty)(prop)}`;
+      const childData = (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(prop)}`;
       if (compositeRule) {
         (0, util_1.checkStrictMode)(it, `default is ignored for: ${childData}`);
         return;
@@ -18484,9 +18484,9 @@ var require_defaults2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/code.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/code.js
 var require_code2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/code.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/code.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.validateUnion = exports2.validateArray = exports2.usePattern = exports2.callValidateCode = exports2.schemaProperties = exports2.allSchemaProperties = exports2.noPropertyInData = exports2.propertyInData = exports2.isOwnProperty = exports2.hasPropFunc = exports2.reportMissingProp = exports2.checkMissingProp = exports2.checkReportMissingProp = void 0;
@@ -18495,15 +18495,15 @@ var require_code2 = __commonJS({
     var names_1 = require_names();
     var util_2 = require_util();
     function checkReportMissingProp(cxt, prop) {
-      const { gen, data: data2, it } = cxt;
-      gen.if(noPropertyInData(gen, data2, prop, it.opts.ownProperties), () => {
+      const { gen, data, it } = cxt;
+      gen.if(noPropertyInData(gen, data, prop, it.opts.ownProperties), () => {
         cxt.setParams({ missingProperty: (0, codegen_1._)`${prop}` }, true);
         cxt.error();
       });
     }
     exports2.checkReportMissingProp = checkReportMissingProp;
-    function checkMissingProp({ gen, data: data2, it: { opts } }, properties, missing) {
-      return (0, codegen_1.or)(...properties.map((prop) => (0, codegen_1.and)(noPropertyInData(gen, data2, prop, opts.ownProperties), (0, codegen_1._)`${missing} = ${prop}`)));
+    function checkMissingProp({ gen, data, it: { opts } }, properties, missing) {
+      return (0, codegen_1.or)(...properties.map((prop) => (0, codegen_1.and)(noPropertyInData(gen, data, prop, opts.ownProperties), (0, codegen_1._)`${missing} = ${prop}`)));
     }
     exports2.checkMissingProp = checkMissingProp;
     function reportMissingProp(cxt, missing) {
@@ -18519,18 +18519,18 @@ var require_code2 = __commonJS({
       });
     }
     exports2.hasPropFunc = hasPropFunc;
-    function isOwnProperty(gen, data2, property) {
-      return (0, codegen_1._)`${hasPropFunc(gen)}.call(${data2}, ${property})`;
+    function isOwnProperty(gen, data, property) {
+      return (0, codegen_1._)`${hasPropFunc(gen)}.call(${data}, ${property})`;
     }
     exports2.isOwnProperty = isOwnProperty;
-    function propertyInData(gen, data2, property, ownProperties) {
-      const cond = (0, codegen_1._)`${data2}${(0, codegen_1.getProperty)(property)} !== undefined`;
-      return ownProperties ? (0, codegen_1._)`${cond} && ${isOwnProperty(gen, data2, property)}` : cond;
+    function propertyInData(gen, data, property, ownProperties) {
+      const cond = (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(property)} !== undefined`;
+      return ownProperties ? (0, codegen_1._)`${cond} && ${isOwnProperty(gen, data, property)}` : cond;
     }
     exports2.propertyInData = propertyInData;
-    function noPropertyInData(gen, data2, property, ownProperties) {
-      const cond = (0, codegen_1._)`${data2}${(0, codegen_1.getProperty)(property)} === undefined`;
-      return ownProperties ? (0, codegen_1.or)(cond, (0, codegen_1.not)(isOwnProperty(gen, data2, property))) : cond;
+    function noPropertyInData(gen, data, property, ownProperties) {
+      const cond = (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(property)} === undefined`;
+      return ownProperties ? (0, codegen_1.or)(cond, (0, codegen_1.not)(isOwnProperty(gen, data, property))) : cond;
     }
     exports2.noPropertyInData = noPropertyInData;
     function allSchemaProperties(schemaMap) {
@@ -18541,8 +18541,8 @@ var require_code2 = __commonJS({
       return allSchemaProperties(schemaMap).filter((p) => !(0, util_1.alwaysValidSchema)(it, schemaMap[p]));
     }
     exports2.schemaProperties = schemaProperties;
-    function callValidateCode({ schemaCode, data: data2, it: { gen, topSchemaRef, schemaPath, errorPath }, it }, func, context, passSchema) {
-      const dataAndSchema = passSchema ? (0, codegen_1._)`${schemaCode}, ${data2}, ${topSchemaRef}${schemaPath}` : data2;
+    function callValidateCode({ schemaCode, data, it: { gen, topSchemaRef, schemaPath, errorPath }, it }, func, context, passSchema) {
+      const dataAndSchema = passSchema ? (0, codegen_1._)`${schemaCode}, ${data}, ${topSchemaRef}${schemaPath}` : data;
       const valCxt = [
         [names_1.default.instancePath, (0, codegen_1.strConcat)(names_1.default.instancePath, errorPath)],
         [names_1.default.parentData, it.parentData],
@@ -18568,7 +18568,7 @@ var require_code2 = __commonJS({
     }
     exports2.usePattern = usePattern;
     function validateArray(cxt) {
-      const { gen, data: data2, keyword, it } = cxt;
+      const { gen, data, keyword, it } = cxt;
       const valid = gen.name("valid");
       if (it.allErrors) {
         const validArr = gen.let("valid", true);
@@ -18579,7 +18579,7 @@ var require_code2 = __commonJS({
       validateItems(() => gen.break());
       return valid;
       function validateItems(notValid) {
-        const len = gen.const("len", (0, codegen_1._)`${data2}.length`);
+        const len = gen.const("len", (0, codegen_1._)`${data}.length`);
         gen.forRange("i", 0, len, (i2) => {
           cxt.subschema({
             keyword,
@@ -18617,9 +18617,9 @@ var require_code2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/keyword.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/keyword.js
 var require_keyword = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/keyword.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/keyword.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.validateKeywordUsage = exports2.validSchemaType = exports2.funcKeywordCode = exports2.macroKeywordCode = void 0;
@@ -18689,8 +18689,8 @@ var require_keyword = __commonJS({
     }
     exports2.funcKeywordCode = funcKeywordCode;
     function modifyData(cxt) {
-      const { gen, data: data2, it } = cxt;
-      gen.if(it.parentData, () => gen.assign(data2, (0, codegen_1._)`${it.parentData}[${it.parentDataProperty}]`));
+      const { gen, data, it } = cxt;
+      gen.if(it.parentData, () => gen.assign(data, (0, codegen_1._)`${it.parentData}[${it.parentDataProperty}]`));
     }
     function addErrs(cxt, errs) {
       const { gen } = cxt;
@@ -18735,9 +18735,9 @@ var require_keyword = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/subschema.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/subschema.js
 var require_subschema = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/subschema.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/subschema.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.extendSubschemaMode = exports2.extendSubschemaData = exports2.getSubschema = void 0;
@@ -18773,8 +18773,8 @@ var require_subschema = __commonJS({
       throw new Error('either "keyword" or "schema" must be passed');
     }
     exports2.getSubschema = getSubschema;
-    function extendSubschemaData(subschema, it, { dataProp, dataPropType: dpType, data: data2, dataTypes, propertyName }) {
-      if (data2 !== void 0 && dataProp !== void 0) {
+    function extendSubschemaData(subschema, it, { dataProp, dataPropType: dpType, data, dataTypes, propertyName }) {
+      if (data !== void 0 && dataProp !== void 0) {
         throw new Error('both "data" and "dataProp" passed, only one allowed');
       }
       const { gen } = it;
@@ -18786,8 +18786,8 @@ var require_subschema = __commonJS({
         subschema.parentDataProperty = (0, codegen_1._)`${dataProp}`;
         subschema.dataPathArr = [...dataPathArr, subschema.parentDataProperty];
       }
-      if (data2 !== void 0) {
-        const nextData = data2 instanceof codegen_1.Name ? data2 : gen.let("data", data2, true);
+      if (data !== void 0) {
+        const nextData = data instanceof codegen_1.Name ? data : gen.let("data", data, true);
         dataContextProps(nextData);
         if (propertyName !== void 0)
           subschema.propertyName = propertyName;
@@ -18818,9 +18818,9 @@ var require_subschema = __commonJS({
   }
 });
 
-// ../node_modules/fast-deep-equal/index.js
+// ../../../../ext/maps/node_modules/fast-deep-equal/index.js
 var require_fast_deep_equal = __commonJS({
-  "../node_modules/fast-deep-equal/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/fast-deep-equal/index.js"(exports2, module2) {
     "use strict";
     module2.exports = function equal(a2, b2) {
       if (a2 === b2) return true;
@@ -18853,9 +18853,9 @@ var require_fast_deep_equal = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/json-schema-traverse/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/json-schema-traverse/index.js
 var require_json_schema_traverse = __commonJS({
-  "../packages/clis/parser/node_modules/json-schema-traverse/index.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/json-schema-traverse/index.js"(exports2, module2) {
     "use strict";
     var traverse = module2.exports = function(schema, opts, cb) {
       if (typeof opts == "function") {
@@ -18941,9 +18941,9 @@ var require_json_schema_traverse = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/resolve.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/resolve.js
 var require_resolve = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/resolve.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/resolve.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getSchemaRefs = exports2.resolveUrl = exports2.normalizeId = exports2._getFullPath = exports2.getFullPath = exports2.inlineRef = void 0;
@@ -19097,9 +19097,9 @@ var require_resolve = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/validate/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/index.js
 var require_validate = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/validate/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/validate/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getData = exports2.KeywordCxt = exports2.validateFunctionCode = void 0;
@@ -19220,9 +19220,9 @@ var require_validate = __commonJS({
     function typeAndKeywords(it, errsCount) {
       if (it.opts.jtd)
         return schemaKeywords(it, [], false, errsCount);
-      const types2 = (0, dataType_1.getSchemaTypes)(it.schema);
-      const checkedTypes = (0, dataType_1.coerceAndCheckDataType)(it, types2);
-      schemaKeywords(it, types2, !checkedTypes, errsCount);
+      const types = (0, dataType_1.getSchemaTypes)(it.schema);
+      const checkedTypes = (0, dataType_1.coerceAndCheckDataType)(it, types);
+      schemaKeywords(it, types, !checkedTypes, errsCount);
     }
     function checkRefsAndKeywords(it) {
       const { schema, errSchemaPath, opts, self: self2 } = it;
@@ -19272,15 +19272,15 @@ var require_validate = __commonJS({
       if (items instanceof codegen_1.Name)
         gen.assign((0, codegen_1._)`${evaluated}.items`, items);
     }
-    function schemaKeywords(it, types2, typeErrors, errsCount) {
-      const { gen, schema, data: data2, allErrors, opts, self: self2 } = it;
+    function schemaKeywords(it, types, typeErrors, errsCount) {
+      const { gen, schema, data, allErrors, opts, self: self2 } = it;
       const { RULES } = self2;
       if (schema.$ref && (opts.ignoreKeywordsWithRef || !(0, util_1.schemaHasRulesButRef)(schema, RULES))) {
         gen.block(() => keywordCode(it, "$ref", RULES.all.$ref.definition));
         return;
       }
       if (!opts.jtd)
-        checkStrictTypes(it, types2);
+        checkStrictTypes(it, types);
       gen.block(() => {
         for (const group of RULES.rules)
           groupKeywords(group);
@@ -19290,9 +19290,9 @@ var require_validate = __commonJS({
         if (!(0, applicability_1.shouldUseGroup)(schema, group))
           return;
         if (group.type) {
-          gen.if((0, dataType_2.checkDataType)(group.type, data2, opts.strictNumbers));
+          gen.if((0, dataType_2.checkDataType)(group.type, data, opts.strictNumbers));
           iterateKeywords(it, group);
-          if (types2.length === 1 && types2[0] === group.type && typeErrors) {
+          if (types.length === 1 && types[0] === group.type && typeErrors) {
             gen.else();
             (0, dataType_2.reportTypeError)(it);
           }
@@ -19316,27 +19316,27 @@ var require_validate = __commonJS({
         }
       });
     }
-    function checkStrictTypes(it, types2) {
+    function checkStrictTypes(it, types) {
       if (it.schemaEnv.meta || !it.opts.strictTypes)
         return;
-      checkContextTypes(it, types2);
+      checkContextTypes(it, types);
       if (!it.opts.allowUnionTypes)
-        checkMultipleTypes(it, types2);
+        checkMultipleTypes(it, types);
       checkKeywordTypes(it, it.dataTypes);
     }
-    function checkContextTypes(it, types2) {
-      if (!types2.length)
+    function checkContextTypes(it, types) {
+      if (!types.length)
         return;
       if (!it.dataTypes.length) {
-        it.dataTypes = types2;
+        it.dataTypes = types;
         return;
       }
-      types2.forEach((t2) => {
+      types.forEach((t2) => {
         if (!includesType(it.dataTypes, t2)) {
           strictTypesError(it, `type "${t2}" not allowed by context "${it.dataTypes.join(",")}"`);
         }
       });
-      narrowSchemaTypes(it, types2);
+      narrowSchemaTypes(it, types);
     }
     function checkMultipleTypes(it, ts) {
       if (ts.length > 1 && !(ts.length === 2 && ts.includes("null"))) {
@@ -19563,14 +19563,14 @@ var require_validate = __commonJS({
     var RELATIVE_JSON_POINTER = /^([0-9]+)(#|\/(?:[^~]|~0|~1)*)?$/;
     function getData($data, { dataLevel, dataNames, dataPathArr }) {
       let jsonPointer;
-      let data2;
+      let data;
       if ($data === "")
         return names_1.default.rootData;
       if ($data[0] === "/") {
         if (!JSON_POINTER.test($data))
           throw new Error(`Invalid JSON-pointer: ${$data}`);
         jsonPointer = $data;
-        data2 = names_1.default.rootData;
+        data = names_1.default.rootData;
       } else {
         const matches = RELATIVE_JSON_POINTER.exec($data);
         if (!matches)
@@ -19584,16 +19584,16 @@ var require_validate = __commonJS({
         }
         if (up > dataLevel)
           throw new Error(errorMsg("data", up));
-        data2 = dataNames[dataLevel - up];
+        data = dataNames[dataLevel - up];
         if (!jsonPointer)
-          return data2;
+          return data;
       }
-      let expr = data2;
+      let expr = data;
       const segments = jsonPointer.split("/");
       for (const segment of segments) {
         if (segment) {
-          data2 = (0, codegen_1._)`${data2}${(0, codegen_1.getProperty)((0, util_1.unescapeJsonPointer)(segment))}`;
-          expr = (0, codegen_1._)`${expr} && ${data2}`;
+          data = (0, codegen_1._)`${data}${(0, codegen_1.getProperty)((0, util_1.unescapeJsonPointer)(segment))}`;
+          expr = (0, codegen_1._)`${expr} && ${data}`;
         }
       }
       return expr;
@@ -19605,9 +19605,9 @@ var require_validate = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/runtime/validation_error.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/validation_error.js
 var require_validation_error = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/runtime/validation_error.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/validation_error.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var ValidationError = class extends Error {
@@ -19621,9 +19621,9 @@ var require_validation_error = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/ref_error.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/ref_error.js
 var require_ref_error = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/ref_error.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/ref_error.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var resolve_1 = require_resolve();
@@ -19638,9 +19638,9 @@ var require_ref_error = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/compile/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/index.js
 var require_compile = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/compile/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/compile/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.resolveSchema = exports2.getCompilingSchema = exports2.resolveRef = exports2.compileSchema = exports2.SchemaEnv = void 0;
@@ -19862,9 +19862,9 @@ var require_compile = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/refs/data.json
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/refs/data.json
 var require_data = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/refs/data.json"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/refs/data.json"(exports2, module2) {
     module2.exports = {
       $id: "https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#",
       description: "Meta-schema for $data reference (JSON AnySchema extension proposal)",
@@ -19881,9 +19881,9 @@ var require_data = __commonJS({
   }
 });
 
-// ../node_modules/fast-uri/lib/utils.js
+// ../../../../ext/maps/node_modules/fast-uri/lib/utils.js
 var require_utils = __commonJS({
-  "../node_modules/fast-uri/lib/utils.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/fast-uri/lib/utils.js"(exports2, module2) {
     "use strict";
     var isUUID = RegExp.prototype.test.bind(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu);
     var isIPv4 = RegExp.prototype.test.bind(/^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/u);
@@ -20040,8 +20040,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path7) {
-      let input = path7;
+    function removeDotSegments(path8) {
+      let input = path8;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -20115,11 +20115,11 @@ var require_utils = __commonJS({
       }
       return output.join("");
     }
-    function removeDotSegmentsRelative(path7) {
-      if (path7 === "" || path7[0] === "/") {
-        return removeDotSegments(path7);
+    function removeDotSegmentsRelative(path8) {
+      if (path8 === "" || path8[0] === "/") {
+        return removeDotSegments(path8);
       }
-      const segments = path7.split("/");
+      const segments = path8.split("/");
       const last = segments.length - 1;
       const output = [];
       let trailingDirectory = false;
@@ -20415,9 +20415,9 @@ var require_utils = __commonJS({
   }
 });
 
-// ../node_modules/fast-uri/lib/schemes.js
+// ../../../../ext/maps/node_modules/fast-uri/lib/schemes.js
 var require_schemes = __commonJS({
-  "../node_modules/fast-uri/lib/schemes.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/fast-uri/lib/schemes.js"(exports2, module2) {
     "use strict";
     var { isUUID } = require_utils();
     var URN_REG = /^([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-./:;=@]|%[\da-f]{2})+)$/iu;
@@ -20482,8 +20482,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path7 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path7 && path7 !== "/" ? path7 : void 0;
+        const path8 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path8 && path8 !== "/" ? path8 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -20626,9 +20626,9 @@ var require_schemes = __commonJS({
   }
 });
 
-// ../node_modules/fast-uri/index.js
+// ../../../../ext/maps/node_modules/fast-uri/index.js
 var require_fast_uri = __commonJS({
-  "../node_modules/fast-uri/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/fast-uri/index.js"(exports2, module2) {
     "use strict";
     var { normalizeIPv6, removeDotSegments, removeDotSegmentsRelative, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
     var { SCHEMES, getSchemeHandler } = require_schemes();
@@ -21056,9 +21056,9 @@ var require_fast_uri = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/runtime/uri.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/uri.js
 var require_uri = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/runtime/uri.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/uri.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var uri = require_fast_uri();
@@ -21067,9 +21067,9 @@ var require_uri = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/core.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/core.js
 var require_core = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/core.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/core.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
@@ -21222,7 +21222,7 @@ var require_core = __commonJS({
         const { meta, schemaId } = this.opts;
         return this.opts.defaultMeta = typeof meta == "object" ? meta[schemaId] || meta : void 0;
       }
-      validate(schemaKeyRef, data2) {
+      validate(schemaKeyRef, data) {
         let v2;
         if (typeof schemaKeyRef == "string") {
           v2 = this.getSchema(schemaKeyRef);
@@ -21231,7 +21231,7 @@ var require_core = __commonJS({
         } else {
           v2 = this.compile(schemaKeyRef);
         }
-        const valid = v2(data2);
+        const valid = v2(data);
         if (!("$async" in v2))
           this.errors = v2.errors;
         return valid;
@@ -21678,9 +21678,9 @@ var require_core = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/core/id.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/core/id.js
 var require_id = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/core/id.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/core/id.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var def = {
@@ -21693,9 +21693,9 @@ var require_id = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/core/ref.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/core/ref.js
 var require_ref = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/core/ref.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/core/ref.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.callRef = exports2.getValidate = void 0;
@@ -21815,9 +21815,9 @@ var require_ref = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/core/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/core/index.js
 var require_core2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/core/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/core/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var id_1 = require_id();
@@ -21836,9 +21836,9 @@ var require_core2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitNumber.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitNumber.js
 var require_limitNumber = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitNumber.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitNumber.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -21860,17 +21860,17 @@ var require_limitNumber = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { keyword, data: data2, schemaCode } = cxt;
-        cxt.fail$data((0, codegen_1._)`${data2} ${KWDs[keyword].fail} ${schemaCode} || isNaN(${data2})`);
+        const { keyword, data, schemaCode } = cxt;
+        cxt.fail$data((0, codegen_1._)`${data} ${KWDs[keyword].fail} ${schemaCode} || isNaN(${data})`);
       }
     };
     exports2.default = def;
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/multipleOf.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/multipleOf.js
 var require_multipleOf = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/multipleOf.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/multipleOf.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -21885,20 +21885,20 @@ var require_multipleOf = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { gen, data: data2, schemaCode, it } = cxt;
+        const { gen, data, schemaCode, it } = cxt;
         const prec = it.opts.multipleOfPrecision;
         const res = gen.let("res");
         const invalid = prec ? (0, codegen_1._)`Math.abs(Math.round(${res}) - ${res}) > 1e-${prec}` : (0, codegen_1._)`${res} !== parseInt(${res})`;
-        cxt.fail$data((0, codegen_1._)`(${schemaCode} === 0 || (${res} = ${data2}/${schemaCode}, ${invalid}))`);
+        cxt.fail$data((0, codegen_1._)`(${schemaCode} === 0 || (${res} = ${data}/${schemaCode}, ${invalid}))`);
       }
     };
     exports2.default = def;
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/runtime/ucs2length.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/ucs2length.js
 var require_ucs2length = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/runtime/ucs2length.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/ucs2length.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     function ucs2length(str) {
@@ -21922,9 +21922,9 @@ var require_ucs2length = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitLength.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitLength.js
 var require_limitLength = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitLength.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitLength.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -21944,9 +21944,9 @@ var require_limitLength = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { keyword, data: data2, schemaCode, it } = cxt;
+        const { keyword, data, schemaCode, it } = cxt;
         const op = keyword === "maxLength" ? codegen_1.operators.GT : codegen_1.operators.LT;
-        const len = it.opts.unicode === false ? (0, codegen_1._)`${data2}.length` : (0, codegen_1._)`${(0, util_1.useFunc)(cxt.gen, ucs2length_1.default)}(${data2})`;
+        const len = it.opts.unicode === false ? (0, codegen_1._)`${data}.length` : (0, codegen_1._)`${(0, util_1.useFunc)(cxt.gen, ucs2length_1.default)}(${data})`;
         cxt.fail$data((0, codegen_1._)`${len} ${op} ${schemaCode}`);
       }
     };
@@ -21954,9 +21954,9 @@ var require_limitLength = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/pattern.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/pattern.js
 var require_pattern = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/pattern.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/pattern.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -21973,17 +21973,17 @@ var require_pattern = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { gen, data: data2, $data, schema, schemaCode, it } = cxt;
+        const { gen, data, $data, schema, schemaCode, it } = cxt;
         const u3 = it.opts.unicodeRegExp ? "u" : "";
         if ($data) {
           const { regExp } = it.opts.code;
           const regExpCode = regExp.code === "new RegExp" ? (0, codegen_1._)`new RegExp` : (0, util_1.useFunc)(gen, regExp);
           const valid = gen.let("valid");
-          gen.try(() => gen.assign(valid, (0, codegen_1._)`${regExpCode}(${schemaCode}, ${u3}).test(${data2})`), () => gen.assign(valid, false));
+          gen.try(() => gen.assign(valid, (0, codegen_1._)`${regExpCode}(${schemaCode}, ${u3}).test(${data})`), () => gen.assign(valid, false));
           cxt.fail$data((0, codegen_1._)`!${valid}`);
         } else {
           const regExp = (0, code_1.usePattern)(cxt, schema);
-          cxt.fail$data((0, codegen_1._)`!${regExp}.test(${data2})`);
+          cxt.fail$data((0, codegen_1._)`!${regExp}.test(${data})`);
         }
       }
     };
@@ -21991,9 +21991,9 @@ var require_pattern = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitProperties.js
 var require_limitProperties = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitProperties.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitProperties.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22011,18 +22011,18 @@ var require_limitProperties = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { keyword, data: data2, schemaCode } = cxt;
+        const { keyword, data, schemaCode } = cxt;
         const op = keyword === "maxProperties" ? codegen_1.operators.GT : codegen_1.operators.LT;
-        cxt.fail$data((0, codegen_1._)`Object.keys(${data2}).length ${op} ${schemaCode}`);
+        cxt.fail$data((0, codegen_1._)`Object.keys(${data}).length ${op} ${schemaCode}`);
       }
     };
     exports2.default = def;
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/required.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/required.js
 var require_required = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/required.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/required.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -22039,7 +22039,7 @@ var require_required = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { gen, schema, schemaCode, data: data2, $data, it } = cxt;
+        const { gen, schema, schemaCode, data, $data, it } = cxt;
         const { opts } = it;
         if (!$data && schema.length === 0)
           return;
@@ -22083,13 +22083,13 @@ var require_required = __commonJS({
         function loopAllRequired() {
           gen.forOf("prop", schemaCode, (prop) => {
             cxt.setParams({ missingProperty: prop });
-            gen.if((0, code_1.noPropertyInData)(gen, data2, prop, opts.ownProperties), () => cxt.error());
+            gen.if((0, code_1.noPropertyInData)(gen, data, prop, opts.ownProperties), () => cxt.error());
           });
         }
         function loopUntilMissing(missing, valid) {
           cxt.setParams({ missingProperty: missing });
           gen.forOf(missing, schemaCode, () => {
-            gen.assign(valid, (0, code_1.propertyInData)(gen, data2, missing, opts.ownProperties));
+            gen.assign(valid, (0, code_1.propertyInData)(gen, data, missing, opts.ownProperties));
             gen.if((0, codegen_1.not)(valid), () => {
               cxt.error();
               gen.break();
@@ -22102,9 +22102,9 @@ var require_required = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitItems.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitItems.js
 var require_limitItems = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitItems.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/limitItems.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22122,18 +22122,18 @@ var require_limitItems = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { keyword, data: data2, schemaCode } = cxt;
+        const { keyword, data, schemaCode } = cxt;
         const op = keyword === "maxItems" ? codegen_1.operators.GT : codegen_1.operators.LT;
-        cxt.fail$data((0, codegen_1._)`${data2}.length ${op} ${schemaCode}`);
+        cxt.fail$data((0, codegen_1._)`${data}.length ${op} ${schemaCode}`);
       }
     };
     exports2.default = def;
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/runtime/equal.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/equal.js
 var require_equal = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/runtime/equal.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/runtime/equal.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var equal = require_fast_deep_equal();
@@ -22142,9 +22142,9 @@ var require_equal = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js
 var require_uniqueItems = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var dataType_1 = require_dataType();
@@ -22162,7 +22162,7 @@ var require_uniqueItems = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { gen, data: data2, $data, schema, parentSchema, schemaCode, it } = cxt;
+        const { gen, data, $data, schema, parentSchema, schemaCode, it } = cxt;
         if (!$data && !schema)
           return;
         const valid = gen.let("valid");
@@ -22170,7 +22170,7 @@ var require_uniqueItems = __commonJS({
         cxt.block$data(valid, validateUniqueItems, (0, codegen_1._)`${schemaCode} === false`);
         cxt.ok(valid);
         function validateUniqueItems() {
-          const i2 = gen.let("i", (0, codegen_1._)`${data2}.length`);
+          const i2 = gen.let("i", (0, codegen_1._)`${data}.length`);
           const j = gen.let("j");
           cxt.setParams({ i: i2, j });
           gen.assign(valid, true);
@@ -22184,7 +22184,7 @@ var require_uniqueItems = __commonJS({
           const wrongType = (0, dataType_1.checkDataTypes)(itemTypes, item, it.opts.strictNumbers, dataType_1.DataType.Wrong);
           const indices = gen.const("indices", (0, codegen_1._)`{}`);
           gen.for((0, codegen_1._)`;${i2}--;`, () => {
-            gen.let(item, (0, codegen_1._)`${data2}[${i2}]`);
+            gen.let(item, (0, codegen_1._)`${data}[${i2}]`);
             gen.if(wrongType, (0, codegen_1._)`continue`);
             if (itemTypes.length > 1)
               gen.if((0, codegen_1._)`typeof ${item} == "string"`, (0, codegen_1._)`${item} += "_"`);
@@ -22198,7 +22198,7 @@ var require_uniqueItems = __commonJS({
         function loopN2(i2, j) {
           const eql = (0, util_1.useFunc)(gen, equal_1.default);
           const outer = gen.name("outer");
-          gen.label(outer).for((0, codegen_1._)`;${i2}--;`, () => gen.for((0, codegen_1._)`${j} = ${i2}; ${j}--;`, () => gen.if((0, codegen_1._)`${eql}(${data2}[${i2}], ${data2}[${j}])`, () => {
+          gen.label(outer).for((0, codegen_1._)`;${i2}--;`, () => gen.for((0, codegen_1._)`${j} = ${i2}; ${j}--;`, () => gen.if((0, codegen_1._)`${eql}(${data}[${i2}], ${data}[${j}])`, () => {
             cxt.error();
             gen.assign(valid, false).break(outer);
           })));
@@ -22209,9 +22209,9 @@ var require_uniqueItems = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/const.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/const.js
 var require_const = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/const.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/const.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22226,11 +22226,11 @@ var require_const = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { gen, data: data2, $data, schemaCode, schema } = cxt;
+        const { gen, data, $data, schemaCode, schema } = cxt;
         if ($data || schema && typeof schema == "object") {
-          cxt.fail$data((0, codegen_1._)`!${(0, util_1.useFunc)(gen, equal_1.default)}(${data2}, ${schemaCode})`);
+          cxt.fail$data((0, codegen_1._)`!${(0, util_1.useFunc)(gen, equal_1.default)}(${data}, ${schemaCode})`);
         } else {
-          cxt.fail((0, codegen_1._)`${schema} !== ${data2}`);
+          cxt.fail((0, codegen_1._)`${schema} !== ${data}`);
         }
       }
     };
@@ -22238,9 +22238,9 @@ var require_const = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/enum.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/enum.js
 var require_enum = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/enum.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/enum.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22256,7 +22256,7 @@ var require_enum = __commonJS({
       $data: true,
       error,
       code(cxt) {
-        const { gen, data: data2, $data, schema, schemaCode, it } = cxt;
+        const { gen, data, $data, schema, schemaCode, it } = cxt;
         if (!$data && schema.length === 0)
           throw new Error("enum must have non-empty array");
         const useLoop = schema.length >= it.opts.loopEnum;
@@ -22275,11 +22275,11 @@ var require_enum = __commonJS({
         cxt.pass(valid);
         function loopEnum() {
           gen.assign(valid, false);
-          gen.forOf("v", schemaCode, (v2) => gen.if((0, codegen_1._)`${getEql()}(${data2}, ${v2})`, () => gen.assign(valid, true).break()));
+          gen.forOf("v", schemaCode, (v2) => gen.if((0, codegen_1._)`${getEql()}(${data}, ${v2})`, () => gen.assign(valid, true).break()));
         }
         function equalCode(vSchema, i2) {
           const sch = schema[i2];
-          return typeof sch === "object" && sch !== null ? (0, codegen_1._)`${getEql()}(${data2}, ${vSchema}[${i2}])` : (0, codegen_1._)`${data2} === ${sch}`;
+          return typeof sch === "object" && sch !== null ? (0, codegen_1._)`${getEql()}(${data}, ${vSchema}[${i2}])` : (0, codegen_1._)`${data} === ${sch}`;
         }
       }
     };
@@ -22287,9 +22287,9 @@ var require_enum = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/index.js
 var require_validation = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/validation/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var limitNumber_1 = require_limitNumber();
@@ -22325,9 +22325,9 @@ var require_validation = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js
 var require_additionalItems = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.validateAdditionalItems = void 0;
@@ -22354,9 +22354,9 @@ var require_additionalItems = __commonJS({
       }
     };
     function validateAdditionalItems(cxt, items) {
-      const { gen, schema, data: data2, keyword, it } = cxt;
+      const { gen, schema, data, keyword, it } = cxt;
       it.items = true;
-      const len = gen.const("len", (0, codegen_1._)`${data2}.length`);
+      const len = gen.const("len", (0, codegen_1._)`${data}.length`);
       if (schema === false) {
         cxt.setParams({ len: items.length });
         cxt.pass((0, codegen_1._)`${len} <= ${items.length}`);
@@ -22378,9 +22378,9 @@ var require_additionalItems = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items.js
 var require_items = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.validateTuple = void 0;
@@ -22403,13 +22403,13 @@ var require_items = __commonJS({
       }
     };
     function validateTuple(cxt, extraItems, schArr = cxt.schema) {
-      const { gen, parentSchema, data: data2, keyword, it } = cxt;
+      const { gen, parentSchema, data, keyword, it } = cxt;
       checkStrictTuple(parentSchema);
       if (it.opts.unevaluated && schArr.length && it.items !== true) {
         it.items = util_1.mergeEvaluated.items(gen, schArr.length, it.items);
       }
       const valid = gen.name("valid");
-      const len = gen.const("len", (0, codegen_1._)`${data2}.length`);
+      const len = gen.const("len", (0, codegen_1._)`${data}.length`);
       schArr.forEach((sch, i2) => {
         if ((0, util_1.alwaysValidSchema)(it, sch))
           return;
@@ -22435,9 +22435,9 @@ var require_items = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js
 var require_prefixItems = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var items_1 = require_items();
@@ -22452,9 +22452,9 @@ var require_prefixItems = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items2020.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items2020.js
 var require_items2020 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items2020.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/items2020.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22487,9 +22487,9 @@ var require_items2020 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/contains.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/contains.js
 var require_contains = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/contains.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/contains.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22506,7 +22506,7 @@ var require_contains = __commonJS({
       trackErrors: true,
       error,
       code(cxt) {
-        const { gen, schema, parentSchema, data: data2, it } = cxt;
+        const { gen, schema, parentSchema, data, it } = cxt;
         let min;
         let max;
         const { minContains, maxContains } = parentSchema;
@@ -22516,7 +22516,7 @@ var require_contains = __commonJS({
         } else {
           min = 1;
         }
-        const len = gen.const("len", (0, codegen_1._)`${data2}.length`);
+        const len = gen.const("len", (0, codegen_1._)`${data}.length`);
         cxt.setParams({ min, max });
         if (max === void 0 && min === 0) {
           (0, util_1.checkStrictMode)(it, `"minContains" == 0 without "maxContains": "contains" keyword ignored`);
@@ -22541,7 +22541,7 @@ var require_contains = __commonJS({
         } else if (min === 0) {
           gen.let(valid, true);
           if (max !== void 0)
-            gen.if((0, codegen_1._)`${data2}.length > 0`, validateItemsWithCount);
+            gen.if((0, codegen_1._)`${data}.length > 0`, validateItemsWithCount);
         } else {
           gen.let(valid, false);
           validateItemsWithCount();
@@ -22581,9 +22581,9 @@ var require_contains = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/dependencies.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/dependencies.js
 var require_dependencies = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/dependencies.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/dependencies.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.validateSchemaDeps = exports2.validatePropertyDeps = exports2.error = void 0;
@@ -22624,7 +22624,7 @@ var require_dependencies = __commonJS({
       return [propertyDeps, schemaDeps];
     }
     function validatePropertyDeps(cxt, propertyDeps = cxt.schema) {
-      const { gen, data: data2, it } = cxt;
+      const { gen, data, it } = cxt;
       if (Object.keys(propertyDeps).length === 0)
         return;
       const missing = gen.let("missing");
@@ -22632,7 +22632,7 @@ var require_dependencies = __commonJS({
         const deps = propertyDeps[prop];
         if (deps.length === 0)
           continue;
-        const hasProperty = (0, code_1.propertyInData)(gen, data2, prop, it.opts.ownProperties);
+        const hasProperty = (0, code_1.propertyInData)(gen, data, prop, it.opts.ownProperties);
         cxt.setParams({
           property: prop,
           depsCount: deps.length,
@@ -22653,13 +22653,13 @@ var require_dependencies = __commonJS({
     }
     exports2.validatePropertyDeps = validatePropertyDeps;
     function validateSchemaDeps(cxt, schemaDeps = cxt.schema) {
-      const { gen, data: data2, keyword, it } = cxt;
+      const { gen, data, keyword, it } = cxt;
       const valid = gen.name("valid");
       for (const prop in schemaDeps) {
         if ((0, util_1.alwaysValidSchema)(it, schemaDeps[prop]))
           continue;
         gen.if(
-          (0, code_1.propertyInData)(gen, data2, prop, it.opts.ownProperties),
+          (0, code_1.propertyInData)(gen, data, prop, it.opts.ownProperties),
           () => {
             const schCxt = cxt.subschema({ keyword, schemaProp: prop }, valid);
             cxt.mergeValidEvaluated(schCxt, valid);
@@ -22675,9 +22675,9 @@ var require_dependencies = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js
 var require_propertyNames = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -22692,11 +22692,11 @@ var require_propertyNames = __commonJS({
       schemaType: ["object", "boolean"],
       error,
       code(cxt) {
-        const { gen, schema, data: data2, it } = cxt;
+        const { gen, schema, data, it } = cxt;
         if ((0, util_1.alwaysValidSchema)(it, schema))
           return;
         const valid = gen.name("valid");
-        gen.forIn("key", data2, (key) => {
+        gen.forIn("key", data, (key) => {
           cxt.setParams({ propertyName: key });
           cxt.subschema({
             keyword: "propertyNames",
@@ -22718,9 +22718,9 @@ var require_propertyNames = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js
 var require_additionalProperties = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -22739,7 +22739,7 @@ var require_additionalProperties = __commonJS({
       trackErrors: true,
       error,
       code(cxt) {
-        const { gen, schema, parentSchema, data: data2, errsCount, it } = cxt;
+        const { gen, schema, parentSchema, data, errsCount, it } = cxt;
         if (!errsCount)
           throw new Error("ajv implementation error");
         const { allErrors, opts } = it;
@@ -22751,7 +22751,7 @@ var require_additionalProperties = __commonJS({
         checkAdditionalProperties();
         cxt.ok((0, codegen_1._)`${errsCount} === ${names_1.default.errors}`);
         function checkAdditionalProperties() {
-          gen.forIn("key", data2, (key) => {
+          gen.forIn("key", data, (key) => {
             if (!props.length && !patProps.length)
               additionalPropertyCode(key);
             else
@@ -22774,7 +22774,7 @@ var require_additionalProperties = __commonJS({
           return (0, codegen_1.not)(definedProp);
         }
         function deleteAdditional(key) {
-          gen.code((0, codegen_1._)`delete ${data2}[${key}]`);
+          gen.code((0, codegen_1._)`delete ${data}[${key}]`);
         }
         function additionalPropertyCode(key) {
           if (opts.removeAdditional === "all" || opts.removeAdditional && schema === false) {
@@ -22824,9 +22824,9 @@ var require_additionalProperties = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/properties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/properties.js
 var require_properties = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/properties.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/properties.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var validate_1 = require_validate();
@@ -22838,7 +22838,7 @@ var require_properties = __commonJS({
       type: "object",
       schemaType: "object",
       code(cxt) {
-        const { gen, schema, parentSchema, data: data2, it } = cxt;
+        const { gen, schema, parentSchema, data, it } = cxt;
         if (it.opts.removeAdditional === "all" && parentSchema.additionalProperties === void 0) {
           additionalProperties_1.default.code(new validate_1.KeywordCxt(it, additionalProperties_1.default, "additionalProperties"));
         }
@@ -22857,7 +22857,7 @@ var require_properties = __commonJS({
           if (hasDefault(prop)) {
             applyPropertySchema(prop);
           } else {
-            gen.if((0, code_1.propertyInData)(gen, data2, prop, it.opts.ownProperties));
+            gen.if((0, code_1.propertyInData)(gen, data, prop, it.opts.ownProperties));
             applyPropertySchema(prop);
             if (!it.allErrors)
               gen.else().var(valid, true);
@@ -22882,9 +22882,9 @@ var require_properties = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js
 var require_patternProperties = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -22896,7 +22896,7 @@ var require_patternProperties = __commonJS({
       type: "object",
       schemaType: "object",
       code(cxt) {
-        const { gen, schema, data: data2, parentSchema, it } = cxt;
+        const { gen, schema, data, parentSchema, it } = cxt;
         const { opts } = it;
         const patterns = (0, code_1.allSchemaProperties)(schema);
         const alwaysValidPatterns = patterns.filter((p) => (0, util_1.alwaysValidSchema)(it, schema[p]));
@@ -22931,7 +22931,7 @@ var require_patternProperties = __commonJS({
           }
         }
         function validateProperties(pat) {
-          gen.forIn("key", data2, (key) => {
+          gen.forIn("key", data, (key) => {
             gen.if((0, codegen_1._)`${(0, code_1.usePattern)(cxt, pat)}.test(${key})`, () => {
               const alwaysValid = alwaysValidPatterns.includes(pat);
               if (!alwaysValid) {
@@ -22956,9 +22956,9 @@ var require_patternProperties = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/not.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/not.js
 var require_not = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/not.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/not.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var util_1 = require_util();
@@ -22987,9 +22987,9 @@ var require_not = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/anyOf.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/anyOf.js
 var require_anyOf = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/anyOf.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/anyOf.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -23004,9 +23004,9 @@ var require_anyOf = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/oneOf.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/oneOf.js
 var require_oneOf = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/oneOf.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/oneOf.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -23062,9 +23062,9 @@ var require_oneOf = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/allOf.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/allOf.js
 var require_allOf = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/allOf.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/allOf.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var util_1 = require_util();
@@ -23089,9 +23089,9 @@ var require_allOf = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/if.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/if.js
 var require_if = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/if.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/if.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -23158,9 +23158,9 @@ var require_if = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/thenElse.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/thenElse.js
 var require_thenElse = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/thenElse.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/thenElse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var util_1 = require_util();
@@ -23176,9 +23176,9 @@ var require_thenElse = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/index.js
 var require_applicator = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/applicator/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var additionalItems_1 = require_additionalItems();
@@ -23224,9 +23224,9 @@ var require_applicator = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/format/format.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/format/format.js
 var require_format = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/format/format.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/format/format.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -23241,7 +23241,7 @@ var require_format = __commonJS({
       $data: true,
       error,
       code(cxt, ruleType) {
-        const { gen, data: data2, $data, schema, schemaCode, it } = cxt;
+        const { gen, data, $data, schema, schemaCode, it } = cxt;
         const { opts, errSchemaPath, schemaEnv, self: self2 } = it;
         if (!opts.validateFormats)
           return;
@@ -23265,8 +23265,8 @@ var require_format = __commonJS({
             return (0, codegen_1._)`${schemaCode} && !${format}`;
           }
           function invalidFmt() {
-            const callFormat = schemaEnv.$async ? (0, codegen_1._)`(${fDef}.async ? await ${format}(${data2}) : ${format}(${data2}))` : (0, codegen_1._)`${format}(${data2})`;
-            const validData = (0, codegen_1._)`(typeof ${format} == "function" ? ${callFormat} : ${format}.test(${data2}))`;
+            const callFormat = schemaEnv.$async ? (0, codegen_1._)`(${fDef}.async ? await ${format}(${data}) : ${format}(${data}))` : (0, codegen_1._)`${format}(${data})`;
+            const validData = (0, codegen_1._)`(typeof ${format} == "function" ? ${callFormat} : ${format}.test(${data}))`;
             return (0, codegen_1._)`${format} && ${format} !== true && ${fType} === ${ruleType} && !${validData}`;
           }
         }
@@ -23303,9 +23303,9 @@ var require_format = __commonJS({
             if (typeof formatDef == "object" && !(formatDef instanceof RegExp) && formatDef.async) {
               if (!schemaEnv.$async)
                 throw new Error("async format in sync schema");
-              return (0, codegen_1._)`await ${fmtRef}(${data2})`;
+              return (0, codegen_1._)`await ${fmtRef}(${data})`;
             }
-            return typeof format == "function" ? (0, codegen_1._)`${fmtRef}(${data2})` : (0, codegen_1._)`${fmtRef}.test(${data2})`;
+            return typeof format == "function" ? (0, codegen_1._)`${fmtRef}(${data})` : (0, codegen_1._)`${fmtRef}.test(${data})`;
           }
         }
       }
@@ -23314,9 +23314,9 @@ var require_format = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/format/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/format/index.js
 var require_format2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/format/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/format/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var format_1 = require_format();
@@ -23325,9 +23325,9 @@ var require_format2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/metadata.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/metadata.js
 var require_metadata = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/metadata.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/metadata.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.contentVocabulary = exports2.metadataVocabulary = void 0;
@@ -23348,9 +23348,9 @@ var require_metadata = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/draft7.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/draft7.js
 var require_draft7 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/draft7.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/draft7.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var core_1 = require_core2();
@@ -23370,9 +23370,9 @@ var require_draft7 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/types.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/types.js
 var require_types = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DiscrError = void 0;
@@ -23384,9 +23384,9 @@ var require_types = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/index.js
 var require_discriminator = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -23404,7 +23404,7 @@ var require_discriminator = __commonJS({
       schemaType: "object",
       error,
       code(cxt) {
-        const { gen, data: data2, schema, parentSchema, it } = cxt;
+        const { gen, data, schema, parentSchema, it } = cxt;
         const { oneOf } = parentSchema;
         if (!it.opts.discriminator) {
           throw new Error("discriminator: requires discriminator option");
@@ -23417,7 +23417,7 @@ var require_discriminator = __commonJS({
         if (!oneOf)
           throw new Error("discriminator: requires oneOf keyword");
         const valid = gen.let("valid", false);
-        const tag = gen.const("tag", (0, codegen_1._)`${data2}${(0, codegen_1.getProperty)(tagName)}`);
+        const tag = gen.const("tag", (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(tagName)}`);
         gen.if((0, codegen_1._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
         cxt.ok(valid);
         function validateMapping() {
@@ -23489,9 +23489,9 @@ var require_discriminator = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/refs/json-schema-draft-07.json
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/refs/json-schema-draft-07.json
 var require_json_schema_draft_07 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports2, module2) {
     module2.exports = {
       $schema: "http://json-schema.org/draft-07/schema#",
       $id: "http://json-schema.org/draft-07/schema#",
@@ -23646,9 +23646,9 @@ var require_json_schema_draft_07 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv/dist/ajv.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/ajv.js
 var require_ajv = __commonJS({
-  "../packages/clis/parser/node_modules/ajv/dist/ajv.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv/dist/ajv.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = exports2.Ajv = void 0;
@@ -23716,9 +23716,9 @@ var require_ajv = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/typeof.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/typeof.js
 var require_typeof = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/typeof.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/typeof.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -23728,8 +23728,8 @@ var require_typeof = __commonJS({
         keyword: "typeof",
         schemaType: ["string", "array"],
         code(cxt) {
-          const { data: data2, schema, schemaValue } = cxt;
-          cxt.fail(typeof schema == "string" ? (0, codegen_1._)`typeof ${data2} != ${schema}` : (0, codegen_1._)`${schemaValue}.indexOf(typeof ${data2}) < 0`);
+          const { data, schema, schemaValue } = cxt;
+          cxt.fail(typeof schema == "string" ? (0, codegen_1._)`typeof ${data} != ${schema}` : (0, codegen_1._)`${schemaValue}.indexOf(typeof ${data}) < 0`);
         },
         metaSchema: {
           anyOf: [
@@ -23744,9 +23744,9 @@ var require_typeof = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/typeof.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/typeof.js
 var require_typeof2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/typeof.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/typeof.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -23759,9 +23759,9 @@ var require_typeof2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/instanceof.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/instanceof.js
 var require_instanceof = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/instanceof.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/instanceof.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var CONSTRUCTORS = {
@@ -23785,13 +23785,13 @@ var require_instanceof = __commonJS({
         compile(schema) {
           if (typeof schema == "string") {
             const C3 = getConstructor(schema);
-            return (data2) => data2 instanceof C3;
+            return (data) => data instanceof C3;
           }
           if (Array.isArray(schema)) {
             const constructors = schema.map(getConstructor);
-            return (data2) => {
+            return (data) => {
               for (const C3 of constructors) {
-                if (data2 instanceof C3)
+                if (data instanceof C3)
                   return true;
               }
               return false;
@@ -23815,9 +23815,9 @@ var require_instanceof = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/instanceof.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/instanceof.js
 var require_instanceof2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/instanceof.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/instanceof.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -23830,9 +23830,9 @@ var require_instanceof2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_range.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_range.js
 var require_range = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_range.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     function getRangeDef(keyword) {
@@ -23861,9 +23861,9 @@ var require_range = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/range.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/range.js
 var require_range2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/range.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/range.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -23876,9 +23876,9 @@ var require_range2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/range.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/range.js
 var require_range3 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/range.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/range.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -23891,9 +23891,9 @@ var require_range3 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/exclusiveRange.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/exclusiveRange.js
 var require_exclusiveRange = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/exclusiveRange.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/exclusiveRange.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -23906,9 +23906,9 @@ var require_exclusiveRange = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/exclusiveRange.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/exclusiveRange.js
 var require_exclusiveRange2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/exclusiveRange.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/exclusiveRange.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -23921,9 +23921,9 @@ var require_exclusiveRange2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_util.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_util.js
 var require_util2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_util.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_util.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.usePattern = exports2.metaSchemaRef = void 0;
@@ -23945,9 +23945,9 @@ var require_util2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/regexp.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/regexp.js
 var require_regexp = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/regexp.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/regexp.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -23968,9 +23968,9 @@ var require_regexp = __commonJS({
         type: "string",
         schemaType: ["string", "object"],
         code(cxt) {
-          const { data: data2, schema } = cxt;
+          const { data, schema } = cxt;
           const regx = getRegExp(schema);
-          cxt.pass((0, codegen_1._)`${regx}.test(${data2})`);
+          cxt.pass((0, codegen_1._)`${regx}.test(${data})`);
           function getRegExp(sch) {
             if (typeof sch == "object")
               return (0, _util_1.usePattern)(cxt, sch.pattern, sch.flags);
@@ -23990,9 +23990,9 @@ var require_regexp = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/regexp.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/regexp.js
 var require_regexp2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/regexp.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/regexp.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24005,9 +24005,9 @@ var require_regexp2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/transform.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/transform.js
 var require_transform = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/transform.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/transform.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -24028,7 +24028,7 @@ var require_transform = __commonJS({
         schemaType: "array",
         before: "enum",
         code(cxt) {
-          const { gen, data: data2, schema, parentSchema, it } = cxt;
+          const { gen, data, schema, parentSchema, it } = cxt;
           const { parentData, parentDataProperty } = it;
           const tNames = schema;
           if (!tNames.length)
@@ -24038,13 +24038,13 @@ var require_transform = __commonJS({
             const config = getEnumCaseCfg(parentSchema);
             cfg = gen.scopeValue("obj", { ref: config, code: (0, codegen_1.stringify)(config) });
           }
-          gen.if((0, codegen_1._)`typeof ${data2} == "string" && ${parentData} !== undefined`, () => {
-            gen.assign(data2, transformExpr(tNames.slice()));
-            gen.assign((0, codegen_1._)`${parentData}[${parentDataProperty}]`, data2);
+          gen.if((0, codegen_1._)`typeof ${data} == "string" && ${parentData} !== undefined`, () => {
+            gen.assign(data, transformExpr(tNames.slice()));
+            gen.assign((0, codegen_1._)`${parentData}[${parentDataProperty}]`, data);
           });
           function transformExpr(ts) {
             if (!ts.length)
-              return data2;
+              return data;
             const t2 = ts.pop();
             if (!(t2 in transform))
               throw new Error(`transform: unknown transformation ${t2}`);
@@ -24085,9 +24085,9 @@ var require_transform = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/transform.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/transform.js
 var require_transform2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/transform.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/transform.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24100,9 +24100,9 @@ var require_transform2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/uniqueItemProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/uniqueItemProperties.js
 var require_uniqueItemProperties = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/uniqueItemProperties.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/uniqueItemProperties.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var equal = require_fast_deep_equal();
@@ -24114,14 +24114,14 @@ var require_uniqueItemProperties = __commonJS({
         schemaType: "array",
         compile(keys, parentSchema) {
           const scalar = getScalarKeys(keys, parentSchema);
-          return (data2) => {
-            if (data2.length <= 1)
+          return (data) => {
+            if (data.length <= 1)
               return true;
             for (let k2 = 0; k2 < keys.length; k2++) {
               const key = keys[k2];
               if (scalar[k2]) {
                 const hash = {};
-                for (const x2 of data2) {
+                for (const x2 of data) {
                   if (!x2 || typeof x2 != "object")
                     continue;
                   let p = x2[key];
@@ -24134,12 +24134,12 @@ var require_uniqueItemProperties = __commonJS({
                   hash[p] = true;
                 }
               } else {
-                for (let i2 = data2.length; i2--; ) {
-                  const x2 = data2[i2];
+                for (let i2 = data.length; i2--; ) {
+                  const x2 = data[i2];
                   if (!x2 || typeof x2 != "object")
                     continue;
                   for (let j = i2; j--; ) {
-                    const y3 = data2[j];
+                    const y3 = data[j];
                     if (y3 && typeof y3 == "object" && equal(x2[key], y3[key]))
                       return false;
                   }
@@ -24167,9 +24167,9 @@ var require_uniqueItemProperties = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/uniqueItemProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/uniqueItemProperties.js
 var require_uniqueItemProperties2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/uniqueItemProperties.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/uniqueItemProperties.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24182,9 +24182,9 @@ var require_uniqueItemProperties2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/allRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/allRequired.js
 var require_allRequired = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/allRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/allRequired.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     function getDef() {
@@ -24208,9 +24208,9 @@ var require_allRequired = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/allRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/allRequired.js
 var require_allRequired2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/allRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/allRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24223,9 +24223,9 @@ var require_allRequired2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_required.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_required.js
 var require_required2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_required.js"(exports2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/_required.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     function getRequiredDef(keyword) {
@@ -24251,9 +24251,9 @@ var require_required2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/anyRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/anyRequired.js
 var require_anyRequired = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/anyRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/anyRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24266,9 +24266,9 @@ var require_anyRequired = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/anyRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/anyRequired.js
 var require_anyRequired2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/anyRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/anyRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24281,9 +24281,9 @@ var require_anyRequired2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/oneRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/oneRequired.js
 var require_oneRequired = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/oneRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/oneRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24296,9 +24296,9 @@ var require_oneRequired = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/oneRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/oneRequired.js
 var require_oneRequired2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/oneRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/oneRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24311,9 +24311,9 @@ var require_oneRequired2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/patternRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/patternRequired.js
 var require_patternRequired = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/patternRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/patternRequired.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -24329,7 +24329,7 @@ var require_patternRequired = __commonJS({
         schemaType: "array",
         error,
         code(cxt) {
-          const { gen, schema, data: data2 } = cxt;
+          const { gen, schema, data } = cxt;
           if (schema.length === 0)
             return;
           const valid = gen.let("valid", true);
@@ -24337,7 +24337,7 @@ var require_patternRequired = __commonJS({
             validateProperties(pat);
           function validateProperties(pattern) {
             const matched = gen.let("matched", false);
-            gen.forIn("key", data2, (key) => {
+            gen.forIn("key", data, (key) => {
               gen.assign(matched, (0, codegen_1._)`${(0, _util_1.usePattern)(cxt, pattern)}.test(${key})`);
               gen.if(matched, () => gen.break());
             });
@@ -24358,9 +24358,9 @@ var require_patternRequired = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/patternRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/patternRequired.js
 var require_patternRequired2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/patternRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/patternRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24373,9 +24373,9 @@ var require_patternRequired2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/prohibited.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/prohibited.js
 var require_prohibited = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/prohibited.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/prohibited.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     function getDef() {
@@ -24401,9 +24401,9 @@ var require_prohibited = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/prohibited.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/prohibited.js
 var require_prohibited2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/prohibited.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/prohibited.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24416,9 +24416,9 @@ var require_prohibited2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepProperties.js
 var require_deepProperties = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepProperties.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepProperties.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var _util_1 = require_util2();
@@ -24474,9 +24474,9 @@ var require_deepProperties = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepProperties.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepProperties.js
 var require_deepProperties2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepProperties.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepProperties.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24489,9 +24489,9 @@ var require_deepProperties2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepRequired.js
 var require_deepRequired = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/deepRequired.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -24501,14 +24501,14 @@ var require_deepRequired = __commonJS({
         type: "object",
         schemaType: "array",
         code(ctx) {
-          const { schema, data: data2 } = ctx;
+          const { schema, data } = ctx;
           const props = schema.map((jp) => (0, codegen_1._)`(${getData(jp)}) === undefined`);
           ctx.fail((0, codegen_1.or)(...props));
           function getData(jsonPointer) {
             if (jsonPointer === "")
               throw new Error("empty JSON pointer not allowed");
             const segments = jsonPointer.split("/");
-            let x2 = data2;
+            let x2 = data;
             const xs = segments.map((s2, i2) => i2 ? x2 = (0, codegen_1._)`${x2}${(0, codegen_1.getProperty)(unescapeJPSegment(s2))}` : x2);
             return (0, codegen_1.and)(...xs);
           }
@@ -24527,9 +24527,9 @@ var require_deepRequired = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepRequired.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepRequired.js
 var require_deepRequired2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepRequired.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/deepRequired.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24542,9 +24542,9 @@ var require_deepRequired2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/dynamicDefaults.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/dynamicDefaults.js
 var require_dynamicDefaults = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/dynamicDefaults.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/dynamicDefaults.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var sequences = {};
@@ -24577,14 +24577,14 @@ var require_dynamicDefaults = __commonJS({
         compile(schema, _parentSchema, it) {
           if (!it.opts.useDefaults || it.compositeRule)
             return () => true;
-          const fs7 = {};
+          const fs8 = {};
           for (const key in schema)
-            fs7[key] = getDefault(schema[key]);
+            fs8[key] = getDefault(schema[key]);
           const empty = it.opts.useDefaults === "empty";
-          return (data2) => {
+          return (data) => {
             for (const prop in schema) {
-              if (data2[prop] === void 0 || empty && (data2[prop] === null || data2[prop] === "")) {
-                data2[prop] = fs7[prop]();
+              if (data[prop] === void 0 || empty && (data[prop] === null || data[prop] === "")) {
+                data[prop] = fs8[prop]();
               }
             }
             return true;
@@ -24631,9 +24631,9 @@ var require_dynamicDefaults = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/dynamicDefaults.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/dynamicDefaults.js
 var require_dynamicDefaults2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/dynamicDefaults.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/dynamicDefaults.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24646,9 +24646,9 @@ var require_dynamicDefaults2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/select.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/select.js
 var require_select = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/definitions/select.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/definitions/select.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -24712,9 +24712,9 @@ var require_select = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/select.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/select.js
 var require_select2 = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/select.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/select.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24730,9 +24730,9 @@ var require_select2 = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/index.js
 var require_keywords = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/keywords/index.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/keywords/index.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24777,9 +24777,9 @@ var require_keywords = __commonJS({
   }
 });
 
-// ../packages/clis/parser/node_modules/ajv-keywords/dist/index.js
+// ../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/index.js
 var require_dist = __commonJS({
-  "../packages/clis/parser/node_modules/ajv-keywords/dist/index.js"(exports2, module2) {
+  "../../../../ext/maps/packages/clis/parser/node_modules/ajv-keywords/dist/index.js"(exports2, module2) {
     "use strict";
     var __importDefault = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
@@ -24813,9 +24813,9 @@ var require_dist = __commonJS({
   }
 });
 
-// ../node_modules/dxtn/DXTUtils.js
+// ../../../../ext/maps/node_modules/dxtn/DXTUtils.js
 var require_DXTUtils = __commonJS({
-  "../node_modules/dxtn/DXTUtils.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/dxtn/DXTUtils.js"(exports2, module2) {
     module2.exports = {
       generateDXT1Lookup(colorValue0, colorValue1, out = null) {
         let color0 = this.getComponentsFromRGB565(colorValue0);
@@ -24909,16 +24909,16 @@ var require_DXTUtils = __commonJS({
           B: ((color & 31) << 3) / 255
         };
       },
-      makeRGB565(r5, g3, b2) {
-        return (r5 & 248) << 8 | (g3 & 252) << 3 | (b2 & 248) >> 3;
+      makeRGB565(r4, g3, b2) {
+        return (r4 & 248) << 8 | (g3 & 252) << 3 | (b2 & 248) >> 3;
       }
     };
   }
 });
 
-// ../node_modules/dxtn/DXT.js
+// ../../../../ext/maps/node_modules/dxtn/DXT.js
 var require_DXT = __commonJS({
-  "../node_modules/dxtn/DXT.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/dxtn/DXT.js"(exports2, module2) {
     var DXT1BlockSize = 8;
     var DXT3BlockSize = 16;
     var DXT5BlockSize = 16;
@@ -24940,17 +24940,17 @@ var require_DXT = __commonJS({
       let minA = 255;
       let maxA = 0;
       for (let i2 = 0; i2 < pixels.length; i2 += 4) {
-        let r5 = pixels[i2 + 0];
+        let r4 = pixels[i2 + 0];
         let g3 = pixels[i2 + 1];
         let b2 = pixels[i2 + 2];
         let a2 = pixels[i2 + 3];
         if (a2 < minA) minA = a2;
         if (a2 > maxA) maxA = a2;
         if (a2 == 0) continue;
-        if (r5 > maxR) maxR = r5;
+        if (r4 > maxR) maxR = r4;
         if (g3 > maxG) maxG = g3;
         if (b2 > maxB) maxB = b2;
-        if (r5 < minR) minR = r5;
+        if (r4 < minR) minR = r4;
         if (g3 < minG) minG = g3;
         if (b2 < minB) minB = b2;
       }
@@ -25036,16 +25036,16 @@ var require_DXT = __commonJS({
       out[7] = (out567 & 16711680) >> 16;
       return out;
     }
-    function decompressBlockDXT1(data2, outArray = null) {
-      if (data2.length != DXT1BlockSize) return false;
-      const cVal0 = (data2[1] << 8) + data2[0];
-      const cVal1 = (data2[3] << 8) + data2[2];
+    function decompressBlockDXT1(data, outArray = null) {
+      if (data.length != DXT1BlockSize) return false;
+      const cVal0 = (data[1] << 8) + data[0];
+      const cVal1 = (data[3] << 8) + data[2];
       const lookup = DXTUtils.generateDXT1Lookup(cVal0, cVal1);
       const out = outArray || new Uint8Array(RGBABlockSize);
       for (let i2 = 0; i2 < 16; i2++) {
         let bitOffset = i2 * 2;
         let byte = 4 + Math.floor(bitOffset / 8);
-        let bits = data2[byte] >> bitOffset % 8 & 3;
+        let bits = data[byte] >> bitOffset % 8 & 3;
         out[i2 * 4 + 0] = lookup[bits * 4 + 0];
         out[i2 * 4 + 1] = lookup[bits * 4 + 1];
         out[i2 * 4 + 2] = lookup[bits * 4 + 2];
@@ -25053,37 +25053,37 @@ var require_DXT = __commonJS({
       }
       return out;
     }
-    function decompressBlockDXT3(data2, outArray = null) {
+    function decompressBlockDXT3(data, outArray = null) {
       const out = outArray || new Uint8Array(RGBABlockSize);
-      decompressBlockDXT1(data2.slice(8, 16), out);
+      decompressBlockDXT1(data.slice(8, 16), out);
       for (let i2 = 0; i2 < 8; i2++) {
-        out[i2 * 8 + 3] = (data2[i2] & 15) << 4;
-        out[i2 * 8 + 7] = data2[i2] & 240;
+        out[i2 * 8 + 3] = (data[i2] & 15) << 4;
+        out[i2 * 8 + 7] = data[i2] & 240;
       }
       return out;
     }
-    function decompressBlockDXT5(data2, outArray = null) {
+    function decompressBlockDXT5(data, outArray = null) {
       const out = outArray || new Uint8Array(RGBABlockSize);
-      decompressBlockDXT1(data2.slice(8, 16), out);
-      let alpha0 = data2[0];
-      let alpha1 = data2[1];
+      decompressBlockDXT1(data.slice(8, 16), out);
+      let alpha0 = data[0];
+      let alpha1 = data[1];
       let alphaLookup = DXTUtils.generateDXT5AlphaLookup(alpha0, alpha1, alphaLookupBuffer);
-      out[31] = alphaLookup[(data2[4] & 224) >> 5];
-      out[27] = alphaLookup[(data2[4] & 28) >> 2];
-      out[23] = alphaLookup[((data2[4] & 3) << 1) + ((data2[3] & 128) >> 7)];
-      out[19] = alphaLookup[(data2[3] & 112) >> 4];
-      out[15] = alphaLookup[(data2[3] & 14) >> 1];
-      out[11] = alphaLookup[((data2[3] & 1) << 2) + ((data2[2] & 192) >> 6)];
-      out[7] = alphaLookup[(data2[2] & 56) >> 3];
-      out[3] = alphaLookup[(data2[2] & 7) >> 0];
-      out[63] = alphaLookup[(data2[7] & 224) >> 5];
-      out[59] = alphaLookup[(data2[7] & 28) >> 2];
-      out[55] = alphaLookup[((data2[7] & 3) << 1) + ((data2[6] & 128) >> 7)];
-      out[51] = alphaLookup[(data2[6] & 112) >> 4];
-      out[47] = alphaLookup[(data2[6] & 14) >> 1];
-      out[43] = alphaLookup[((data2[6] & 1) << 2) + ((data2[5] & 192) >> 6)];
-      out[39] = alphaLookup[(data2[5] & 56) >> 3];
-      out[35] = alphaLookup[(data2[5] & 7) >> 0];
+      out[31] = alphaLookup[(data[4] & 224) >> 5];
+      out[27] = alphaLookup[(data[4] & 28) >> 2];
+      out[23] = alphaLookup[((data[4] & 3) << 1) + ((data[3] & 128) >> 7)];
+      out[19] = alphaLookup[(data[3] & 112) >> 4];
+      out[15] = alphaLookup[(data[3] & 14) >> 1];
+      out[11] = alphaLookup[((data[3] & 1) << 2) + ((data[2] & 192) >> 6)];
+      out[7] = alphaLookup[(data[2] & 56) >> 3];
+      out[3] = alphaLookup[(data[2] & 7) >> 0];
+      out[63] = alphaLookup[(data[7] & 224) >> 5];
+      out[59] = alphaLookup[(data[7] & 28) >> 2];
+      out[55] = alphaLookup[((data[7] & 3) << 1) + ((data[6] & 128) >> 7)];
+      out[51] = alphaLookup[(data[6] & 112) >> 4];
+      out[47] = alphaLookup[(data[6] & 14) >> 1];
+      out[43] = alphaLookup[((data[6] & 1) << 2) + ((data[5] & 192) >> 6)];
+      out[39] = alphaLookup[(data[5] & 56) >> 3];
+      out[35] = alphaLookup[(data[5] & 7) >> 0];
       return out;
     }
     function compress(width, height, pixels, compression) {
@@ -25120,18 +25120,18 @@ var require_DXT = __commonJS({
       }
       return buffer;
     }
-    function decompress(width, height, data2, compression) {
+    function decompress(width, height, data, compression) {
       if (width % BlockWidth != 0) throw new Error("Width of the texture must be divisible by 4");
       if (height % BlockHeight != 0) throw new Error("Height of the texture must be divisible by 4");
       if (width < BlockWidth || height < BlockHeight) throw new Error("Size of the texture is to small");
       let w2 = width / BlockWidth;
       let h2 = height / BlockHeight;
       let blockNumber = w2 * h2;
-      if (blockNumber * compression.blockSize != data2.length) throw new Error("Data does not match dimensions");
+      if (blockNumber * compression.blockSize != data.length) throw new Error("Data does not match dimensions");
       let out = new Uint8Array(width * height * 4);
       let blockBuffer = new Uint8Array(RGBABlockSize);
       for (let i2 = 0; i2 < blockNumber; i2++) {
-        let decompressed = compression.blockDecompressMethod(data2.slice(i2 * compression.blockSize, (i2 + 1) * compression.blockSize), blockBuffer);
+        let decompressed = compression.blockDecompressMethod(data.slice(i2 * compression.blockSize, (i2 + 1) * compression.blockSize), blockBuffer);
         let pixelX = i2 % w2 * 4;
         let pixelY = Math.floor(i2 / w2) * 4;
         let j = 0;
@@ -25157,8 +25157,8 @@ var require_DXT = __commonJS({
             blockCompressMethod: compressBlockDXT1
           });
         },
-        decompress(width, height, data2) {
-          return decompress(width, height, data2, {
+        decompress(width, height, data) {
+          return decompress(width, height, data, {
             blockSize: DXT1BlockSize,
             blockDecompressMethod: decompressBlockDXT1
           });
@@ -25171,8 +25171,8 @@ var require_DXT = __commonJS({
             blockCompressMethod: compressBlockDXT3
           });
         },
-        decompress(width, height, data2) {
-          return decompress(width, height, data2, {
+        decompress(width, height, data) {
+          return decompress(width, height, data, {
             blockSize: DXT3BlockSize,
             blockDecompressMethod: decompressBlockDXT3
           });
@@ -25185,8 +25185,8 @@ var require_DXT = __commonJS({
             blockCompressMethod: compressBlockDXT5
           });
         },
-        decompress(width, height, data2) {
-          return decompress(width, height, data2, {
+        decompress(width, height, data) {
+          return decompress(width, height, data, {
             blockSize: DXT5BlockSize,
             blockDecompressMethod: decompressBlockDXT5
           });
@@ -25196,9 +25196,9 @@ var require_DXT = __commonJS({
   }
 });
 
-// ../node_modules/dxtn/index.js
+// ../../../../ext/maps/node_modules/dxtn/index.js
 var require_dxtn = __commonJS({
-  "../node_modules/dxtn/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/dxtn/index.js"(exports2, module2) {
     var DXT = require_DXT();
     function compressDXT1(width, height, rgba8888) {
       return DXT.DXT1.compress(width, height, rgba8888);
@@ -25232,7 +25232,6 @@ var require_dxtn = __commonJS({
 // bindings-shim.js
 var require_bindings_shim = __commonJS({
   "bindings-shim.js"(exports2, module2) {
-    "use strict";
     var { city64: city643 } = require_cityhash();
     module2.exports = (name) => name === "cityhash" ? { city64: (s2) => city643(s2) } : { gdeflate() {
       return -1;
@@ -25240,9 +25239,9 @@ var require_bindings_shim = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/util/constants.js
+// ../../../../ext/maps/node_modules/adm-zip/util/constants.js
 var require_constants3 = __commonJS({
-  "../node_modules/adm-zip/util/constants.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/util/constants.js"(exports2, module2) {
     module2.exports = {
       /* The local file header */
       LOCHDR: 30,
@@ -25459,9 +25458,9 @@ var require_constants3 = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/util/errors.js
+// ../../../../ext/maps/node_modules/adm-zip/util/errors.js
 var require_errors2 = __commonJS({
-  "../node_modules/adm-zip/util/errors.js"(exports2) {
+  "../../../../ext/maps/node_modules/adm-zip/util/errors.js"(exports2) {
     var errors = {
       /* Header error messages */
       INVALID_LOC: "Invalid LOC header (bad signature)",
@@ -25522,9 +25521,9 @@ var require_errors2 = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/util/utils.js
+// ../../../../ext/maps/node_modules/adm-zip/util/utils.js
 var require_utils2 = __commonJS({
-  "../node_modules/adm-zip/util/utils.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/util/utils.js"(exports2, module2) {
     var fsystem = require("fs");
     var pth = require("path");
     var Constants = require_constants3();
@@ -25573,25 +25572,25 @@ var require_utils2 = __commonJS({
       }
       mkdirSync(folder);
     };
-    Utils.prototype.writeFileTo = function(path7, content, overwrite, attr) {
+    Utils.prototype.writeFileTo = function(path8, content, overwrite, attr) {
       const self2 = this;
-      if (self2.fs.existsSync(path7)) {
+      if (self2.fs.existsSync(path8)) {
         if (!overwrite) return false;
-        var stat = self2.fs.statSync(path7);
+        var stat = self2.fs.statSync(path8);
         if (stat.isDirectory()) {
           return false;
         }
       }
-      var folder = pth.dirname(path7);
+      var folder = pth.dirname(path8);
       if (!self2.fs.existsSync(folder)) {
         self2.makeDir(folder);
       }
       var fd;
       try {
-        fd = self2.fs.openSync(path7, "w", 438);
+        fd = self2.fs.openSync(path8, "w", 438);
       } catch (e2) {
-        self2.fs.chmodSync(path7, 438);
-        fd = self2.fs.openSync(path7, "w", 438);
+        self2.fs.chmodSync(path8, 438);
+        fd = self2.fs.openSync(path8, "w", 438);
       }
       if (fd) {
         try {
@@ -25600,22 +25599,22 @@ var require_utils2 = __commonJS({
           self2.fs.closeSync(fd);
         }
       }
-      self2.fs.chmodSync(path7, attr || 438);
+      self2.fs.chmodSync(path8, attr || 438);
       return true;
     };
-    Utils.prototype.writeFileToAsync = function(path7, content, overwrite, attr, callback) {
+    Utils.prototype.writeFileToAsync = function(path8, content, overwrite, attr, callback) {
       if (typeof attr === "function") {
         callback = attr;
         attr = void 0;
       }
       const self2 = this;
-      self2.fs.exists(path7, function(exist) {
+      self2.fs.exists(path8, function(exist) {
         if (exist && !overwrite) return callback(false);
-        self2.fs.stat(path7, function(err, stat) {
+        self2.fs.stat(path8, function(err, stat) {
           if (exist && stat && stat.isDirectory()) {
             return callback(false);
           }
-          var folder = pth.dirname(path7);
+          var folder = pth.dirname(path8);
           self2.fs.exists(folder, function(exists) {
             if (!exists) {
               try {
@@ -25628,16 +25627,16 @@ var require_utils2 = __commonJS({
               self2.fs.write(fd, content, 0, content.length, 0, function(writeErr) {
                 self2.fs.close(fd, function() {
                   if (writeErr) return callback(false);
-                  self2.fs.chmod(path7, attr || 438, function() {
+                  self2.fs.chmod(path8, attr || 438, function() {
                     callback(true);
                   });
                 });
               });
             };
-            self2.fs.open(path7, "w", 438, function(err2, fd) {
+            self2.fs.open(path8, "w", 438, function(err2, fd) {
               if (err2) {
-                self2.fs.chmod(path7, 438, function() {
-                  self2.fs.open(path7, "w", 438, function(retryErr, fd2) {
+                self2.fs.chmod(path8, 438, function() {
+                  self2.fs.open(path8, "w", 438, function(retryErr, fd2) {
                     if (retryErr || !fd2) return callback(false);
                     writeToFd(fd2);
                   });
@@ -25673,10 +25672,10 @@ var require_utils2 = __commonJS({
         if (stat.isSymbolicLink()) throw Errors.FILE_IN_THE_WAY(`"${cur}"`);
       }
     };
-    Utils.prototype.findFiles = function(path7) {
+    Utils.prototype.findFiles = function(path8) {
       const self2 = this;
       const canLstat = typeof self2.fs.lstatSync === "function";
-      const rootReal = self2.fs.realpathSync(path7);
+      const rootReal = self2.fs.realpathSync(path8);
       function escapesRoot(p) {
         if (!canLstat) return false;
         if (!self2.fs.lstatSync(p).isSymbolicLink()) return false;
@@ -25695,23 +25694,23 @@ var require_utils2 = __commonJS({
         }
         let files = [];
         self2.fs.readdirSync(dir).forEach(function(file) {
-          const path8 = pth.join(dir, file);
-          if (escapesRoot(path8)) return;
-          const stat = self2.fs.statSync(path8);
-          if (!pattern || pattern.test(path8)) {
-            files.push(pth.normalize(path8) + (stat.isDirectory() ? self2.sep : ""));
+          const path9 = pth.join(dir, file);
+          if (escapesRoot(path9)) return;
+          const stat = self2.fs.statSync(path9);
+          if (!pattern || pattern.test(path9)) {
+            files.push(pth.normalize(path9) + (stat.isDirectory() ? self2.sep : ""));
           }
           if (stat.isDirectory() && recursive) {
-            const realDir = self2.fs.realpathSync(path8);
+            const realDir = self2.fs.realpathSync(path9);
             if (!visited.has(realDir)) {
               visited.add(realDir);
-              files = files.concat(findSync(path8, pattern, recursive, visited));
+              files = files.concat(findSync(path9, pattern, recursive, visited));
             }
           }
         });
         return files;
       }
-      return findSync(path7, void 0, true, /* @__PURE__ */ new Set([rootReal]));
+      return findSync(path8, void 0, true, /* @__PURE__ */ new Set([rootReal]));
     };
     Utils.prototype.findFilesAsync = function(dir, cb) {
       const self2 = this;
@@ -25808,14 +25807,14 @@ var require_utils2 = __commonJS({
           return "UNSUPPORTED (" + method + ")";
       }
     };
-    Utils.canonical = function(path7) {
-      if (!path7) return "";
-      const safeSuffix = pth.posix.normalize("/" + path7.split("\\").join("/"));
+    Utils.canonical = function(path8) {
+      if (!path8) return "";
+      const safeSuffix = pth.posix.normalize("/" + path8.split("\\").join("/"));
       return pth.join(".", safeSuffix);
     };
-    Utils.zipnamefix = function(path7) {
-      if (!path7) return "";
-      const safeSuffix = pth.posix.normalize("/" + path7.split("\\").join("/"));
+    Utils.zipnamefix = function(path8) {
+      if (!path8) return "";
+      const safeSuffix = pth.posix.normalize("/" + path8.split("\\").join("/"));
       return pth.posix.join(".", safeSuffix);
     };
     Utils.findLast = function(arr, callback) {
@@ -25832,9 +25831,9 @@ var require_utils2 = __commonJS({
       prefix = pth.resolve(pth.normalize(prefix));
       var parts = name.split("/");
       for (var i2 = 0, l2 = parts.length; i2 < l2; i2++) {
-        var path7 = pth.normalize(pth.join(prefix, parts.slice(i2, l2).join(pth.sep)));
-        if (path7 === prefix || path7.startsWith(prefix + pth.sep)) {
-          return path7;
+        var path8 = pth.normalize(pth.join(prefix, parts.slice(i2, l2).join(pth.sep)));
+        if (path8 === prefix || path8.startsWith(prefix + pth.sep)) {
+          return path8;
         }
       }
       return pth.normalize(pth.join(prefix, pth.basename(name)));
@@ -25880,12 +25879,12 @@ var require_utils2 = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/util/fattr.js
+// ../../../../ext/maps/node_modules/adm-zip/util/fattr.js
 var require_fattr = __commonJS({
-  "../node_modules/adm-zip/util/fattr.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/util/fattr.js"(exports2, module2) {
     var pth = require("path");
-    module2.exports = function(path7, { fs: fs7 }) {
-      var _path = path7 || "", _obj = newAttr(), _stat = null;
+    module2.exports = function(path8, { fs: fs8 }) {
+      var _path = path8 || "", _obj = newAttr(), _stat = null;
       function newAttr() {
         return {
           directory: false,
@@ -25896,8 +25895,8 @@ var require_fattr = __commonJS({
           atime: 0
         };
       }
-      if (_path && fs7.existsSync(_path)) {
-        _stat = fs7.statSync(_path);
+      if (_path && fs8.existsSync(_path)) {
+        _stat = fs8.statSync(_path);
         _obj.directory = _stat.isDirectory();
         _obj.mtime = _stat.mtime;
         _obj.atime = _stat.atime;
@@ -25949,20 +25948,20 @@ var require_fattr = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/util/decoder.js
+// ../../../../ext/maps/node_modules/adm-zip/util/decoder.js
 var require_decoder = __commonJS({
-  "../node_modules/adm-zip/util/decoder.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/util/decoder.js"(exports2, module2) {
     module2.exports = {
       efs: true,
-      encode: (data2) => Buffer.from(data2, "utf8"),
-      decode: (data2) => data2.toString("utf8")
+      encode: (data) => Buffer.from(data, "utf8"),
+      decode: (data) => data.toString("utf8")
     };
   }
 });
 
-// ../node_modules/adm-zip/util/index.js
+// ../../../../ext/maps/node_modules/adm-zip/util/index.js
 var require_util3 = __commonJS({
-  "../node_modules/adm-zip/util/index.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/util/index.js"(exports2, module2) {
     module2.exports = require_utils2();
     module2.exports.Constants = require_constants3();
     module2.exports.Errors = require_errors2();
@@ -25971,9 +25970,9 @@ var require_util3 = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/headers/entryHeader.js
+// ../../../../ext/maps/node_modules/adm-zip/headers/entryHeader.js
 var require_entryHeader = __commonJS({
-  "../node_modules/adm-zip/headers/entryHeader.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/headers/entryHeader.js"(exports2, module2) {
     var Utils = require_util3();
     var Constants = Utils.Constants;
     module2.exports = function() {
@@ -26142,77 +26141,77 @@ var require_entryHeader = __commonJS({
           if (_offset < 0 || _offset + Constants.LOCHDR > input.length) {
             throw Utils.Errors.INVALID_LOC();
           }
-          var data2 = input.slice(_offset, _offset + Constants.LOCHDR);
-          if (data2.readUInt32LE(0) !== Constants.LOCSIG) {
+          var data = input.slice(_offset, _offset + Constants.LOCHDR);
+          if (data.readUInt32LE(0) !== Constants.LOCSIG) {
             throw Utils.Errors.INVALID_LOC();
           }
-          _localHeader.version = data2.readUInt16LE(Constants.LOCVER);
-          _localHeader.flags = data2.readUInt16LE(Constants.LOCFLG);
+          _localHeader.version = data.readUInt16LE(Constants.LOCVER);
+          _localHeader.flags = data.readUInt16LE(Constants.LOCFLG);
           _localHeader.flags_desc = (_localHeader.flags & Constants.FLG_DESC) > 0;
-          _localHeader.method = data2.readUInt16LE(Constants.LOCHOW);
-          _localHeader.time = data2.readUInt32LE(Constants.LOCTIM);
-          _localHeader.crc = data2.readUInt32LE(Constants.LOCCRC);
-          _localHeader.compressedSize = data2.readUInt32LE(Constants.LOCSIZ);
-          _localHeader.size = data2.readUInt32LE(Constants.LOCLEN);
-          _localHeader.fnameLen = data2.readUInt16LE(Constants.LOCNAM);
-          _localHeader.extraLen = data2.readUInt16LE(Constants.LOCEXT);
+          _localHeader.method = data.readUInt16LE(Constants.LOCHOW);
+          _localHeader.time = data.readUInt32LE(Constants.LOCTIM);
+          _localHeader.crc = data.readUInt32LE(Constants.LOCCRC);
+          _localHeader.compressedSize = data.readUInt32LE(Constants.LOCSIZ);
+          _localHeader.size = data.readUInt32LE(Constants.LOCLEN);
+          _localHeader.fnameLen = data.readUInt16LE(Constants.LOCNAM);
+          _localHeader.extraLen = data.readUInt16LE(Constants.LOCEXT);
           const extraStart = _offset + Constants.LOCHDR + _localHeader.fnameLen;
           const extraEnd = extraStart + _localHeader.extraLen;
           return input.slice(extraStart, extraEnd);
         },
-        loadFromBinary: function(data2) {
-          if (data2.length !== Constants.CENHDR || data2.readUInt32LE(0) !== Constants.CENSIG) {
+        loadFromBinary: function(data) {
+          if (data.length !== Constants.CENHDR || data.readUInt32LE(0) !== Constants.CENSIG) {
             throw Utils.Errors.INVALID_CEN();
           }
-          _verMade = data2.readUInt16LE(Constants.CENVEM);
-          _version = data2.readUInt16LE(Constants.CENVER);
-          _flags = data2.readUInt16LE(Constants.CENFLG);
-          _method = data2.readUInt16LE(Constants.CENHOW);
-          _time = data2.readUInt32LE(Constants.CENTIM);
-          _crc = data2.readUInt32LE(Constants.CENCRC);
-          _compressedSize = data2.readUInt32LE(Constants.CENSIZ);
-          _size = data2.readUInt32LE(Constants.CENLEN);
-          _fnameLen = data2.readUInt16LE(Constants.CENNAM);
-          _extraLen = data2.readUInt16LE(Constants.CENEXT);
-          _comLen = data2.readUInt16LE(Constants.CENCOM);
-          _diskStart = data2.readUInt16LE(Constants.CENDSK);
-          _inattr = data2.readUInt16LE(Constants.CENATT);
-          _attr = data2.readUInt32LE(Constants.CENATX);
-          _offset = data2.readUInt32LE(Constants.CENOFF);
+          _verMade = data.readUInt16LE(Constants.CENVEM);
+          _version = data.readUInt16LE(Constants.CENVER);
+          _flags = data.readUInt16LE(Constants.CENFLG);
+          _method = data.readUInt16LE(Constants.CENHOW);
+          _time = data.readUInt32LE(Constants.CENTIM);
+          _crc = data.readUInt32LE(Constants.CENCRC);
+          _compressedSize = data.readUInt32LE(Constants.CENSIZ);
+          _size = data.readUInt32LE(Constants.CENLEN);
+          _fnameLen = data.readUInt16LE(Constants.CENNAM);
+          _extraLen = data.readUInt16LE(Constants.CENEXT);
+          _comLen = data.readUInt16LE(Constants.CENCOM);
+          _diskStart = data.readUInt16LE(Constants.CENDSK);
+          _inattr = data.readUInt16LE(Constants.CENATT);
+          _attr = data.readUInt32LE(Constants.CENATX);
+          _offset = data.readUInt32LE(Constants.CENOFF);
         },
         localHeaderToBinary: function() {
-          var data2 = Buffer.alloc(Constants.LOCHDR);
-          data2.writeUInt32LE(Constants.LOCSIG, 0);
-          data2.writeUInt16LE(_version, Constants.LOCVER);
-          data2.writeUInt16LE(_flags & ~Constants.FLG_DESC, Constants.LOCFLG);
-          data2.writeUInt16LE(_method, Constants.LOCHOW);
-          data2.writeUInt32LE(_time, Constants.LOCTIM);
-          data2.writeUInt32LE(_crc, Constants.LOCCRC);
-          data2.writeUInt32LE(_compressedSize, Constants.LOCSIZ);
-          data2.writeUInt32LE(_size, Constants.LOCLEN);
-          data2.writeUInt16LE(_fnameLen, Constants.LOCNAM);
-          data2.writeUInt16LE(_localHeader.extraLen, Constants.LOCEXT);
-          return data2;
+          var data = Buffer.alloc(Constants.LOCHDR);
+          data.writeUInt32LE(Constants.LOCSIG, 0);
+          data.writeUInt16LE(_version, Constants.LOCVER);
+          data.writeUInt16LE(_flags & ~Constants.FLG_DESC, Constants.LOCFLG);
+          data.writeUInt16LE(_method, Constants.LOCHOW);
+          data.writeUInt32LE(_time, Constants.LOCTIM);
+          data.writeUInt32LE(_crc, Constants.LOCCRC);
+          data.writeUInt32LE(_compressedSize, Constants.LOCSIZ);
+          data.writeUInt32LE(_size, Constants.LOCLEN);
+          data.writeUInt16LE(_fnameLen, Constants.LOCNAM);
+          data.writeUInt16LE(_localHeader.extraLen, Constants.LOCEXT);
+          return data;
         },
         centralHeaderToBinary: function() {
-          var data2 = Buffer.alloc(Constants.CENHDR + _fnameLen + _extraLen + _comLen);
-          data2.writeUInt32LE(Constants.CENSIG, 0);
-          data2.writeUInt16LE(_verMade, Constants.CENVEM);
-          data2.writeUInt16LE(_version, Constants.CENVER);
-          data2.writeUInt16LE(_flags & ~Constants.FLG_DESC, Constants.CENFLG);
-          data2.writeUInt16LE(_method, Constants.CENHOW);
-          data2.writeUInt32LE(_time, Constants.CENTIM);
-          data2.writeUInt32LE(_crc, Constants.CENCRC);
-          data2.writeUInt32LE(_compressedSize, Constants.CENSIZ);
-          data2.writeUInt32LE(_size, Constants.CENLEN);
-          data2.writeUInt16LE(_fnameLen, Constants.CENNAM);
-          data2.writeUInt16LE(_extraLen, Constants.CENEXT);
-          data2.writeUInt16LE(_comLen, Constants.CENCOM);
-          data2.writeUInt16LE(_diskStart, Constants.CENDSK);
-          data2.writeUInt16LE(_inattr, Constants.CENATT);
-          data2.writeUInt32LE(_attr, Constants.CENATX);
-          data2.writeUInt32LE(_offset, Constants.CENOFF);
-          return data2;
+          var data = Buffer.alloc(Constants.CENHDR + _fnameLen + _extraLen + _comLen);
+          data.writeUInt32LE(Constants.CENSIG, 0);
+          data.writeUInt16LE(_verMade, Constants.CENVEM);
+          data.writeUInt16LE(_version, Constants.CENVER);
+          data.writeUInt16LE(_flags & ~Constants.FLG_DESC, Constants.CENFLG);
+          data.writeUInt16LE(_method, Constants.CENHOW);
+          data.writeUInt32LE(_time, Constants.CENTIM);
+          data.writeUInt32LE(_crc, Constants.CENCRC);
+          data.writeUInt32LE(_compressedSize, Constants.CENSIZ);
+          data.writeUInt32LE(_size, Constants.CENLEN);
+          data.writeUInt16LE(_fnameLen, Constants.CENNAM);
+          data.writeUInt16LE(_extraLen, Constants.CENEXT);
+          data.writeUInt16LE(_comLen, Constants.CENCOM);
+          data.writeUInt16LE(_diskStart, Constants.CENDSK);
+          data.writeUInt16LE(_inattr, Constants.CENATT);
+          data.writeUInt32LE(_attr, Constants.CENATX);
+          data.writeUInt32LE(_offset, Constants.CENOFF);
+          return data;
         },
         toJSON: function() {
           const bytes = function(nr) {
@@ -26245,9 +26244,9 @@ var require_entryHeader = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/headers/mainHeader.js
+// ../../../../ext/maps/node_modules/adm-zip/headers/mainHeader.js
 var require_mainHeader = __commonJS({
-  "../node_modules/adm-zip/headers/mainHeader.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/headers/mainHeader.js"(exports2, module2) {
     var Utils = require_util3();
     var Constants = Utils.Constants;
     module2.exports = function() {
@@ -26287,21 +26286,21 @@ var require_mainHeader = __commonJS({
         get mainHeaderSize() {
           return (needsZip64() ? Constants.ZIP64HDR + Constants.END64HDR : 0) + Constants.ENDHDR + _commentLength;
         },
-        loadFromBinary: function(data2) {
-          if ((data2.length !== Constants.ENDHDR || data2.readUInt32LE(0) !== Constants.ENDSIG) && (data2.length < Constants.ZIP64HDR || data2.readUInt32LE(0) !== Constants.ZIP64SIG)) {
+        loadFromBinary: function(data) {
+          if ((data.length !== Constants.ENDHDR || data.readUInt32LE(0) !== Constants.ENDSIG) && (data.length < Constants.ZIP64HDR || data.readUInt32LE(0) !== Constants.ZIP64SIG)) {
             throw Utils.Errors.INVALID_END();
           }
-          if (data2.readUInt32LE(0) === Constants.ENDSIG) {
-            _volumeEntries = data2.readUInt16LE(Constants.ENDSUB);
-            _totalEntries = data2.readUInt16LE(Constants.ENDTOT);
-            _size = data2.readUInt32LE(Constants.ENDSIZ);
-            _offset = data2.readUInt32LE(Constants.ENDOFF);
-            _commentLength = data2.readUInt16LE(Constants.ENDCOM);
+          if (data.readUInt32LE(0) === Constants.ENDSIG) {
+            _volumeEntries = data.readUInt16LE(Constants.ENDSUB);
+            _totalEntries = data.readUInt16LE(Constants.ENDTOT);
+            _size = data.readUInt32LE(Constants.ENDSIZ);
+            _offset = data.readUInt32LE(Constants.ENDOFF);
+            _commentLength = data.readUInt16LE(Constants.ENDCOM);
           } else {
-            _volumeEntries = Utils.readBigUInt64LE(data2, Constants.ZIP64SUB);
-            _totalEntries = Utils.readBigUInt64LE(data2, Constants.ZIP64TOT);
-            _size = Utils.readBigUInt64LE(data2, Constants.ZIP64SIZB);
-            _offset = Utils.readBigUInt64LE(data2, Constants.ZIP64OFF);
+            _volumeEntries = Utils.readBigUInt64LE(data, Constants.ZIP64SUB);
+            _totalEntries = Utils.readBigUInt64LE(data, Constants.ZIP64TOT);
+            _size = Utils.readBigUInt64LE(data, Constants.ZIP64SIZB);
+            _offset = Utils.readBigUInt64LE(data, Constants.ZIP64OFF);
             _commentLength = 0;
           }
         },
@@ -26369,17 +26368,17 @@ var require_mainHeader = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/headers/index.js
+// ../../../../ext/maps/node_modules/adm-zip/headers/index.js
 var require_headers = __commonJS({
-  "../node_modules/adm-zip/headers/index.js"(exports2) {
+  "../../../../ext/maps/node_modules/adm-zip/headers/index.js"(exports2) {
     exports2.EntryHeader = require_entryHeader();
     exports2.MainHeader = require_mainHeader();
   }
 });
 
-// ../node_modules/adm-zip/methods/deflater.js
+// ../../../../ext/maps/node_modules/adm-zip/methods/deflater.js
 var require_deflater = __commonJS({
-  "../node_modules/adm-zip/methods/deflater.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/methods/deflater.js"(exports2, module2) {
     module2.exports = function(inbuf) {
       var zlib2 = require("zlib");
       var opts = { chunkSize: (parseInt(inbuf.length / 1024) + 1) * 1024 };
@@ -26389,9 +26388,9 @@ var require_deflater = __commonJS({
         },
         deflateAsync: function(callback) {
           var tmp = zlib2.createDeflateRaw(opts), parts = [], total = 0;
-          tmp.on("data", function(data2) {
-            parts.push(data2);
-            total += data2.length;
+          tmp.on("data", function(data) {
+            parts.push(data);
+            total += data.length;
           });
           tmp.on("end", function() {
             var buf = Buffer.alloc(total), written = 0;
@@ -26410,9 +26409,9 @@ var require_deflater = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/methods/inflater.js
+// ../../../../ext/maps/node_modules/adm-zip/methods/inflater.js
 var require_inflater = __commonJS({
-  "../node_modules/adm-zip/methods/inflater.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/methods/inflater.js"(exports2, module2) {
     var version = +(process?.versions?.node ?? "").split(".")[0] || 0;
     var Errors = require_errors2();
     module2.exports = function(inbuf, expectedLength) {
@@ -26434,13 +26433,13 @@ var require_inflater = __commonJS({
           tmp.on("error", function(err) {
             fail(err);
           });
-          tmp.on("data", function(data2) {
+          tmp.on("data", function(data) {
             if (done) return;
-            total += data2.length;
+            total += data.length;
             if (total > maxOutputLength) {
               return fail(Errors.MAX_OUTPUT_EXCEEDED());
             }
-            parts.push(data2);
+            parts.push(data);
           });
           tmp.on("end", function() {
             if (done) return;
@@ -26461,9 +26460,9 @@ var require_inflater = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/methods/zipcrypto.js
+// ../../../../ext/maps/node_modules/adm-zip/methods/zipcrypto.js
 var require_zipcrypto = __commonJS({
-  "../node_modules/adm-zip/methods/zipcrypto.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/methods/zipcrypto.js"(exports2, module2) {
     "use strict";
     var { randomFillSync } = require("crypto");
     var Errors = require_errors2();
@@ -26518,10 +26517,10 @@ var require_zipcrypto = __commonJS({
     };
     function make_decrypter(pwd) {
       const keys = new Initkeys(pwd);
-      return function(data2) {
-        const result = Buffer.alloc(data2.length);
+      return function(data) {
+        const result = Buffer.alloc(data.length);
         let pos = 0;
-        for (let c3 of data2) {
+        for (let c3 of data) {
           result[pos++] = keys.updateKeys(c3 ^ keys.next());
         }
         return result;
@@ -26529,9 +26528,9 @@ var require_zipcrypto = __commonJS({
     }
     function make_encrypter(pwd) {
       const keys = new Initkeys(pwd);
-      return function(data2, result, pos = 0) {
-        if (!result) result = Buffer.alloc(data2.length);
-        for (let c3 of data2) {
+      return function(data, result, pos = 0) {
+        if (!result) result = Buffer.alloc(data.length);
+        for (let c3 of data) {
           const k2 = keys.next();
           result[pos++] = c3 ^ k2;
           keys.updateKeys(c3);
@@ -26539,56 +26538,56 @@ var require_zipcrypto = __commonJS({
         return result;
       };
     }
-    function decrypt(data2, header, pwd) {
-      if (!data2 || !Buffer.isBuffer(data2) || data2.length < 12) {
+    function decrypt(data, header, pwd) {
+      if (!data || !Buffer.isBuffer(data) || data.length < 12) {
         return Buffer.alloc(0);
       }
       const decrypter = make_decrypter(pwd);
-      const salt = decrypter(data2.slice(0, 12));
+      const salt = decrypter(data.slice(0, 12));
       const verifyByte = (header.flags & 8) === 8 ? header.timeHighByte : header.crc >>> 24;
       if (salt[11] !== verifyByte) {
         throw Errors.WRONG_PASSWORD();
       }
-      return decrypter(data2.slice(12));
+      return decrypter(data.slice(12));
     }
-    function _salter(data2) {
-      if (Buffer.isBuffer(data2) && data2.length >= 12) {
+    function _salter(data) {
+      if (Buffer.isBuffer(data) && data.length >= 12) {
         config.genSalt = function() {
-          return data2.slice(0, 12);
+          return data.slice(0, 12);
         };
-      } else if (data2 === "node") {
+      } else if (data === "node") {
         config.genSalt = genSalt.node;
       } else {
         config.genSalt = genSalt;
       }
     }
-    function encrypt(data2, header, pwd, oldlike = false) {
-      if (data2 == null) data2 = Buffer.alloc(0);
-      if (!Buffer.isBuffer(data2)) data2 = Buffer.from(data2.toString());
+    function encrypt(data, header, pwd, oldlike = false) {
+      if (data == null) data = Buffer.alloc(0);
+      if (!Buffer.isBuffer(data)) data = Buffer.from(data.toString());
       const encrypter = make_encrypter(pwd);
       const salt = config.genSalt();
       salt[11] = header.crc >>> 24 & 255;
       if (oldlike) salt[10] = header.crc >>> 16 & 255;
-      const result = Buffer.alloc(data2.length + 12);
+      const result = Buffer.alloc(data.length + 12);
       encrypter(salt, result);
-      return encrypter(data2, result, 12);
+      return encrypter(data, result, 12);
     }
     module2.exports = { decrypt, encrypt, _salter };
   }
 });
 
-// ../node_modules/adm-zip/methods/index.js
+// ../../../../ext/maps/node_modules/adm-zip/methods/index.js
 var require_methods = __commonJS({
-  "../node_modules/adm-zip/methods/index.js"(exports2) {
+  "../../../../ext/maps/node_modules/adm-zip/methods/index.js"(exports2) {
     exports2.Deflater = require_deflater();
     exports2.Inflater = require_inflater();
     exports2.ZipCrypto = require_zipcrypto();
   }
 });
 
-// ../node_modules/adm-zip/zipEntry.js
+// ../../../../ext/maps/node_modules/adm-zip/zipEntry.js
 var require_zipEntry = __commonJS({
-  "../node_modules/adm-zip/zipEntry.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/zipEntry.js"(exports2, module2) {
     var Utils = require_util3();
     var Headers = require_headers();
     var Constants = Utils.Constants;
@@ -26610,9 +26609,9 @@ var require_zipEntry = __commonJS({
         }
         return input.slice(dataOffset, dataEnd);
       }
-      function crc32OK(data2) {
+      function crc32OK(data) {
         const expectedCrc = _centralHeader.flags_desc || _centralHeader.localHeader.flags_desc ? _centralHeader.crc : _centralHeader.localHeader.crc;
-        return Utils.crc32(data2) === expectedCrc;
+        return Utils.crc32(data) === expectedCrc;
       }
       function decompress(async, callback, pass) {
         if (typeof callback === "undefined" && typeof async === "string") {
@@ -26645,26 +26644,26 @@ var require_zipEntry = __commonJS({
           }
           throw err;
         }
-        var data2;
+        var data;
         switch (_centralHeader.method) {
           case Utils.Constants.STORED:
-            data2 = Buffer.alloc(compressedData.length);
-            compressedData.copy(data2);
-            if (!crc32OK(data2)) {
-              if (async && callback) callback(data2, Utils.Errors.BAD_CRC());
+            data = Buffer.alloc(compressedData.length);
+            compressedData.copy(data);
+            if (!crc32OK(data)) {
+              if (async && callback) callback(data, Utils.Errors.BAD_CRC());
               throw Utils.Errors.BAD_CRC();
             } else {
-              if (async && callback) callback(data2);
-              return data2;
+              if (async && callback) callback(data);
+              return data;
             }
           case Utils.Constants.DEFLATED:
             var inflater = new Methods.Inflater(compressedData, _centralHeader.size);
             if (!async) {
-              data2 = inflater.inflate();
-              if (!crc32OK(data2)) {
+              data = inflater.inflate();
+              if (!crc32OK(data)) {
                 throw Utils.Errors.BAD_CRC(`"${decoder.decode(_entryName)}"`);
               }
-              return data2;
+              return data;
             } else {
               inflater.inflateAsync(function(result, err) {
                 if (!callback) return;
@@ -26705,10 +26704,10 @@ var require_zipEntry = __commonJS({
                 _centralHeader.compressedSize = deflated.length;
                 return deflated;
               } else {
-                deflater.deflateAsync(function(data2) {
-                  compressedData = Buffer.alloc(data2.length);
-                  _centralHeader.compressedSize = data2.length;
-                  data2.copy(compressedData);
+                deflater.deflateAsync(function(data) {
+                  compressedData = Buffer.alloc(data.length);
+                  _centralHeader.compressedSize = data.length;
+                  data.copy(compressedData);
                   callback && callback(compressedData);
                 });
               }
@@ -26724,16 +26723,16 @@ var require_zipEntry = __commonJS({
       function readUInt64LE(buffer, offset) {
         return Utils.readBigUInt64LE(buffer, offset);
       }
-      function parseExtra(data2) {
+      function parseExtra(data) {
         try {
           var offset = 0;
           var signature, size, part;
-          while (offset + 4 < data2.length) {
-            signature = data2.readUInt16LE(offset);
+          while (offset + 4 < data.length) {
+            signature = data.readUInt16LE(offset);
             offset += 2;
-            size = data2.readUInt16LE(offset);
+            size = data.readUInt16LE(offset);
             offset += 2;
-            part = data2.slice(offset, offset + size);
+            part = data.slice(offset, offset + size);
             offset += size;
             if (Constants.ID_ZIP64 === signature) {
               parseZip64ExtendedInformation(part);
@@ -26743,28 +26742,28 @@ var require_zipEntry = __commonJS({
           throw Utils.Errors.EXTRA_FIELD_PARSE_ERROR();
         }
       }
-      function parseZip64ExtendedInformation(data2) {
+      function parseZip64ExtendedInformation(data) {
         var size, compressedSize, offset, diskNumStart;
-        if (data2.length >= Constants.EF_ZIP64_SCOMP) {
-          size = readUInt64LE(data2, Constants.EF_ZIP64_SUNCOMP);
+        if (data.length >= Constants.EF_ZIP64_SCOMP) {
+          size = readUInt64LE(data, Constants.EF_ZIP64_SUNCOMP);
           if (_centralHeader.size === Constants.EF_ZIP64_OR_32) {
             _centralHeader.size = size;
           }
         }
-        if (data2.length >= Constants.EF_ZIP64_RHO) {
-          compressedSize = readUInt64LE(data2, Constants.EF_ZIP64_SCOMP);
+        if (data.length >= Constants.EF_ZIP64_RHO) {
+          compressedSize = readUInt64LE(data, Constants.EF_ZIP64_SCOMP);
           if (_centralHeader.compressedSize === Constants.EF_ZIP64_OR_32) {
             _centralHeader.compressedSize = compressedSize;
           }
         }
-        if (data2.length >= Constants.EF_ZIP64_DSN) {
-          offset = readUInt64LE(data2, Constants.EF_ZIP64_RHO);
+        if (data.length >= Constants.EF_ZIP64_DSN) {
+          offset = readUInt64LE(data, Constants.EF_ZIP64_RHO);
           if (_centralHeader.offset === Constants.EF_ZIP64_OR_32) {
             _centralHeader.offset = offset;
           }
         }
-        if (data2.length >= Constants.EF_ZIP64_DSN + 4) {
-          diskNumStart = data2.readUInt32LE(Constants.EF_ZIP64_DSN);
+        if (data.length >= Constants.EF_ZIP64_DSN + 4) {
+          diskNumStart = data.readUInt32LE(Constants.EF_ZIP64_DSN);
           if (_centralHeader.diskNumStart === Constants.EF_ZIP64_OR_16) {
             _centralHeader.diskNumStart = diskNumStart;
           }
@@ -26850,8 +26849,8 @@ var require_zipEntry = __commonJS({
         get attr() {
           return _centralHeader.attr;
         },
-        set header(data2) {
-          _centralHeader.loadFromBinary(data2);
+        set header(data) {
+          _centralHeader.loadFromBinary(data);
         },
         get header() {
           return _centralHeader;
@@ -26904,9 +26903,9 @@ var require_zipEntry = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/zipFile.js
+// ../../../../ext/maps/node_modules/adm-zip/zipFile.js
 var require_zipFile = __commonJS({
-  "../node_modules/adm-zip/zipFile.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/zipFile.js"(exports2, module2) {
     var ZipEntry = require_zipEntry();
     var Headers = require_headers();
     var Utils = require_util3();
@@ -27253,9 +27252,9 @@ var require_zipFile = __commonJS({
   }
 });
 
-// ../node_modules/adm-zip/adm-zip.js
+// ../../../../ext/maps/node_modules/adm-zip/adm-zip.js
 var require_adm_zip = __commonJS({
-  "../node_modules/adm-zip/adm-zip.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/adm-zip/adm-zip.js"(exports2, module2) {
     var Utils = require_util3();
     var pth = require("path");
     var ZipEntry = require_zipEntry();
@@ -27324,11 +27323,11 @@ var require_adm_zip = __commonJS({
       }
       function filenameFilter(filterfn) {
         if (filterfn instanceof RegExp) {
-          return /* @__PURE__ */ function(rx) {
+          return /* @__PURE__ */ (function(rx) {
             return function(filename) {
               return rx.test(filename);
             };
-          }(filterfn);
+          })(filterfn);
         } else if ("function" !== typeof filterfn) {
           return () => true;
         }
@@ -27386,9 +27385,9 @@ var require_adm_zip = __commonJS({
         readAsText: function(entry, encoding) {
           var item = getEntry(entry);
           if (item) {
-            var data2 = item.getData();
-            if (data2 && data2.length) {
-              return data2.toString(encoding || "utf8");
+            var data = item.getData();
+            if (data && data.length) {
+              return data.toString(encoding || "utf8");
             }
           }
           return "";
@@ -27404,13 +27403,13 @@ var require_adm_zip = __commonJS({
         readAsTextAsync: function(entry, callback, encoding) {
           var item = getEntry(entry);
           if (item) {
-            item.getDataAsync(function(data2, err) {
+            item.getDataAsync(function(data, err) {
               if (err) {
-                callback(data2, err);
+                callback(data, err);
                 return;
               }
-              if (data2 && data2.length) {
-                callback(data2.toString(encoding || "utf8"));
+              if (data && data.length) {
+                callback(data.toString(encoding || "utf8"));
               } else {
                 callback("");
               }
@@ -27512,9 +27511,9 @@ var require_adm_zip = __commonJS({
             const p = pth.win32.basename(pth.win32.normalize(localPath));
             zipPath += zipName ? zipName : p;
             const _attr = filetools.fs.statSync(localPath);
-            const data2 = _attr.isFile() ? filetools.fs.readFileSync(localPath) : Buffer.alloc(0);
+            const data = _attr.isFile() ? filetools.fs.readFileSync(localPath) : Buffer.alloc(0);
             if (_attr.isDirectory()) zipPath += filetools.sep;
-            this.addFile(zipPath, data2, comment, _attr);
+            this.addFile(zipPath, data, comment, _attr);
           } else {
             throw Utils.Errors.FILE_NOT_FOUND(localPath);
           }
@@ -27548,9 +27547,9 @@ var require_adm_zip = __commonJS({
             const p = pth.win32.basename(pth.win32.normalize(localPath));
             zipPath += zipName ? zipName : p;
             if (stats.isFile()) {
-              filetools.fs.readFile(localPath, function(err2, data2) {
+              filetools.fs.readFile(localPath, function(err2, data) {
                 if (err2) return callback(err2, false);
-                self2.addFile(zipPath, data2, comment, stats);
+                self2.addFile(zipPath, data, comment, stats);
                 return setImmediate(callback, void 0, true);
               });
             } else if (stats.isDirectory()) {
@@ -27617,11 +27616,11 @@ var require_adm_zip = __commonJS({
                     filetools.fs.stat(filepath, function(er0, stats) {
                       if (er0) callback(void 0, er0);
                       if (stats.isFile()) {
-                        filetools.fs.readFile(filepath, function(er1, data2) {
+                        filetools.fs.readFile(filepath, function(er1, data) {
                           if (er1) {
                             callback(void 0, er1);
                           } else {
-                            self2.addFile(zipPath + p, data2, "", stats);
+                            self2.addFile(zipPath + p, data, "", stats);
                             next();
                           }
                         });
@@ -27660,11 +27659,11 @@ var require_adm_zip = __commonJS({
           const localPath = pth.resolve(options2.localPath);
           let { zipPath, filter, namefix } = options2;
           if (filter instanceof RegExp) {
-            filter = /* @__PURE__ */ function(rx) {
+            filter = /* @__PURE__ */ (function(rx) {
               return function(filename) {
                 return rx.test(filename);
               };
-            }(filter);
+            })(filter);
           } else if ("function" !== typeof filter) {
             filter = function() {
               return true;
@@ -28069,12 +28068,12 @@ var require_adm_zip = __commonJS({
   }
 });
 
-// ../node_modules/proj4/dist/proj4-src.js
+// ../../../../ext/maps/node_modules/proj4/dist/proj4-src.js
 var require_proj4_src = __commonJS({
-  "../node_modules/proj4/dist/proj4-src.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/proj4/dist/proj4-src.js"(exports2, module2) {
     (function(global2, factory) {
       typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : global2.proj4 = factory();
-    })(exports2, function() {
+    })(exports2, (function() {
       "use strict";
       var globals = function(defs2) {
         defs2("EPSG:4326", "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
@@ -29439,8 +29438,8 @@ var require_proj4_src = __commonJS({
         return out;
       }
       var loadedNadgrids = {};
-      function nadgrid(key2, data2) {
-        var view = new DataView(data2);
+      function nadgrid(key2, data) {
+        var view = new DataView(data);
         var isLittleEndian = detectLittleEndian(view);
         var header = readHeader(view, isLittleEndian);
         var subgrids = readSubgrids(view, header, isLittleEndian);
@@ -29526,8 +29525,8 @@ var require_proj4_src = __commonJS({
         return grids;
       }
       function mapNodes(nodes) {
-        return nodes.map(function(r5) {
-          return [secondsToRadians(r5.longitudeShift), secondsToRadians(r5.latitudeShift)];
+        return nodes.map(function(r4) {
+          return [secondsToRadians(r4.longitudeShift), secondsToRadians(r4.latitudeShift)];
         });
       }
       function readGridHeader(view, offset, isLittleEndian) {
@@ -30226,7 +30225,7 @@ var require_proj4_src = __commonJS({
         var k0 = 0.9996;
         var LongOrigin;
         var eccPrimeSquared;
-        var N3, T4, C3, A5, M2;
+        var N3, T3, C3, A5, M2;
         var LatRad = degToRad(Lat);
         var LongRad = degToRad(Long);
         var LongOriginRad;
@@ -30253,12 +30252,12 @@ var require_proj4_src = __commonJS({
         LongOriginRad = degToRad(LongOrigin);
         eccPrimeSquared = eccSquared / (1 - eccSquared);
         N3 = a2 / Math.sqrt(1 - eccSquared * Math.sin(LatRad) * Math.sin(LatRad));
-        T4 = Math.tan(LatRad) * Math.tan(LatRad);
+        T3 = Math.tan(LatRad) * Math.tan(LatRad);
         C3 = eccPrimeSquared * Math.cos(LatRad) * Math.cos(LatRad);
         A5 = Math.cos(LatRad) * (LongRad - LongOriginRad);
         M2 = a2 * ((1 - eccSquared / 4 - 3 * eccSquared * eccSquared / 64 - 5 * eccSquared * eccSquared * eccSquared / 256) * LatRad - (3 * eccSquared / 8 + 3 * eccSquared * eccSquared / 32 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(2 * LatRad) + (15 * eccSquared * eccSquared / 256 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(4 * LatRad) - 35 * eccSquared * eccSquared * eccSquared / 3072 * Math.sin(6 * LatRad));
-        var UTMEasting = k0 * N3 * (A5 + (1 - T4 + C3) * A5 * A5 * A5 / 6 + (5 - 18 * T4 + T4 * T4 + 72 * C3 - 58 * eccPrimeSquared) * A5 * A5 * A5 * A5 * A5 / 120) + 5e5;
-        var UTMNorthing = k0 * (M2 + N3 * Math.tan(LatRad) * (A5 * A5 / 2 + (5 - T4 + 9 * C3 + 4 * C3 * C3) * A5 * A5 * A5 * A5 / 24 + (61 - 58 * T4 + T4 * T4 + 600 * C3 - 330 * eccPrimeSquared) * A5 * A5 * A5 * A5 * A5 * A5 / 720));
+        var UTMEasting = k0 * N3 * (A5 + (1 - T3 + C3) * A5 * A5 * A5 / 6 + (5 - 18 * T3 + T3 * T3 + 72 * C3 - 58 * eccPrimeSquared) * A5 * A5 * A5 * A5 * A5 / 120) + 5e5;
+        var UTMNorthing = k0 * (M2 + N3 * Math.tan(LatRad) * (A5 * A5 / 2 + (5 - T3 + 9 * C3 + 4 * C3 * C3) * A5 * A5 * A5 * A5 / 24 + (61 - 58 * T3 + T3 * T3 + 600 * C3 - 330 * eccPrimeSquared) * A5 * A5 * A5 * A5 * A5 * A5 / 720));
         if (Lat < 0) {
           UTMNorthing += 1e7;
         }
@@ -30794,9 +30793,9 @@ var require_proj4_src = __commonJS({
         names: names$3
       };
       var sinh = function(x2) {
-        var r5 = Math.exp(x2);
-        r5 = (r5 - 1 / r5) / 2;
-        return r5;
+        var r4 = Math.exp(x2);
+        r4 = (r4 - 1 / r4) / 2;
+        return r4;
       };
       var hypot = function(x2, y3) {
         x2 = Math.abs(x2);
@@ -30829,29 +30828,29 @@ var require_proj4_src = __commonJS({
         return B2 + h3 * Math.sin(2 * B2);
       };
       var clens = function(pp, arg_r) {
-        var r5 = 2 * Math.cos(arg_r);
+        var r4 = 2 * Math.cos(arg_r);
         var i2 = pp.length - 1;
         var hr1 = pp[i2];
         var hr2 = 0;
         var hr;
         while (--i2 >= 0) {
-          hr = -hr2 + r5 * hr1 + pp[i2];
+          hr = -hr2 + r4 * hr1 + pp[i2];
           hr2 = hr1;
           hr1 = hr;
         }
         return Math.sin(arg_r) * hr;
       };
       var cosh = function(x2) {
-        var r5 = Math.exp(x2);
-        r5 = (r5 + 1 / r5) / 2;
-        return r5;
+        var r4 = Math.exp(x2);
+        r4 = (r4 + 1 / r4) / 2;
+        return r4;
       };
       var clens_cmplx = function(pp, arg_r, arg_i) {
         var sin_arg_r = Math.sin(arg_r);
         var cos_arg_r = Math.cos(arg_r);
         var sinh_arg_i = sinh(arg_i);
         var cosh_arg_i = cosh(arg_i);
-        var r5 = 2 * cos_arg_r * cosh_arg_i;
+        var r4 = 2 * cos_arg_r * cosh_arg_i;
         var i2 = -2 * sin_arg_r * sinh_arg_i;
         var j = pp.length - 1;
         var hr = pp[j];
@@ -30865,12 +30864,12 @@ var require_proj4_src = __commonJS({
           hi2 = hi1;
           hr1 = hr;
           hi1 = hi;
-          hr = -hr2 + r5 * hr1 - i2 * hi1 + pp[j];
-          hi = -hi2 + i2 * hr1 + r5 * hi1;
+          hr = -hr2 + r4 * hr1 - i2 * hi1 + pp[j];
+          hi = -hi2 + i2 * hr1 + r4 * hi1;
         }
-        r5 = sin_arg_r * cosh_arg_i;
+        r4 = sin_arg_r * cosh_arg_i;
         i2 = cos_arg_r * sinh_arg_i;
-        return [r5 * hr - i2 * hi, r5 * hi + i2 * hr];
+        return [r4 * hr - i2 * hi, r4 * hi + i2 * hr];
       };
       function init$3() {
         if (!this.approx && (isNaN(this.es) || this.es <= 0)) {
@@ -31432,15 +31431,15 @@ var require_proj4_src = __commonJS({
       }
       function forward$8(p) {
         var coords = {};
-        var S3, T4, U, V3, W2, temp, u3, v2;
+        var S3, T3, U, V3, W2, temp, u3, v2;
         p.x = p.x - this.lam0;
         if (Math.abs(Math.abs(p.y) - HALF_PI) > EPSLN) {
           W2 = this.E / Math.pow(tsfnz(this.e, p.y, Math.sin(p.y)), this.B);
           temp = 1 / W2;
           S3 = 0.5 * (W2 - temp);
-          T4 = 0.5 * (W2 + temp);
+          T3 = 0.5 * (W2 + temp);
           V3 = Math.sin(this.B * p.x);
-          U = (S3 * this.singam - V3 * this.cosgam) / T4;
+          U = (S3 * this.singam - V3 * this.cosgam) / T3;
           if (Math.abs(Math.abs(U) - 1) < EPSLN) {
             throw new Error();
           }
@@ -33250,7 +33249,7 @@ var require_proj4_src = __commonJS({
             theta = lon > 0 ? -lon + SPI : -lon - SPI;
           }
         } else {
-          var q2, r5, s2;
+          var q2, r4, s2;
           var sinlat, coslat;
           var sinlon, coslon;
           if (this.face === FACE_ENUM.RIGHT) {
@@ -33265,19 +33264,19 @@ var require_proj4_src = __commonJS({
           sinlon = Math.sin(lon);
           coslon = Math.cos(lon);
           q2 = coslat * coslon;
-          r5 = coslat * sinlon;
+          r4 = coslat * sinlon;
           s2 = sinlat;
           if (this.face === FACE_ENUM.FRONT) {
             phi = Math.acos(q2);
-            theta = qsc_fwd_equat_face_theta(phi, s2, r5, area);
+            theta = qsc_fwd_equat_face_theta(phi, s2, r4, area);
           } else if (this.face === FACE_ENUM.RIGHT) {
-            phi = Math.acos(r5);
+            phi = Math.acos(r4);
             theta = qsc_fwd_equat_face_theta(phi, s2, -q2, area);
           } else if (this.face === FACE_ENUM.BACK) {
             phi = Math.acos(-q2);
-            theta = qsc_fwd_equat_face_theta(phi, s2, -r5, area);
+            theta = qsc_fwd_equat_face_theta(phi, s2, -r4, area);
           } else if (this.face === FACE_ENUM.LEFT) {
-            phi = Math.acos(-r5);
+            phi = Math.acos(-r4);
             theta = qsc_fwd_equat_face_theta(phi, s2, q2, area);
           } else {
             phi = theta = 0;
@@ -33359,7 +33358,7 @@ var require_proj4_src = __commonJS({
             lp.lam = theta < 0 ? -theta - SPI : -theta + SPI;
           }
         } else {
-          var q2, r5, s2;
+          var q2, r4, s2;
           q2 = cosphi;
           t2 = q2 * q2;
           if (t2 >= 1) {
@@ -33369,36 +33368,36 @@ var require_proj4_src = __commonJS({
           }
           t2 += s2 * s2;
           if (t2 >= 1) {
-            r5 = 0;
+            r4 = 0;
           } else {
-            r5 = Math.sqrt(1 - t2);
+            r4 = Math.sqrt(1 - t2);
           }
           if (area.value === AREA_ENUM.AREA_1) {
-            t2 = r5;
-            r5 = -s2;
+            t2 = r4;
+            r4 = -s2;
             s2 = t2;
           } else if (area.value === AREA_ENUM.AREA_2) {
-            r5 = -r5;
+            r4 = -r4;
             s2 = -s2;
           } else if (area.value === AREA_ENUM.AREA_3) {
-            t2 = r5;
-            r5 = s2;
+            t2 = r4;
+            r4 = s2;
             s2 = -t2;
           }
           if (this.face === FACE_ENUM.RIGHT) {
             t2 = q2;
-            q2 = -r5;
-            r5 = t2;
+            q2 = -r4;
+            r4 = t2;
           } else if (this.face === FACE_ENUM.BACK) {
             q2 = -q2;
-            r5 = -r5;
+            r4 = -r4;
           } else if (this.face === FACE_ENUM.LEFT) {
             t2 = q2;
-            q2 = r5;
-            r5 = -t2;
+            q2 = r4;
+            r4 = -t2;
           }
           lp.phi = Math.acos(-s2) - HALF_PI;
-          lp.lam = Math.atan2(r5, q2);
+          lp.lam = Math.atan2(r4, q2);
           if (this.face === FACE_ENUM.RIGHT) {
             lp.lam = qsc_shift_lon_origin(lp.lam, -HALF_PI);
           } else if (this.face === FACE_ENUM.BACK) {
@@ -33720,7 +33719,7 @@ var require_proj4_src = __commonJS({
       function inverse$29(p) {
         p.x /= this.a;
         p.y /= this.a;
-        var r5 = { x: p.x, y: p.y };
+        var r4 = { x: p.x, y: p.y };
         var bm, bq, yt;
         yt = 1 / (this.pn1 - p.y * this.sw);
         bm = this.pn1 * p.x * yt;
@@ -33729,8 +33728,8 @@ var require_proj4_src = __commonJS({
         p.y = bq * this.cg - bm * this.sg;
         var rh = hypot(p.x, p.y);
         if (Math.abs(rh) < EPSLN) {
-          r5.x = 0;
-          r5.y = p.y;
+          r4.x = 0;
+          r4.y = p.y;
         } else {
           var cosz, sinz;
           sinz = 1 - rh * rh * this.pfact;
@@ -33738,27 +33737,27 @@ var require_proj4_src = __commonJS({
           cosz = Math.sqrt(1 - sinz * sinz);
           switch (this.mode) {
             case mode.OBLIQ:
-              r5.y = Math.asin(cosz * this.sinph0 + p.y * sinz * this.cosph0 / rh);
-              p.y = (cosz - this.sinph0 * Math.sin(r5.y)) * rh;
+              r4.y = Math.asin(cosz * this.sinph0 + p.y * sinz * this.cosph0 / rh);
+              p.y = (cosz - this.sinph0 * Math.sin(r4.y)) * rh;
               p.x *= sinz * this.cosph0;
               break;
             case mode.EQUIT:
-              r5.y = Math.asin(p.y * sinz / rh);
+              r4.y = Math.asin(p.y * sinz / rh);
               p.y = cosz * rh;
               p.x *= sinz;
               break;
             case mode.N_POLE:
-              r5.y = Math.asin(cosz);
+              r4.y = Math.asin(cosz);
               p.y = -p.y;
               break;
             case mode.S_POLE:
-              r5.y = -Math.asin(cosz);
+              r4.y = -Math.asin(cosz);
               break;
           }
-          r5.x = Math.atan2(p.x, p.y);
+          r4.x = Math.atan2(p.x, p.y);
         }
-        p.x = r5.x + this.long0;
-        p.y = r5.y;
+        p.x = r4.x + this.long0;
+        p.y = r4.y;
         return p;
       }
       var names$31 = ["Tilted_Perspective", "tpers"];
@@ -33801,10 +33800,10 @@ var require_proj4_src = __commonJS({
         lon = lon - this.long0;
         if (this.shape === "ellipse") {
           lat = Math.atan(this.radius_p2 * Math.tan(lat));
-          var r5 = this.radius_p / hypot(this.radius_p * Math.cos(lat), Math.sin(lat));
-          v_x = r5 * Math.cos(lon) * Math.cos(lat);
-          v_y = r5 * Math.sin(lon) * Math.cos(lat);
-          v_z = r5 * Math.sin(lat);
+          var r4 = this.radius_p / hypot(this.radius_p * Math.cos(lat), Math.sin(lat));
+          v_x = r4 * Math.cos(lon) * Math.cos(lat);
+          v_y = r4 * Math.sin(lon) * Math.cos(lat);
+          v_z = r4 * Math.sin(lat);
           if ((this.radius_g - v_x) * v_x - v_y * v_y - v_z * v_z * this.radius_p_inv2 < 0) {
             p.x = Number.NaN;
             p.y = Number.NaN;
@@ -34088,21 +34087,21 @@ var require_proj4_src = __commonJS({
       proj4$1.version = "2.15.0";
       includedProjections(proj4$1);
       return proj4$1;
-    });
+    }));
   }
 });
 
-// ../node_modules/tinyqueue/tinyqueue.js
+// ../../../../ext/maps/node_modules/tinyqueue/tinyqueue.js
 var require_tinyqueue = __commonJS({
-  "../node_modules/tinyqueue/tinyqueue.js"(exports2, module2) {
+  "../../../../ext/maps/node_modules/tinyqueue/tinyqueue.js"(exports2, module2) {
     (function(global2, factory) {
       typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global2 = global2 || self, global2.TinyQueue = factory());
     })(exports2, function() {
       "use strict";
-      var TinyQueue = function TinyQueue2(data2, compare) {
-        if (data2 === void 0) data2 = [];
+      var TinyQueue = function TinyQueue2(data, compare) {
+        if (data === void 0) data = [];
         if (compare === void 0) compare = defaultCompare2;
-        this.data = data2;
+        this.data = data;
         this.length = this.data.length;
         this.compare = compare;
         if (this.length > 0) {
@@ -34134,41 +34133,41 @@ var require_tinyqueue = __commonJS({
       };
       TinyQueue.prototype._up = function _up(pos) {
         var ref = this;
-        var data2 = ref.data;
+        var data = ref.data;
         var compare = ref.compare;
-        var item = data2[pos];
+        var item = data[pos];
         while (pos > 0) {
           var parent = pos - 1 >> 1;
-          var current = data2[parent];
+          var current = data[parent];
           if (compare(item, current) >= 0) {
             break;
           }
-          data2[pos] = current;
+          data[pos] = current;
           pos = parent;
         }
-        data2[pos] = item;
+        data[pos] = item;
       };
       TinyQueue.prototype._down = function _down(pos) {
         var ref = this;
-        var data2 = ref.data;
+        var data = ref.data;
         var compare = ref.compare;
         var halfLength = this.length >> 1;
-        var item = data2[pos];
+        var item = data[pos];
         while (pos < halfLength) {
           var left = (pos << 1) + 1;
-          var best = data2[left];
+          var best = data[left];
           var right = left + 1;
-          if (right < this.length && compare(data2[right], best) < 0) {
+          if (right < this.length && compare(data[right], best) < 0) {
             left = right;
-            best = data2[right];
+            best = data[right];
           }
           if (compare(best, item) >= 0) {
             break;
           }
-          data2[pos] = best;
+          data[pos] = best;
           pos = left;
         }
-        data2[pos] = item;
+        data[pos] = item;
       };
       function defaultCompare2(a2, b2) {
         return a2 < b2 ? -1 : a2 > b2 ? 1 : 0;
@@ -34178,17 +34177,2104 @@ var require_tinyqueue = __commonJS({
   }
 });
 
+// node_modules/geojson-vt/geojson-vt-dev.js
+var require_geojson_vt_dev = __commonJS({
+  "node_modules/geojson-vt/geojson-vt-dev.js"(exports2, module2) {
+    (function(global2, factory) {
+      typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : global2.geojsonvt = factory();
+    })(exports2, (function() {
+      "use strict";
+      function simplify(coords, first, last, sqTolerance) {
+        var maxSqDist = sqTolerance;
+        var mid = last - first >> 1;
+        var minPosToMid = last - first;
+        var index;
+        var ax = coords[first];
+        var ay = coords[first + 1];
+        var bx = coords[last];
+        var by = coords[last + 1];
+        for (var i2 = first + 3; i2 < last; i2 += 3) {
+          var d2 = getSqSegDist(coords[i2], coords[i2 + 1], ax, ay, bx, by);
+          if (d2 > maxSqDist) {
+            index = i2;
+            maxSqDist = d2;
+          } else if (d2 === maxSqDist) {
+            var posToMid = Math.abs(i2 - mid);
+            if (posToMid < minPosToMid) {
+              index = i2;
+              minPosToMid = posToMid;
+            }
+          }
+        }
+        if (maxSqDist > sqTolerance) {
+          if (index - first > 3) simplify(coords, first, index, sqTolerance);
+          coords[index + 2] = maxSqDist;
+          if (last - index > 3) simplify(coords, index, last, sqTolerance);
+        }
+      }
+      function getSqSegDist(px, py, x2, y3, bx, by) {
+        var dx = bx - x2;
+        var dy = by - y3;
+        if (dx !== 0 || dy !== 0) {
+          var t2 = ((px - x2) * dx + (py - y3) * dy) / (dx * dx + dy * dy);
+          if (t2 > 1) {
+            x2 = bx;
+            y3 = by;
+          } else if (t2 > 0) {
+            x2 += dx * t2;
+            y3 += dy * t2;
+          }
+        }
+        dx = px - x2;
+        dy = py - y3;
+        return dx * dx + dy * dy;
+      }
+      function createFeature(id, type, geom, tags) {
+        var feature2 = {
+          id: typeof id === "undefined" ? null : id,
+          type,
+          geometry: geom,
+          tags,
+          minX: Infinity,
+          minY: Infinity,
+          maxX: -Infinity,
+          maxY: -Infinity
+        };
+        calcBBox2(feature2);
+        return feature2;
+      }
+      function calcBBox2(feature2) {
+        var geom = feature2.geometry;
+        var type = feature2.type;
+        if (type === "Point" || type === "MultiPoint" || type === "LineString") {
+          calcLineBBox(feature2, geom);
+        } else if (type === "Polygon" || type === "MultiLineString") {
+          for (var i2 = 0; i2 < geom.length; i2++) {
+            calcLineBBox(feature2, geom[i2]);
+          }
+        } else if (type === "MultiPolygon") {
+          for (i2 = 0; i2 < geom.length; i2++) {
+            for (var j = 0; j < geom[i2].length; j++) {
+              calcLineBBox(feature2, geom[i2][j]);
+            }
+          }
+        }
+      }
+      function calcLineBBox(feature2, geom) {
+        for (var i2 = 0; i2 < geom.length; i2 += 3) {
+          feature2.minX = Math.min(feature2.minX, geom[i2]);
+          feature2.minY = Math.min(feature2.minY, geom[i2 + 1]);
+          feature2.maxX = Math.max(feature2.maxX, geom[i2]);
+          feature2.maxY = Math.max(feature2.maxY, geom[i2 + 1]);
+        }
+      }
+      function convert(data, options) {
+        var features = [];
+        if (data.type === "FeatureCollection") {
+          for (var i2 = 0; i2 < data.features.length; i2++) {
+            convertFeature(features, data.features[i2], options, i2);
+          }
+        } else if (data.type === "Feature") {
+          convertFeature(features, data, options);
+        } else {
+          convertFeature(features, { geometry: data }, options);
+        }
+        return features;
+      }
+      function convertFeature(features, geojson, options, index) {
+        if (!geojson.geometry) return;
+        var coords = geojson.geometry.coordinates;
+        var type = geojson.geometry.type;
+        var tolerance = Math.pow(options.tolerance / ((1 << options.maxZoom) * options.extent), 2);
+        var geometry = [];
+        var id = geojson.id;
+        if (options.promoteId) {
+          id = geojson.properties[options.promoteId];
+        } else if (options.generateId) {
+          id = index || 0;
+        }
+        if (type === "Point") {
+          convertPoint(coords, geometry);
+        } else if (type === "MultiPoint") {
+          for (var i2 = 0; i2 < coords.length; i2++) {
+            convertPoint(coords[i2], geometry);
+          }
+        } else if (type === "LineString") {
+          convertLine(coords, geometry, tolerance, false);
+        } else if (type === "MultiLineString") {
+          if (options.lineMetrics) {
+            for (i2 = 0; i2 < coords.length; i2++) {
+              geometry = [];
+              convertLine(coords[i2], geometry, tolerance, false);
+              features.push(createFeature(id, "LineString", geometry, geojson.properties));
+            }
+            return;
+          } else {
+            convertLines(coords, geometry, tolerance, false);
+          }
+        } else if (type === "Polygon") {
+          convertLines(coords, geometry, tolerance, true);
+        } else if (type === "MultiPolygon") {
+          for (i2 = 0; i2 < coords.length; i2++) {
+            var polygon2 = [];
+            convertLines(coords[i2], polygon2, tolerance, true);
+            geometry.push(polygon2);
+          }
+        } else if (type === "GeometryCollection") {
+          for (i2 = 0; i2 < geojson.geometry.geometries.length; i2++) {
+            convertFeature(features, {
+              id,
+              geometry: geojson.geometry.geometries[i2],
+              properties: geojson.properties
+            }, options, index);
+          }
+          return;
+        } else {
+          throw new Error("Input data is not a valid GeoJSON object.");
+        }
+        features.push(createFeature(id, type, geometry, geojson.properties));
+      }
+      function convertPoint(coords, out) {
+        out.push(projectX(coords[0]));
+        out.push(projectY(coords[1]));
+        out.push(0);
+      }
+      function convertLine(ring, out, tolerance, isPolygon) {
+        var x0, y0;
+        var size = 0;
+        for (var j = 0; j < ring.length; j++) {
+          var x2 = projectX(ring[j][0]);
+          var y3 = projectY(ring[j][1]);
+          out.push(x2);
+          out.push(y3);
+          out.push(0);
+          if (j > 0) {
+            if (isPolygon) {
+              size += (x0 * y3 - x2 * y0) / 2;
+            } else {
+              size += Math.sqrt(Math.pow(x2 - x0, 2) + Math.pow(y3 - y0, 2));
+            }
+          }
+          x0 = x2;
+          y0 = y3;
+        }
+        var last = out.length - 3;
+        out[2] = 1;
+        simplify(out, 0, last, tolerance);
+        out[last + 2] = 1;
+        out.size = Math.abs(size);
+        out.start = 0;
+        out.end = out.size;
+      }
+      function convertLines(rings, out, tolerance, isPolygon) {
+        for (var i2 = 0; i2 < rings.length; i2++) {
+          var geom = [];
+          convertLine(rings[i2], geom, tolerance, isPolygon);
+          out.push(geom);
+        }
+      }
+      function projectX(x2) {
+        return x2 / 360 + 0.5;
+      }
+      function projectY(y3) {
+        var sin = Math.sin(y3 * Math.PI / 180);
+        var y22 = 0.5 - 0.25 * Math.log((1 + sin) / (1 - sin)) / Math.PI;
+        return y22 < 0 ? 0 : y22 > 1 ? 1 : y22;
+      }
+      function clip(features, scale2, k1, k2, axis, minAll, maxAll, options) {
+        k1 /= scale2;
+        k2 /= scale2;
+        if (minAll >= k1 && maxAll < k2) return features;
+        else if (maxAll < k1 || minAll >= k2) return null;
+        var clipped = [];
+        for (var i2 = 0; i2 < features.length; i2++) {
+          var feature2 = features[i2];
+          var geometry = feature2.geometry;
+          var type = feature2.type;
+          var min = axis === 0 ? feature2.minX : feature2.minY;
+          var max = axis === 0 ? feature2.maxX : feature2.maxY;
+          if (min >= k1 && max < k2) {
+            clipped.push(feature2);
+            continue;
+          } else if (max < k1 || min >= k2) {
+            continue;
+          }
+          var newGeometry = [];
+          if (type === "Point" || type === "MultiPoint") {
+            clipPoints(geometry, newGeometry, k1, k2, axis);
+          } else if (type === "LineString") {
+            clipLine(geometry, newGeometry, k1, k2, axis, false, options.lineMetrics);
+          } else if (type === "MultiLineString") {
+            clipLines(geometry, newGeometry, k1, k2, axis, false);
+          } else if (type === "Polygon") {
+            clipLines(geometry, newGeometry, k1, k2, axis, true);
+          } else if (type === "MultiPolygon") {
+            for (var j = 0; j < geometry.length; j++) {
+              var polygon2 = [];
+              clipLines(geometry[j], polygon2, k1, k2, axis, true);
+              if (polygon2.length) {
+                newGeometry.push(polygon2);
+              }
+            }
+          }
+          if (newGeometry.length) {
+            if (options.lineMetrics && type === "LineString") {
+              for (j = 0; j < newGeometry.length; j++) {
+                clipped.push(createFeature(feature2.id, type, newGeometry[j], feature2.tags));
+              }
+              continue;
+            }
+            if (type === "LineString" || type === "MultiLineString") {
+              if (newGeometry.length === 1) {
+                type = "LineString";
+                newGeometry = newGeometry[0];
+              } else {
+                type = "MultiLineString";
+              }
+            }
+            if (type === "Point" || type === "MultiPoint") {
+              type = newGeometry.length === 3 ? "Point" : "MultiPoint";
+            }
+            clipped.push(createFeature(feature2.id, type, newGeometry, feature2.tags));
+          }
+        }
+        return clipped.length ? clipped : null;
+      }
+      function clipPoints(geom, newGeom, k1, k2, axis) {
+        for (var i2 = 0; i2 < geom.length; i2 += 3) {
+          var a2 = geom[i2 + axis];
+          if (a2 >= k1 && a2 <= k2) {
+            newGeom.push(geom[i2]);
+            newGeom.push(geom[i2 + 1]);
+            newGeom.push(geom[i2 + 2]);
+          }
+        }
+      }
+      function clipLine(geom, newGeom, k1, k2, axis, isPolygon, trackMetrics) {
+        var slice = newSlice(geom);
+        var intersect = axis === 0 ? intersectX : intersectY;
+        var len = geom.start;
+        var segLen, t2;
+        for (var i2 = 0; i2 < geom.length - 3; i2 += 3) {
+          var ax = geom[i2];
+          var ay = geom[i2 + 1];
+          var az = geom[i2 + 2];
+          var bx = geom[i2 + 3];
+          var by = geom[i2 + 4];
+          var a2 = axis === 0 ? ax : ay;
+          var b2 = axis === 0 ? bx : by;
+          var exited = false;
+          if (trackMetrics) segLen = Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
+          if (a2 < k1) {
+            if (b2 > k1) {
+              t2 = intersect(slice, ax, ay, bx, by, k1);
+              if (trackMetrics) slice.start = len + segLen * t2;
+            }
+          } else if (a2 > k2) {
+            if (b2 < k2) {
+              t2 = intersect(slice, ax, ay, bx, by, k2);
+              if (trackMetrics) slice.start = len + segLen * t2;
+            }
+          } else {
+            addPoint(slice, ax, ay, az);
+          }
+          if (b2 < k1 && a2 >= k1) {
+            t2 = intersect(slice, ax, ay, bx, by, k1);
+            exited = true;
+          }
+          if (b2 > k2 && a2 <= k2) {
+            t2 = intersect(slice, ax, ay, bx, by, k2);
+            exited = true;
+          }
+          if (!isPolygon && exited) {
+            if (trackMetrics) slice.end = len + segLen * t2;
+            newGeom.push(slice);
+            slice = newSlice(geom);
+          }
+          if (trackMetrics) len += segLen;
+        }
+        var last = geom.length - 3;
+        ax = geom[last];
+        ay = geom[last + 1];
+        az = geom[last + 2];
+        a2 = axis === 0 ? ax : ay;
+        if (a2 >= k1 && a2 <= k2) addPoint(slice, ax, ay, az);
+        last = slice.length - 3;
+        if (isPolygon && last >= 3 && (slice[last] !== slice[0] || slice[last + 1] !== slice[1])) {
+          addPoint(slice, slice[0], slice[1], slice[2]);
+        }
+        if (slice.length) {
+          newGeom.push(slice);
+        }
+      }
+      function newSlice(line) {
+        var slice = [];
+        slice.size = line.size;
+        slice.start = line.start;
+        slice.end = line.end;
+        return slice;
+      }
+      function clipLines(geom, newGeom, k1, k2, axis, isPolygon) {
+        for (var i2 = 0; i2 < geom.length; i2++) {
+          clipLine(geom[i2], newGeom, k1, k2, axis, isPolygon, false);
+        }
+      }
+      function addPoint(out, x2, y3, z2) {
+        out.push(x2);
+        out.push(y3);
+        out.push(z2);
+      }
+      function intersectX(out, ax, ay, bx, by, x2) {
+        var t2 = (x2 - ax) / (bx - ax);
+        out.push(x2);
+        out.push(ay + (by - ay) * t2);
+        out.push(1);
+        return t2;
+      }
+      function intersectY(out, ax, ay, bx, by, y3) {
+        var t2 = (y3 - ay) / (by - ay);
+        out.push(ax + (bx - ax) * t2);
+        out.push(y3);
+        out.push(1);
+        return t2;
+      }
+      function wrap(features, options) {
+        var buffer = options.buffer / options.extent;
+        var merged = features;
+        var left = clip(features, 1, -1 - buffer, buffer, 0, -1, 2, options);
+        var right = clip(features, 1, 1 - buffer, 2 + buffer, 0, -1, 2, options);
+        if (left || right) {
+          merged = clip(features, 1, -buffer, 1 + buffer, 0, -1, 2, options) || [];
+          if (left) merged = shiftFeatureCoords(left, 1).concat(merged);
+          if (right) merged = merged.concat(shiftFeatureCoords(right, -1));
+        }
+        return merged;
+      }
+      function shiftFeatureCoords(features, offset) {
+        var newFeatures = [];
+        for (var i2 = 0; i2 < features.length; i2++) {
+          var feature2 = features[i2], type = feature2.type;
+          var newGeometry;
+          if (type === "Point" || type === "MultiPoint" || type === "LineString") {
+            newGeometry = shiftCoords(feature2.geometry, offset);
+          } else if (type === "MultiLineString" || type === "Polygon") {
+            newGeometry = [];
+            for (var j = 0; j < feature2.geometry.length; j++) {
+              newGeometry.push(shiftCoords(feature2.geometry[j], offset));
+            }
+          } else if (type === "MultiPolygon") {
+            newGeometry = [];
+            for (j = 0; j < feature2.geometry.length; j++) {
+              var newPolygon = [];
+              for (var k2 = 0; k2 < feature2.geometry[j].length; k2++) {
+                newPolygon.push(shiftCoords(feature2.geometry[j][k2], offset));
+              }
+              newGeometry.push(newPolygon);
+            }
+          }
+          newFeatures.push(createFeature(feature2.id, type, newGeometry, feature2.tags));
+        }
+        return newFeatures;
+      }
+      function shiftCoords(points, offset) {
+        var newPoints = [];
+        newPoints.size = points.size;
+        if (points.start !== void 0) {
+          newPoints.start = points.start;
+          newPoints.end = points.end;
+        }
+        for (var i2 = 0; i2 < points.length; i2 += 3) {
+          newPoints.push(points[i2] + offset, points[i2 + 1], points[i2 + 2]);
+        }
+        return newPoints;
+      }
+      function transformTile(tile, extent) {
+        if (tile.transformed) return tile;
+        var z2 = 1 << tile.z, tx = tile.x, ty = tile.y, i2, j, k2;
+        for (i2 = 0; i2 < tile.features.length; i2++) {
+          var feature2 = tile.features[i2], geom = feature2.geometry, type = feature2.type;
+          feature2.geometry = [];
+          if (type === 1) {
+            for (j = 0; j < geom.length; j += 2) {
+              feature2.geometry.push(transformPoint(geom[j], geom[j + 1], extent, z2, tx, ty));
+            }
+          } else {
+            for (j = 0; j < geom.length; j++) {
+              var ring = [];
+              for (k2 = 0; k2 < geom[j].length; k2 += 2) {
+                ring.push(transformPoint(geom[j][k2], geom[j][k2 + 1], extent, z2, tx, ty));
+              }
+              feature2.geometry.push(ring);
+            }
+          }
+        }
+        tile.transformed = true;
+        return tile;
+      }
+      function transformPoint(x2, y3, extent, z2, tx, ty) {
+        return [
+          Math.round(extent * (x2 * z2 - tx)),
+          Math.round(extent * (y3 * z2 - ty))
+        ];
+      }
+      function createTile(features, z2, tx, ty, options) {
+        var tolerance = z2 === options.maxZoom ? 0 : options.tolerance / ((1 << z2) * options.extent);
+        var tile = {
+          features: [],
+          numPoints: 0,
+          numSimplified: 0,
+          numFeatures: 0,
+          source: null,
+          x: tx,
+          y: ty,
+          z: z2,
+          transformed: false,
+          minX: 2,
+          minY: 1,
+          maxX: -1,
+          maxY: 0
+        };
+        for (var i2 = 0; i2 < features.length; i2++) {
+          tile.numFeatures++;
+          addFeature(tile, features[i2], tolerance, options);
+          var minX = features[i2].minX;
+          var minY = features[i2].minY;
+          var maxX = features[i2].maxX;
+          var maxY = features[i2].maxY;
+          if (minX < tile.minX) tile.minX = minX;
+          if (minY < tile.minY) tile.minY = minY;
+          if (maxX > tile.maxX) tile.maxX = maxX;
+          if (maxY > tile.maxY) tile.maxY = maxY;
+        }
+        return tile;
+      }
+      function addFeature(tile, feature2, tolerance, options) {
+        var geom = feature2.geometry, type = feature2.type, simplified = [];
+        if (type === "Point" || type === "MultiPoint") {
+          for (var i2 = 0; i2 < geom.length; i2 += 3) {
+            simplified.push(geom[i2]);
+            simplified.push(geom[i2 + 1]);
+            tile.numPoints++;
+            tile.numSimplified++;
+          }
+        } else if (type === "LineString") {
+          addLine(simplified, geom, tile, tolerance, false, false);
+        } else if (type === "MultiLineString" || type === "Polygon") {
+          for (i2 = 0; i2 < geom.length; i2++) {
+            addLine(simplified, geom[i2], tile, tolerance, type === "Polygon", i2 === 0);
+          }
+        } else if (type === "MultiPolygon") {
+          for (var k2 = 0; k2 < geom.length; k2++) {
+            var polygon2 = geom[k2];
+            for (i2 = 0; i2 < polygon2.length; i2++) {
+              addLine(simplified, polygon2[i2], tile, tolerance, true, i2 === 0);
+            }
+          }
+        }
+        if (simplified.length) {
+          var tags = feature2.tags || null;
+          if (type === "LineString" && options.lineMetrics) {
+            tags = {};
+            for (var key in feature2.tags) tags[key] = feature2.tags[key];
+            tags["mapbox_clip_start"] = geom.start / geom.size;
+            tags["mapbox_clip_end"] = geom.end / geom.size;
+          }
+          var tileFeature = {
+            geometry: simplified,
+            type: type === "Polygon" || type === "MultiPolygon" ? 3 : type === "LineString" || type === "MultiLineString" ? 2 : 1,
+            tags
+          };
+          if (feature2.id !== null) {
+            tileFeature.id = feature2.id;
+          }
+          tile.features.push(tileFeature);
+        }
+      }
+      function addLine(result, geom, tile, tolerance, isPolygon, isOuter) {
+        var sqTolerance = tolerance * tolerance;
+        if (tolerance > 0 && geom.size < (isPolygon ? sqTolerance : tolerance)) {
+          tile.numPoints += geom.length / 3;
+          return;
+        }
+        var ring = [];
+        for (var i2 = 0; i2 < geom.length; i2 += 3) {
+          if (tolerance === 0 || geom[i2 + 2] > sqTolerance) {
+            tile.numSimplified++;
+            ring.push(geom[i2]);
+            ring.push(geom[i2 + 1]);
+          }
+          tile.numPoints++;
+        }
+        if (isPolygon) rewind(ring, isOuter);
+        result.push(ring);
+      }
+      function rewind(ring, clockwise) {
+        var area = 0;
+        for (var i2 = 0, len = ring.length, j = len - 2; i2 < len; j = i2, i2 += 2) {
+          area += (ring[i2] - ring[j]) * (ring[i2 + 1] + ring[j + 1]);
+        }
+        if (area > 0 === clockwise) {
+          for (i2 = 0, len = ring.length; i2 < len / 2; i2 += 2) {
+            var x2 = ring[i2];
+            var y3 = ring[i2 + 1];
+            ring[i2] = ring[len - 2 - i2];
+            ring[i2 + 1] = ring[len - 1 - i2];
+            ring[len - 2 - i2] = x2;
+            ring[len - 1 - i2] = y3;
+          }
+        }
+      }
+      function geojsonvt2(data, options) {
+        return new GeoJSONVT(data, options);
+      }
+      function GeoJSONVT(data, options) {
+        options = this.options = extend2(Object.create(this.options), options);
+        var debug = options.debug;
+        if (debug) console.time("preprocess data");
+        if (options.maxZoom < 0 || options.maxZoom > 24) throw new Error("maxZoom should be in the 0-24 range");
+        if (options.promoteId && options.generateId) throw new Error("promoteId and generateId cannot be used together.");
+        var features = convert(data, options);
+        this.tiles = {};
+        this.tileCoords = [];
+        if (debug) {
+          console.timeEnd("preprocess data");
+          console.log("index: maxZoom: %d, maxPoints: %d", options.indexMaxZoom, options.indexMaxPoints);
+          console.time("generate tiles");
+          this.stats = {};
+          this.total = 0;
+        }
+        features = wrap(features, options);
+        if (features.length) this.splitTile(features, 0, 0, 0);
+        if (debug) {
+          if (features.length) console.log("features: %d, points: %d", this.tiles[0].numFeatures, this.tiles[0].numPoints);
+          console.timeEnd("generate tiles");
+          console.log("tiles generated:", this.total, JSON.stringify(this.stats));
+        }
+      }
+      GeoJSONVT.prototype.options = {
+        maxZoom: 14,
+        // max zoom to preserve detail on
+        indexMaxZoom: 5,
+        // max zoom in the tile index
+        indexMaxPoints: 1e5,
+        // max number of points per tile in the tile index
+        tolerance: 3,
+        // simplification tolerance (higher means simpler)
+        extent: 4096,
+        // tile extent
+        buffer: 64,
+        // tile buffer on each side
+        lineMetrics: false,
+        // whether to calculate line metrics
+        promoteId: null,
+        // name of a feature property to be promoted to feature.id
+        generateId: false,
+        // whether to generate feature ids. Cannot be used with promoteId
+        debug: 0
+        // logging level (0, 1 or 2)
+      };
+      GeoJSONVT.prototype.splitTile = function(features, z2, x2, y3, cz, cx, cy) {
+        var stack = [features, z2, x2, y3], options = this.options, debug = options.debug;
+        while (stack.length) {
+          y3 = stack.pop();
+          x2 = stack.pop();
+          z2 = stack.pop();
+          features = stack.pop();
+          var z22 = 1 << z2, id = toID(z2, x2, y3), tile = this.tiles[id];
+          if (!tile) {
+            if (debug > 1) console.time("creation");
+            tile = this.tiles[id] = createTile(features, z2, x2, y3, options);
+            this.tileCoords.push({ z: z2, x: x2, y: y3 });
+            if (debug) {
+              if (debug > 1) {
+                console.log(
+                  "tile z%d-%d-%d (features: %d, points: %d, simplified: %d)",
+                  z2,
+                  x2,
+                  y3,
+                  tile.numFeatures,
+                  tile.numPoints,
+                  tile.numSimplified
+                );
+                console.timeEnd("creation");
+              }
+              var key = "z" + z2;
+              this.stats[key] = (this.stats[key] || 0) + 1;
+              this.total++;
+            }
+          }
+          tile.source = features;
+          if (!cz) {
+            if (z2 === options.indexMaxZoom || tile.numPoints <= options.indexMaxPoints) continue;
+          } else {
+            if (z2 === options.maxZoom || z2 === cz) continue;
+            var m2 = 1 << cz - z2;
+            if (x2 !== Math.floor(cx / m2) || y3 !== Math.floor(cy / m2)) continue;
+          }
+          tile.source = null;
+          if (features.length === 0) continue;
+          if (debug > 1) console.time("clipping");
+          var k1 = 0.5 * options.buffer / options.extent, k2 = 0.5 - k1, k3 = 0.5 + k1, k4 = 1 + k1, tl, bl, tr, br, left, right;
+          tl = bl = tr = br = null;
+          left = clip(features, z22, x2 - k1, x2 + k3, 0, tile.minX, tile.maxX, options);
+          right = clip(features, z22, x2 + k2, x2 + k4, 0, tile.minX, tile.maxX, options);
+          features = null;
+          if (left) {
+            tl = clip(left, z22, y3 - k1, y3 + k3, 1, tile.minY, tile.maxY, options);
+            bl = clip(left, z22, y3 + k2, y3 + k4, 1, tile.minY, tile.maxY, options);
+            left = null;
+          }
+          if (right) {
+            tr = clip(right, z22, y3 - k1, y3 + k3, 1, tile.minY, tile.maxY, options);
+            br = clip(right, z22, y3 + k2, y3 + k4, 1, tile.minY, tile.maxY, options);
+            right = null;
+          }
+          if (debug > 1) console.timeEnd("clipping");
+          stack.push(tl || [], z2 + 1, x2 * 2, y3 * 2);
+          stack.push(bl || [], z2 + 1, x2 * 2, y3 * 2 + 1);
+          stack.push(tr || [], z2 + 1, x2 * 2 + 1, y3 * 2);
+          stack.push(br || [], z2 + 1, x2 * 2 + 1, y3 * 2 + 1);
+        }
+      };
+      GeoJSONVT.prototype.getTile = function(z2, x2, y3) {
+        var options = this.options, extent = options.extent, debug = options.debug;
+        if (z2 < 0 || z2 > 24) return null;
+        var z22 = 1 << z2;
+        x2 = (x2 % z22 + z22) % z22;
+        var id = toID(z2, x2, y3);
+        if (this.tiles[id]) return transformTile(this.tiles[id], extent);
+        if (debug > 1) console.log("drilling down to z%d-%d-%d", z2, x2, y3);
+        var z0 = z2, x0 = x2, y0 = y3, parent;
+        while (!parent && z0 > 0) {
+          z0--;
+          x0 = Math.floor(x0 / 2);
+          y0 = Math.floor(y0 / 2);
+          parent = this.tiles[toID(z0, x0, y0)];
+        }
+        if (!parent || !parent.source) return null;
+        if (debug > 1) console.log("found parent tile z%d-%d-%d", z0, x0, y0);
+        if (debug > 1) console.time("drilling down");
+        this.splitTile(parent.source, z0, x0, y0, z2, x2, y3);
+        if (debug > 1) console.timeEnd("drilling down");
+        return this.tiles[id] ? transformTile(this.tiles[id], extent) : null;
+      };
+      function toID(z2, x2, y3) {
+        return ((1 << z2) * y3 + x2) * 32 + z2;
+      }
+      function extend2(dest, src2) {
+        for (var i2 in src2) dest[i2] = src2[i2];
+        return dest;
+      }
+      return geojsonvt2;
+    }));
+  }
+});
+
+// node_modules/ieee754/index.js
+var require_ieee754 = __commonJS({
+  "node_modules/ieee754/index.js"(exports2) {
+    /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+    exports2.read = function(buffer, offset, isLE, mLen, nBytes) {
+      var e2, m2;
+      var eLen = nBytes * 8 - mLen - 1;
+      var eMax = (1 << eLen) - 1;
+      var eBias = eMax >> 1;
+      var nBits = -7;
+      var i2 = isLE ? nBytes - 1 : 0;
+      var d2 = isLE ? -1 : 1;
+      var s2 = buffer[offset + i2];
+      i2 += d2;
+      e2 = s2 & (1 << -nBits) - 1;
+      s2 >>= -nBits;
+      nBits += eLen;
+      for (; nBits > 0; e2 = e2 * 256 + buffer[offset + i2], i2 += d2, nBits -= 8) {
+      }
+      m2 = e2 & (1 << -nBits) - 1;
+      e2 >>= -nBits;
+      nBits += mLen;
+      for (; nBits > 0; m2 = m2 * 256 + buffer[offset + i2], i2 += d2, nBits -= 8) {
+      }
+      if (e2 === 0) {
+        e2 = 1 - eBias;
+      } else if (e2 === eMax) {
+        return m2 ? NaN : (s2 ? -1 : 1) * Infinity;
+      } else {
+        m2 = m2 + Math.pow(2, mLen);
+        e2 = e2 - eBias;
+      }
+      return (s2 ? -1 : 1) * m2 * Math.pow(2, e2 - mLen);
+    };
+    exports2.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+      var e2, m2, c3;
+      var eLen = nBytes * 8 - mLen - 1;
+      var eMax = (1 << eLen) - 1;
+      var eBias = eMax >> 1;
+      var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
+      var i2 = isLE ? 0 : nBytes - 1;
+      var d2 = isLE ? 1 : -1;
+      var s2 = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
+      value = Math.abs(value);
+      if (isNaN(value) || value === Infinity) {
+        m2 = isNaN(value) ? 1 : 0;
+        e2 = eMax;
+      } else {
+        e2 = Math.floor(Math.log(value) / Math.LN2);
+        if (value * (c3 = Math.pow(2, -e2)) < 1) {
+          e2--;
+          c3 *= 2;
+        }
+        if (e2 + eBias >= 1) {
+          value += rt / c3;
+        } else {
+          value += rt * Math.pow(2, 1 - eBias);
+        }
+        if (value * c3 >= 2) {
+          e2++;
+          c3 /= 2;
+        }
+        if (e2 + eBias >= eMax) {
+          m2 = 0;
+          e2 = eMax;
+        } else if (e2 + eBias >= 1) {
+          m2 = (value * c3 - 1) * Math.pow(2, mLen);
+          e2 = e2 + eBias;
+        } else {
+          m2 = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+          e2 = 0;
+        }
+      }
+      for (; mLen >= 8; buffer[offset + i2] = m2 & 255, i2 += d2, m2 /= 256, mLen -= 8) {
+      }
+      e2 = e2 << mLen | m2;
+      eLen += mLen;
+      for (; eLen > 0; buffer[offset + i2] = e2 & 255, i2 += d2, e2 /= 256, eLen -= 8) {
+      }
+      buffer[offset + i2 - d2] |= s2 * 128;
+    };
+  }
+});
+
+// node_modules/pbf/index.js
+var require_pbf = __commonJS({
+  "node_modules/pbf/index.js"(exports2, module2) {
+    "use strict";
+    module2.exports = Pbf;
+    var ieee754 = require_ieee754();
+    function Pbf(buf) {
+      this.buf = ArrayBuffer.isView && ArrayBuffer.isView(buf) ? buf : new Uint8Array(buf || 0);
+      this.pos = 0;
+      this.type = 0;
+      this.length = this.buf.length;
+    }
+    Pbf.Varint = 0;
+    Pbf.Fixed64 = 1;
+    Pbf.Bytes = 2;
+    Pbf.Fixed32 = 5;
+    var SHIFT_LEFT_32 = (1 << 16) * (1 << 16);
+    var SHIFT_RIGHT_32 = 1 / SHIFT_LEFT_32;
+    var TEXT_DECODER_MIN_LENGTH = 12;
+    var utf8TextDecoder = typeof TextDecoder === "undefined" ? null : new TextDecoder("utf-8");
+    Pbf.prototype = {
+      destroy: function() {
+        this.buf = null;
+      },
+      // === READING =================================================================
+      readFields: function(readField, result, end) {
+        end = end || this.length;
+        while (this.pos < end) {
+          var val = this.readVarint(), tag = val >> 3, startPos = this.pos;
+          this.type = val & 7;
+          readField(tag, result, this);
+          if (this.pos === startPos) this.skip(val);
+        }
+        return result;
+      },
+      readMessage: function(readField, result) {
+        return this.readFields(readField, result, this.readVarint() + this.pos);
+      },
+      readFixed32: function() {
+        var val = readUInt32(this.buf, this.pos);
+        this.pos += 4;
+        return val;
+      },
+      readSFixed32: function() {
+        var val = readInt32(this.buf, this.pos);
+        this.pos += 4;
+        return val;
+      },
+      // 64-bit int handling is based on github.com/dpw/node-buffer-more-ints (MIT-licensed)
+      readFixed64: function() {
+        var val = readUInt32(this.buf, this.pos) + readUInt32(this.buf, this.pos + 4) * SHIFT_LEFT_32;
+        this.pos += 8;
+        return val;
+      },
+      readSFixed64: function() {
+        var val = readUInt32(this.buf, this.pos) + readInt32(this.buf, this.pos + 4) * SHIFT_LEFT_32;
+        this.pos += 8;
+        return val;
+      },
+      readFloat: function() {
+        var val = ieee754.read(this.buf, this.pos, true, 23, 4);
+        this.pos += 4;
+        return val;
+      },
+      readDouble: function() {
+        var val = ieee754.read(this.buf, this.pos, true, 52, 8);
+        this.pos += 8;
+        return val;
+      },
+      readVarint: function(isSigned) {
+        var buf = this.buf, val, b2;
+        b2 = buf[this.pos++];
+        val = b2 & 127;
+        if (b2 < 128) return val;
+        b2 = buf[this.pos++];
+        val |= (b2 & 127) << 7;
+        if (b2 < 128) return val;
+        b2 = buf[this.pos++];
+        val |= (b2 & 127) << 14;
+        if (b2 < 128) return val;
+        b2 = buf[this.pos++];
+        val |= (b2 & 127) << 21;
+        if (b2 < 128) return val;
+        b2 = buf[this.pos];
+        val |= (b2 & 15) << 28;
+        return readVarintRemainder(val, isSigned, this);
+      },
+      readVarint64: function() {
+        return this.readVarint(true);
+      },
+      readSVarint: function() {
+        var num = this.readVarint();
+        return num % 2 === 1 ? (num + 1) / -2 : num / 2;
+      },
+      readBoolean: function() {
+        return Boolean(this.readVarint());
+      },
+      readString: function() {
+        var end = this.readVarint() + this.pos;
+        var pos = this.pos;
+        this.pos = end;
+        if (end - pos >= TEXT_DECODER_MIN_LENGTH && utf8TextDecoder) {
+          return readUtf8TextDecoder(this.buf, pos, end);
+        }
+        return readUtf8(this.buf, pos, end);
+      },
+      readBytes: function() {
+        var end = this.readVarint() + this.pos, buffer = this.buf.subarray(this.pos, end);
+        this.pos = end;
+        return buffer;
+      },
+      // verbose for performance reasons; doesn't affect gzipped size
+      readPackedVarint: function(arr, isSigned) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readVarint(isSigned));
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readVarint(isSigned));
+        return arr;
+      },
+      readPackedSVarint: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readSVarint());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readSVarint());
+        return arr;
+      },
+      readPackedBoolean: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readBoolean());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readBoolean());
+        return arr;
+      },
+      readPackedFloat: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readFloat());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readFloat());
+        return arr;
+      },
+      readPackedDouble: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readDouble());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readDouble());
+        return arr;
+      },
+      readPackedFixed32: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readFixed32());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readFixed32());
+        return arr;
+      },
+      readPackedSFixed32: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readSFixed32());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readSFixed32());
+        return arr;
+      },
+      readPackedFixed64: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readFixed64());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readFixed64());
+        return arr;
+      },
+      readPackedSFixed64: function(arr) {
+        if (this.type !== Pbf.Bytes) return arr.push(this.readSFixed64());
+        var end = readPackedEnd(this);
+        arr = arr || [];
+        while (this.pos < end) arr.push(this.readSFixed64());
+        return arr;
+      },
+      skip: function(val) {
+        var type = val & 7;
+        if (type === Pbf.Varint) while (this.buf[this.pos++] > 127) {
+        }
+        else if (type === Pbf.Bytes) this.pos = this.readVarint() + this.pos;
+        else if (type === Pbf.Fixed32) this.pos += 4;
+        else if (type === Pbf.Fixed64) this.pos += 8;
+        else throw new Error("Unimplemented type: " + type);
+      },
+      // === WRITING =================================================================
+      writeTag: function(tag, type) {
+        this.writeVarint(tag << 3 | type);
+      },
+      realloc: function(min) {
+        var length = this.length || 16;
+        while (length < this.pos + min) length *= 2;
+        if (length !== this.length) {
+          var buf = new Uint8Array(length);
+          buf.set(this.buf);
+          this.buf = buf;
+          this.length = length;
+        }
+      },
+      finish: function() {
+        this.length = this.pos;
+        this.pos = 0;
+        return this.buf.subarray(0, this.length);
+      },
+      writeFixed32: function(val) {
+        this.realloc(4);
+        writeInt32(this.buf, val, this.pos);
+        this.pos += 4;
+      },
+      writeSFixed32: function(val) {
+        this.realloc(4);
+        writeInt32(this.buf, val, this.pos);
+        this.pos += 4;
+      },
+      writeFixed64: function(val) {
+        this.realloc(8);
+        writeInt32(this.buf, val & -1, this.pos);
+        writeInt32(this.buf, Math.floor(val * SHIFT_RIGHT_32), this.pos + 4);
+        this.pos += 8;
+      },
+      writeSFixed64: function(val) {
+        this.realloc(8);
+        writeInt32(this.buf, val & -1, this.pos);
+        writeInt32(this.buf, Math.floor(val * SHIFT_RIGHT_32), this.pos + 4);
+        this.pos += 8;
+      },
+      writeVarint: function(val) {
+        val = +val || 0;
+        if (val > 268435455 || val < 0) {
+          writeBigVarint(val, this);
+          return;
+        }
+        this.realloc(4);
+        this.buf[this.pos++] = val & 127 | (val > 127 ? 128 : 0);
+        if (val <= 127) return;
+        this.buf[this.pos++] = (val >>>= 7) & 127 | (val > 127 ? 128 : 0);
+        if (val <= 127) return;
+        this.buf[this.pos++] = (val >>>= 7) & 127 | (val > 127 ? 128 : 0);
+        if (val <= 127) return;
+        this.buf[this.pos++] = val >>> 7 & 127;
+      },
+      writeSVarint: function(val) {
+        this.writeVarint(val < 0 ? -val * 2 - 1 : val * 2);
+      },
+      writeBoolean: function(val) {
+        this.writeVarint(Boolean(val));
+      },
+      writeString: function(str) {
+        str = String(str);
+        this.realloc(str.length * 4);
+        this.pos++;
+        var startPos = this.pos;
+        this.pos = writeUtf8(this.buf, str, this.pos);
+        var len = this.pos - startPos;
+        if (len >= 128) makeRoomForExtraLength(startPos, len, this);
+        this.pos = startPos - 1;
+        this.writeVarint(len);
+        this.pos += len;
+      },
+      writeFloat: function(val) {
+        this.realloc(4);
+        ieee754.write(this.buf, val, this.pos, true, 23, 4);
+        this.pos += 4;
+      },
+      writeDouble: function(val) {
+        this.realloc(8);
+        ieee754.write(this.buf, val, this.pos, true, 52, 8);
+        this.pos += 8;
+      },
+      writeBytes: function(buffer) {
+        var len = buffer.length;
+        this.writeVarint(len);
+        this.realloc(len);
+        for (var i2 = 0; i2 < len; i2++) this.buf[this.pos++] = buffer[i2];
+      },
+      writeRawMessage: function(fn, obj) {
+        this.pos++;
+        var startPos = this.pos;
+        fn(obj, this);
+        var len = this.pos - startPos;
+        if (len >= 128) makeRoomForExtraLength(startPos, len, this);
+        this.pos = startPos - 1;
+        this.writeVarint(len);
+        this.pos += len;
+      },
+      writeMessage: function(tag, fn, obj) {
+        this.writeTag(tag, Pbf.Bytes);
+        this.writeRawMessage(fn, obj);
+      },
+      writePackedVarint: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedVarint, arr);
+      },
+      writePackedSVarint: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedSVarint, arr);
+      },
+      writePackedBoolean: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedBoolean, arr);
+      },
+      writePackedFloat: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedFloat, arr);
+      },
+      writePackedDouble: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedDouble, arr);
+      },
+      writePackedFixed32: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedFixed32, arr);
+      },
+      writePackedSFixed32: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedSFixed32, arr);
+      },
+      writePackedFixed64: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedFixed64, arr);
+      },
+      writePackedSFixed64: function(tag, arr) {
+        if (arr.length) this.writeMessage(tag, writePackedSFixed64, arr);
+      },
+      writeBytesField: function(tag, buffer) {
+        this.writeTag(tag, Pbf.Bytes);
+        this.writeBytes(buffer);
+      },
+      writeFixed32Field: function(tag, val) {
+        this.writeTag(tag, Pbf.Fixed32);
+        this.writeFixed32(val);
+      },
+      writeSFixed32Field: function(tag, val) {
+        this.writeTag(tag, Pbf.Fixed32);
+        this.writeSFixed32(val);
+      },
+      writeFixed64Field: function(tag, val) {
+        this.writeTag(tag, Pbf.Fixed64);
+        this.writeFixed64(val);
+      },
+      writeSFixed64Field: function(tag, val) {
+        this.writeTag(tag, Pbf.Fixed64);
+        this.writeSFixed64(val);
+      },
+      writeVarintField: function(tag, val) {
+        this.writeTag(tag, Pbf.Varint);
+        this.writeVarint(val);
+      },
+      writeSVarintField: function(tag, val) {
+        this.writeTag(tag, Pbf.Varint);
+        this.writeSVarint(val);
+      },
+      writeStringField: function(tag, str) {
+        this.writeTag(tag, Pbf.Bytes);
+        this.writeString(str);
+      },
+      writeFloatField: function(tag, val) {
+        this.writeTag(tag, Pbf.Fixed32);
+        this.writeFloat(val);
+      },
+      writeDoubleField: function(tag, val) {
+        this.writeTag(tag, Pbf.Fixed64);
+        this.writeDouble(val);
+      },
+      writeBooleanField: function(tag, val) {
+        this.writeVarintField(tag, Boolean(val));
+      }
+    };
+    function readVarintRemainder(l2, s2, p) {
+      var buf = p.buf, h2, b2;
+      b2 = buf[p.pos++];
+      h2 = (b2 & 112) >> 4;
+      if (b2 < 128) return toNum(l2, h2, s2);
+      b2 = buf[p.pos++];
+      h2 |= (b2 & 127) << 3;
+      if (b2 < 128) return toNum(l2, h2, s2);
+      b2 = buf[p.pos++];
+      h2 |= (b2 & 127) << 10;
+      if (b2 < 128) return toNum(l2, h2, s2);
+      b2 = buf[p.pos++];
+      h2 |= (b2 & 127) << 17;
+      if (b2 < 128) return toNum(l2, h2, s2);
+      b2 = buf[p.pos++];
+      h2 |= (b2 & 127) << 24;
+      if (b2 < 128) return toNum(l2, h2, s2);
+      b2 = buf[p.pos++];
+      h2 |= (b2 & 1) << 31;
+      if (b2 < 128) return toNum(l2, h2, s2);
+      throw new Error("Expected varint not more than 10 bytes");
+    }
+    function readPackedEnd(pbf) {
+      return pbf.type === Pbf.Bytes ? pbf.readVarint() + pbf.pos : pbf.pos + 1;
+    }
+    function toNum(low, high, isSigned) {
+      if (isSigned) {
+        return high * 4294967296 + (low >>> 0);
+      }
+      return (high >>> 0) * 4294967296 + (low >>> 0);
+    }
+    function writeBigVarint(val, pbf) {
+      var low, high;
+      if (val >= 0) {
+        low = val % 4294967296 | 0;
+        high = val / 4294967296 | 0;
+      } else {
+        low = ~(-val % 4294967296);
+        high = ~(-val / 4294967296);
+        if (low ^ 4294967295) {
+          low = low + 1 | 0;
+        } else {
+          low = 0;
+          high = high + 1 | 0;
+        }
+      }
+      if (val >= 18446744073709552e3 || val < -18446744073709552e3) {
+        throw new Error("Given varint doesn't fit into 10 bytes");
+      }
+      pbf.realloc(10);
+      writeBigVarintLow(low, high, pbf);
+      writeBigVarintHigh(high, pbf);
+    }
+    function writeBigVarintLow(low, high, pbf) {
+      pbf.buf[pbf.pos++] = low & 127 | 128;
+      low >>>= 7;
+      pbf.buf[pbf.pos++] = low & 127 | 128;
+      low >>>= 7;
+      pbf.buf[pbf.pos++] = low & 127 | 128;
+      low >>>= 7;
+      pbf.buf[pbf.pos++] = low & 127 | 128;
+      low >>>= 7;
+      pbf.buf[pbf.pos] = low & 127;
+    }
+    function writeBigVarintHigh(high, pbf) {
+      var lsb = (high & 7) << 4;
+      pbf.buf[pbf.pos++] |= lsb | ((high >>>= 3) ? 128 : 0);
+      if (!high) return;
+      pbf.buf[pbf.pos++] = high & 127 | ((high >>>= 7) ? 128 : 0);
+      if (!high) return;
+      pbf.buf[pbf.pos++] = high & 127 | ((high >>>= 7) ? 128 : 0);
+      if (!high) return;
+      pbf.buf[pbf.pos++] = high & 127 | ((high >>>= 7) ? 128 : 0);
+      if (!high) return;
+      pbf.buf[pbf.pos++] = high & 127 | ((high >>>= 7) ? 128 : 0);
+      if (!high) return;
+      pbf.buf[pbf.pos++] = high & 127;
+    }
+    function makeRoomForExtraLength(startPos, len, pbf) {
+      var extraLen = len <= 16383 ? 1 : len <= 2097151 ? 2 : len <= 268435455 ? 3 : Math.floor(Math.log(len) / (Math.LN2 * 7));
+      pbf.realloc(extraLen);
+      for (var i2 = pbf.pos - 1; i2 >= startPos; i2--) pbf.buf[i2 + extraLen] = pbf.buf[i2];
+    }
+    function writePackedVarint(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeVarint(arr[i2]);
+    }
+    function writePackedSVarint(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeSVarint(arr[i2]);
+    }
+    function writePackedFloat(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeFloat(arr[i2]);
+    }
+    function writePackedDouble(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeDouble(arr[i2]);
+    }
+    function writePackedBoolean(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeBoolean(arr[i2]);
+    }
+    function writePackedFixed32(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeFixed32(arr[i2]);
+    }
+    function writePackedSFixed32(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeSFixed32(arr[i2]);
+    }
+    function writePackedFixed64(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeFixed64(arr[i2]);
+    }
+    function writePackedSFixed64(arr, pbf) {
+      for (var i2 = 0; i2 < arr.length; i2++) pbf.writeSFixed64(arr[i2]);
+    }
+    function readUInt32(buf, pos) {
+      return (buf[pos] | buf[pos + 1] << 8 | buf[pos + 2] << 16) + buf[pos + 3] * 16777216;
+    }
+    function writeInt32(buf, val, pos) {
+      buf[pos] = val;
+      buf[pos + 1] = val >>> 8;
+      buf[pos + 2] = val >>> 16;
+      buf[pos + 3] = val >>> 24;
+    }
+    function readInt32(buf, pos) {
+      return (buf[pos] | buf[pos + 1] << 8 | buf[pos + 2] << 16) + (buf[pos + 3] << 24);
+    }
+    function readUtf8(buf, pos, end) {
+      var str = "";
+      var i2 = pos;
+      while (i2 < end) {
+        var b0 = buf[i2];
+        var c3 = null;
+        var bytesPerSequence = b0 > 239 ? 4 : b0 > 223 ? 3 : b0 > 191 ? 2 : 1;
+        if (i2 + bytesPerSequence > end) break;
+        var b1, b2, b3;
+        if (bytesPerSequence === 1) {
+          if (b0 < 128) {
+            c3 = b0;
+          }
+        } else if (bytesPerSequence === 2) {
+          b1 = buf[i2 + 1];
+          if ((b1 & 192) === 128) {
+            c3 = (b0 & 31) << 6 | b1 & 63;
+            if (c3 <= 127) {
+              c3 = null;
+            }
+          }
+        } else if (bytesPerSequence === 3) {
+          b1 = buf[i2 + 1];
+          b2 = buf[i2 + 2];
+          if ((b1 & 192) === 128 && (b2 & 192) === 128) {
+            c3 = (b0 & 15) << 12 | (b1 & 63) << 6 | b2 & 63;
+            if (c3 <= 2047 || c3 >= 55296 && c3 <= 57343) {
+              c3 = null;
+            }
+          }
+        } else if (bytesPerSequence === 4) {
+          b1 = buf[i2 + 1];
+          b2 = buf[i2 + 2];
+          b3 = buf[i2 + 3];
+          if ((b1 & 192) === 128 && (b2 & 192) === 128 && (b3 & 192) === 128) {
+            c3 = (b0 & 15) << 18 | (b1 & 63) << 12 | (b2 & 63) << 6 | b3 & 63;
+            if (c3 <= 65535 || c3 >= 1114112) {
+              c3 = null;
+            }
+          }
+        }
+        if (c3 === null) {
+          c3 = 65533;
+          bytesPerSequence = 1;
+        } else if (c3 > 65535) {
+          c3 -= 65536;
+          str += String.fromCharCode(c3 >>> 10 & 1023 | 55296);
+          c3 = 56320 | c3 & 1023;
+        }
+        str += String.fromCharCode(c3);
+        i2 += bytesPerSequence;
+      }
+      return str;
+    }
+    function readUtf8TextDecoder(buf, pos, end) {
+      return utf8TextDecoder.decode(buf.subarray(pos, end));
+    }
+    function writeUtf8(buf, str, pos) {
+      for (var i2 = 0, c3, lead; i2 < str.length; i2++) {
+        c3 = str.charCodeAt(i2);
+        if (c3 > 55295 && c3 < 57344) {
+          if (lead) {
+            if (c3 < 56320) {
+              buf[pos++] = 239;
+              buf[pos++] = 191;
+              buf[pos++] = 189;
+              lead = c3;
+              continue;
+            } else {
+              c3 = lead - 55296 << 10 | c3 - 56320 | 65536;
+              lead = null;
+            }
+          } else {
+            if (c3 > 56319 || i2 + 1 === str.length) {
+              buf[pos++] = 239;
+              buf[pos++] = 191;
+              buf[pos++] = 189;
+            } else {
+              lead = c3;
+            }
+            continue;
+          }
+        } else if (lead) {
+          buf[pos++] = 239;
+          buf[pos++] = 191;
+          buf[pos++] = 189;
+          lead = null;
+        }
+        if (c3 < 128) {
+          buf[pos++] = c3;
+        } else {
+          if (c3 < 2048) {
+            buf[pos++] = c3 >> 6 | 192;
+          } else {
+            if (c3 < 65536) {
+              buf[pos++] = c3 >> 12 | 224;
+            } else {
+              buf[pos++] = c3 >> 18 | 240;
+              buf[pos++] = c3 >> 12 & 63 | 128;
+            }
+            buf[pos++] = c3 >> 6 & 63 | 128;
+          }
+          buf[pos++] = c3 & 63 | 128;
+        }
+      }
+      return pos;
+    }
+  }
+});
+
+// node_modules/@mapbox/point-geometry/index.js
+var require_point_geometry = __commonJS({
+  "node_modules/@mapbox/point-geometry/index.js"(exports2, module2) {
+    "use strict";
+    module2.exports = Point;
+    function Point(x2, y3) {
+      this.x = x2;
+      this.y = y3;
+    }
+    Point.prototype = {
+      /**
+       * Clone this point, returning a new point that can be modified
+       * without affecting the old one.
+       * @return {Point} the clone
+       */
+      clone: function() {
+        return new Point(this.x, this.y);
+      },
+      /**
+       * Add this point's x & y coordinates to another point,
+       * yielding a new point.
+       * @param {Point} p the other point
+       * @return {Point} output point
+       */
+      add: function(p) {
+        return this.clone()._add(p);
+      },
+      /**
+       * Subtract this point's x & y coordinates to from point,
+       * yielding a new point.
+       * @param {Point} p the other point
+       * @return {Point} output point
+       */
+      sub: function(p) {
+        return this.clone()._sub(p);
+      },
+      /**
+       * Multiply this point's x & y coordinates by point,
+       * yielding a new point.
+       * @param {Point} p the other point
+       * @return {Point} output point
+       */
+      multByPoint: function(p) {
+        return this.clone()._multByPoint(p);
+      },
+      /**
+       * Divide this point's x & y coordinates by point,
+       * yielding a new point.
+       * @param {Point} p the other point
+       * @return {Point} output point
+       */
+      divByPoint: function(p) {
+        return this.clone()._divByPoint(p);
+      },
+      /**
+       * Multiply this point's x & y coordinates by a factor,
+       * yielding a new point.
+       * @param {Point} k factor
+       * @return {Point} output point
+       */
+      mult: function(k2) {
+        return this.clone()._mult(k2);
+      },
+      /**
+       * Divide this point's x & y coordinates by a factor,
+       * yielding a new point.
+       * @param {Point} k factor
+       * @return {Point} output point
+       */
+      div: function(k2) {
+        return this.clone()._div(k2);
+      },
+      /**
+       * Rotate this point around the 0, 0 origin by an angle a,
+       * given in radians
+       * @param {Number} a angle to rotate around, in radians
+       * @return {Point} output point
+       */
+      rotate: function(a2) {
+        return this.clone()._rotate(a2);
+      },
+      /**
+       * Rotate this point around p point by an angle a,
+       * given in radians
+       * @param {Number} a angle to rotate around, in radians
+       * @param {Point} p Point to rotate around
+       * @return {Point} output point
+       */
+      rotateAround: function(a2, p) {
+        return this.clone()._rotateAround(a2, p);
+      },
+      /**
+       * Multiply this point by a 4x1 transformation matrix
+       * @param {Array<Number>} m transformation matrix
+       * @return {Point} output point
+       */
+      matMult: function(m2) {
+        return this.clone()._matMult(m2);
+      },
+      /**
+       * Calculate this point but as a unit vector from 0, 0, meaning
+       * that the distance from the resulting point to the 0, 0
+       * coordinate will be equal to 1 and the angle from the resulting
+       * point to the 0, 0 coordinate will be the same as before.
+       * @return {Point} unit vector point
+       */
+      unit: function() {
+        return this.clone()._unit();
+      },
+      /**
+       * Compute a perpendicular point, where the new y coordinate
+       * is the old x coordinate and the new x coordinate is the old y
+       * coordinate multiplied by -1
+       * @return {Point} perpendicular point
+       */
+      perp: function() {
+        return this.clone()._perp();
+      },
+      /**
+       * Return a version of this point with the x & y coordinates
+       * rounded to integers.
+       * @return {Point} rounded point
+       */
+      round: function() {
+        return this.clone()._round();
+      },
+      /**
+       * Return the magitude of this point: this is the Euclidean
+       * distance from the 0, 0 coordinate to this point's x and y
+       * coordinates.
+       * @return {Number} magnitude
+       */
+      mag: function() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+      },
+      /**
+       * Judge whether this point is equal to another point, returning
+       * true or false.
+       * @param {Point} other the other point
+       * @return {boolean} whether the points are equal
+       */
+      equals: function(other) {
+        return this.x === other.x && this.y === other.y;
+      },
+      /**
+       * Calculate the distance from this point to another point
+       * @param {Point} p the other point
+       * @return {Number} distance
+       */
+      dist: function(p) {
+        return Math.sqrt(this.distSqr(p));
+      },
+      /**
+       * Calculate the distance from this point to another point,
+       * without the square root step. Useful if you're comparing
+       * relative distances.
+       * @param {Point} p the other point
+       * @return {Number} distance
+       */
+      distSqr: function(p) {
+        var dx = p.x - this.x, dy = p.y - this.y;
+        return dx * dx + dy * dy;
+      },
+      /**
+       * Get the angle from the 0, 0 coordinate to this point, in radians
+       * coordinates.
+       * @return {Number} angle
+       */
+      angle: function() {
+        return Math.atan2(this.y, this.x);
+      },
+      /**
+       * Get the angle from this point to another point, in radians
+       * @param {Point} b the other point
+       * @return {Number} angle
+       */
+      angleTo: function(b2) {
+        return Math.atan2(this.y - b2.y, this.x - b2.x);
+      },
+      /**
+       * Get the angle between this point and another point, in radians
+       * @param {Point} b the other point
+       * @return {Number} angle
+       */
+      angleWith: function(b2) {
+        return this.angleWithSep(b2.x, b2.y);
+      },
+      /*
+       * Find the angle of the two vectors, solving the formula for
+       * the cross product a x b = |a||b|sin(θ) for θ.
+       * @param {Number} x the x-coordinate
+       * @param {Number} y the y-coordinate
+       * @return {Number} the angle in radians
+       */
+      angleWithSep: function(x2, y3) {
+        return Math.atan2(
+          this.x * y3 - this.y * x2,
+          this.x * x2 + this.y * y3
+        );
+      },
+      _matMult: function(m2) {
+        var x2 = m2[0] * this.x + m2[1] * this.y, y3 = m2[2] * this.x + m2[3] * this.y;
+        this.x = x2;
+        this.y = y3;
+        return this;
+      },
+      _add: function(p) {
+        this.x += p.x;
+        this.y += p.y;
+        return this;
+      },
+      _sub: function(p) {
+        this.x -= p.x;
+        this.y -= p.y;
+        return this;
+      },
+      _mult: function(k2) {
+        this.x *= k2;
+        this.y *= k2;
+        return this;
+      },
+      _div: function(k2) {
+        this.x /= k2;
+        this.y /= k2;
+        return this;
+      },
+      _multByPoint: function(p) {
+        this.x *= p.x;
+        this.y *= p.y;
+        return this;
+      },
+      _divByPoint: function(p) {
+        this.x /= p.x;
+        this.y /= p.y;
+        return this;
+      },
+      _unit: function() {
+        this._div(this.mag());
+        return this;
+      },
+      _perp: function() {
+        var y3 = this.y;
+        this.y = this.x;
+        this.x = -y3;
+        return this;
+      },
+      _rotate: function(angle) {
+        var cos = Math.cos(angle), sin = Math.sin(angle), x2 = cos * this.x - sin * this.y, y3 = sin * this.x + cos * this.y;
+        this.x = x2;
+        this.y = y3;
+        return this;
+      },
+      _rotateAround: function(angle, p) {
+        var cos = Math.cos(angle), sin = Math.sin(angle), x2 = p.x + cos * (this.x - p.x) - sin * (this.y - p.y), y3 = p.y + sin * (this.x - p.x) + cos * (this.y - p.y);
+        this.x = x2;
+        this.y = y3;
+        return this;
+      },
+      _round: function() {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
+        return this;
+      }
+    };
+    Point.convert = function(a2) {
+      if (a2 instanceof Point) {
+        return a2;
+      }
+      if (Array.isArray(a2)) {
+        return new Point(a2[0], a2[1]);
+      }
+      return a2;
+    };
+  }
+});
+
+// node_modules/@mapbox/vector-tile/lib/vectortilefeature.js
+var require_vectortilefeature = __commonJS({
+  "node_modules/@mapbox/vector-tile/lib/vectortilefeature.js"(exports2, module2) {
+    "use strict";
+    var Point = require_point_geometry();
+    module2.exports = VectorTileFeature;
+    function VectorTileFeature(pbf, end, extent, keys, values) {
+      this.properties = {};
+      this.extent = extent;
+      this.type = 0;
+      this._pbf = pbf;
+      this._geometry = -1;
+      this._keys = keys;
+      this._values = values;
+      pbf.readFields(readFeature, this, end);
+    }
+    function readFeature(tag, feature2, pbf) {
+      if (tag == 1) feature2.id = pbf.readVarint();
+      else if (tag == 2) readTag(pbf, feature2);
+      else if (tag == 3) feature2.type = pbf.readVarint();
+      else if (tag == 4) feature2._geometry = pbf.pos;
+    }
+    function readTag(pbf, feature2) {
+      var end = pbf.readVarint() + pbf.pos;
+      while (pbf.pos < end) {
+        var key = feature2._keys[pbf.readVarint()], value = feature2._values[pbf.readVarint()];
+        feature2.properties[key] = value;
+      }
+    }
+    VectorTileFeature.types = ["Unknown", "Point", "LineString", "Polygon"];
+    VectorTileFeature.prototype.loadGeometry = function() {
+      var pbf = this._pbf;
+      pbf.pos = this._geometry;
+      var end = pbf.readVarint() + pbf.pos, cmd = 1, length = 0, x2 = 0, y3 = 0, lines = [], line;
+      while (pbf.pos < end) {
+        if (length <= 0) {
+          var cmdLen = pbf.readVarint();
+          cmd = cmdLen & 7;
+          length = cmdLen >> 3;
+        }
+        length--;
+        if (cmd === 1 || cmd === 2) {
+          x2 += pbf.readSVarint();
+          y3 += pbf.readSVarint();
+          if (cmd === 1) {
+            if (line) lines.push(line);
+            line = [];
+          }
+          line.push(new Point(x2, y3));
+        } else if (cmd === 7) {
+          if (line) {
+            line.push(line[0].clone());
+          }
+        } else {
+          throw new Error("unknown command " + cmd);
+        }
+      }
+      if (line) lines.push(line);
+      return lines;
+    };
+    VectorTileFeature.prototype.bbox = function() {
+      var pbf = this._pbf;
+      pbf.pos = this._geometry;
+      var end = pbf.readVarint() + pbf.pos, cmd = 1, length = 0, x2 = 0, y3 = 0, x1 = Infinity, x22 = -Infinity, y1 = Infinity, y22 = -Infinity;
+      while (pbf.pos < end) {
+        if (length <= 0) {
+          var cmdLen = pbf.readVarint();
+          cmd = cmdLen & 7;
+          length = cmdLen >> 3;
+        }
+        length--;
+        if (cmd === 1 || cmd === 2) {
+          x2 += pbf.readSVarint();
+          y3 += pbf.readSVarint();
+          if (x2 < x1) x1 = x2;
+          if (x2 > x22) x22 = x2;
+          if (y3 < y1) y1 = y3;
+          if (y3 > y22) y22 = y3;
+        } else if (cmd !== 7) {
+          throw new Error("unknown command " + cmd);
+        }
+      }
+      return [x1, y1, x22, y22];
+    };
+    VectorTileFeature.prototype.toGeoJSON = function(x2, y3, z2) {
+      var size = this.extent * Math.pow(2, z2), x0 = this.extent * x2, y0 = this.extent * y3, coords = this.loadGeometry(), type = VectorTileFeature.types[this.type], i2, j;
+      function project(line) {
+        for (var j2 = 0; j2 < line.length; j2++) {
+          var p = line[j2], y22 = 180 - (p.y + y0) * 360 / size;
+          line[j2] = [
+            (p.x + x0) * 360 / size - 180,
+            360 / Math.PI * Math.atan(Math.exp(y22 * Math.PI / 180)) - 90
+          ];
+        }
+      }
+      switch (this.type) {
+        case 1:
+          var points = [];
+          for (i2 = 0; i2 < coords.length; i2++) {
+            points[i2] = coords[i2][0];
+          }
+          coords = points;
+          project(coords);
+          break;
+        case 2:
+          for (i2 = 0; i2 < coords.length; i2++) {
+            project(coords[i2]);
+          }
+          break;
+        case 3:
+          coords = classifyRings(coords);
+          for (i2 = 0; i2 < coords.length; i2++) {
+            for (j = 0; j < coords[i2].length; j++) {
+              project(coords[i2][j]);
+            }
+          }
+          break;
+      }
+      if (coords.length === 1) {
+        coords = coords[0];
+      } else {
+        type = "Multi" + type;
+      }
+      var result = {
+        type: "Feature",
+        geometry: {
+          type,
+          coordinates: coords
+        },
+        properties: this.properties
+      };
+      if ("id" in this) {
+        result.id = this.id;
+      }
+      return result;
+    };
+    function classifyRings(rings) {
+      var len = rings.length;
+      if (len <= 1) return [rings];
+      var polygons = [], polygon2, ccw;
+      for (var i2 = 0; i2 < len; i2++) {
+        var area = signedArea(rings[i2]);
+        if (area === 0) continue;
+        if (ccw === void 0) ccw = area < 0;
+        if (ccw === area < 0) {
+          if (polygon2) polygons.push(polygon2);
+          polygon2 = [rings[i2]];
+        } else {
+          polygon2.push(rings[i2]);
+        }
+      }
+      if (polygon2) polygons.push(polygon2);
+      return polygons;
+    }
+    function signedArea(ring) {
+      var sum = 0;
+      for (var i2 = 0, len = ring.length, j = len - 1, p1, p2; i2 < len; j = i2++) {
+        p1 = ring[i2];
+        p2 = ring[j];
+        sum += (p2.x - p1.x) * (p1.y + p2.y);
+      }
+      return sum;
+    }
+  }
+});
+
+// node_modules/@mapbox/vector-tile/lib/vectortilelayer.js
+var require_vectortilelayer = __commonJS({
+  "node_modules/@mapbox/vector-tile/lib/vectortilelayer.js"(exports2, module2) {
+    "use strict";
+    var VectorTileFeature = require_vectortilefeature();
+    module2.exports = VectorTileLayer;
+    function VectorTileLayer(pbf, end) {
+      this.version = 1;
+      this.name = null;
+      this.extent = 4096;
+      this.length = 0;
+      this._pbf = pbf;
+      this._keys = [];
+      this._values = [];
+      this._features = [];
+      pbf.readFields(readLayer, this, end);
+      this.length = this._features.length;
+    }
+    function readLayer(tag, layer, pbf) {
+      if (tag === 15) layer.version = pbf.readVarint();
+      else if (tag === 1) layer.name = pbf.readString();
+      else if (tag === 5) layer.extent = pbf.readVarint();
+      else if (tag === 2) layer._features.push(pbf.pos);
+      else if (tag === 3) layer._keys.push(pbf.readString());
+      else if (tag === 4) layer._values.push(readValueMessage(pbf));
+    }
+    function readValueMessage(pbf) {
+      var value = null, end = pbf.readVarint() + pbf.pos;
+      while (pbf.pos < end) {
+        var tag = pbf.readVarint() >> 3;
+        value = tag === 1 ? pbf.readString() : tag === 2 ? pbf.readFloat() : tag === 3 ? pbf.readDouble() : tag === 4 ? pbf.readVarint64() : tag === 5 ? pbf.readVarint() : tag === 6 ? pbf.readSVarint() : tag === 7 ? pbf.readBoolean() : null;
+      }
+      return value;
+    }
+    VectorTileLayer.prototype.feature = function(i2) {
+      if (i2 < 0 || i2 >= this._features.length) throw new Error("feature index out of bounds");
+      this._pbf.pos = this._features[i2];
+      var end = this._pbf.readVarint() + this._pbf.pos;
+      return new VectorTileFeature(this._pbf, end, this.extent, this._keys, this._values);
+    };
+  }
+});
+
+// node_modules/@mapbox/vector-tile/lib/vectortile.js
+var require_vectortile = __commonJS({
+  "node_modules/@mapbox/vector-tile/lib/vectortile.js"(exports2, module2) {
+    "use strict";
+    var VectorTileLayer = require_vectortilelayer();
+    module2.exports = VectorTile;
+    function VectorTile(pbf, end) {
+      this.layers = pbf.readFields(readTile, {}, end);
+    }
+    function readTile(tag, layers, pbf) {
+      if (tag === 3) {
+        var layer = new VectorTileLayer(pbf, pbf.readVarint() + pbf.pos);
+        if (layer.length) layers[layer.name] = layer;
+      }
+    }
+  }
+});
+
+// node_modules/@mapbox/vector-tile/index.js
+var require_vector_tile = __commonJS({
+  "node_modules/@mapbox/vector-tile/index.js"(exports2, module2) {
+    module2.exports.VectorTile = require_vectortile();
+    module2.exports.VectorTileFeature = require_vectortilefeature();
+    module2.exports.VectorTileLayer = require_vectortilelayer();
+  }
+});
+
+// node_modules/vt-pbf/lib/geojson_wrapper.js
+var require_geojson_wrapper = __commonJS({
+  "node_modules/vt-pbf/lib/geojson_wrapper.js"(exports2, module2) {
+    "use strict";
+    var Point = require_point_geometry();
+    var VectorTileFeature = require_vector_tile().VectorTileFeature;
+    module2.exports = GeoJSONWrapper;
+    function GeoJSONWrapper(features, options) {
+      this.options = options || {};
+      this.features = features;
+      this.length = features.length;
+    }
+    GeoJSONWrapper.prototype.feature = function(i2) {
+      return new FeatureWrapper(this.features[i2], this.options.extent);
+    };
+    function FeatureWrapper(feature2, extent) {
+      this.id = typeof feature2.id === "number" ? feature2.id : void 0;
+      this.type = feature2.type;
+      this.rawGeometry = feature2.type === 1 ? [feature2.geometry] : feature2.geometry;
+      this.properties = feature2.tags;
+      this.extent = extent || 4096;
+    }
+    FeatureWrapper.prototype.loadGeometry = function() {
+      var rings = this.rawGeometry;
+      this.geometry = [];
+      for (var i2 = 0; i2 < rings.length; i2++) {
+        var ring = rings[i2];
+        var newRing = [];
+        for (var j = 0; j < ring.length; j++) {
+          newRing.push(new Point(ring[j][0], ring[j][1]));
+        }
+        this.geometry.push(newRing);
+      }
+      return this.geometry;
+    };
+    FeatureWrapper.prototype.bbox = function() {
+      if (!this.geometry) this.loadGeometry();
+      var rings = this.geometry;
+      var x1 = Infinity;
+      var x2 = -Infinity;
+      var y1 = Infinity;
+      var y22 = -Infinity;
+      for (var i2 = 0; i2 < rings.length; i2++) {
+        var ring = rings[i2];
+        for (var j = 0; j < ring.length; j++) {
+          var coord = ring[j];
+          x1 = Math.min(x1, coord.x);
+          x2 = Math.max(x2, coord.x);
+          y1 = Math.min(y1, coord.y);
+          y22 = Math.max(y22, coord.y);
+        }
+      }
+      return [x1, y1, x2, y22];
+    };
+    FeatureWrapper.prototype.toGeoJSON = VectorTileFeature.prototype.toGeoJSON;
+  }
+});
+
+// node_modules/vt-pbf/index.js
+var require_vt_pbf = __commonJS({
+  "node_modules/vt-pbf/index.js"(exports2, module2) {
+    var Pbf = require_pbf();
+    var GeoJSONWrapper = require_geojson_wrapper();
+    module2.exports = fromVectorTileJs;
+    module2.exports.fromVectorTileJs = fromVectorTileJs;
+    module2.exports.fromGeojsonVt = fromGeojsonVt;
+    module2.exports.GeoJSONWrapper = GeoJSONWrapper;
+    function fromVectorTileJs(tile) {
+      var out = new Pbf();
+      writeTile(tile, out);
+      return out.finish();
+    }
+    function fromGeojsonVt(layers, options) {
+      options = options || {};
+      var l2 = {};
+      for (var k2 in layers) {
+        l2[k2] = new GeoJSONWrapper(layers[k2].features, options);
+        l2[k2].name = k2;
+        l2[k2].version = options.version;
+        l2[k2].extent = options.extent;
+      }
+      return fromVectorTileJs({ layers: l2 });
+    }
+    function writeTile(tile, pbf) {
+      for (var key in tile.layers) {
+        pbf.writeMessage(3, writeLayer, tile.layers[key]);
+      }
+    }
+    function writeLayer(layer, pbf) {
+      pbf.writeVarintField(15, layer.version || 1);
+      pbf.writeStringField(1, layer.name || "");
+      pbf.writeVarintField(5, layer.extent || 4096);
+      var i2;
+      var context = {
+        keys: [],
+        values: [],
+        keycache: {},
+        valuecache: {}
+      };
+      for (i2 = 0; i2 < layer.length; i2++) {
+        context.feature = layer.feature(i2);
+        pbf.writeMessage(2, writeFeature, context);
+      }
+      var keys = context.keys;
+      for (i2 = 0; i2 < keys.length; i2++) {
+        pbf.writeStringField(3, keys[i2]);
+      }
+      var values = context.values;
+      for (i2 = 0; i2 < values.length; i2++) {
+        pbf.writeMessage(4, writeValue, values[i2]);
+      }
+    }
+    function writeFeature(context, pbf) {
+      var feature2 = context.feature;
+      if (feature2.id !== void 0) {
+        pbf.writeVarintField(1, feature2.id);
+      }
+      pbf.writeMessage(2, writeProperties, context);
+      pbf.writeVarintField(3, feature2.type);
+      pbf.writeMessage(4, writeGeometry, feature2);
+    }
+    function writeProperties(context, pbf) {
+      var feature2 = context.feature;
+      var keys = context.keys;
+      var values = context.values;
+      var keycache = context.keycache;
+      var valuecache = context.valuecache;
+      for (var key in feature2.properties) {
+        var value = feature2.properties[key];
+        var keyIndex = keycache[key];
+        if (value === null) continue;
+        if (typeof keyIndex === "undefined") {
+          keys.push(key);
+          keyIndex = keys.length - 1;
+          keycache[key] = keyIndex;
+        }
+        pbf.writeVarint(keyIndex);
+        var type = typeof value;
+        if (type !== "string" && type !== "boolean" && type !== "number") {
+          value = JSON.stringify(value);
+        }
+        var valueKey = type + ":" + value;
+        var valueIndex = valuecache[valueKey];
+        if (typeof valueIndex === "undefined") {
+          values.push(value);
+          valueIndex = values.length - 1;
+          valuecache[valueKey] = valueIndex;
+        }
+        pbf.writeVarint(valueIndex);
+      }
+    }
+    function command(cmd, length) {
+      return (length << 3) + (cmd & 7);
+    }
+    function zigzag(num) {
+      return num << 1 ^ num >> 31;
+    }
+    function writeGeometry(feature2, pbf) {
+      var geometry = feature2.loadGeometry();
+      var type = feature2.type;
+      var x2 = 0;
+      var y3 = 0;
+      var rings = geometry.length;
+      for (var r4 = 0; r4 < rings; r4++) {
+        var ring = geometry[r4];
+        var count = 1;
+        if (type === 1) {
+          count = ring.length;
+        }
+        pbf.writeVarint(command(1, count));
+        var lineCount = type === 3 ? ring.length - 1 : ring.length;
+        for (var i2 = 0; i2 < lineCount; i2++) {
+          if (i2 === 1 && type !== 1) {
+            pbf.writeVarint(command(2, lineCount - 1));
+          }
+          var dx = ring[i2].x - x2;
+          var dy = ring[i2].y - y3;
+          pbf.writeVarint(zigzag(dx));
+          pbf.writeVarint(zigzag(dy));
+          x2 += dx;
+          y3 += dy;
+        }
+        if (type === 3) {
+          pbf.writeVarint(command(7, 1));
+        }
+      }
+    }
+    function writeValue(value, pbf) {
+      var type = typeof value;
+      if (type === "string") {
+        pbf.writeStringField(1, value);
+      } else if (type === "boolean") {
+        pbf.writeBooleanField(7, value);
+      } else if (type === "number") {
+        if (value % 1 !== 0) {
+          pbf.writeDoubleField(3, value);
+        } else if (value < 0) {
+          pbf.writeSVarintField(6, value);
+        } else {
+          pbf.writeVarintField(5, value);
+        }
+      }
+    }
+  }
+});
+
 // extraire.ts
-var import_fs5 = __toESM(require("fs"));
-var import_path6 = __toESM(require("path"));
+var import_fs6 = __toESM(require("fs"));
+var import_os = __toESM(require("os"));
+var import_path7 = __toESM(require("path"));
 
 // dir-archive.ts
 var import_fs = __toESM(require("fs"));
 var import_path = __toESM(require("path"));
 var import_cityhash = __toESM(require_cityhash());
 var DirArchive = class {
-  constructor(path7, scsSource) {
-    this.path = path7;
+  constructor(path8, scsSource) {
+    this.path = path8;
     this.scsSource = scsSource;
   }
   isValid() {
@@ -34221,7 +36307,7 @@ var DirArchive = class {
   }
 };
 
-// ../packages/libs/base/assert.ts
+// ../../../../ext/maps/packages/libs/base/assert.ts
 function assertExists(x2, msg) {
   if (x2 == null) {
     throw new Error(msg);
@@ -34235,7 +36321,7 @@ function assert(condition, msg) {
   return;
 }
 
-// ../packages/libs/base/precon.ts
+// ../../../../ext/maps/packages/libs/base/precon.ts
 var UnreachableError = class extends Error {
   constructor(x2) {
     super("unreachable value " + JSON.stringify(x2));
@@ -34257,7 +36343,7 @@ var Preconditions = class {
   }
 };
 
-// ../packages/libs/base/geom.ts
+// ../../../../ext/maps/packages/libs/base/geom.ts
 function translate([x2, y3], [dx, dy]) {
   return [x2 + dx, y3 + dy];
 }
@@ -34383,7 +36469,7 @@ function withPositionLikes(a2, b2, fn) {
   return fn(x1, y1, x2, y22);
 }
 
-// ../packages/libs/base/map.ts
+// ../../../../ext/maps/packages/libs/base/map.ts
 function putIfAbsent(key, defValue, map) {
   let v2 = map.get(key);
   if (v2 == null) {
@@ -34396,7 +36482,7 @@ function mapValues(map, m2) {
   return new Map([...map.entries()].map(([k2, v2]) => [k2, m2(v2)]));
 }
 
-// ../packages/libs/map/constants.ts
+// ../../../../ext/maps/packages/libs/map/constants.ts
 var AtsDlcGuards = {
   0: /* @__PURE__ */ new Set(),
   1: /* @__PURE__ */ new Set([11 /* Nevada */]),
@@ -34612,7 +36698,7 @@ var laneSpeedClassRecord = {
 var isLaneSpeedClass = (s2) => Object.prototype.hasOwnProperty.call(laneSpeedClassRecord, s2);
 var isLabeledPoi = (poi) => poi.type === "company" || poi.type === "landmark" || poi.type === "viewpoint" || poi.type === "ferry" || poi.type === "train";
 
-// ../node_modules/@turf/helpers/dist/esm/index.js
+// ../../../../ext/maps/node_modules/@turf/helpers/dist/esm/index.js
 var earthRadius = 63710088e-1;
 var factors = {
   centimeters: earthRadius * 100,
@@ -34733,7 +36819,7 @@ function isObject(input) {
   return input !== null && typeof input === "object" && !Array.isArray(input);
 }
 
-// ../node_modules/@turf/line-intersect/dist/esm/index.js
+// ../../../../ext/maps/node_modules/@turf/line-intersect/dist/esm/index.js
 var import_sweepline_intersections = __toESM(require_sweeplineIntersections(), 1);
 var sweeplineIntersections = import_sweepline_intersections.default;
 function lineIntersect(line1, line2, options = {}) {
@@ -34770,11 +36856,11 @@ function lineIntersect(line1, line2, options = {}) {
   } else {
     results = intersections;
   }
-  return featureCollection(results.map((r5) => point(r5)));
+  return featureCollection(results.map((r4) => point(r4)));
 }
 var turf_line_intersect_default = lineIntersect;
 
-// ../node_modules/@turf/meta/dist/esm/index.js
+// ../../../../ext/maps/node_modules/@turf/meta/dist/esm/index.js
 function geomEach(geojson, callback) {
   var i2, j, g3, geometry, stopG, geometryMaybeCollection, isGeometryCollection, featureProperties, featureBBox, featureId, featureIndex = 0, isFeatureCollection = geojson.type === "FeatureCollection", isFeature = geojson.type === "Feature", stop = isFeatureCollection ? geojson.features.length : 1;
   for (i2 = 0; i2 < stop; i2++) {
@@ -34919,7 +37005,7 @@ function flattenEach(geojson, callback) {
   });
 }
 
-// ../node_modules/@turf/invariant/dist/esm/index.js
+// ../../../../ext/maps/node_modules/@turf/invariant/dist/esm/index.js
 function getCoords(coords) {
   if (Array.isArray(coords)) {
     return coords;
@@ -34950,7 +37036,7 @@ function getType(geojson, _name) {
   return geojson.type;
 }
 
-// ../node_modules/@turf/line-offset/dist/esm/index.js
+// ../../../../ext/maps/node_modules/@turf/line-offset/dist/esm/index.js
 function ab(segment) {
   var start = segment[0];
   var end = segment[1];
@@ -34970,20 +37056,20 @@ function scalarMult(s2, v2) {
 }
 function intersectSegments(a2, b2) {
   var p = a2[0];
-  var r5 = ab(a2);
+  var r4 = ab(a2);
   var q2 = b2[0];
   var s2 = ab(b2);
-  var cross = crossProduct(r5, s2);
+  var cross = crossProduct(r4, s2);
   var qmp = sub(q2, p);
   var numerator = crossProduct(qmp, s2);
   var t2 = numerator / cross;
-  var intersection2 = add2(p, scalarMult(t2, r5));
+  var intersection2 = add2(p, scalarMult(t2, r4));
   return intersection2;
 }
 function isParallel(a2, b2) {
-  var r5 = ab(a2);
+  var r4 = ab(a2);
   var s2 = ab(b2);
-  return crossProduct(r5, s2) === 0;
+  return crossProduct(r4, s2) === 0;
 }
 function intersection(a2, b2) {
   if (isParallel(a2, b2)) return false;
@@ -35065,7 +37151,7 @@ function processSegment(point1, point2, offset) {
 }
 var index_default = lineOffset;
 
-// ../packages/libs/map/prefabs.ts
+// ../../../../ext/maps/packages/libs/map/prefabs.ts
 function toMapPosition(position, prefabItem, prefabDescription, nodes) {
   const prefabOrigin = prefabDescription.nodes[prefabItem.originNodeIndex];
   const originNode = assertExists(nodes.get(prefabItem.nodeUids[0]));
@@ -35211,9 +37297,9 @@ function toRoadStringsAndPolygons(prefab) {
     return [firstSection, secondSection];
   });
   while (visitedSegments.size !== roadSegments.length) {
-    const roadEndpoints = roadStrings.flatMap((r5) => [
-      r5.points[0],
-      r5.points.at(-1)
+    const roadEndpoints = roadStrings.flatMap((r4) => [
+      r4.points[0],
+      r4.points.at(-1)
     ]);
     const segment = roadSegments.filter((s2) => !visitedSegments.has(s2)).sort((a2, b2) => {
       const aMin = Math.min(
@@ -35289,15 +37375,15 @@ function toRoadStringsAndPolygons(prefab) {
     for (const rs of roadStrings) {
       const startPoint = rs.points[0];
       const endPoint = rs.points.at(-1);
-      const otherRs = roadStrings.filter((r5) => r5 !== rs);
+      const otherRs = roadStrings.filter((r4) => r4 !== rs);
       if (endPoint.neighbors.length === 3 || startPoint.neighbors.length === 3) {
-        const otherPRs = otherRs.filter((r5) => canBeParallelified(r5));
+        const otherPRs = otherRs.filter((r4) => canBeParallelified(r4));
         const plThruRs = otherPRs.find(
-          (r5) => (
+          (r4) => (
             // the following conditions check that `rs` and `r` form a T-junction
             // TODO false positive with "big" prefab junction.
             // take angle of intersection into account?
-            r5.points[0] !== endPoint && r5.points.at(-1) !== endPoint && r5.points.includes(endPoint)
+            r4.points[0] !== endPoint && r4.points.at(-1) !== endPoint && r4.points.includes(endPoint)
           )
         );
         if (plThruRs) {
@@ -35316,7 +37402,7 @@ function toRoadStringsAndPolygons(prefab) {
           continue;
         }
         const intersectingPlA = otherPRs.find(
-          (r5) => r5.points.some((p) => p === endPoint)
+          (r4) => r4.points.some((p) => p === endPoint)
         );
         if (intersectingPlA) {
           const prevPoint = rs.points.at(-2);
@@ -35331,7 +37417,7 @@ function toRoadStringsAndPolygons(prefab) {
           };
         }
         const intersectingPlB = otherPRs.find(
-          (r5) => r5.points.some((p) => p === startPoint)
+          (r4) => r4.points.some((p) => p === startPoint)
         );
         if (intersectingPlB) {
           const nextPoint = rs.points[1];
@@ -35347,9 +37433,9 @@ function toRoadStringsAndPolygons(prefab) {
           continue;
         }
       } else if (!rs.offset || !rs.lanesRight || !rs.lanesLeft) {
-        const otherPRs = otherRs.filter((r5) => canBeParallelified(r5));
+        const otherPRs = otherRs.filter((r4) => canBeParallelified(r4));
         const intersectingPlA = otherPRs.find(
-          (r5) => r5.points.some((p) => p === endPoint)
+          (r4) => r4.points.some((p) => p === endPoint)
         );
         if (intersectingPlA) {
           const prevPoint = rs.points.at(-2);
@@ -35364,7 +37450,7 @@ function toRoadStringsAndPolygons(prefab) {
           };
         }
         const intersectingPlB = otherPRs.find(
-          (r5) => r5.points.some((p) => p === startPoint)
+          (r4) => r4.points.some((p) => p === startPoint)
         );
         if (intersectingPlB) {
           const nextPoint = rs.points[1];
@@ -35383,10 +37469,10 @@ function toRoadStringsAndPolygons(prefab) {
     }
   }
   const maybeParallelRoadStrings = roadStrings.flatMap(
-    (r5) => canBeParallelified(r5) ? toParallelRoadStrings(r5) : [
+    (r4) => canBeParallelified(r4) ? toParallelRoadStrings(r4) : [
       {
-        ...r5,
-        coordinates: r5.points.map(toPosition),
+        ...r4,
+        coordinates: r4.points.map(toPosition),
         parallel: false
       }
     ]
@@ -35452,9 +37538,9 @@ function toRoadStringsAndPolygons(prefab) {
     connections[start] = ends;
   }
   return {
-    roadStrings: maybeParallelRoadStrings.map((r5) => ({
-      ...r5,
-      points: r5.coordinates
+    roadStrings: maybeParallelRoadStrings.map((r4) => ({
+      ...r4,
+      points: r4.coordinates
     })),
     polygons: polygons.sort((a2, b2) => a2.zIndex - b2.zIndex),
     isVJunction: polygons.length === 0 && maybeParallelRoadStrings.length === 2 && maybeParallelRoadStrings.every((rs) => rs.fuse),
@@ -35646,12 +37732,12 @@ function calculateHalfOffset(p) {
   return p.offset / 2 + toNumber(p.lanesLeft) / 2 * 4.5;
 }
 
-// ../packages/clis/parser/game-files/map-files-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/map-files-parser.ts
 var cliProgress = __toESM(require_cli_progress(), 1);
 var import_path2 = __toESM(require("path"), 1);
 var import_pngjs2 = __toESM(require_png(), 1);
 
-// ../node_modules/consola/dist/core.mjs
+// ../../../../ext/maps/node_modules/consola/dist/core.mjs
 var LogLevels = {
   silent: Number.NEGATIVE_INFINITY,
   fatal: 0,
@@ -35801,12 +37887,12 @@ var Consola = class _Consola {
    * @param {Partial<ConsolaOptions>} [options={}] - Configuration options for the Consola instance.
    */
   constructor(options = {}) {
-    const types2 = options.types || LogTypes;
+    const types = options.types || LogTypes;
     this.options = defu(
       {
         ...options,
         defaults: { ...options.defaults },
-        level: _normalizeLogLevel(options.level, types2),
+        level: _normalizeLogLevel(options.level, types),
         reporters: [...options.reporters || []]
       },
       {
@@ -35820,11 +37906,11 @@ var Consola = class _Consola {
         }
       }
     );
-    for (const type in types2) {
+    for (const type in types) {
       const defaults = {
         type,
         ...this.options.defaults,
-        ...types2[type]
+        ...types[type]
       };
       this[type] = this._wrapLogFn(defaults);
       this[type].raw = this._wrapLogFn(
@@ -35997,8 +38083,8 @@ var Consola = class _Consola {
     if (!stream.__write) {
       stream.__write = stream.write;
     }
-    stream.write = (data2) => {
-      this[type].raw(String(data2).trim());
+    stream.write = (data) => {
+      this[type].raw(String(data).trim());
     };
   }
   /**
@@ -36136,15 +38222,15 @@ var Consola = class _Consola {
     }
   }
 };
-function _normalizeLogLevel(input, types2 = {}, defaultLevel = 3) {
+function _normalizeLogLevel(input, types = {}, defaultLevel = 3) {
   if (input === void 0) {
     return defaultLevel;
   }
   if (typeof input === "number") {
     return input;
   }
-  if (types2[input] && types2[input].level !== void 0) {
-    return types2[input].level;
+  if (types[input] && types[input].level !== void 0) {
+    return types[input].level;
   }
   return defaultLevel;
 }
@@ -36159,7 +38245,7 @@ function createConsola(options = {}) {
   return new Consola(options);
 }
 
-// ../node_modules/consola/dist/shared/consola.DRwqZj3T.mjs
+// ../../../../ext/maps/node_modules/consola/dist/shared/consola.DRwqZj3T.mjs
 var import_node_util = require("node:util");
 var import_node_path = require("node:path");
 function parseStack(stack, message) {
@@ -36167,9 +38253,9 @@ function parseStack(stack, message) {
   const lines = stack.split("\n").splice(message.split("\n").length).map((l2) => l2.trim().replace("file://", "").replace(cwd, ""));
   return lines;
 }
-function writeStream(data2, stream) {
+function writeStream(data, stream) {
   const write = stream.__write || stream.write;
-  return write.call(stream, data2);
+  return write.call(stream, data);
 }
 var bracket = (x2) => x2 ? `[${x2}]` : "";
 var BasicReporter = class {
@@ -36228,10 +38314,10 @@ ${indent}`);
   }
 };
 
-// ../node_modules/consola/dist/index.mjs
+// ../../../../ext/maps/node_modules/consola/dist/index.mjs
 var import_node_process2 = __toESM(require("node:process"), 1);
 
-// ../node_modules/consola/dist/shared/consola.DXBYu-KD.mjs
+// ../../../../ext/maps/node_modules/consola/dist/shared/consola.DXBYu-KD.mjs
 var tty = __toESM(require("node:tty"), 1);
 var {
   env = {},
@@ -36467,7 +38553,7 @@ function box(text, _opts = {}) {
   return boxLines.join("\n");
 }
 
-// ../node_modules/consola/dist/index.mjs
+// ../../../../ext/maps/node_modules/consola/dist/index.mjs
 var import_meta2 = {};
 var r2 = /* @__PURE__ */ Object.create(null);
 var i = (e2) => globalThis.process?.env || import_meta2.env || globalThis.Deno?.env.toObject() || globalThis.__env__ || (e2 ? r2 : globalThis);
@@ -36750,7 +38836,7 @@ function _getDefaultLogLevel() {
 }
 var consola = createConsola2();
 
-// ../packages/clis/parser/logger.ts
+// ../../../../ext/maps/packages/clis/parser/logger.ts
 var _logger = createConsola2({
   formatOptions: { compact: true, colors: true, date: false }
 });
@@ -36769,7 +38855,7 @@ var logger = createConsola2({
   ]
 });
 
-// ../packages/clis/parser/game-files/combined-entries.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/combined-entries.ts
 var CombinedEntries = class {
   archives;
   constructor(archives) {
@@ -36825,7 +38911,7 @@ var CompositeDirectory = class {
   }
 };
 
-// ../node_modules/chevrotain/lib_esm/api_esm.mjs
+// ../../../../ext/maps/node_modules/chevrotain/lib_esm/api_esm.mjs
 var import_api = __toESM(require_api4(), 1);
 var Alternation = import_api.default.Alternation;
 var Alternative = import_api.default.Alternative;
@@ -36867,7 +38953,7 @@ var tokenLabel = import_api.default.tokenLabel;
 var tokenMatcher = import_api.default.tokenMatcher;
 var tokenName = import_api.default.tokenName;
 
-// ../packages/clis/parser/game-files/sii-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/sii-parser.ts
 var SiiNunit = createToken({ name: "SiiNunit", pattern: /SiiNunit/ });
 var LCurly = createToken({ name: "LCurly", pattern: /\{/ });
 var RCurly = createToken({ name: "RCurly", pattern: /}/ });
@@ -37058,18 +39144,18 @@ function parseSii(sii) {
   };
 }
 
-// ../packages/clis/parser/game-files/sii-schemas.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/sii-schemas.ts
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_keywords = __toESM(require_dist(), 1);
 var ajv = new import_ajv.default({ useDefaults: true });
 (0, import_ajv_keywords.default)(ajv, "transform");
 ajv.addKeyword({
   keyword: "dataType",
-  validate: (schema, data2) => {
+  validate: (schema, data) => {
     if (schema === "bigint") {
-      return typeof data2 === "bigint";
+      return typeof data === "bigint";
     }
-    return ajv.compile({ type: schema })(data2);
+    return ajv.compile({ type: schema })(data);
   },
   errors: true
 });
@@ -37543,7 +39629,7 @@ var SignSiiSchema = object(
   []
 );
 
-// ../packages/clis/parser/game-files/sii-visitors.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/sii-visitors.ts
 var JsonConverterVisitor = class extends getSiiVisitorClass() {
   constructor() {
     super();
@@ -37673,12 +39759,12 @@ function stringToFloat(str) {
   if (binaryInt == 2139095039) {
     return null;
   }
-  const data2 = new DataView(new ArrayBuffer(4));
-  data2.setUint32(0, binaryInt);
-  return data2.getFloat32(0);
+  const data = new DataView(new ArrayBuffer(4));
+  data.setUint32(0, binaryInt);
+  return data.getFloat32(0);
 }
 
-// ../packages/clis/parser/game-files/convert-sii-to-json.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/convert-sii-to-json.ts
 function convertSiiToJson(siiPath, entries, schema) {
   logger.debug("converting", siiPath, "to json object");
   const siiFile = Preconditions.checkExists(
@@ -37729,11 +39815,11 @@ function convertSiiToJson(siiPath, entries, schema) {
   throw new Error();
 }
 
-// ../packages/clis/parser/game-files/dds-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/dds-parser.ts
 var import_dxtn = __toESM(require_dxtn(), 1);
 var import_pngjs = __toESM(require_png(), 1);
 
-// ../node_modules/restructure/src/DecodeStream.js
+// ../../../../ext/maps/node_modules/restructure/src/DecodeStream.js
 var ENCODING_MAPPING = {
   utf16le: "utf-16le",
   ucs2: "utf-16le",
@@ -37808,7 +39894,7 @@ for (let key of Object.getOwnPropertyNames(DataView.prototype)) {
   }
 }
 
-// ../node_modules/restructure/src/EncodeStream.js
+// ../../../../ext/maps/node_modules/restructure/src/EncodeStream.js
 var textEncoder = new TextEncoder();
 var isBigEndian = new Uint8Array(new Uint16Array([4660]).buffer)[0] == 18;
 var EncodeStream = class {
@@ -37919,7 +40005,7 @@ for (let key of Object.getOwnPropertyNames(DataView.prototype)) {
   }
 }
 
-// ../node_modules/restructure/src/Base.js
+// ../../../../ext/maps/node_modules/restructure/src/Base.js
 var Base = class {
   fromBuffer(buffer) {
     let stream = new DecodeStream(buffer);
@@ -37934,7 +40020,7 @@ var Base = class {
   }
 };
 
-// ../node_modules/restructure/src/Number.js
+// ../../../../ext/maps/node_modules/restructure/src/Number.js
 var NumberT = class extends Base {
   constructor(type, endian = "BE") {
     super();
@@ -37990,7 +40076,7 @@ var fixed16le = new Fixed(16, "LE");
 var fixed32be = new Fixed(32, "BE");
 var fixed32le = new Fixed(32, "LE");
 
-// ../node_modules/restructure/src/utils.js
+// ../../../../ext/maps/node_modules/restructure/src/utils.js
 function resolveLength(length, stream, parent) {
   let res;
   if (typeof length === "number") {
@@ -38018,7 +40104,7 @@ var PropertyDescriptor = class {
   }
 };
 
-// ../node_modules/restructure/src/Array.js
+// ../../../../ext/maps/node_modules/restructure/src/Array.js
 var ArrayT = class extends Base {
   constructor(type, length, lengthType = "count") {
     super();
@@ -38096,7 +40182,7 @@ var ArrayT = class extends Base {
   }
 };
 
-// ../node_modules/restructure/src/Bitfield.js
+// ../../../../ext/maps/node_modules/restructure/src/Bitfield.js
 var Bitfield = class extends Base {
   constructor(type, flags = []) {
     super();
@@ -38131,7 +40217,7 @@ var Bitfield = class extends Base {
   }
 };
 
-// ../node_modules/restructure/src/Enum.js
+// ../../../../ext/maps/node_modules/restructure/src/Enum.js
 var Enum = class extends Base {
   constructor(type, options = []) {
     super();
@@ -38154,7 +40240,7 @@ var Enum = class extends Base {
   }
 };
 
-// ../node_modules/restructure/src/Reserved.js
+// ../../../../ext/maps/node_modules/restructure/src/Reserved.js
 var Reserved = class extends Base {
   constructor(type, count = 1) {
     super();
@@ -38165,7 +40251,7 @@ var Reserved = class extends Base {
     stream.pos += this.size(null, parent);
     return void 0;
   }
-  size(data2, parent) {
+  size(data, parent) {
     const count = resolveLength(this.count, null, parent);
     return this.type.size() * count;
   }
@@ -38174,7 +40260,7 @@ var Reserved = class extends Base {
   }
 };
 
-// ../node_modules/restructure/src/String.js
+// ../../../../ext/maps/node_modules/restructure/src/String.js
 var StringT = class extends Base {
   constructor(length, encoding = "ascii") {
     super();
@@ -38293,7 +40379,7 @@ function byteLength(string2, encoding) {
   }
 }
 
-// ../node_modules/restructure/src/Struct.js
+// ../../../../ext/maps/node_modules/restructure/src/Struct.js
 var Struct = class extends Base {
   constructor(fields = {}) {
     super();
@@ -38387,7 +40473,7 @@ var Struct = class extends Base {
   }
 };
 
-// ../node_modules/restructure/src/Pointer.js
+// ../../../../ext/maps/node_modules/restructure/src/Pointer.js
 var Pointer = class extends Base {
   constructor(offsetType, type, options = {}) {
     super();
@@ -38544,7 +40630,7 @@ var VoidPointer = class {
   }
 };
 
-// ../packages/clis/parser/game-files/dds-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/dds-parser.ts
 var DdsHeader = new Struct({
   size: uint32le,
   flags: uint32le,
@@ -38582,16 +40668,16 @@ function parseDds(buffer, sdfData) {
     logger.error("invalid .dds file length", header.size);
     throw new Error();
   }
-  const data2 = buffer.slice(128);
+  const data = buffer.slice(128);
   const png = new import_pngjs.PNG({
     width: header.width,
     height: header.height
   });
   if (header.ddsPixelFormat.fourCc === "\0\0\0\0") {
-    for (let i2 = 0; i2 < data2.length; i2 += 4) {
-      const b2 = data2[i2];
-      data2[i2] = data2[i2 + 2];
-      data2[i2 + 2] = b2;
+    for (let i2 = 0; i2 < data.length; i2 += 4) {
+      const b2 = data[i2];
+      data[i2] = data[i2 + 2];
+      data[i2 + 2] = b2;
     }
     if (sdfData) {
       const [, rColor, gColor, bColor, aColor] = sdfData;
@@ -38603,24 +40689,24 @@ function parseDds(buffer, sdfData) {
           return smoothed * gammaCorrected;
         });
       };
-      for (let i2 = 0; i2 < data2.length; i2 += 4) {
-        const r5 = data2[i2];
-        const g3 = data2[i2 + 1];
-        const b2 = data2[i2 + 2];
-        const a2 = data2[i2 + 3];
-        const [r1, g1, b1, a1] = calcColor(r5, rColor);
+      for (let i2 = 0; i2 < data.length; i2 += 4) {
+        const r4 = data[i2];
+        const g3 = data[i2 + 1];
+        const b2 = data[i2 + 2];
+        const a2 = data[i2 + 3];
+        const [r1, g1, b1, a1] = calcColor(r4, rColor);
         const [r22, g22, b22, a22] = calcColor(g3, gColor);
         const [r32, g32, b3, a3] = calcColor(b2, bColor);
         const [r42, g4, b4, a4] = calcColor(a2, aColor);
-        data2[i2] = clamp(r1 + r22 + r32 + r42, 0, 255);
-        data2[i2 + 1] = clamp(g1 + g22 + g32 + g4, 0, 255);
-        data2[i2 + 2] = clamp(b1 + b22 + b3 + b4, 0, 255);
-        data2[i2 + 3] = clamp(a1 + a22 + a3 + a4, 0, 255);
+        data[i2] = clamp(r1 + r22 + r32 + r42, 0, 255);
+        data[i2 + 1] = clamp(g1 + g22 + g32 + g4, 0, 255);
+        data[i2 + 2] = clamp(b1 + b22 + b3 + b4, 0, 255);
+        data[i2 + 3] = clamp(a1 + a22 + a3 + a4, 0, 255);
       }
     }
-    png.data = data2;
+    png.data = data;
   } else if (header.ddsPixelFormat.fourCc === "DXT5") {
-    png.data = (0, import_dxtn.decompressDXT5)(header.width, header.height, data2);
+    png.data = (0, import_dxtn.decompressDXT5)(header.width, header.height, data);
   } else {
     logger.error("unsupported pixel format", header.ddsPixelFormat.fourCc);
     throw new Error();
@@ -38635,7 +40721,7 @@ function smoothstep(edge0, edge1, x2) {
   return x2 * x2 * (3 - 2 * x2);
 }
 
-// ../node_modules/binary-parser/dist/binary_parser.js
+// ../../../../ext/maps/node_modules/binary-parser/dist/binary_parser.js
 var IDENTIFIER = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
 function sanitizeReference(ref) {
   if (!ref.split(".").every((s2) => IDENTIFIER.test(s2))) {
@@ -39838,7 +41924,7 @@ var Parser2 = class _Parser {
   }
 };
 
-// ../packages/clis/parser/game-files/binary-parser-adapter.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/binary-parser-adapter.ts
 var BinaryParserBase = class {
   decode(stream) {
     const parser2 = new Parser2();
@@ -39989,8 +42075,8 @@ var VersionedStruct2 = class extends BinaryParserBase {
   constructor(tagType, headerAndTypes) {
     super();
     this.tagType = tagType;
-    const { header, ...types2 } = headerAndTypes;
-    this.types = types2;
+    const { header, ...types } = headerAndTypes;
+    this.types = types;
     this.headerStruct = new Struct2(header);
   }
   headerStruct;
@@ -40087,7 +42173,7 @@ var token64 = new Token();
 var uint64String = new Uint64String();
 var uint64le = new NumberBase("uint64le");
 
-// ../packages/clis/parser/game-files/model-pmg-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/model-pmg-parser.ts
 var PmgHeader = new r3.Struct({
   version: r3.uint8,
   // 21
@@ -40127,7 +42213,7 @@ function parseModelPmg(buffer) {
   };
 }
 
-// ../packages/clis/parser/game-files/restructure-helpers.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/restructure-helpers.ts
 var float32 = new ArrayT(floatle, 3);
 var float42 = new ArrayT(floatle, 4);
 var debugStruct = new ArrayT(uint8, function(parent) {
@@ -40202,7 +42288,7 @@ var Uint64String2 = class {
 };
 var uint64String2 = new Uint64String2();
 
-// ../packages/clis/parser/game-files/prefab-ppd-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/prefab-ppd-parser.ts
 var Prefab = new Struct({
   version: uint32le,
   numNodes: uint32le,
@@ -40637,7 +42723,7 @@ function getXYZR(pos, rotQuat) {
   return { x: x2, y: y3, z: z2, rotation, rotationQuat: rotQuat };
 }
 
-// ../packages/clis/parser/game-files/def-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/def-parser.ts
 function parseDefFiles(entries, application) {
   logger.log(
     "parsing",
@@ -40650,8 +42736,8 @@ function parseDefFiles(entries, application) {
   const companies = /* @__PURE__ */ new Map();
   const cargoes = /* @__PURE__ */ new Map();
   const ferries = /* @__PURE__ */ new Map();
-  const processAndAdd = (path7, dlcGuard, schema, p, m2) => {
-    const t2 = convertSiiToJson(path7, entries, schema);
+  const processAndAdd = (path8, dlcGuard, schema, p, m2) => {
+    const t2 = convertSiiToJson(path8, entries, schema);
     const u3 = p(t2, entries);
     if (u3) {
       m2.set(u3.token, { ...u3, dlcGuard });
@@ -40671,17 +42757,17 @@ function parseDefFiles(entries, application) {
       dlcGuard = 0;
     }
     const includePaths = parseIncludeOnlySii(`def/${f3}`, entries);
-    for (const path7 of includePaths) {
+    for (const path8 of includePaths) {
       if (f3.startsWith("city.")) {
-        processAndAdd(path7, dlcGuard, CitySiiSchema, processCityJson, cities);
+        processAndAdd(path8, dlcGuard, CitySiiSchema, processCityJson, cities);
       } else if (f3.startsWith("country.")) {
         const partialCountry = processCountryJson(
-          convertSiiToJson(path7, entries, CountrySiiSchema)
+          convertSiiToJson(path8, entries, CountrySiiSchema)
         );
         if (partialCountry) {
           const truckSpeedLimits = processSpeedLimitJson(
             convertSiiToJson(
-              path7.replace(".sui", "/speed_limits.sii"),
+              path8.replace(".sui", "/speed_limits.sii"),
               entries,
               SpeedLimitSiiSchema
             )
@@ -40693,7 +42779,7 @@ function parseDefFiles(entries, application) {
         }
       } else if (f3.startsWith("company.")) {
         processAndAdd(
-          path7,
+          path8,
           dlcGuard,
           CompanySiiSchema,
           processCompanyJson,
@@ -40701,7 +42787,7 @@ function parseDefFiles(entries, application) {
         );
       } else if (f3.startsWith("cargo.")) {
         processAndAdd(
-          path7,
+          path8,
           dlcGuard,
           CargoDataSiiSchema,
           processCargoJson,
@@ -40709,7 +42795,7 @@ function parseDefFiles(entries, application) {
         );
       } else if (f3.startsWith("ferry.")) {
         processAndAdd(
-          path7,
+          path8,
           dlcGuard,
           FerrySiiSchema,
           processFerryJson,
@@ -41091,28 +43177,28 @@ function processPrefabJson(obj, entries) {
     ([key, o3]) => [key.split(".")[1], o3.prefabDesc.substring(1)]
   );
   const prefabs = /* @__PURE__ */ new Map();
-  for (const [token2, path7] of prefabTuples) {
-    const ppdFile = entries.files.get(path7);
+  for (const [token2, path8] of prefabTuples) {
+    const ppdFile = entries.files.get(path8);
     if (!ppdFile) {
       logger.warn(`could not find prefab file for ${token2}`);
       continue;
     }
     const ppd = parsePrefabPpd(ppdFile.read());
-    if (ppd.mapPoints.some((p) => p.type === "polygon")) {
-      const pmgPath = path7.replace(
+    if (false) {
+      const pmgPath = path8.replace(
         /(_spawn|_roof_trigger_rt|_rt|_trigger)?\.ppd$/,
         ".pmg"
       );
       const pmgFile = entries.files.get(pmgPath);
       if (!pmgFile) {
         logger.warn(
-          `could not find pmg file ${pmgPath} for ${token2} (${path7})`
+          `could not find pmg file ${pmgPath} for ${token2} (${path8})`
         );
       } else {
       }
     }
     prefabs.set(token2, {
-      path: path7,
+      path: path8,
       ...ppd
     });
   }
@@ -41155,25 +43241,25 @@ function processModelJson(obj, entries) {
     ([key, o3]) => [key.split(".")[1], o3.modelDesc?.substring(1)]
   );
   const buildings = /* @__PURE__ */ new Map();
-  for (const [token2, path7] of modelTuples) {
-    if (path7 == null) {
+  for (const [token2, path8] of modelTuples) {
+    if (path8 == null) {
       continue;
     }
-    if (!path7.endsWith(".pmd")) {
+    if (!path8.endsWith(".pmd")) {
       continue;
     }
-    const isProbablyBuildingModel = /^model2?\/building\//.exec(path7) ?? /^model2?\/panorama\/.*building/.exec(path7);
-    if (!isProbablyBuildingModel) {
+    const isProbablyBuildingModel = /^model2?\/building\//.exec(path8) ?? /^model2?\/panorama\/.*building/.exec(path8);
+    if (true) {
       continue;
     }
-    const pmgPath = path7.replace(/\.pmd$/, ".pmg");
+    const pmgPath = path8.replace(/\.pmd$/, ".pmg");
     const pmgFile = entries.files.get(pmgPath);
     if (!pmgFile) {
       logger.warn(`could not find pmg file ${pmgPath} for ${token2}`);
       continue;
     }
     const pmg = parseModelPmg(pmgFile.read());
-    buildings.set(token2, { path: path7, ...pmg });
+    buildings.set(token2, { path: path8, ...pmg });
   }
   return { buildings, vegetation };
 }
@@ -41450,7 +43536,7 @@ function processMileageTargetJson(obj) {
   return mileageTargets;
 }
 
-// ../packages/clis/parser/game-files/scs-archive.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/scs-archive.ts
 var import_fs2 = __toESM(require("fs"), 1);
 var import_zlib = __toESM(require("zlib"), 1);
 var import_bindings_shim = __toESM(require_bindings_shim(), 1);
@@ -41546,10 +43632,10 @@ var MetadataEntryHeader = new Struct({
   type: uint8
 });
 var ScsArchive = class {
-  constructor(path7, scsSource) {
-    this.path = path7;
+  constructor(path8, scsSource) {
+    this.path = path8;
     this.scsSource = scsSource;
-    this.fd = import_fs2.default.openSync(path7, "r");
+    this.fd = import_fs2.default.openSync(path8, "r");
     const buffer = Buffer.alloc(FileHeader.size());
     import_fs2.default.readSync(this.fd, buffer, { length: buffer.length });
     this.header = FileHeader.fromBuffer(buffer);
@@ -41922,7 +44008,7 @@ var ScsArchiveDirectory = class extends ScsArchiveEntry {
   }
 };
 
-// ../packages/clis/parser/game-files/sector-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/sector-parser.ts
 var quadInfo = new r3.Struct({
   materials: new r3.Array(
     new r3.Struct({
@@ -42771,7 +44857,7 @@ function toNode(rawNode) {
   };
 }
 
-// ../packages/clis/parser/game-files/map-files-parser.ts
+// ../../../../ext/maps/packages/clis/parser/game-files/map-files-parser.ts
 function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
   const requiredFiles = /* @__PURE__ */ new Set([
     "base.scs",
@@ -42807,7 +44893,8 @@ function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
       };
     }
     const defData = parseDefFiles(entries, version.application);
-    const l10n = assertExists(parseLocaleFiles(entries).get("en_us"));
+    const __loc = parseLocaleFiles(entries);
+    const l10n = assertExists(__loc.get(process.env.TCH_LANGUE || "fr_fr") ?? __loc.get("en_us"));
     if (mode === "defs") {
       return {
         ...baseResult,
@@ -43624,9 +45711,9 @@ function postProcess(defData, { sectors, map }, icons, l10n) {
       referencedNodeUids.add(d2.startNodeUid);
       referencedNodeUids.add(d2.endNodeUid);
     }
-    for (const r5 of sectorRoads) {
-      const rStart = assertExists(nodesByUid.get(r5.startNodeUid));
-      const rEnd = assertExists(nodesByUid.get(r5.endNodeUid));
+    for (const r4 of sectorRoads) {
+      const rStart = assertExists(nodesByUid.get(r4.startNodeUid));
+      const rEnd = assertExists(nodesByUid.get(r4.endNodeUid));
       const splitsRoad = (t2) => {
         const tStart = assertExists(nodesByUid.get(t2.startNodeUid));
         const tEnd = assertExists(nodesByUid.get(t2.endNodeUid));
@@ -43634,12 +45721,12 @@ function postProcess(defData, { sectors, map }, icons, l10n) {
       };
       if (sectorDividers.some(splitsRoad)) {
         roads.push({
-          ...r5,
+          ...r4,
           maybeDivided: true
         });
         splitCount++;
       } else {
-        roads.push(r5);
+        roads.push(r4);
       }
     }
     bar.increment({ key });
@@ -43763,7 +45850,7 @@ function checkReference(ref, store, fieldName, item) {
   }
 }
 
-// ../packages/libs/io/file-source.ts
+// ../../../../ext/maps/packages/libs/io/file-source.ts
 var import_adm_zip = __toESM(require_adm_zip(), 1);
 var import_fs3 = __toESM(require("fs"), 1);
 var import_path3 = __toESM(require("path"), 1);
@@ -43775,7 +45862,7 @@ function fromDir(dir) {
   };
 }
 
-// ../packages/libs/map/projections.ts
+// ../../../../ext/maps/packages/libs/map/projections.ts
 var proj4 = __toESM(require_proj4_src(), 1);
 var earthRadiusMeters = 6370997;
 var lengthOfDegree = earthRadiusMeters * Math.PI / 180;
@@ -43844,11 +45931,11 @@ var fromEts2CoordsToWgs84 = ([x2, y3]) => {
   return fromWgs84ToEts2Converter.inverse(lccCoords);
 };
 
-// ../packages/libs/io/mapped-data.ts
+// ../../../../ext/maps/packages/libs/io/mapped-data.ts
 var import_path4 = __toESM(require("path"), 1);
 var import_process = __toESM(require("process"), 1);
 
-// ../packages/libs/io/logger.ts
+// ../../../../ext/maps/packages/libs/io/logger.ts
 var _logger2 = createConsola2({
   formatOptions: { compact: true, colors: true, date: false }
 });
@@ -43870,7 +45957,7 @@ var logger2 = createConsola2({
   ]
 });
 
-// ../packages/libs/io/mapped-data.ts
+// ../../../../ext/maps/packages/libs/io/mapped-data.ts
 function readMapData(input, map, options) {
   Preconditions.checkArgument(options.mapDataKeys.length > 0);
   const source = typeof input === "string" ? fromDir(input) : input;
@@ -43973,9 +46060,9 @@ function readMapData(input, map, options) {
         mapData.roads = mapify(
           readArrayFile(source, toJsonFilePath(key), {
             transform: maybeForceSecret,
-            filter: (r5) => (includeHiddenRoadsAndPrefabs || !r5.hidden) && focusXY(r5)
+            filter: (r4) => (includeHiddenRoadsAndPrefabs || !r4.hidden) && focusXY(r4)
           }),
-          (r5) => r5.uid
+          (r4) => r4.uid
         );
         mapData.roads.values().forEach((road) => {
           referencedNodeUids.add(road.startNodeUid);
@@ -44082,7 +46169,7 @@ function readMapData(input, map, options) {
       case "roadLooks":
         mapData.roadLooks = mapify(
           readArrayFile(source, toJsonFilePath(key)),
-          (r5) => r5.token
+          (r4) => r4.token
         );
         break;
       case "prefabDescriptions":
@@ -44156,7 +46243,7 @@ function readMapData(input, map, options) {
       case "routes":
         mapData.routes = mapify(
           readArrayFile(source, toJsonFilePath(key)),
-          (r5) => r5.token
+          (r4) => r4.token
         );
         break;
       case "mileageTargets":
@@ -44311,35 +46398,16 @@ function toBigInt(v2) {
   return BigInt("0x" + v2);
 }
 
-// ../packages/libs/io/write.ts
+// ../../../../ext/maps/packages/libs/io/write.ts
 var fs4 = __toESM(require("node:fs"), 1);
 function writeArrayFile(array, outputFile) {
   fs4.writeFileSync(outputFile, JSON.stringify(array, null, 2));
-}
-function writeGeojsonFile(path7, data2) {
-  const fd = fs4.openSync(path7, "w");
-  let pos = 0;
-  const writeln = (str) => pos += fs4.writeSync(fd, str + "\n", pos, "utf-8");
-  writeln("{");
-  writeln('"type": "FeatureCollection",');
-  writeln('"features":[');
-  for (let i2 = 0; i2 < data2.features.length; i2++) {
-    const feature2 = data2.features[i2];
-    if (i2 !== data2.features.length - 1) {
-      writeln(JSON.stringify(feature2) + ",");
-    } else {
-      writeln(JSON.stringify(feature2));
-    }
-  }
-  writeln("]");
-  writeln("}");
-  fs4.closeSync(fd);
 }
 BigInt.prototype.toJSON = function() {
   return this.toString(16);
 };
 
-// ../packages/libs/base/equals.ts
+// ../../../../ext/maps/packages/libs/base/equals.ts
 function areSetsEqual(a2, b2) {
   if (a2.size !== b2.size) {
     return false;
@@ -44352,7 +46420,7 @@ function areSetsEqual(a2, b2) {
   return true;
 }
 
-// ../packages/libs/map/labels.ts
+// ../../../../ext/maps/packages/libs/map/labels.ts
 function toDealerLabel(prefabPath) {
   Preconditions.checkArgument(prefabPath.includes("/truck_dealer/"));
   const dealerRegex = /\/truck_dealer\/(?:truck_dealer_([^.]+).ppd$|([^/]+)\/)/;
@@ -44381,7 +46449,7 @@ function toDealerLabel(prefabPath) {
   }
 }
 
-// ../packages/libs/map/roads.ts
+// ../../../../ext/maps/packages/libs/map/roads.ts
 function getRoadType(look) {
   const lanes = look.lanesLeft.concat(look.lanesRight);
   if (lanes.length === 0) {
@@ -44406,7 +46474,7 @@ function getRoadType(look) {
   return roadType;
 }
 
-// ../node_modules/d3-quadtree/src/add.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/add.js
 function add_default(d2) {
   const x2 = +this._x.call(null, d2), y3 = +this._y.call(null, d2);
   return add3(this.cover(x2, y3), x2, y3, d2);
@@ -44434,10 +46502,10 @@ function add3(tree, x2, y3, d2) {
   } while ((i2 = bottom << 1 | right) === (j = (yp >= ym) << 1 | xp >= xm));
   return parent[j] = node, parent[i2] = leaf, tree;
 }
-function addAll(data2) {
-  var d2, i2, n2 = data2.length, x2, y3, xz = new Array(n2), yz = new Array(n2), x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+function addAll(data) {
+  var d2, i2, n2 = data.length, x2, y3, xz = new Array(n2), yz = new Array(n2), x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   for (i2 = 0; i2 < n2; ++i2) {
-    if (isNaN(x2 = +this._x.call(null, d2 = data2[i2])) || isNaN(y3 = +this._y.call(null, d2))) continue;
+    if (isNaN(x2 = +this._x.call(null, d2 = data[i2])) || isNaN(y3 = +this._y.call(null, d2))) continue;
     xz[i2] = x2;
     yz[i2] = y3;
     if (x2 < x0) x0 = x2;
@@ -44448,12 +46516,12 @@ function addAll(data2) {
   if (x0 > x1 || y0 > y1) return this;
   this.cover(x0, y0).cover(x1, y1);
   for (i2 = 0; i2 < n2; ++i2) {
-    add3(this, xz[i2], yz[i2], data2[i2]);
+    add3(this, xz[i2], yz[i2], data[i2]);
   }
   return this;
 }
 
-// ../node_modules/d3-quadtree/src/cover.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/cover.js
 function cover_default(x2, y3) {
   if (isNaN(x2 = +x2) || isNaN(y3 = +y3)) return this;
   var x0 = this._x0, y0 = this._y0, x1 = this._x1, y1 = this._y1;
@@ -44489,23 +46557,23 @@ function cover_default(x2, y3) {
   return this;
 }
 
-// ../node_modules/d3-quadtree/src/data.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/data.js
 function data_default() {
-  var data2 = [];
+  var data = [];
   this.visit(function(node) {
     if (!node.length) do
-      data2.push(node.data);
+      data.push(node.data);
     while (node = node.next);
   });
-  return data2;
+  return data;
 }
 
-// ../node_modules/d3-quadtree/src/extent.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/extent.js
 function extent_default(_3) {
   return arguments.length ? this.cover(+_3[0][0], +_3[0][1]).cover(+_3[1][0], +_3[1][1]) : isNaN(this._x0) ? void 0 : [[this._x0, this._y0], [this._x1, this._y1]];
 }
 
-// ../node_modules/d3-quadtree/src/quad.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/quad.js
 function quad_default(node, x0, y0, x1, y1) {
   this.node = node;
   this.x0 = x0;
@@ -44514,9 +46582,9 @@ function quad_default(node, x0, y0, x1, y1) {
   this.y1 = y1;
 }
 
-// ../node_modules/d3-quadtree/src/find.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/find.js
 function find_default(x2, y3, radius) {
-  var data2, x0 = this._x0, y0 = this._y0, x1, y1, x22, y22, x3 = this._x1, y32 = this._y1, quads = [], node = this._root, q2, i2;
+  var data, x0 = this._x0, y0 = this._y0, x1, y1, x22, y22, x3 = this._x1, y32 = this._y1, quads = [], node = this._root, q2, i2;
   if (node) quads.push(new quad_default(node, x0, y0, x3, y32));
   if (radius == null) radius = Infinity;
   else {
@@ -44545,14 +46613,14 @@ function find_default(x2, y3, radius) {
         var d3 = Math.sqrt(radius = d2);
         x0 = x2 - d3, y0 = y3 - d3;
         x3 = x2 + d3, y32 = y3 + d3;
-        data2 = node.data;
+        data = node.data;
       }
     }
   }
-  return data2;
+  return data;
 }
 
-// ../node_modules/d3-quadtree/src/remove.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/remove.js
 function remove_default(d2) {
   if (isNaN(x2 = +this._x.call(null, d2)) || isNaN(y3 = +this._y.call(null, d2))) return this;
   var parent, node = this._root, retainer, previous, next, x0 = this._x0, y0 = this._y0, x1 = this._x1, y1 = this._y1, x2, y3, xm, ym, right, bottom, i2, j;
@@ -44577,17 +46645,17 @@ function remove_default(d2) {
   }
   return this;
 }
-function removeAll(data2) {
-  for (var i2 = 0, n2 = data2.length; i2 < n2; ++i2) this.remove(data2[i2]);
+function removeAll(data) {
+  for (var i2 = 0, n2 = data.length; i2 < n2; ++i2) this.remove(data[i2]);
   return this;
 }
 
-// ../node_modules/d3-quadtree/src/root.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/root.js
 function root_default() {
   return this._root;
 }
 
-// ../node_modules/d3-quadtree/src/size.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/size.js
 function size_default() {
   var size = 0;
   this.visit(function(node) {
@@ -44598,7 +46666,7 @@ function size_default() {
   return size;
 }
 
-// ../node_modules/d3-quadtree/src/visit.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/visit.js
 function visit_default(callback) {
   var quads = [], q2, node = this._root, child, x0, y0, x1, y1;
   if (node) quads.push(new quad_default(node, this._x0, this._y0, this._x1, this._y1));
@@ -44614,7 +46682,7 @@ function visit_default(callback) {
   return this;
 }
 
-// ../node_modules/d3-quadtree/src/visitAfter.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/visitAfter.js
 function visitAfter_default(callback) {
   var quads = [], next = [], q2;
   if (this._root) quads.push(new quad_default(this._root, this._x0, this._y0, this._x1, this._y1));
@@ -44635,7 +46703,7 @@ function visitAfter_default(callback) {
   return this;
 }
 
-// ../node_modules/d3-quadtree/src/x.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/x.js
 function defaultX(d2) {
   return d2[0];
 }
@@ -44643,7 +46711,7 @@ function x_default(_3) {
   return arguments.length ? (this._x = _3, this) : this._x;
 }
 
-// ../node_modules/d3-quadtree/src/y.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/y.js
 function defaultY(d2) {
   return d2[1];
 }
@@ -44651,7 +46719,7 @@ function y_default(_3) {
   return arguments.length ? (this._y = _3, this) : this._y;
 }
 
-// ../node_modules/d3-quadtree/src/quadtree.js
+// ../../../../ext/maps/node_modules/d3-quadtree/src/quadtree.js
 function quadtree(nodes, x2, y3) {
   var tree = new Quadtree(x2 == null ? defaultX : x2, y3 == null ? defaultY : y3, NaN, NaN, NaN, NaN);
   return nodes == null ? tree : tree.addAll(nodes);
@@ -44701,7 +46769,7 @@ treeProto.visitAfter = visitAfter_default;
 treeProto.x = x_default;
 treeProto.y = y_default;
 
-// ../node_modules/quickselect/index.js
+// ../../../../ext/maps/node_modules/quickselect/index.js
 function quickselect(arr, k2, left = 0, right = arr.length - 1, compare = defaultCompare) {
   while (right > left) {
     if (right - left > 600) {
@@ -44744,7 +46812,7 @@ function defaultCompare(a2, b2) {
   return a2 < b2 ? -1 : a2 > b2 ? 1 : 0;
 }
 
-// ../node_modules/rbush/index.js
+// ../../../../ext/maps/node_modules/rbush/index.js
 var RBush = class {
   constructor(maxEntries = 9) {
     this._maxEntries = Math.max(4, maxEntries);
@@ -44791,15 +46859,15 @@ var RBush = class {
     }
     return false;
   }
-  load(data2) {
-    if (!(data2 && data2.length)) return this;
-    if (data2.length < this._minEntries) {
-      for (let i2 = 0; i2 < data2.length; i2++) {
-        this.insert(data2[i2]);
+  load(data) {
+    if (!(data && data.length)) return this;
+    if (data.length < this._minEntries) {
+      for (let i2 = 0; i2 < data.length; i2++) {
+        this.insert(data[i2]);
       }
       return this;
     }
-    let node = this._build(data2.slice(), 0, data2.length - 1, 0);
+    let node = this._build(data.slice(), 0, data.length - 1, 0);
     if (!this.data.children.length) {
       this.data = node;
     } else if (this.data.height === node.height) {
@@ -44826,13 +46894,13 @@ var RBush = class {
     if (!item) return this;
     let node = this.data;
     const bbox = this.toBBox(item);
-    const path7 = [];
+    const path8 = [];
     const indexes = [];
     let i2, parent, goingUp;
-    while (node || path7.length) {
+    while (node || path8.length) {
       if (!node) {
-        node = path7.pop();
-        parent = path7[path7.length - 1];
+        node = path8.pop();
+        parent = path8[path8.length - 1];
         i2 = indexes.pop();
         goingUp = true;
       }
@@ -44840,13 +46908,13 @@ var RBush = class {
         const index = findItem(item, node.children, equalsFn);
         if (index !== -1) {
           node.children.splice(index, 1);
-          path7.push(node);
-          this._condense(path7);
+          path8.push(node);
+          this._condense(path8);
           return this;
         }
       }
       if (!goingUp && !node.leaf && contains(node, bbox)) {
-        path7.push(node);
+        path8.push(node);
         indexes.push(i2);
         i2 = 0;
         parent = node;
@@ -44871,8 +46939,8 @@ var RBush = class {
   toJSON() {
     return this.data;
   }
-  fromJSON(data2) {
-    this.data = data2;
+  fromJSON(data) {
+    this.data = data;
     return this;
   }
   _all(node, result) {
@@ -44914,10 +46982,10 @@ var RBush = class {
     calcBBox(node, this.toBBox);
     return node;
   }
-  _chooseSubtree(bbox, node, level, path7) {
+  _chooseSubtree(bbox, node, level, path8) {
     while (true) {
-      path7.push(node);
-      if (node.leaf || path7.length - 1 === level) break;
+      path8.push(node);
+      if (node.leaf || path8.length - 1 === level) break;
       let minArea = Infinity;
       let minEnlargement = Infinity;
       let targetNode;
@@ -45024,19 +47092,19 @@ var RBush = class {
     }
     return margin;
   }
-  _adjustParentBBoxes(bbox, path7, level) {
+  _adjustParentBBoxes(bbox, path8, level) {
     for (let i2 = level; i2 >= 0; i2--) {
-      extend(path7[i2], bbox);
+      extend(path8[i2], bbox);
     }
   }
-  _condense(path7) {
-    for (let i2 = path7.length - 1, siblings; i2 >= 0; i2--) {
-      if (path7[i2].children.length === 0) {
+  _condense(path8) {
+    for (let i2 = path8.length - 1, siblings; i2 >= 0; i2--) {
+      if (path8[i2].children.length === 0) {
         if (i2 > 0) {
-          siblings = path7[i2 - 1].children;
-          siblings.splice(siblings.indexOf(path7[i2]), 1);
+          siblings = path8[i2 - 1].children;
+          siblings.splice(siblings.indexOf(path8[i2]), 1);
         } else this.clear();
-      } else calcBBox(path7[i2], this.toBBox);
+      } else calcBBox(path8[i2], this.toBBox);
     }
   }
 };
@@ -45120,7 +47188,7 @@ function multiSelect(arr, left, right, n2, compare) {
   }
 }
 
-// ../node_modules/rbush-knn/index.js
+// ../../../../ext/maps/node_modules/rbush-knn/index.js
 var import_tinyqueue = __toESM(require_tinyqueue(), 1);
 function knn(tree, x2, y3, n2, predicate, maxDistance) {
   let node = tree.data;
@@ -45161,7 +47229,7 @@ function axisDist(k2, min, max) {
   return k2 < min ? min - k2 : k2 <= max ? 0 : k2 - max;
 }
 
-// ../packages/libs/map/point-rbush.ts
+// ../../../../ext/maps/packages/libs/map/point-rbush.ts
 var PointRBush = class extends RBush {
   toBBox({ x: x2, y: y3 }) {
     return { minX: x2, minY: y3, maxX: x2, maxY: y3 };
@@ -45188,7 +47256,7 @@ var PointRBush = class extends RBush {
   }
 };
 
-// ../packages/clis/generator/logger.ts
+// ../../../../ext/maps/packages/clis/generator/logger.ts
 var _logger3 = createConsola2({
   formatOptions: { compact: true, colors: true, date: false }
 });
@@ -45210,7 +47278,7 @@ var logger3 = createConsola2({
   ]
 });
 
-// ../packages/clis/generator/dlc-guards.ts
+// ../../../../ext/maps/packages/clis/generator/dlc-guards.ts
 var dlcGuardMapDataKeys = [
   "nodes",
   "roads",
@@ -45262,7 +47330,7 @@ function buildDlcGuardSpatialIndex(tsMapData) {
   return rtree;
 }
 
-// ../packages/clis/generator/geo-json/normalize.ts
+// ../../../../ext/maps/packages/clis/generator/geo-json/normalize.ts
 function createNormalizeFeature(map, decimalPoints) {
   const normalize = createNormalizeCoordinates(map, decimalPoints);
   return (feature2) => {
@@ -45310,10 +47378,10 @@ function createNormalizeCoordinates(map, decimalPoints) {
   };
 }
 
-// ../packages/clis/generator/geo-json/populated-places.ts
+// ../../../../ext/maps/packages/clis/generator/geo-json/populated-places.ts
 var import_fs4 = __toESM(require("fs"), 1);
 var import_path5 = __toESM(require("path"), 1);
-var __dirname = import_path5.default.join(process.env.TCH_RESSOURCES || ".", "x");
+var __dirname = import_path5.default.join(process.env.TCH_RESSOURCES || require("path").dirname(process.argv[1]), "x");
 var ets2IsoA2 = /* @__PURE__ */ new Map([
   ["A", "AT"],
   ["B", "BE"],
@@ -45359,7 +47427,7 @@ function getCitiesByCountryIsoA2() {
   return citiesByCountryIsoA2;
 }
 
-// ../packages/clis/generator/geo-json/map.ts
+// ../../../../ext/maps/packages/clis/generator/geo-json/map.ts
 var geoJsonMapDataKeys = [
   ...dlcGuardMapDataKeys,
   "nodes",
@@ -45512,57 +47580,57 @@ function convertToMapGeoJson(tsMapData, options) {
   }
   logger3.log("creating roads and quadtree of prefab-adjacent roads...");
   const roadFeatures = [];
-  for (const r5 of roads.values()) {
-    const fs7 = roadToFeature(
-      r5,
-      assertExists(roadLooks.get(r5.roadLookToken)),
+  for (const r4 of roads.values()) {
+    const fs8 = roadToFeature(
+      r4,
+      assertExists(roadLooks.get(r4.roadLookToken)),
       nodes,
       dividerFeatures
     );
-    for (const f3 of fs7) {
+    for (const f3 of fs8) {
       roadFeatures.push(f3);
-      if (prefabNodeUids.has(r5.startNodeUid)) {
-        const node = assertExists(nodes.get(r5.startNodeUid));
+      if (prefabNodeUids.has(r4.startNodeUid)) {
+        const node = assertExists(nodes.get(r4.startNodeUid));
         contextTree.add({
           x: node.x,
           y: node.y,
-          roadLookToken: r5.roadLookToken
+          roadLookToken: r4.roadLookToken
         });
         roadQuadTree.add({
           x: f3.geometry.coordinates[0][0],
           y: f3.geometry.coordinates[0][1],
-          roadLookToken: r5.roadLookToken
+          roadLookToken: r4.roadLookToken
         });
         roadQuadTree.add({
           x: f3.geometry.coordinates[0][0],
           y: f3.geometry.coordinates[0][1],
-          roadLookToken: r5.roadLookToken
+          roadLookToken: r4.roadLookToken
         });
         vjunctionQuadTree.add({
           x: f3.geometry.coordinates[0][0],
           y: f3.geometry.coordinates[0][1],
-          roadLookToken: r5.roadLookToken,
+          roadLookToken: r4.roadLookToken,
           roadFeature: f3,
           startOrEnd: f3.geometry.coordinates[0]
         });
         lutSize++;
       }
-      if (prefabNodeUids.has(r5.endNodeUid)) {
-        const node = assertExists(nodes.get(r5.endNodeUid));
+      if (prefabNodeUids.has(r4.endNodeUid)) {
+        const node = assertExists(nodes.get(r4.endNodeUid));
         contextTree.add({
           x: node.x,
           y: node.y,
-          roadLookToken: r5.roadLookToken
+          roadLookToken: r4.roadLookToken
         });
         roadQuadTree.add({
           x: f3.geometry.coordinates.at(-1)[0],
           y: f3.geometry.coordinates.at(-1)[1],
-          roadLookToken: r5.roadLookToken
+          roadLookToken: r4.roadLookToken
         });
         vjunctionQuadTree.add({
           x: f3.geometry.coordinates.at(-1)[0],
           y: f3.geometry.coordinates.at(-1)[1],
-          roadLookToken: r5.roadLookToken,
+          roadLookToken: r4.roadLookToken,
           roadFeature: f3,
           startOrEnd: f3.geometry.coordinates.at(-1)
         });
@@ -45647,22 +47715,22 @@ function convertToMapGeoJson(tsMapData, options) {
     if (f3.geometry.type === "Polygon" && f3.properties.type === "prefab") {
       prefabFeatures.push(f3);
     } else if (f3.geometry.type === "LineString" && f3.properties.type === "road") {
-      const r5 = f3;
-      roadFeatures.push(r5);
+      const r4 = f3;
+      roadFeatures.push(r4);
       vjunctionQuadTree.addAll([
         {
-          x: r5.geometry.coordinates[0][0],
-          y: r5.geometry.coordinates[0][1],
+          x: r4.geometry.coordinates[0][0],
+          y: r4.geometry.coordinates[0][1],
           roadLookToken: "any",
-          roadFeature: r5,
-          startOrEnd: r5.geometry.coordinates[0]
+          roadFeature: r4,
+          startOrEnd: r4.geometry.coordinates[0]
         },
         {
-          x: r5.geometry.coordinates.at(-1)[0],
-          y: r5.geometry.coordinates.at(-1)[1],
+          x: r4.geometry.coordinates.at(-1)[0],
+          y: r4.geometry.coordinates.at(-1)[1],
           roadLookToken: "any",
-          roadFeature: r5,
-          startOrEnd: r5.geometry.coordinates.at(-1)
+          roadFeature: r4,
+          startOrEnd: r4.geometry.coordinates.at(-1)
         }
       ]);
     } else {
@@ -46020,7 +48088,7 @@ function coalesceRoadFeatures(roadFeatures) {
     if (dir === "head") {
       const headKey = road.properties.startNodeUid;
       const connectingRoad = headKey && tails.has(headKey) ? tails.get(headKey).find(
-        (r5) => inRange(road, r5) && arePropsConnectable(road.properties, r5.properties)
+        (r4) => inRange(road, r4) && arePropsConnectable(road.properties, r4.properties)
       ) : void 0;
       if (!connectingRoad || !availableRoads.has(connectingRoad)) {
         return [road];
@@ -46030,7 +48098,7 @@ function coalesceRoadFeatures(roadFeatures) {
     } else {
       const tailKey = road.properties.endNodeUid;
       const connectingRoad = tailKey && heads.has(tailKey) ? heads.get(tailKey).find(
-        (r5) => inRange(r5, road) && arePropsConnectable(r5.properties, road.properties)
+        (r4) => inRange(r4, road) && arePropsConnectable(r4.properties, road.properties)
       ) : void 0;
       if (!connectingRoad || !availableRoads.has(connectingRoad)) {
         return [road];
@@ -46039,7 +48107,7 @@ function coalesceRoadFeatures(roadFeatures) {
       return [road, ...getStringConnectingTo(connectingRoad, "tail")];
     }
   };
-  const roadStrings = roadFeatures.map((r5) => getString(r5)).filter((rs) => rs.length);
+  const roadStrings = roadFeatures.map((r4) => getString(r4)).filter((rs) => rs.length);
   const flattenedStrings = roadStrings.flatMap((rs) => rs);
   assert(
     flattenedStrings.length === roadFeatures.length,
@@ -46047,9 +48115,9 @@ function coalesceRoadFeatures(roadFeatures) {
   );
   assert(areSetsEqual(new Set(flattenedStrings), new Set(roadFeatures)));
   const coalescedFeatures = roadStrings.map((rs) => {
-    return rs.slice(1).reduce((coalesced, r5) => {
+    return rs.slice(1).reduce((coalesced, r4) => {
       const a2 = assertExists(coalesced.geometry.coordinates.pop());
-      const [b2, ...tail] = r5.geometry.coordinates;
+      const [b2, ...tail] = r4.geometry.coordinates;
       const mid = midPoint(a2, b2);
       coalesced.geometry.coordinates.push(mid, ...tail);
       return coalesced;
@@ -46481,21 +48549,101 @@ function arePropsConnectable(a2, b2) {
   return false;
 }
 
+// tuiles.ts
+var import_fs5 = __toESM(require("fs"));
+var import_path6 = __toESM(require("path"));
+var import_geojson_vt = __toESM(require_geojson_vt_dev());
+var import_vt_pbf = __toESM(require_vt_pbf());
+var ZMIN = 4;
+var ZMAX = 10;
+function gardesVisibles(map, fichiersScs) {
+  const src2 = map === "usa" ? AtsScsSourceToDlcGuard : Ets2ScsSourceToDlcGuard;
+  const gardes = map === "usa" ? AtsDlcGuards : Ets2DlcGuards;
+  const possedees = /* @__PURE__ */ new Set();
+  for (const f3 of fichiersScs) {
+    const g3 = src2[import_path6.default.basename(f3)];
+    if (g3 != null) for (const d2 of gardes[g3] ?? []) possedees.add(d2);
+  }
+  const ok = /* @__PURE__ */ new Set();
+  for (const [g3, req] of Object.entries(gardes)) if ([...req].every((d2) => possedees.has(d2))) ok.add(Number(g3));
+  return ok;
+}
+function ecrireCarte(gj, outDir2, gardes) {
+  const feats = [];
+  const villes = [];
+  for (const f3 of gj.features) {
+    const p = f3.properties;
+    if (p.dlcGuard != null && !gardes.has(p.dlcGuard)) continue;
+    switch (p.type) {
+      case "mapArea":
+      case "prefab":
+        feats.push({ type: "Feature", geometry: f3.geometry, properties: { t: p.type === "prefab" ? "p" : "a", c: p.color ?? 0, z: p.zIndex ?? 0 } });
+        break;
+      case "road":
+        if (p.hidden || p.roadType === "train" || p.roadType === "tram") break;
+        feats.push({ type: "Feature", geometry: f3.geometry, properties: { t: "r", r: p.roadType, s: p.secret ? 1 : 0 } });
+        break;
+      case "ferry":
+      case "train":
+        feats.push({ type: "Feature", geometry: f3.geometry, properties: { t: p.type === "ferry" ? "f" : "tr" } });
+        break;
+      case "city":
+        villes.push({ n: p.name, r: p.scaleRank, c: p.capital ? 1 : 0, p: f3.geometry.coordinates.map((v2) => Math.round(v2 * 1e5) / 1e5) });
+        break;
+    }
+  }
+  const index = (0, import_geojson_vt.default)({ type: "FeatureCollection", features: feats }, { maxZoom: ZMAX, indexMaxZoom: 5, indexMaxPoints: 1e5, tolerance: 3, buffer: 64 });
+  const tuiles = {};
+  const bin = import_fs5.default.openSync(import_path6.default.join(outDir2, "tuiles.bin.tmp"), "w");
+  let pos = 0;
+  const descendre = (z2, x2, y3) => {
+    const t2 = index.getTile(z2, x2, y3);
+    if (!t2 || !t2.features.length) return;
+    if (z2 >= ZMIN) {
+      const buf = Buffer.from(import_vt_pbf.default.fromGeojsonVt({ jeu: t2 }, { version: 2 }));
+      import_fs5.default.writeSync(bin, buf);
+      tuiles[`${z2}/${x2}/${y3}`] = [pos, buf.length];
+      pos += buf.length;
+    }
+    if (z2 < ZMAX) for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) descendre(z2 + 1, x2 * 2 + dx, y3 * 2 + dy);
+  };
+  descendre(0, 0, 0);
+  import_fs5.default.closeSync(bin);
+  import_fs5.default.renameSync(import_path6.default.join(outDir2, "tuiles.bin.tmp"), import_path6.default.join(outDir2, "tuiles.bin"));
+  import_fs5.default.writeFileSync(import_path6.default.join(outDir2, "tuiles.json"), JSON.stringify({ zmin: ZMIN, zmax: ZMAX, tuiles }));
+  import_fs5.default.writeFileSync(import_path6.default.join(outDir2, "villes.json"), JSON.stringify(villes));
+  return { tuiles: Object.keys(tuiles).length, octets: pos, villes: villes.length };
+}
+
 // extraire.ts
 var [gameDir, outDir] = process.argv.slice(2);
-var mem = () => Math.round(process.memoryUsage().rss / 1e6) + " Mo";
 var t0 = Date.now();
-var T3 = () => ((Date.now() - t0) / 1e3).toFixed(0) + " s";
-import_fs5.default.mkdirSync(import_path6.default.join(outDir, "json"), { recursive: true });
-var scs = import_fs5.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path6.default.join(gameDir, f3));
-var r4 = parseMapFiles(scs, { includeDlc: true, mode: "all" });
-console.log("lu", r4.map, r4.version, T3(), mem());
-for (const k2 of Object.keys(r4.mapData)) writeArrayFile(r4.mapData[k2], import_path6.default.join(outDir, "json", `${r4.map}-${k2}.json`));
-import_fs5.default.writeFileSync(import_path6.default.join(outDir, "version.txt"), r4.version);
-console.log("json \xE9crit", T3(), mem());
-var data = readMapData(import_path6.default.join(outDir, "json"), r4.map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
-var gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
-writeGeojsonFile(import_path6.default.join(outDir, r4.map === "usa" ? "ats.geojson" : "ets2.geojson"), gj);
-var types = {};
-for (const f3 of gj.features) types[f3.properties.type] = (types[f3.properties.type] || 0) + 1;
-console.log("geojson", JSON.stringify(types), T3(), mem());
+var etape = (nom, extra = {}) => process.stdout.write("@TCH " + JSON.stringify({ etape: nom, s: Math.round((Date.now() - t0) / 1e3), mo: Math.round(process.memoryUsage().rss / 1e6), ...extra }) + "\n");
+try {
+  import_fs6.default.mkdirSync(outDir, { recursive: true });
+  const scs = import_fs6.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path7.default.join(gameDir, f3));
+  const empreinte = scs.map((f3) => {
+    const st = import_fs6.default.statSync(f3);
+    return [import_path7.default.basename(f3), st.size, Math.round(st.mtimeMs)];
+  });
+  etape("lecture");
+  let r4 = parseMapFiles(scs, { includeDlc: true, mode: "all" });
+  const map = r4.map, version = r4.version;
+  etape("conversion", { version });
+  const tmp = import_fs6.default.mkdtempSync(import_path7.default.join(import_os.default.tmpdir(), "tchmap-"));
+  try {
+    for (const k2 of Object.keys(r4.mapData)) writeArrayFile(r4.mapData[k2], import_path7.default.join(tmp, `${map}-${k2}.json`));
+    r4 = null;
+    const data = readMapData(tmp, map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
+    const gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
+    etape("tuiles");
+    const res = ecrireCarte(gj, outDir, gardesVisibles(map, scs));
+    import_fs6.default.writeFileSync(import_path7.default.join(outDir, "info.json"), JSON.stringify({ jeu: map === "usa" ? "ats" : "ets2", version, date: (/* @__PURE__ */ new Date()).toISOString(), empreinte, ...res }));
+    etape("fini", res);
+  } finally {
+    import_fs6.default.rmSync(tmp, { recursive: true, force: true });
+  }
+} catch (e2) {
+  etape("erreur", { message: String(e2?.message || e2) });
+  process.exitCode = 1;
+}

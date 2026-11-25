@@ -20,7 +20,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const VIEWER = path.join(__dirname, 'viewer');
-const DATA = process.argv[2] ? path.resolve(process.argv[2]) : null;   // cartes générées depuis le jeu (plus tard)
+const DATA = process.argv[2] ? path.resolve(process.argv[2]) : null;   // cartes générées depuis les fichiers du jeu (extraction/)
 const TOKEN = crypto.randomBytes(24).toString('hex');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.geojson': 'application/geo+json', '.png': 'image/png', '.svg': 'image/svg+xml', '.pmtiles': 'application/octet-stream', '.txt': 'text/plain; charset=utf-8' };
 const CSP = "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'";
@@ -28,7 +28,7 @@ const CSP = "default-src 'self'; script-src 'self'; worker-src 'self' blob:; sty
 // Derniers messages reçus de l'hôte, rejoués à chaque nouvel affichage
 const last = {};
 const clients = new Set();
-const KINDS = ['config', 'theme', 'cities', 'trail', 'state'];
+const KINDS = ['config', 'theme', 'cities', 'trail', 'state', 'donnees'];
 
 function send(res, code, body, type) {
   res.writeHead(code, { 'Content-Type': type || 'text/plain; charset=utf-8', 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer', 'Content-Security-Policy': CSP });
@@ -38,6 +38,7 @@ function send(res, code, body, type) {
 // Fichier sous `root` uniquement (pas de « .. », pas de lien vers l'extérieur)
 function serveFile(res, root, rel) {
   if (!root) return send(res, 404, 'Introuvable');
+  root = path.resolve(root);
   let file;
   try { file = path.resolve(root, '.' + path.posix.normalize('/' + decodeURIComponent(rel))); } catch { return send(res, 400, 'Adresse invalide'); }
   if (file !== root && !file.startsWith(root + path.sep)) return send(res, 403, 'Interdit');
@@ -45,6 +46,40 @@ function serveFile(res, root, rel) {
     if (err || !st.isFile()) return send(res, 404, 'Introuvable');
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Content-Length': st.size, 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-cache', 'Referrer-Policy': 'no-referrer', 'Content-Security-Policy': CSP });
     fs.createReadStream(file).pipe(res);
+  });
+}
+
+// Tuiles vectorielles : un seul fichier tuiles.bin + son index tuiles.json par jeu (écrits par extraction/extraire.cjs)
+const packs = {};
+// Dossier de la carte en service : DATA/<jeu>/<nom lu dans courant.txt>
+function dossierJeu(game) {
+  if (!DATA) return null;
+  try {
+    const cur = fs.readFileSync(path.join(DATA, game, 'courant.txt'), 'utf8').trim();
+    return /^[0-9a-z-]+$/i.test(cur) ? path.join(DATA, game, cur) : null;
+  } catch { return null; }
+}
+function pack(game) {
+  const dir = dossierJeu(game);
+  if (!dir) return null;
+  let st; try { st = fs.statSync(path.join(dir, 'tuiles.bin')); } catch { return null; }
+  const p = packs[game];
+  if (p && p.dir === dir && p.mtime === st.mtimeMs) return p;
+  if (p) { try { fs.closeSync(p.fd); } catch {} }
+  try {
+    const index = JSON.parse(fs.readFileSync(path.join(dir, 'tuiles.json'), 'utf8')).tuiles;
+    return (packs[game] = { dir, fd: fs.openSync(path.join(dir, 'tuiles.bin'), 'r'), index, mtime: st.mtimeMs });
+  } catch { return null; }
+}
+function serveTile(res, game, key) {
+  const p = pack(game);
+  const e = p && p.index[key];
+  if (!e) { res.writeHead(204, { 'Cache-Control': 'no-store' }); return res.end(); } // pas de tuile : zone vide
+  const buf = Buffer.alloc(e[1]);
+  fs.read(p.fd, buf, 0, e[1], e[0], (err) => {
+    if (err) return send(res, 500, 'Lecture impossible');
+    res.writeHead(200, { 'Content-Type': 'application/x-protobuf', 'Content-Length': e[1], 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-cache' });
+    res.end(buf);
   });
 }
 
@@ -68,7 +103,10 @@ const server = http.createServer((req, res) => {
     req.on('close', () => clients.delete(res));
     return;
   }
-  if (rest.startsWith('data/')) return serveFile(res, DATA, rest.slice(5));
+  const t = /^data\/(ets2|ats)\/tuiles\/(\d{1,2})\/(\d{1,5})\/(\d{1,5})\.pbf$/.exec(rest);
+  if (t) return serveTile(res, t[1], `${t[2]}/${t[3]}/${t[4]}`);
+  const d = /^data\/(ets2|ats)\/([a-z]+\.json)$/.exec(rest);
+  if (d) return serveFile(res, dossierJeu(d[1]), d[2]);
   return serveFile(res, VIEWER, rest);
 });
 
