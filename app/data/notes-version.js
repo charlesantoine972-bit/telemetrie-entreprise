@@ -143,6 +143,14 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 8', date: '2026-11-26', titre: 'Carte du jeu fiable : plus de blocage, routes sur la terre ferme', notes: [
+    ['corrige', 'Carte : la préparation ne peut plus rester bloquée. Si un des cœurs de calcul plante, son travail est repris ; si plus rien n’avance pendant 3 minutes, elle recommence en mode simple. Un journal est gardé pour comprendre un échec.'],
+    ['corrige', 'Carte : routes et villes visibles quand on dézoome (elles disparaissaient en vue d’ensemble).'],
+    ['corrige', 'Carte : côtes recalées sur la géographie du jeu à partir de près de 380 villes, et terre dessinée sous tout le contenu du jeu : plus de routes dans l’eau (Islande, Norvège, Grèce…).'],
+    ['corrige', 'Carte : fond uni, sans les bandes et lignes droites qui traversaient la carte.'],
+    ['ameliore', 'Carte : petites routes un peu plus visibles ; nouvelle étape « Recalage des côtes sur le jeu » dans l’avancement.'],
+    ['change', 'Carte : elle se prépare une nouvelle fois automatiquement après cette mise à jour (nouveau format).'],
+  ]},
   { version: '0.12.0.5 bêta 7', date: '2026-11-25', titre: 'Carte du jeu préparée plus vite, en arrière-plan', notes: [
     ['ameliore', 'Carte : la préparation utilise plusieurs cœurs du processeur (en en laissant toujours libres pour le jeu et Windows) et ne lit plus les fichiers du jeu qu’une seule fois : environ 2 fois plus rapide avec 2 cœurs, bien plus sur un PC récent.'],
     ['ameliore', 'Carte : moins de mémoire utilisée (pic d’environ 2,7 Go au lieu de 3 à 4 Go), et priorité basse pour que le jeu reste fluide. Pendant une partie, elle se fait encore plus discrète.'],

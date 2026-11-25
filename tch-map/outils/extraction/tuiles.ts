@@ -3,9 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import geojsonvt from 'geojson-vt';
 import vtpbf from 'vt-pbf';
+import { terreDuJeu } from './terre';
 import { Ets2DlcGuards, Ets2ScsSourceToDlcGuard, AtsDlcGuards, AtsScsSourceToDlcGuard } from '@truckermudgeon/map/constants';
 
-const ZMIN = 4, ZMAX = 10;
+// Tuiles dès le zoom 2 : la carte reste visible quand on dézoome (FORMAT : à changer si le contenu des tuiles change)
+const ZMIN = 2, ZMAX = 10;
+export const FORMAT = 3; // = CARTE_FORMAT dans main.js de l'appli hôte
 
 // Variantes de carte visibles : celles dont toutes les DLC requises sont installées.
 export function gardesVisibles(map: 'usa' | 'europe', fichiersScs: string[]): Set<number> {
@@ -21,8 +24,9 @@ export function gardesVisibles(map: 'usa' | 'europe', fichiersScs: string[]): Se
   return ok;
 }
 
-export function ecrireCarte(gj: any, outDir: string, gardes: Set<number>) {
+export function ecrireCarte(gj: any, outDir: string, gardes: Set<number>, fond: any[] = []) {
   const feats: any[] = [];
+  const contenu: any[] = []; // ce qui doit être sur la terre ferme
   const villes: any[] = [];
   for (const f of gj.features) {
     const p = f.properties;
@@ -30,10 +34,12 @@ export function ecrireCarte(gj: any, outDir: string, gardes: Set<number>) {
     switch (p.type) {
       case 'mapArea':
       case 'prefab':
+        contenu.push(f);
         feats.push({ type: 'Feature', geometry: f.geometry, properties: { t: p.type === 'prefab' ? 'p' : 'a', c: p.color ?? 0, z: p.zIndex ?? 0 } });
         break;
       case 'road':
         if (p.hidden || p.roadType === 'train' || p.roadType === 'tram') break;
+        contenu.push(f);
         feats.push({ type: 'Feature', geometry: f.geometry, properties: { t: 'r', r: p.roadType, s: p.secret ? 1 : 0 } });
         break;
       case 'ferry':
@@ -41,10 +47,14 @@ export function ecrireCarte(gj: any, outDir: string, gardes: Set<number>) {
         feats.push({ type: 'Feature', geometry: f.geometry, properties: { t: p.type === 'ferry' ? 'f' : 'tr' } });
         break;
       case 'city':
+        contenu.push(f);
         villes.push({ n: p.name, r: p.scaleRank, c: p.capital ? 1 : 0, p: f.geometry.coordinates.map((v: number) => Math.round(v * 1e5) / 1e5) });
         break;
     }
   }
+  // Terres : terres réelles recalées + tout le contenu du jeu (aucune route dans l'eau), dessinées sous le reste
+  feats.unshift(...terreDuJeu(contenu, { fond }));
+  contenu.length = 0;
   gj.features = []; // libère le GeoJSON complet : seules les entités gardées restent
   const index = geojsonvt({ type: 'FeatureCollection', features: feats } as any, { maxZoom: ZMAX, indexMaxZoom: 5, indexMaxPoints: 100000, tolerance: 3, buffer: 64 });
   feats.length = 0;
@@ -67,5 +77,5 @@ export function ecrireCarte(gj: any, outDir: string, gardes: Set<number>) {
   fs.renameSync(path.join(outDir, 'tuiles.bin.tmp'), path.join(outDir, 'tuiles.bin'));
   fs.writeFileSync(path.join(outDir, 'tuiles.json'), JSON.stringify({ zmin: ZMIN, zmax: ZMAX, tuiles }));
   fs.writeFileSync(path.join(outDir, 'villes.json'), JSON.stringify(villes));
-  return { tuiles: Object.keys(tuiles).length, octets: pos, villes: villes.length };
+  return { format: FORMAT, zmin: ZMIN, zmax: ZMAX, tuiles: Object.keys(tuiles).length, octets: pos, villes: villes.length };
 }

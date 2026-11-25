@@ -7,7 +7,9 @@ import { parseMapFiles } from '@maps/clis/parser/game-files/map-files-parser';
 import { readMapData } from '@truckermudgeon/io';
 import { convertToMapGeoJson, geoJsonMapDataKeys } from '@maps/clis/generator/geo-json/map';
 import { ecrireCarte, gardesVisibles } from './tuiles';
-import { estOuvrier, lancerOuvrier, creerOuvriers, nombreOuvriers } from './ouvriers';
+import { fondDuJeu } from './fond-jeu';
+import { fromEts2CoordsToWgs84, fromAtsCoordsToWgs84 } from '@truckermudgeon/map/projections';
+import { estOuvrier, lancerOuvrier, creerOuvriers, nombreOuvriers, decoderSecteur } from './ouvriers';
 
 // Comme TruckSim Maps (libs/io/write.ts) : les identifiants (BigInt) s'écrivent en hexadécimal
 (BigInt.prototype as any).toJSON = function () { return this.toString(16); };
@@ -22,7 +24,7 @@ try {
   // Priorité basse : le jeu et l'appli restent fluides pendant la préparation
   try { os.setPriority(process.pid, os.constants.priority.PRIORITY_BELOW_NORMAL); } catch {}
   let dernier = -1;
-  (globalThis as any).__tchOuvriers = (modeles: string[]) => creerOuvriers(modeles);
+  (globalThis as any).__tchOuvriers = (modeles: string[]) => creerOuvriers(modeles, decoderSecteur);
   (globalThis as any).__tchProgression = (fait: number, total: number) => {
     const pct = Math.floor((fait / total) * 100);
     if (pct !== dernier) { dernier = pct; etape('lecture', { fait, total }); }
@@ -47,17 +49,34 @@ try {
     let data: any = readMapData(source as any, map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false } as any);
     for (const k of Object.keys(donnees)) delete donnees[k];
     const gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
+    // Fond recalé sur le jeu (côtes et frontières réelles déformées pour passer par les villes du jeu)
+    etape('fond');
+    const proj = map === 'usa' ? fromAtsCoordsToWgs84 : fromEts2CoordsToWgs84;
+    const villes = [...(data.cities as Map<string, any>).values()].map((c: any) => ({ token: c.token, name: c.name, nameLocalized: c.nameLocalized, ll: proj([c.x, c.y]) as [number, number] }));
     data = null;
+    // 1) Côtes réelles recalées sur TON jeu (toutes tes DLC, ETS2 comme ATS) ; 2) à défaut, fond fourni avec TCH Map
+    let fond: any[] = [], reperes = 0;
+    try { const r2 = fondDuJeu(villes, map === 'usa'); fond = r2.terres; reperes = r2.reperes; } catch (e: any) { process.stderr.write('[TCH Map] fond non recalé : ' + (e && e.message) + '\n'); }
+    if (process.env.TCH_DEBUG) fs.writeFileSync(path.join(outDir, 'fond-debug.geojson'), JSON.stringify({ type: 'FeatureCollection', features: fond }));
+    if (!fond.length) {
+      try {
+        const f = process.env.TCH_FOND || path.join(path.dirname(process.argv[1]), '..', 'viewer', 'fond', map === 'usa' ? 'terres.geojson' : 'terres-ets2.geojson');
+        fond = JSON.parse(fs.readFileSync(f, 'utf8')).features;
+      } catch {}
+    }
     etape('tuiles');
-    const res = ecrireCarte(gj, outDir, gardesVisibles(map, scs));
+    const res = { ...ecrireCarte(gj, outDir, gardesVisibles(map, scs), fond), reperes };
     fs.writeFileSync(path.join(outDir, 'info.json'), JSON.stringify({ jeu: map === 'usa' ? 'ats' : 'ets2', version, date: new Date().toISOString(), empreinte, ...res }));
     etape('fini', res);
   }
+  terminer(0);
 } catch (e: any) {
   etape('erreur', { message: String(e?.message || e) });
-  process.exitCode = 1;
+  terminer(1);
 }
 }
+// Fin explicite (un processus utilitaire d'Electron ne s'arrête pas toujours seul) après l'écriture des messages
+function terminer(code: number) { process.stdout.write('', () => process.exit(code)); }
 
 if (estOuvrier) lancerOuvrier();
 else principal();

@@ -2348,13 +2348,14 @@ document.getElementById('mapFollow').addEventListener('click', () => { if (hasTc
 document.querySelectorAll('[data-mapgame]').forEach(b => b.addEventListener('click', () => { if (hasTch() && mapEngine === 'tch' && state.view === 'cartePerso') window.tel.tchMap.visible(true, { game: b.dataset.mapgame }); }));
 
 /* Carte du jeu : préparée une fois par version du jeu, en lisant les fichiers du jeu (lecture seule) */
-const TCH_ETAPES = { lecture: 'Lecture des fichiers du jeu', conversion: 'Assemblage des routes et des villes', tuiles: 'Découpage de la carte' };
+const TCH_ETAPES = { lecture: 'Lecture des fichiers du jeu', conversion: 'Assemblage des routes et des villes', fond: 'Recalage des côtes sur le jeu', tuiles: 'Découpage de la carte' };
 let tchPrepGame = null, tchPrepTimer = null, tchPrepDernier = null;
 const tchPrepJeu = () => (typeof M !== 'undefined' && M.game) || activeGame || 'ets2';
 const fmtMin = (s) => s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')}`;
 // Avancement réel : lecture = secteurs lus / total (0 → 65 %), assemblage estimé (65 → 95 %), découpage (95 → 99 %)
 function tchPrepPct(st, s) {
   if (st.etape === 'tuiles') return 97;
+  if (st.etape === 'fond') return 95;
   if (st.etape === 'conversion') { const d = Math.max(0, s - (st.debutConv || s)); return 65 + 30 * Math.min(1, d / 50); }
   return st.total ? 2 + 63 * (st.fait / st.total) : 2;
 }

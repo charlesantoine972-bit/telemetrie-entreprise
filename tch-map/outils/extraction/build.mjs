@@ -6,7 +6,8 @@
 //   - pas d'icônes ni de modèles 3D (.pmg) : inutiles pour la carte ;
 //   - langue des noms au choix (TCH_LANGUE, par défaut fr_fr) ;
 //   - archives « dossier » acceptées (essais) ;
-//   - lecture des secteurs en parallèle (ouvriers.ts), données passées en mémoire à la conversion.
+//   - lecture des secteurs en parallèle (ouvriers.ts), données passées en mémoire à la conversion ;
+//   - borne nord du Royaume-Uni élargie (nord de l'Écosse) dans la projection.
 import * as esbuild from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -58,6 +59,13 @@ await esbuild.build({
       s = remplacer(s, 'const results: unknown = JSON.parse(source.readUtf8(filename), reviver);',
         'const __mem = (source as any).memoire; const results: unknown = __mem ? __mem(filename) : JSON.parse(source.readUtf8(filename), reviver);', 'lecture mémoire');
       s = remplacer(s, "if (basename.endsWith('nodes')) {\n    for (const t of filtered) {", "if (basename.endsWith('nodes') && !(source as any).memoire) {\n    for (const t of filtered) {", 'nœuds mémoire');
+      return { contents: s, loader: 'ts', resolveDir: path.dirname(a.path) };
+    });
+    b.onLoad({ filter: /libs[\\/]map[\\/]projections\.ts$/ }, async (a) => {
+      let s = fs.readFileSync(a.path, 'utf8');
+      // Royaume-Uni : la borne nord excluait tout le nord de l'Écosse (secteur -15, Aberdeen) ; l'Islande commence au secteur -24
+      if (!s.includes('sy >= -14')) throw new Error('motif introuvable : borne Royaume-Uni');
+      s = s.replaceAll('sy >= -14', 'sy >= -20');
       return { contents: s, loader: 'ts', resolveDir: path.dirname(a.path) };
     });
     b.onLoad({ filter: /combined-entries\.ts$/ }, async (a) => {

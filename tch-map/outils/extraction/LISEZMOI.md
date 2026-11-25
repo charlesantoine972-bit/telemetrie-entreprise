@@ -1,10 +1,10 @@
 # Sources de l'extraction TCH Map
 
 `tch-map/extraction/extraire.cjs` est compilé à partir de :
-- ce dossier (`extraire.ts`, `tuiles.ts`, `patch-secteurs.mjs`, `dir-archive.ts`, `bindings-shim.js`, `build.mjs`) ;
+- ce dossier (`extraire.ts`, `ouvriers.ts`, `tuiles.ts`, `terre.ts`, `fond-jeu.ts`, `patch-secteurs.mjs`, `dir-archive.ts`, `bindings-shim.js`, `build.mjs`) ;
 - [truckermudgeon/maps](https://github.com/truckermudgeon/maps) (GPL-3.0-or-later), commit `43f5222` (« update deps (#160) », 24/11/2026) :
   lecteur des fichiers du jeu (`packages/clis/parser`) et conversion en GeoJSON (`packages/clis/generator/geo-json`) ;
-- les bibliothèques geojson-vt (ISC), vt-pbf (MIT) et les dépendances de TruckSim Maps (voir leurs licences).
+- les bibliothèques geojson-vt (ISC), vt-pbf (MIT), topojson-client (ISC), world-atlas (ISC, données Natural Earth du domaine public), polygon-clipping (MIT) et les dépendances de TruckSim Maps (voir leurs licences).
 
 Toutes les modifications du code de TruckSim Maps sont appliquées à la compilation par `build.mjs` (liste en tête du fichier).
 

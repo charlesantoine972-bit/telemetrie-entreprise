@@ -918,3 +918,23 @@ test('TCH Map : préparation parallèle, économe et automatique', () => {
   const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
   assert.match(html, /tchPrepMini/);
 });
+
+test('TCH Map : préparation qui ne bloque jamais, carte visible à tous les zooms, terres recalées', () => {
+  const src = (f) => fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'outils', 'extraction', f), 'utf8');
+  const ouv = src('ouvriers.ts');
+  assert.match(ouv, /panne\(o,/, 'un ouvrier en panne est remplacé par le fil principal');
+  assert.match(ouv, /decoderIci\(a\.ab/);
+  assert.match(src('tuiles.ts'), /ZMIN = 2/);
+  const fond = src('fond-jeu.ts');
+  assert.match(fond, /p\[0\] \+= 360/, 'ligne de changement de date corrigée');
+  assert.match(fond, /Math\.exp\(-\(r2\[i\] - r2min\) \/ SIG2\)/, 'déformation bornée');
+  assert.match(src('terre.ts'), /limiteKm/);
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /180000/, 'alarme si plus rien n’avance');
+  assert.match(main, /simple: true/, 'nouvel essai en mode simple');
+  assert.match(main, /journal\.txt/);
+  const carte = fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'viewer', 'carte.js'), 'utf8');
+  assert.match(carte, /fondMonde\(false\)/, 'fond monde masqué quand la carte du jeu est là');
+  assert.match(carte, /sy >= -20/.source ? /jeu-terre/ : /jeu-terre/);
+  assert.match(fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'viewer', 'projection.js'), 'utf8'), /sy >= -20/);
+});

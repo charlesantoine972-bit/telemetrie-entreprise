@@ -46,8 +46,8 @@ export function fromEts2(x, z) {
   x -= ETS2.mapOffset[0];
   z -= ETS2.mapOffset[1];
   // Le Royaume-Uni est dessiné à une échelle un peu plus grande (~14,37 contre ~19,15).
-  // Repère : le secteur de Calais. La borne en y exclut l'Islande (correction de truckermudgeon, nov. 2026).
-  const isUk = sx <= -8 && sy <= -2 && !(sx === -8 && sy === -2) && sy >= -14;
+  // Repère : le secteur de Calais. La borne en y exclut l’Islande (secteurs -24 et au-delà) sans couper le nord de l’Écosse (secteur -15).
+  const isUk = sx <= -8 && sy <= -2 && !(sx === -8 && sy === -2) && sy >= -20;
   if (isUk) {
     x = (x + -31100 / 2) * 0.75;
     z = (z + -5500 / 2) * 0.75;
