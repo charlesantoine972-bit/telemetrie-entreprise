@@ -32,6 +32,111 @@ var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__
   mod2
 ));
 
+// ../../../telemetrie-entreprise/tch-map/lecteur/cityhash.js
+var require_cityhash = __commonJS({
+  "../../../telemetrie-entreprise/tch-map/lecteur/cityhash.js"(exports2, module2) {
+    "use strict";
+    var M = (1n << 64n) - 1n;
+    var k0 = 0xc3a5c85c97cb3127n;
+    var k1 = 0xb492b66fbe98f273n;
+    var k2 = 0x9ae16a3b2f90404fn;
+    var k3 = 0xc949d7c7509e6557n;
+    var kMul = 0x9ddfea08eb382d69n;
+    var f64 = (b2, i2) => b2.readBigUInt64LE(i2);
+    var f32 = (b2, i2) => BigInt(b2.readUInt32LE(i2));
+    var mul = (a2, b2) => a2 * b2 & M;
+    var add4 = (...v2) => v2.reduce((s2, x2) => s2 + x2 & M, 0n);
+    var sub2 = (a2, b2) => a2 - b2 & M;
+    var rot = (v2, s2) => s2 === 0 ? v2 : (v2 >> BigInt(s2) | v2 << BigInt(64 - s2)) & M;
+    var shiftMix = (v2) => v2 ^ v2 >> 47n;
+    function hash16(u3, v2) {
+      let a2 = mul(u3 ^ v2, kMul);
+      a2 ^= a2 >> 47n;
+      let b2 = mul(v2 ^ a2, kMul);
+      b2 ^= b2 >> 47n;
+      return mul(b2, kMul);
+    }
+    function len0to16(s2, len) {
+      const L3 = BigInt(len);
+      if (len > 8) {
+        const a2 = f64(s2, 0), b2 = f64(s2, len - 8);
+        return hash16(a2, rot(add4(b2, L3), len)) ^ b2;
+      }
+      if (len >= 4) {
+        const a2 = f32(s2, 0);
+        return hash16(add4(L3, a2 << 3n & M), f32(s2, len - 4));
+      }
+      if (len > 0) {
+        const y3 = BigInt(s2[0]) + (BigInt(s2[len >> 1]) << 8n);
+        const z2 = L3 + (BigInt(s2[len - 1]) << 2n);
+        return mul(shiftMix(mul(y3, k2) ^ mul(z2, k3)), k2);
+      }
+      return k2;
+    }
+    function len17to32(s2, len) {
+      const a2 = mul(f64(s2, 0), k1), b2 = f64(s2, 8), c3 = mul(f64(s2, len - 8), k2), d2 = mul(f64(s2, len - 16), k0);
+      return hash16(add4(rot(sub2(a2, b2), 43), rot(c3, 30), d2), add4(sub2(add4(a2, rot(b2 ^ k3, 20)), c3), BigInt(len)));
+    }
+    function weak(w2, x2, y3, z2, a2, b2) {
+      a2 = add4(a2, w2);
+      b2 = rot(add4(b2, a2, z2), 21);
+      const c3 = a2;
+      a2 = add4(a2, x2, y3);
+      b2 = add4(b2, rot(a2, 44));
+      return [add4(a2, z2), add4(b2, c3)];
+    }
+    var weakS = (s2, i2, a2, b2) => weak(f64(s2, i2), f64(s2, i2 + 8), f64(s2, i2 + 16), f64(s2, i2 + 24), a2, b2);
+    function len33to64(s2, len) {
+      let z2 = f64(s2, 24);
+      let a2 = add4(f64(s2, 0), mul(add4(BigInt(len), f64(s2, len - 16)), k0));
+      let b2 = rot(add4(a2, z2), 52), c3 = rot(a2, 37);
+      a2 = add4(a2, f64(s2, 8));
+      c3 = add4(c3, rot(a2, 7));
+      a2 = add4(a2, f64(s2, 16));
+      const vf = add4(a2, z2), vs = add4(b2, rot(a2, 31), c3);
+      a2 = add4(f64(s2, 16), f64(s2, len - 32));
+      z2 = f64(s2, len - 8);
+      b2 = rot(add4(a2, z2), 52);
+      c3 = rot(a2, 37);
+      a2 = add4(a2, f64(s2, len - 24));
+      c3 = add4(c3, rot(a2, 7));
+      a2 = add4(a2, f64(s2, len - 16));
+      const wf = add4(a2, z2), ws = add4(b2, rot(a2, 31), c3);
+      const r5 = shiftMix(add4(mul(add4(vf, ws), k2), mul(add4(wf, vs), k0)));
+      return mul(shiftMix(add4(mul(r5, k0), vs)), k2);
+    }
+    function city643(input) {
+      const s2 = Buffer.isBuffer(input) ? input : Buffer.from(String(input), "utf8");
+      let len = s2.length;
+      if (len <= 16) return len0to16(s2, len);
+      if (len <= 32) return len17to32(s2, len);
+      if (len <= 64) return len33to64(s2, len);
+      let x2 = f64(s2, len - 40);
+      let y3 = add4(f64(s2, len - 16), f64(s2, len - 56));
+      let z2 = hash16(add4(f64(s2, len - 48), BigInt(len)), f64(s2, len - 24));
+      let v2 = weakS(s2, len - 64, BigInt(len), z2);
+      let w2 = weakS(s2, len - 32, add4(y3, k1), x2);
+      x2 = add4(mul(x2, k1), f64(s2, 0));
+      len = len - 1 & ~63;
+      let p = 0;
+      do {
+        x2 = mul(rot(add4(x2, y3, v2[0], f64(s2, p + 8)), 37), k1);
+        y3 = mul(rot(add4(y3, v2[1], f64(s2, p + 48)), 42), k1);
+        x2 ^= w2[1];
+        y3 = add4(y3, v2[0], f64(s2, p + 40));
+        z2 = mul(rot(add4(z2, w2[0]), 33), k1);
+        v2 = weakS(s2, p, mul(v2[1], k1), add4(x2, w2[0]));
+        w2 = weakS(s2, p + 32, add4(z2, w2[1]), add4(y3, f64(s2, p + 16)));
+        [z2, x2] = [x2, z2];
+        p += 64;
+        len -= 64;
+      } while (len !== 0);
+      return hash16(add4(hash16(v2[0], w2[0]), mul(shiftMix(y3), k1), z2), add4(hash16(v2[1], w2[1]), x2));
+    }
+    module2.exports = { city64: city643 };
+  }
+});
+
 // ../node_modules/sweepline-intersections/dist/sweeplineIntersections.js
 var require_sweeplineIntersections = __commonJS({
   "../node_modules/sweepline-intersections/dist/sweeplineIntersections.js"(exports2, module2) {
@@ -5833,11 +5938,11 @@ var require_baseGet = __commonJS({
   "../node_modules/lodash/_baseGet.js"(exports2, module2) {
     var castPath = require_castPath();
     var toKey = require_toKey();
-    function baseGet(object2, path6) {
-      path6 = castPath(path6, object2);
-      var index = 0, length = path6.length;
+    function baseGet(object2, path7) {
+      path7 = castPath(path7, object2);
+      var index = 0, length = path7.length;
       while (object2 != null && index < length) {
-        object2 = object2[toKey(path6[index++])];
+        object2 = object2[toKey(path7[index++])];
       }
       return index && index == length ? object2 : void 0;
     }
@@ -5849,8 +5954,8 @@ var require_baseGet = __commonJS({
 var require_get = __commonJS({
   "../node_modules/lodash/get.js"(exports2, module2) {
     var baseGet = require_baseGet();
-    function get(object2, path6, defaultValue) {
-      var result = object2 == null ? void 0 : baseGet(object2, path6);
+    function get(object2, path7, defaultValue) {
+      var result = object2 == null ? void 0 : baseGet(object2, path7);
       return result === void 0 ? defaultValue : result;
     }
     module2.exports = get;
@@ -5876,11 +5981,11 @@ var require_hasPath = __commonJS({
     var isIndex = require_isIndex();
     var isLength = require_isLength();
     var toKey = require_toKey();
-    function hasPath(object2, path6, hasFunc) {
-      path6 = castPath(path6, object2);
-      var index = -1, length = path6.length, result = false;
+    function hasPath(object2, path7, hasFunc) {
+      path7 = castPath(path7, object2);
+      var index = -1, length = path7.length, result = false;
       while (++index < length) {
-        var key = toKey(path6[index]);
+        var key = toKey(path7[index]);
         if (!(result = object2 != null && hasFunc(object2, key))) {
           break;
         }
@@ -5901,8 +6006,8 @@ var require_hasIn = __commonJS({
   "../node_modules/lodash/hasIn.js"(exports2, module2) {
     var baseHasIn = require_baseHasIn();
     var hasPath = require_hasPath();
-    function hasIn(object2, path6) {
-      return object2 != null && hasPath(object2, path6, baseHasIn);
+    function hasIn(object2, path7) {
+      return object2 != null && hasPath(object2, path7, baseHasIn);
     }
     module2.exports = hasIn;
   }
@@ -5920,13 +6025,13 @@ var require_baseMatchesProperty = __commonJS({
     var toKey = require_toKey();
     var COMPARE_PARTIAL_FLAG = 1;
     var COMPARE_UNORDERED_FLAG = 2;
-    function baseMatchesProperty(path6, srcValue) {
-      if (isKey(path6) && isStrictComparable(srcValue)) {
-        return matchesStrictComparable(toKey(path6), srcValue);
+    function baseMatchesProperty(path7, srcValue) {
+      if (isKey(path7) && isStrictComparable(srcValue)) {
+        return matchesStrictComparable(toKey(path7), srcValue);
       }
       return function(object2) {
-        var objValue = get(object2, path6);
-        return objValue === void 0 && objValue === srcValue ? hasIn(object2, path6) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+        var objValue = get(object2, path7);
+        return objValue === void 0 && objValue === srcValue ? hasIn(object2, path7) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
       };
     }
     module2.exports = baseMatchesProperty;
@@ -5959,9 +6064,9 @@ var require_baseProperty = __commonJS({
 var require_basePropertyDeep = __commonJS({
   "../node_modules/lodash/_basePropertyDeep.js"(exports2, module2) {
     var baseGet = require_baseGet();
-    function basePropertyDeep(path6) {
+    function basePropertyDeep(path7) {
       return function(object2) {
-        return baseGet(object2, path6);
+        return baseGet(object2, path7);
       };
     }
     module2.exports = basePropertyDeep;
@@ -5975,8 +6080,8 @@ var require_property = __commonJS({
     var basePropertyDeep = require_basePropertyDeep();
     var isKey = require_isKey();
     var toKey = require_toKey();
-    function property(path6) {
-      return isKey(path6) ? baseProperty(toKey(path6)) : basePropertyDeep(path6);
+    function property(path7) {
+      return isKey(path7) ? baseProperty(toKey(path7)) : basePropertyDeep(path7);
     }
     module2.exports = property;
   }
@@ -6196,8 +6301,8 @@ var require_has = __commonJS({
   "../node_modules/lodash/has.js"(exports2, module2) {
     var baseHas = require_baseHas();
     var hasPath = require_hasPath();
-    function has(object2, path6) {
-      return object2 != null && hasPath(object2, path6, baseHas);
+    function has(object2, path7) {
+      return object2 != null && hasPath(object2, path7, baseHas);
     }
     module2.exports = has;
   }
@@ -7093,14 +7198,14 @@ var require_baseSet = __commonJS({
     var isIndex = require_isIndex();
     var isObject2 = require_isObject();
     var toKey = require_toKey();
-    function baseSet(object2, path6, value, customizer) {
+    function baseSet(object2, path7, value, customizer) {
       if (!isObject2(object2)) {
         return object2;
       }
-      path6 = castPath(path6, object2);
-      var index = -1, length = path6.length, lastIndex = length - 1, nested = object2;
+      path7 = castPath(path7, object2);
+      var index = -1, length = path7.length, lastIndex = length - 1, nested = object2;
       while (nested != null && ++index < length) {
-        var key = toKey(path6[index]), newValue = value;
+        var key = toKey(path7[index]), newValue = value;
         if (key === "__proto__" || key === "constructor" || key === "prototype") {
           return object2;
         }
@@ -7108,7 +7213,7 @@ var require_baseSet = __commonJS({
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : void 0;
           if (newValue === void 0) {
-            newValue = isObject2(objValue) ? objValue : isIndex(path6[index + 1]) ? [] : {};
+            newValue = isObject2(objValue) ? objValue : isIndex(path7[index + 1]) ? [] : {};
           }
         }
         assignValue(nested, key, newValue);
@@ -7129,9 +7234,9 @@ var require_basePickBy = __commonJS({
     function basePickBy(object2, paths, predicate) {
       var index = -1, length = paths.length, result = {};
       while (++index < length) {
-        var path6 = paths[index], value = baseGet(object2, path6);
-        if (predicate(value, path6)) {
-          baseSet(result, castPath(path6, object2), value);
+        var path7 = paths[index], value = baseGet(object2, path7);
+        if (predicate(value, path7)) {
+          baseSet(result, castPath(path7, object2), value);
         }
       }
       return result;
@@ -7155,8 +7260,8 @@ var require_pickBy = __commonJS({
         return [prop];
       });
       predicate = baseIteratee(predicate);
-      return basePickBy(object2, props, function(value, path6) {
-        return predicate(value, path6[0]);
+      return basePickBy(object2, props, function(value, path7) {
+        return predicate(value, path7[0]);
       });
     }
     module2.exports = pickBy;
@@ -10904,12 +11009,12 @@ var require_tokens = __commonJS({
       });
     }
     exports2.assignCategoriesMapProp = assignCategoriesMapProp;
-    function singleAssignCategoriesToksMap(path6, nextNode) {
-      (0, forEach_1.default)(path6, function(pathNode) {
+    function singleAssignCategoriesToksMap(path7, nextNode) {
+      (0, forEach_1.default)(path7, function(pathNode) {
         nextNode.categoryMatchesMap[pathNode.tokenTypeIdx] = true;
       });
       (0, forEach_1.default)(nextNode.CATEGORIES, function(nextCategory) {
-        var newPath = path6.concat(nextNode);
+        var newPath = path7.concat(nextNode);
         if (!(0, includes_1.default)(newPath, nextCategory)) {
           singleAssignCategoriesToksMap(newPath, nextCategory);
         }
@@ -12016,10 +12121,10 @@ var require_interpreter = __commonJS({
       /** @class */
       function(_super) {
         __extends(AbstractNextPossibleTokensWalker2, _super);
-        function AbstractNextPossibleTokensWalker2(topProd, path6) {
+        function AbstractNextPossibleTokensWalker2(topProd, path7) {
           var _this = _super.call(this) || this;
           _this.topProd = topProd;
-          _this.path = path6;
+          _this.path = path7;
           _this.possibleTokTypes = [];
           _this.nextProductionName = "";
           _this.nextProductionOccurrence = 0;
@@ -12073,9 +12178,9 @@ var require_interpreter = __commonJS({
       /** @class */
       function(_super) {
         __extends(NextAfterTokenWalker2, _super);
-        function NextAfterTokenWalker2(topProd, path6) {
-          var _this = _super.call(this, topProd, path6) || this;
-          _this.path = path6;
+        function NextAfterTokenWalker2(topProd, path7) {
+          var _this = _super.call(this, topProd, path7) || this;
+          _this.path = path7;
           _this.nextTerminalName = "";
           _this.nextTerminalOccurrence = 0;
           _this.nextTerminalName = _this.path.lastTok.name;
@@ -12793,10 +12898,10 @@ var require_lookahead = __commonJS({
       }
       return result;
     }
-    function pathToHashKeys(path6) {
+    function pathToHashKeys(path7) {
       var keys = [""];
-      for (var i2 = 0; i2 < path6.length; i2++) {
-        var tokType = path6[i2];
+      for (var i2 = 0; i2 < path7.length; i2++) {
+        var tokType = path7[i2];
         var longerKeys = [];
         for (var j = 0; j < keys.length; j++) {
           var currShorterKey = keys[j];
@@ -13137,9 +13242,9 @@ var require_checks = __commonJS({
       return errors;
     }
     exports2.validateRuleIsOverridden = validateRuleIsOverridden;
-    function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path6) {
-      if (path6 === void 0) {
-        path6 = [];
+    function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path7) {
+      if (path7 === void 0) {
+        path7 = [];
       }
       var errors = [];
       var nextNonTerminals = getFirstNoneTerminal(currRule.definition);
@@ -13152,15 +13257,15 @@ var require_checks = __commonJS({
           errors.push({
             message: errMsgProvider.buildLeftRecursionError({
               topLevelRule: topRule,
-              leftRecursionPath: path6
+              leftRecursionPath: path7
             }),
             type: parser_1.ParserDefinitionErrorType.LEFT_RECURSION,
             ruleName
           });
         }
-        var validNextSteps = (0, difference_1.default)(nextNonTerminals, path6.concat([topRule]));
+        var validNextSteps = (0, difference_1.default)(nextNonTerminals, path7.concat([topRule]));
         var errorsFromNextSteps = (0, flatMap_1.default)(validNextSteps, function(currRefRule) {
-          var newPath = (0, clone_1.default)(path6);
+          var newPath = (0, clone_1.default)(path7);
           newPath.push(currRefRule);
           return validateNoLeftRecursion(topRule, currRefRule, errMsgProvider, newPath);
         });
@@ -19935,8 +20040,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path6) {
-      let input = path6;
+    function removeDotSegments(path7) {
+      let input = path7;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -20010,11 +20115,11 @@ var require_utils = __commonJS({
       }
       return output.join("");
     }
-    function removeDotSegmentsRelative(path6) {
-      if (path6 === "" || path6[0] === "/") {
-        return removeDotSegments(path6);
+    function removeDotSegmentsRelative(path7) {
+      if (path7 === "" || path7[0] === "/") {
+        return removeDotSegments(path7);
       }
-      const segments = path6.split("/");
+      const segments = path7.split("/");
       const last = segments.length - 1;
       const output = [];
       let trailingDirectory = false;
@@ -20377,8 +20482,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path6 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path6 && path6 !== "/" ? path6 : void 0;
+        const path7 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path7 && path7 !== "/" ? path7 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -24472,14 +24577,14 @@ var require_dynamicDefaults = __commonJS({
         compile(schema, _parentSchema, it) {
           if (!it.opts.useDefaults || it.compositeRule)
             return () => true;
-          const fs6 = {};
+          const fs8 = {};
           for (const key in schema)
-            fs6[key] = getDefault(schema[key]);
+            fs8[key] = getDefault(schema[key]);
           const empty = it.opts.useDefaults === "empty";
           return (data2) => {
             for (const prop in schema) {
               if (data2[prop] === void 0 || empty && (data2[prop] === null || data2[prop] === "")) {
-                data2[prop] = fs6[prop]();
+                data2[prop] = fs8[prop]();
               }
             }
             return true;
@@ -25124,117 +25229,12 @@ var require_dxtn = __commonJS({
   }
 });
 
-// ../../../telemetrie-entreprise/tch-map/lecteur/cityhash.js
-var require_cityhash = __commonJS({
-  "../../../telemetrie-entreprise/tch-map/lecteur/cityhash.js"(exports2, module2) {
-    "use strict";
-    var M = (1n << 64n) - 1n;
-    var k0 = 0xc3a5c85c97cb3127n;
-    var k1 = 0xb492b66fbe98f273n;
-    var k2 = 0x9ae16a3b2f90404fn;
-    var k3 = 0xc949d7c7509e6557n;
-    var kMul = 0x9ddfea08eb382d69n;
-    var f64 = (b2, i2) => b2.readBigUInt64LE(i2);
-    var f32 = (b2, i2) => BigInt(b2.readUInt32LE(i2));
-    var mul = (a2, b2) => a2 * b2 & M;
-    var add4 = (...v2) => v2.reduce((s2, x2) => s2 + x2 & M, 0n);
-    var sub2 = (a2, b2) => a2 - b2 & M;
-    var rot = (v2, s2) => s2 === 0 ? v2 : (v2 >> BigInt(s2) | v2 << BigInt(64 - s2)) & M;
-    var shiftMix = (v2) => v2 ^ v2 >> 47n;
-    function hash16(u3, v2) {
-      let a2 = mul(u3 ^ v2, kMul);
-      a2 ^= a2 >> 47n;
-      let b2 = mul(v2 ^ a2, kMul);
-      b2 ^= b2 >> 47n;
-      return mul(b2, kMul);
-    }
-    function len0to16(s2, len) {
-      const L3 = BigInt(len);
-      if (len > 8) {
-        const a2 = f64(s2, 0), b2 = f64(s2, len - 8);
-        return hash16(a2, rot(add4(b2, L3), len)) ^ b2;
-      }
-      if (len >= 4) {
-        const a2 = f32(s2, 0);
-        return hash16(add4(L3, a2 << 3n & M), f32(s2, len - 4));
-      }
-      if (len > 0) {
-        const y3 = BigInt(s2[0]) + (BigInt(s2[len >> 1]) << 8n);
-        const z2 = L3 + (BigInt(s2[len - 1]) << 2n);
-        return mul(shiftMix(mul(y3, k2) ^ mul(z2, k3)), k2);
-      }
-      return k2;
-    }
-    function len17to32(s2, len) {
-      const a2 = mul(f64(s2, 0), k1), b2 = f64(s2, 8), c3 = mul(f64(s2, len - 8), k2), d2 = mul(f64(s2, len - 16), k0);
-      return hash16(add4(rot(sub2(a2, b2), 43), rot(c3, 30), d2), add4(sub2(add4(a2, rot(b2 ^ k3, 20)), c3), BigInt(len)));
-    }
-    function weak(w2, x2, y3, z2, a2, b2) {
-      a2 = add4(a2, w2);
-      b2 = rot(add4(b2, a2, z2), 21);
-      const c3 = a2;
-      a2 = add4(a2, x2, y3);
-      b2 = add4(b2, rot(a2, 44));
-      return [add4(a2, z2), add4(b2, c3)];
-    }
-    var weakS = (s2, i2, a2, b2) => weak(f64(s2, i2), f64(s2, i2 + 8), f64(s2, i2 + 16), f64(s2, i2 + 24), a2, b2);
-    function len33to64(s2, len) {
-      let z2 = f64(s2, 24);
-      let a2 = add4(f64(s2, 0), mul(add4(BigInt(len), f64(s2, len - 16)), k0));
-      let b2 = rot(add4(a2, z2), 52), c3 = rot(a2, 37);
-      a2 = add4(a2, f64(s2, 8));
-      c3 = add4(c3, rot(a2, 7));
-      a2 = add4(a2, f64(s2, 16));
-      const vf = add4(a2, z2), vs = add4(b2, rot(a2, 31), c3);
-      a2 = add4(f64(s2, 16), f64(s2, len - 32));
-      z2 = f64(s2, len - 8);
-      b2 = rot(add4(a2, z2), 52);
-      c3 = rot(a2, 37);
-      a2 = add4(a2, f64(s2, len - 24));
-      c3 = add4(c3, rot(a2, 7));
-      a2 = add4(a2, f64(s2, len - 16));
-      const wf = add4(a2, z2), ws = add4(b2, rot(a2, 31), c3);
-      const r5 = shiftMix(add4(mul(add4(vf, ws), k2), mul(add4(wf, vs), k0)));
-      return mul(shiftMix(add4(mul(r5, k0), vs)), k2);
-    }
-    function city642(input) {
-      const s2 = Buffer.isBuffer(input) ? input : Buffer.from(String(input), "utf8");
-      let len = s2.length;
-      if (len <= 16) return len0to16(s2, len);
-      if (len <= 32) return len17to32(s2, len);
-      if (len <= 64) return len33to64(s2, len);
-      let x2 = f64(s2, len - 40);
-      let y3 = add4(f64(s2, len - 16), f64(s2, len - 56));
-      let z2 = hash16(add4(f64(s2, len - 48), BigInt(len)), f64(s2, len - 24));
-      let v2 = weakS(s2, len - 64, BigInt(len), z2);
-      let w2 = weakS(s2, len - 32, add4(y3, k1), x2);
-      x2 = add4(mul(x2, k1), f64(s2, 0));
-      len = len - 1 & ~63;
-      let p = 0;
-      do {
-        x2 = mul(rot(add4(x2, y3, v2[0], f64(s2, p + 8)), 37), k1);
-        y3 = mul(rot(add4(y3, v2[1], f64(s2, p + 48)), 42), k1);
-        x2 ^= w2[1];
-        y3 = add4(y3, v2[0], f64(s2, p + 40));
-        z2 = mul(rot(add4(z2, w2[0]), 33), k1);
-        v2 = weakS(s2, p, mul(v2[1], k1), add4(x2, w2[0]));
-        w2 = weakS(s2, p + 32, add4(z2, w2[1]), add4(y3, f64(s2, p + 16)));
-        [z2, x2] = [x2, z2];
-        p += 64;
-        len -= 64;
-      } while (len !== 0);
-      return hash16(add4(hash16(v2[0], w2[0]), mul(shiftMix(y3), k1), z2), add4(hash16(v2[1], w2[1]), x2));
-    }
-    module2.exports = { city64: city642 };
-  }
-});
-
 // bindings-shim.js
 var require_bindings_shim = __commonJS({
   "bindings-shim.js"(exports2, module2) {
     "use strict";
-    var { city64: city642 } = require_cityhash();
-    module2.exports = (name) => name === "cityhash" ? { city64: (s2) => city642(s2) } : { gdeflate() {
+    var { city64: city643 } = require_cityhash();
+    module2.exports = (name) => name === "cityhash" ? { city64: (s2) => city643(s2) } : { gdeflate() {
       return -1;
     } };
   }
@@ -25573,25 +25573,25 @@ var require_utils2 = __commonJS({
       }
       mkdirSync(folder);
     };
-    Utils.prototype.writeFileTo = function(path6, content, overwrite, attr) {
+    Utils.prototype.writeFileTo = function(path7, content, overwrite, attr) {
       const self2 = this;
-      if (self2.fs.existsSync(path6)) {
+      if (self2.fs.existsSync(path7)) {
         if (!overwrite) return false;
-        var stat = self2.fs.statSync(path6);
+        var stat = self2.fs.statSync(path7);
         if (stat.isDirectory()) {
           return false;
         }
       }
-      var folder = pth.dirname(path6);
+      var folder = pth.dirname(path7);
       if (!self2.fs.existsSync(folder)) {
         self2.makeDir(folder);
       }
       var fd;
       try {
-        fd = self2.fs.openSync(path6, "w", 438);
+        fd = self2.fs.openSync(path7, "w", 438);
       } catch (e2) {
-        self2.fs.chmodSync(path6, 438);
-        fd = self2.fs.openSync(path6, "w", 438);
+        self2.fs.chmodSync(path7, 438);
+        fd = self2.fs.openSync(path7, "w", 438);
       }
       if (fd) {
         try {
@@ -25600,22 +25600,22 @@ var require_utils2 = __commonJS({
           self2.fs.closeSync(fd);
         }
       }
-      self2.fs.chmodSync(path6, attr || 438);
+      self2.fs.chmodSync(path7, attr || 438);
       return true;
     };
-    Utils.prototype.writeFileToAsync = function(path6, content, overwrite, attr, callback) {
+    Utils.prototype.writeFileToAsync = function(path7, content, overwrite, attr, callback) {
       if (typeof attr === "function") {
         callback = attr;
         attr = void 0;
       }
       const self2 = this;
-      self2.fs.exists(path6, function(exist) {
+      self2.fs.exists(path7, function(exist) {
         if (exist && !overwrite) return callback(false);
-        self2.fs.stat(path6, function(err, stat) {
+        self2.fs.stat(path7, function(err, stat) {
           if (exist && stat && stat.isDirectory()) {
             return callback(false);
           }
-          var folder = pth.dirname(path6);
+          var folder = pth.dirname(path7);
           self2.fs.exists(folder, function(exists) {
             if (!exists) {
               try {
@@ -25628,16 +25628,16 @@ var require_utils2 = __commonJS({
               self2.fs.write(fd, content, 0, content.length, 0, function(writeErr) {
                 self2.fs.close(fd, function() {
                   if (writeErr) return callback(false);
-                  self2.fs.chmod(path6, attr || 438, function() {
+                  self2.fs.chmod(path7, attr || 438, function() {
                     callback(true);
                   });
                 });
               });
             };
-            self2.fs.open(path6, "w", 438, function(err2, fd) {
+            self2.fs.open(path7, "w", 438, function(err2, fd) {
               if (err2) {
-                self2.fs.chmod(path6, 438, function() {
-                  self2.fs.open(path6, "w", 438, function(retryErr, fd2) {
+                self2.fs.chmod(path7, 438, function() {
+                  self2.fs.open(path7, "w", 438, function(retryErr, fd2) {
                     if (retryErr || !fd2) return callback(false);
                     writeToFd(fd2);
                   });
@@ -25673,10 +25673,10 @@ var require_utils2 = __commonJS({
         if (stat.isSymbolicLink()) throw Errors.FILE_IN_THE_WAY(`"${cur}"`);
       }
     };
-    Utils.prototype.findFiles = function(path6) {
+    Utils.prototype.findFiles = function(path7) {
       const self2 = this;
       const canLstat = typeof self2.fs.lstatSync === "function";
-      const rootReal = self2.fs.realpathSync(path6);
+      const rootReal = self2.fs.realpathSync(path7);
       function escapesRoot(p) {
         if (!canLstat) return false;
         if (!self2.fs.lstatSync(p).isSymbolicLink()) return false;
@@ -25695,23 +25695,23 @@ var require_utils2 = __commonJS({
         }
         let files = [];
         self2.fs.readdirSync(dir).forEach(function(file) {
-          const path7 = pth.join(dir, file);
-          if (escapesRoot(path7)) return;
-          const stat = self2.fs.statSync(path7);
-          if (!pattern || pattern.test(path7)) {
-            files.push(pth.normalize(path7) + (stat.isDirectory() ? self2.sep : ""));
+          const path8 = pth.join(dir, file);
+          if (escapesRoot(path8)) return;
+          const stat = self2.fs.statSync(path8);
+          if (!pattern || pattern.test(path8)) {
+            files.push(pth.normalize(path8) + (stat.isDirectory() ? self2.sep : ""));
           }
           if (stat.isDirectory() && recursive) {
-            const realDir = self2.fs.realpathSync(path7);
+            const realDir = self2.fs.realpathSync(path8);
             if (!visited.has(realDir)) {
               visited.add(realDir);
-              files = files.concat(findSync(path7, pattern, recursive, visited));
+              files = files.concat(findSync(path8, pattern, recursive, visited));
             }
           }
         });
         return files;
       }
-      return findSync(path6, void 0, true, /* @__PURE__ */ new Set([rootReal]));
+      return findSync(path7, void 0, true, /* @__PURE__ */ new Set([rootReal]));
     };
     Utils.prototype.findFilesAsync = function(dir, cb) {
       const self2 = this;
@@ -25808,14 +25808,14 @@ var require_utils2 = __commonJS({
           return "UNSUPPORTED (" + method + ")";
       }
     };
-    Utils.canonical = function(path6) {
-      if (!path6) return "";
-      const safeSuffix = pth.posix.normalize("/" + path6.split("\\").join("/"));
+    Utils.canonical = function(path7) {
+      if (!path7) return "";
+      const safeSuffix = pth.posix.normalize("/" + path7.split("\\").join("/"));
       return pth.join(".", safeSuffix);
     };
-    Utils.zipnamefix = function(path6) {
-      if (!path6) return "";
-      const safeSuffix = pth.posix.normalize("/" + path6.split("\\").join("/"));
+    Utils.zipnamefix = function(path7) {
+      if (!path7) return "";
+      const safeSuffix = pth.posix.normalize("/" + path7.split("\\").join("/"));
       return pth.posix.join(".", safeSuffix);
     };
     Utils.findLast = function(arr, callback) {
@@ -25832,9 +25832,9 @@ var require_utils2 = __commonJS({
       prefix = pth.resolve(pth.normalize(prefix));
       var parts = name.split("/");
       for (var i2 = 0, l2 = parts.length; i2 < l2; i2++) {
-        var path6 = pth.normalize(pth.join(prefix, parts.slice(i2, l2).join(pth.sep)));
-        if (path6 === prefix || path6.startsWith(prefix + pth.sep)) {
-          return path6;
+        var path7 = pth.normalize(pth.join(prefix, parts.slice(i2, l2).join(pth.sep)));
+        if (path7 === prefix || path7.startsWith(prefix + pth.sep)) {
+          return path7;
         }
       }
       return pth.normalize(pth.join(prefix, pth.basename(name)));
@@ -25884,8 +25884,8 @@ var require_utils2 = __commonJS({
 var require_fattr = __commonJS({
   "../node_modules/adm-zip/util/fattr.js"(exports2, module2) {
     var pth = require("path");
-    module2.exports = function(path6, { fs: fs6 }) {
-      var _path = path6 || "", _obj = newAttr(), _stat = null;
+    module2.exports = function(path7, { fs: fs8 }) {
+      var _path = path7 || "", _obj = newAttr(), _stat = null;
       function newAttr() {
         return {
           directory: false,
@@ -25896,8 +25896,8 @@ var require_fattr = __commonJS({
           atime: 0
         };
       }
-      if (_path && fs6.existsSync(_path)) {
-        _stat = fs6.statSync(_path);
+      if (_path && fs8.existsSync(_path)) {
+        _stat = fs8.statSync(_path);
         _obj.directory = _stat.isDirectory();
         _obj.mtime = _stat.mtime;
         _obj.atime = _stat.atime;
@@ -34179,8 +34179,47 @@ var require_tinyqueue = __commonJS({
 });
 
 // extraire.ts
-var import_fs4 = __toESM(require("fs"));
-var import_path5 = __toESM(require("path"));
+var import_fs5 = __toESM(require("fs"));
+var import_path6 = __toESM(require("path"));
+
+// dir-archive.ts
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+var import_cityhash = __toESM(require_cityhash());
+var DirArchive = class {
+  constructor(path7, scsSource) {
+    this.path = path7;
+    this.scsSource = scsSource;
+  }
+  isValid() {
+    return true;
+  }
+  dispose() {
+  }
+  parseEntries() {
+    const root = this.path, src2 = this.scsSource;
+    const full = (k2) => import_path.default.join(root, k2);
+    return {
+      files: { get: (k2) => {
+        const f3 = full(k2);
+        if (!import_fs.default.existsSync(f3) || !import_fs.default.statSync(f3).isFile()) return void 0;
+        return { type: "file", hash: (0, import_cityhash.city64)(k2), scsSource: src2, read: () => import_fs.default.readFileSync(f3) };
+      } },
+      directories: { get: (k2) => {
+        const d2 = full(k2);
+        if (!import_fs.default.existsSync(d2) || !import_fs.default.statSync(d2).isDirectory()) return void 0;
+        const ents = import_fs.default.readdirSync(d2, { withFileTypes: true });
+        return {
+          type: "directory",
+          hash: (0, import_cityhash.city64)(k2),
+          scsSource: src2,
+          files: ents.filter((e2) => e2.isFile()).map((e2) => e2.name),
+          subdirectories: ents.filter((e2) => e2.isDirectory()).map((e2) => e2.name)
+        };
+      } }
+    };
+  }
+};
 
 // ../packages/libs/base/assert.ts
 function assertExists(x2, msg) {
@@ -35609,7 +35648,7 @@ function calculateHalfOffset(p) {
 
 // ../packages/clis/parser/game-files/map-files-parser.ts
 var cliProgress = __toESM(require_cli_progress(), 1);
-var import_path = __toESM(require("path"), 1);
+var import_path2 = __toESM(require("path"), 1);
 var import_pngjs2 = __toESM(require_png(), 1);
 
 // ../node_modules/consola/dist/core.mjs
@@ -36761,7 +36800,9 @@ var CombinedEntries = class {
             `multiple files found for ${key}; using most recent one.`
           );
         }
-        return entries.length ? entries.at(-1) : void 0;
+        const __e = entries.length ? entries.at(-1) : void 0;
+        if (__e && process.env.TCH_TRACE) require("fs").appendFileSync(process.env.TCH_TRACE, JSON.stringify([__e.scsSource, key]) + "\n");
+        return __e;
       }
     };
   }
@@ -40609,8 +40650,8 @@ function parseDefFiles(entries, application) {
   const companies = /* @__PURE__ */ new Map();
   const cargoes = /* @__PURE__ */ new Map();
   const ferries = /* @__PURE__ */ new Map();
-  const processAndAdd = (path6, dlcGuard, schema, p, m2) => {
-    const t2 = convertSiiToJson(path6, entries, schema);
+  const processAndAdd = (path7, dlcGuard, schema, p, m2) => {
+    const t2 = convertSiiToJson(path7, entries, schema);
     const u3 = p(t2, entries);
     if (u3) {
       m2.set(u3.token, { ...u3, dlcGuard });
@@ -40630,17 +40671,17 @@ function parseDefFiles(entries, application) {
       dlcGuard = 0;
     }
     const includePaths = parseIncludeOnlySii(`def/${f3}`, entries);
-    for (const path6 of includePaths) {
+    for (const path7 of includePaths) {
       if (f3.startsWith("city.")) {
-        processAndAdd(path6, dlcGuard, CitySiiSchema, processCityJson, cities);
+        processAndAdd(path7, dlcGuard, CitySiiSchema, processCityJson, cities);
       } else if (f3.startsWith("country.")) {
         const partialCountry = processCountryJson(
-          convertSiiToJson(path6, entries, CountrySiiSchema)
+          convertSiiToJson(path7, entries, CountrySiiSchema)
         );
         if (partialCountry) {
           const truckSpeedLimits = processSpeedLimitJson(
             convertSiiToJson(
-              path6.replace(".sui", "/speed_limits.sii"),
+              path7.replace(".sui", "/speed_limits.sii"),
               entries,
               SpeedLimitSiiSchema
             )
@@ -40652,7 +40693,7 @@ function parseDefFiles(entries, application) {
         }
       } else if (f3.startsWith("company.")) {
         processAndAdd(
-          path6,
+          path7,
           dlcGuard,
           CompanySiiSchema,
           processCompanyJson,
@@ -40660,7 +40701,7 @@ function parseDefFiles(entries, application) {
         );
       } else if (f3.startsWith("cargo.")) {
         processAndAdd(
-          path6,
+          path7,
           dlcGuard,
           CargoDataSiiSchema,
           processCargoJson,
@@ -40668,7 +40709,7 @@ function parseDefFiles(entries, application) {
         );
       } else if (f3.startsWith("ferry.")) {
         processAndAdd(
-          path6,
+          path7,
           dlcGuard,
           FerrySiiSchema,
           processFerryJson,
@@ -41050,28 +41091,28 @@ function processPrefabJson(obj, entries) {
     ([key, o3]) => [key.split(".")[1], o3.prefabDesc.substring(1)]
   );
   const prefabs = /* @__PURE__ */ new Map();
-  for (const [token2, path6] of prefabTuples) {
-    const ppdFile = entries.files.get(path6);
+  for (const [token2, path7] of prefabTuples) {
+    const ppdFile = entries.files.get(path7);
     if (!ppdFile) {
       logger.warn(`could not find prefab file for ${token2}`);
       continue;
     }
     const ppd = parsePrefabPpd(ppdFile.read());
     if (ppd.mapPoints.some((p) => p.type === "polygon")) {
-      const pmgPath = path6.replace(
+      const pmgPath = path7.replace(
         /(_spawn|_roof_trigger_rt|_rt|_trigger)?\.ppd$/,
         ".pmg"
       );
       const pmgFile = entries.files.get(pmgPath);
       if (!pmgFile) {
         logger.warn(
-          `could not find pmg file ${pmgPath} for ${token2} (${path6})`
+          `could not find pmg file ${pmgPath} for ${token2} (${path7})`
         );
       } else {
       }
     }
     prefabs.set(token2, {
-      path: path6,
+      path: path7,
       ...ppd
     });
   }
@@ -41114,25 +41155,25 @@ function processModelJson(obj, entries) {
     ([key, o3]) => [key.split(".")[1], o3.modelDesc?.substring(1)]
   );
   const buildings = /* @__PURE__ */ new Map();
-  for (const [token2, path6] of modelTuples) {
-    if (path6 == null) {
+  for (const [token2, path7] of modelTuples) {
+    if (path7 == null) {
       continue;
     }
-    if (!path6.endsWith(".pmd")) {
+    if (!path7.endsWith(".pmd")) {
       continue;
     }
-    const isProbablyBuildingModel = /^model2?\/building\//.exec(path6) ?? /^model2?\/panorama\/.*building/.exec(path6);
+    const isProbablyBuildingModel = /^model2?\/building\//.exec(path7) ?? /^model2?\/panorama\/.*building/.exec(path7);
     if (!isProbablyBuildingModel) {
       continue;
     }
-    const pmgPath = path6.replace(/\.pmd$/, ".pmg");
+    const pmgPath = path7.replace(/\.pmd$/, ".pmg");
     const pmgFile = entries.files.get(pmgPath);
     if (!pmgFile) {
       logger.warn(`could not find pmg file ${pmgPath} for ${token2}`);
       continue;
     }
     const pmg = parseModelPmg(pmgFile.read());
-    buildings.set(token2, { path: path6, ...pmg });
+    buildings.set(token2, { path: path7, ...pmg });
   }
   return { buildings, vegetation };
 }
@@ -41410,10 +41451,10 @@ function processMileageTargetJson(obj) {
 }
 
 // ../packages/clis/parser/game-files/scs-archive.ts
-var import_fs = __toESM(require("fs"), 1);
+var import_fs2 = __toESM(require("fs"), 1);
 var import_zlib = __toESM(require("zlib"), 1);
 var import_bindings_shim = __toESM(require_bindings_shim(), 1);
-var { city64 } = (0, import_bindings_shim.default)("cityhash");
+var { city64: city642 } = (0, import_bindings_shim.default)("cityhash");
 var { gdeflate } = (0, import_bindings_shim.default)("gdeflate");
 var FileHeader = new Struct({
   magic: new StringT(4),
@@ -41505,19 +41546,19 @@ var MetadataEntryHeader = new Struct({
   type: uint8
 });
 var ScsArchive = class {
-  constructor(path6, scsSource) {
-    this.path = path6;
+  constructor(path7, scsSource) {
+    this.path = path7;
     this.scsSource = scsSource;
-    this.fd = import_fs.default.openSync(path6, "r");
+    this.fd = import_fs2.default.openSync(path7, "r");
     const buffer = Buffer.alloc(FileHeader.size());
-    import_fs.default.readSync(this.fd, buffer, { length: buffer.length });
+    import_fs2.default.readSync(this.fd, buffer, { length: buffer.length });
     this.header = FileHeader.fromBuffer(buffer);
   }
   fd;
   header;
   entries;
   dispose() {
-    import_fs.default.closeSync(this.fd);
+    import_fs2.default.closeSync(this.fd);
   }
   isValid() {
     return this.header.magic === "SCS#" && this.header.hashMethod === "CITY" && this.header.version === 2;
@@ -41626,7 +41667,7 @@ var ScsArchive = class {
     uncompressedSize
   }) {
     const buffer = Buffer.alloc(compressedSize);
-    import_fs.default.readSync(this.fd, buffer, {
+    import_fs2.default.readSync(this.fd, buffer, {
       length: buffer.length,
       position: offset
     });
@@ -41636,7 +41677,7 @@ var ScsArchive = class {
 function createStore(values) {
   const map = new Map(values.map((v2) => [v2.hash, v2]));
   return {
-    get: (key) => map.get(city64(key))
+    get: (key) => map.get(city642(key))
   };
 }
 function createEntry(fd, header, scsSource, metadataMap) {
@@ -41724,7 +41765,7 @@ var ScsArchiveEntry = class {
   }
   read() {
     const rawData = Buffer.alloc(this.metadata.compressedSize);
-    const bytesRead = import_fs.default.readSync(this.fd, rawData, {
+    const bytesRead = import_fs2.default.readSync(this.fd, rawData, {
       length: rawData.length,
       position: this.metadata.offset
     });
@@ -42742,12 +42783,12 @@ function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
     "version.scs"
   ]);
   const archives = scsFilePaths.filter((p) => {
-    const fn = import_path.default.basename(p);
+    const fn = import_path2.default.basename(p);
     return requiredFiles.has(fn) || includeDlc && fn.startsWith("dlc");
   }).map((p) => {
-    const scsSource = import_path.default.basename(p);
+    const scsSource = import_path2.default.basename(p);
     logger.log("adding", scsSource);
-    return new ScsArchive(p, scsSource);
+    return fs.statSync(p).isDirectory() ? new DirArchive(p, scsSource) : new ScsArchive(p, scsSource);
   });
   const entries = new CombinedEntries(archives);
   try {
@@ -43724,12 +43765,12 @@ function checkReference(ref, store, fieldName, item) {
 
 // ../packages/libs/io/file-source.ts
 var import_adm_zip = __toESM(require_adm_zip(), 1);
-var import_fs2 = __toESM(require("fs"), 1);
-var import_path2 = __toESM(require("path"), 1);
+var import_fs3 = __toESM(require("fs"), 1);
+var import_path3 = __toESM(require("path"), 1);
 function fromDir(dir) {
   return {
-    has: (name) => import_fs2.default.existsSync(import_path2.default.join(dir, name)),
-    readUtf8: (name) => import_fs2.default.readFileSync(import_path2.default.join(dir, name), "utf-8"),
+    has: (name) => import_fs3.default.existsSync(import_path3.default.join(dir, name)),
+    readUtf8: (name) => import_fs3.default.readFileSync(import_path3.default.join(dir, name), "utf-8"),
     describe: () => dir
   };
 }
@@ -43804,7 +43845,7 @@ var fromEts2CoordsToWgs84 = ([x2, y3]) => {
 };
 
 // ../packages/libs/io/mapped-data.ts
-var import_path3 = __toESM(require("path"), 1);
+var import_path4 = __toESM(require("path"), 1);
 var import_process = __toESM(require("process"), 1);
 
 // ../packages/libs/io/logger.ts
@@ -43844,8 +43885,8 @@ function readMapData(input, map, options) {
   const forceSecretUids = /* @__PURE__ */ new Set();
   if (dataOverridesJsonPath != null) {
     overrides = readArrayFile(
-      fromDir(import_path3.default.dirname(dataOverridesJsonPath)),
-      import_path3.default.basename(dataOverridesJsonPath)
+      fromDir(import_path4.default.dirname(dataOverridesJsonPath)),
+      import_path4.default.basename(dataOverridesJsonPath)
     );
     for (const override of overrides) {
       switch (override.type) {
@@ -44235,7 +44276,7 @@ function checkJsonFilesPresent(source, map, keys) {
   }
 }
 function readArrayFile(source, filename, options = {}) {
-  const basename = import_path3.default.basename(filename, ".json");
+  const basename = import_path4.default.basename(filename, ".json");
   const start = Date.now();
   const reviver = basename.endsWith("elevation") || basename.endsWith("prefabDescriptions") || basename.endsWith("nodes") ? void 0 : bigintReviver;
   const results = JSON.parse(source.readUtf8(filename), reviver);
@@ -44271,14 +44312,14 @@ function toBigInt(v2) {
 }
 
 // ../packages/libs/io/write.ts
-var fs3 = __toESM(require("node:fs"), 1);
+var fs5 = __toESM(require("node:fs"), 1);
 function writeArrayFile(array, outputFile) {
-  fs3.writeFileSync(outputFile, JSON.stringify(array, null, 2));
+  fs5.writeFileSync(outputFile, JSON.stringify(array, null, 2));
 }
-function writeGeojsonFile(path6, data2) {
-  const fd = fs3.openSync(path6, "w");
+function writeGeojsonFile(path7, data2) {
+  const fd = fs5.openSync(path7, "w");
   let pos = 0;
-  const writeln = (str) => pos += fs3.writeSync(fd, str + "\n", pos, "utf-8");
+  const writeln = (str) => pos += fs5.writeSync(fd, str + "\n", pos, "utf-8");
   writeln("{");
   writeln('"type": "FeatureCollection",');
   writeln('"features":[');
@@ -44292,7 +44333,7 @@ function writeGeojsonFile(path6, data2) {
   }
   writeln("]");
   writeln("}");
-  fs3.closeSync(fd);
+  fs5.closeSync(fd);
 }
 BigInt.prototype.toJSON = function() {
   return this.toString(16);
@@ -44785,13 +44826,13 @@ var RBush = class {
     if (!item) return this;
     let node = this.data;
     const bbox = this.toBBox(item);
-    const path6 = [];
+    const path7 = [];
     const indexes = [];
     let i2, parent, goingUp;
-    while (node || path6.length) {
+    while (node || path7.length) {
       if (!node) {
-        node = path6.pop();
-        parent = path6[path6.length - 1];
+        node = path7.pop();
+        parent = path7[path7.length - 1];
         i2 = indexes.pop();
         goingUp = true;
       }
@@ -44799,13 +44840,13 @@ var RBush = class {
         const index = findItem(item, node.children, equalsFn);
         if (index !== -1) {
           node.children.splice(index, 1);
-          path6.push(node);
-          this._condense(path6);
+          path7.push(node);
+          this._condense(path7);
           return this;
         }
       }
       if (!goingUp && !node.leaf && contains(node, bbox)) {
-        path6.push(node);
+        path7.push(node);
         indexes.push(i2);
         i2 = 0;
         parent = node;
@@ -44873,10 +44914,10 @@ var RBush = class {
     calcBBox(node, this.toBBox);
     return node;
   }
-  _chooseSubtree(bbox, node, level, path6) {
+  _chooseSubtree(bbox, node, level, path7) {
     while (true) {
-      path6.push(node);
-      if (node.leaf || path6.length - 1 === level) break;
+      path7.push(node);
+      if (node.leaf || path7.length - 1 === level) break;
       let minArea = Infinity;
       let minEnlargement = Infinity;
       let targetNode;
@@ -44983,19 +45024,19 @@ var RBush = class {
     }
     return margin;
   }
-  _adjustParentBBoxes(bbox, path6, level) {
+  _adjustParentBBoxes(bbox, path7, level) {
     for (let i2 = level; i2 >= 0; i2--) {
-      extend(path6[i2], bbox);
+      extend(path7[i2], bbox);
     }
   }
-  _condense(path6) {
-    for (let i2 = path6.length - 1, siblings; i2 >= 0; i2--) {
-      if (path6[i2].children.length === 0) {
+  _condense(path7) {
+    for (let i2 = path7.length - 1, siblings; i2 >= 0; i2--) {
+      if (path7[i2].children.length === 0) {
         if (i2 > 0) {
-          siblings = path6[i2 - 1].children;
-          siblings.splice(siblings.indexOf(path6[i2]), 1);
+          siblings = path7[i2 - 1].children;
+          siblings.splice(siblings.indexOf(path7[i2]), 1);
         } else this.clear();
-      } else calcBBox(path6[i2], this.toBBox);
+      } else calcBBox(path7[i2], this.toBBox);
     }
   }
 };
@@ -45270,9 +45311,9 @@ function createNormalizeCoordinates(map, decimalPoints) {
 }
 
 // ../packages/clis/generator/geo-json/populated-places.ts
-var import_fs3 = __toESM(require("fs"), 1);
-var import_path4 = __toESM(require("path"), 1);
-var __dirname = import_path4.default.join(process.env.TCH_RESSOURCES || ".", "x");
+var import_fs4 = __toESM(require("fs"), 1);
+var import_path5 = __toESM(require("path"), 1);
+var __dirname = import_path5.default.join(process.env.TCH_RESSOURCES || ".", "x");
 var ets2IsoA2 = /* @__PURE__ */ new Map([
   ["A", "AT"],
   ["B", "BE"],
@@ -45297,8 +45338,8 @@ var ets2IsoA2 = /* @__PURE__ */ new Map([
 var isoA2Ets2 = new Map(ets2IsoA2.entries().map(([k2, v2]) => [v2, k2]));
 function getCitiesByCountryIsoA2() {
   const populatedPlaces = JSON.parse(
-    import_fs3.default.readFileSync(
-      import_path4.default.join(
+    import_fs4.default.readFileSync(
+      import_path5.default.join(
         __dirname,
         "../resources",
         // from https://github.com/nvkelso/natural-earth-vector
@@ -45472,13 +45513,13 @@ function convertToMapGeoJson(tsMapData, options) {
   logger3.log("creating roads and quadtree of prefab-adjacent roads...");
   const roadFeatures = [];
   for (const r5 of roads.values()) {
-    const fs6 = roadToFeature(
+    const fs8 = roadToFeature(
       r5,
       assertExists(roadLooks.get(r5.roadLookToken)),
       nodes,
       dividerFeatures
     );
-    for (const f3 of fs6) {
+    for (const f3 of fs8) {
       roadFeatures.push(f3);
       if (prefabNodeUids.has(r5.startNodeUid)) {
         const node = assertExists(nodes.get(r5.startNodeUid));
@@ -46445,16 +46486,16 @@ var [gameDir, outDir] = process.argv.slice(2);
 var mem = () => Math.round(process.memoryUsage().rss / 1e6) + " Mo";
 var t0 = Date.now();
 var T3 = () => ((Date.now() - t0) / 1e3).toFixed(0) + " s";
-import_fs4.default.mkdirSync(import_path5.default.join(outDir, "json"), { recursive: true });
-var scs = import_fs4.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path5.default.join(gameDir, f3));
+import_fs5.default.mkdirSync(import_path6.default.join(outDir, "json"), { recursive: true });
+var scs = import_fs5.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path6.default.join(gameDir, f3));
 var r4 = parseMapFiles(scs, { includeDlc: true, mode: "all" });
 console.log("lu", r4.map, r4.version, T3(), mem());
-for (const k2 of Object.keys(r4.mapData)) writeArrayFile(r4.mapData[k2], import_path5.default.join(outDir, "json", `${r4.map}-${k2}.json`));
-import_fs4.default.writeFileSync(import_path5.default.join(outDir, "version.txt"), r4.version);
+for (const k2 of Object.keys(r4.mapData)) writeArrayFile(r4.mapData[k2], import_path6.default.join(outDir, "json", `${r4.map}-${k2}.json`));
+import_fs5.default.writeFileSync(import_path6.default.join(outDir, "version.txt"), r4.version);
 console.log("json \xE9crit", T3(), mem());
-var data = readMapData(import_path5.default.join(outDir, "json"), r4.map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
+var data = readMapData(import_path6.default.join(outDir, "json"), r4.map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
 var gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
-writeGeojsonFile(import_path5.default.join(outDir, r4.map === "usa" ? "ats.geojson" : "ets2.geojson"), gj);
+writeGeojsonFile(import_path6.default.join(outDir, r4.map === "usa" ? "ats.geojson" : "ets2.geojson"), gj);
 var types = {};
 for (const f3 of gj.features) types[f3.properties.type] = (types[f3.properties.type] || 0) + 1;
 console.log("geojson", JSON.stringify(types), T3(), mem());
