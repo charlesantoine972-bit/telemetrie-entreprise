@@ -225,6 +225,7 @@ const tchMap = {
 // ---------- Carte du jeu : extraction depuis les fichiers du jeu (programme séparé tch-map/extraction, GPL-3) ----------
 // Lecture seule des .scs du jeu. Résultat dans userData/TCH Map/<jeu>/<date>/, désigné par userData/TCH Map/<jeu>/courant.txt
 // (un nouveau dossier à chaque fois : la carte affichée garde ses fichiers ouverts pendant la mise à jour).
+const CARTE_FORMAT = 3; // doit suivre FORMAT de tch-map/outils/extraction/tuiles.ts
 const carteJeu = {
   proc: null, game: null, etat: null,
   dir(game) { return path.join(app.getPath('userData'), 'TCH Map', game); },
@@ -245,6 +246,7 @@ const carteJeu = {
     const g = this.jeu(game), info = this.info(game);
     if (!g) return { game, etat: info ? 'a-jour' : 'sans-jeu', version: info && info.version, date: info && info.date };
     if (!info) return { game, etat: 'a-faire' };
+    if (info.format !== CARTE_FORMAT) return { game, etat: 'perimee', version: info.version, date: info.date }; // nouvelle version de la préparation
     const now = JSON.stringify(this.empreinte(g.dir)), avant = JSON.stringify(info.empreinte || null);
     return { game, etat: now === avant ? 'a-jour' : 'perimee', version: info.version, date: info.date, villes: info.villes };
   },
@@ -261,14 +263,25 @@ const carteJeu = {
     // Pendant une partie, la préparation se fait discrète : moitié moins de cœurs (et toujours en priorité basse)
     const coeurs = typeof os.availableParallelism === 'function' ? os.availableParallelism() : os.cpus().length;
     const enJeu = !!(telemetry && telemetry.snapshot().connected);
-    const env = { ...process.env, TCH_LANGUE: 'fr_fr', TCH_RESSOURCES: ext };
+    const fond = path.join(__dirname, 'tch-map', 'viewer', 'fond', game === 'ats' ? 'terres.geojson' : 'terres-ets2.geojson').replace('app.asar', 'app.asar.unpacked');
+    const env = { ...process.env, TCH_LANGUE: 'fr_fr', TCH_RESSOURCES: ext, TCH_FOND: fond };
     if (enJeu) env.TCH_OUVRIERS = String(Math.max(1, Math.min(4, Math.floor((coeurs - 2) / 2))));
+    if (opts.simple) env.TCH_OUVRIERS = '0'; // secours : tout sur un seul fil
+    // Journal de la préparation (dernière tentative), pour comprendre un échec
+    const journal = path.join(this.dir(game), 'journal.txt');
+    const ecrire = (t) => { try { fs.appendFileSync(journal, t); } catch {} };
+    try { fs.writeFileSync(journal, `${new Date().toISOString()} — ${g.dir} — ${coeurs} cœurs, ${Math.round(os.freemem() / 2 ** 20)} Mo libres${enJeu ? ', jeu en cours' : ''}${opts.simple ? ', mode simple' : ''}\n`); } catch {}
     const p = utilityProcess.fork(path.join(ext, 'extraire.cjs'), [g.dir, out], {
       serviceName: 'TCH Map — préparation de la carte', stdio: 'pipe', execArgv: ['--max-old-space-size=4096'], env,
     });
     this.proc = p; this.game = game; this.auto = !!opts.auto; this.etat = { etape: 'lecture', s: 0, auto: this.auto };
-    let buf = '', fini = false, erreur = null;
+    let buf = '', fini = false, erreur = null, bloque = false;
+    // Sécurité : si plus rien n'avance pendant 3 minutes, on arrête et on recommence en mode simple
+    let vu = Date.now();
+    const garde = setInterval(() => { if (Date.now() - vu > 180000) { bloque = true; ecrire('Bloquée depuis 3 minutes : arrêt.\n'); try { p.kill(); } catch {} } }, 10000);
     p.stdout.on('data', (d) => {
+      vu = Date.now();
+      ecrire(d.toString());
       buf += d.toString();
       let i;
       while ((i = buf.indexOf('\n')) >= 0) {
@@ -283,8 +296,10 @@ const carteJeu = {
         } catch {}
       }
     });
-    p.stderr && p.stderr.on('data', () => {});
+    p.stderr && p.stderr.on('data', (d) => { vu = Date.now(); ecrire(d.toString()); });
     p.on('exit', (code) => {
+      clearInterval(garde);
+      ecrire(`Fin (code ${code})\n`);
       this.proc = null; this.etat = null;
       if (fini && code === 0) {
         fs.writeFileSync(path.join(this.dir(game), 'courant.txt'), stamp);
@@ -294,12 +309,19 @@ const carteJeu = {
         setTimeout(() => this.auto(), 5000); // l'autre jeu ensuite, s'il en a besoin
       } else {
         try { fs.rmSync(out, { recursive: true, force: true }); } catch {}
-        this.envoyer({ game, etape: 'erreur', message: erreur || `La préparation s'est arrêtée (code ${code}).` });
+        // Échec avec plusieurs cœurs (bloquée, ouvrier arrêté…) : on réessaie une fois, tout seul, en mode simple
+        if (!opts.simple && !this.annule && (bloque || /ouvrier|worker/i.test(erreur || '') || !erreur)) {
+          this.envoyer({ game, etape: 'lecture', s: 0, message: 'Nouvel essai en mode simple…' });
+          setTimeout(() => this.lancer(game, { ...opts, simple: true }), 1000);
+          return;
+        }
+        this.envoyer({ game, etape: 'erreur', message: (erreur || `La préparation s'est arrêtée (code ${code}).`) + ` Détails : ${journal}` });
       }
+      this.annule = false;
     });
     return { ok: true };
   },
-  annuler() { try { if (this.proc) this.proc.kill(); } catch {} },
+  annuler() { this.annule = !!this.proc; try { if (this.proc) this.proc.kill(); } catch {} },
   // Comme les logiciels qui se mettent à jour en arrière-plan : au lancement, la carte du jeu se prépare toute seule
   // si elle n'existe pas encore ou si le jeu / les DLC ont changé (une fois par mise à jour du jeu).
   auto() {
@@ -312,7 +334,7 @@ const carteJeu = {
   },
   // Anciennes cartes : supprimées quand elles ne sont plus utilisées (au pire au prochain lancement)
   nettoyer(game, garder) {
-    try { for (const d of fs.readdirSync(this.dir(game))) if (d !== garder && d !== 'courant.txt') fs.rmSync(path.join(this.dir(game), d), { recursive: true, force: true }); } catch {}
+    try { for (const d of fs.readdirSync(this.dir(game))) if (d !== garder && d !== 'courant.txt' && d !== 'journal.txt') fs.rmSync(path.join(this.dir(game), d), { recursive: true, force: true }); } catch {}
   },
 };
 // ---------- Mods & sauvegarde : analyse par le programme séparé tch-mods/ (GPL-3) ----------

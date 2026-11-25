@@ -5938,11 +5938,11 @@ var require_baseGet = __commonJS({
   "../../../../ext/maps/node_modules/lodash/_baseGet.js"(exports2, module2) {
     var castPath = require_castPath();
     var toKey = require_toKey();
-    function baseGet(object2, path8) {
-      path8 = castPath(path8, object2);
-      var index = 0, length = path8.length;
+    function baseGet(object2, path9) {
+      path9 = castPath(path9, object2);
+      var index = 0, length = path9.length;
       while (object2 != null && index < length) {
-        object2 = object2[toKey(path8[index++])];
+        object2 = object2[toKey(path9[index++])];
       }
       return index && index == length ? object2 : void 0;
     }
@@ -5954,8 +5954,8 @@ var require_baseGet = __commonJS({
 var require_get = __commonJS({
   "../../../../ext/maps/node_modules/lodash/get.js"(exports2, module2) {
     var baseGet = require_baseGet();
-    function get(object2, path8, defaultValue) {
-      var result = object2 == null ? void 0 : baseGet(object2, path8);
+    function get(object2, path9, defaultValue) {
+      var result = object2 == null ? void 0 : baseGet(object2, path9);
       return result === void 0 ? defaultValue : result;
     }
     module2.exports = get;
@@ -5981,11 +5981,11 @@ var require_hasPath = __commonJS({
     var isIndex = require_isIndex();
     var isLength = require_isLength();
     var toKey = require_toKey();
-    function hasPath(object2, path8, hasFunc) {
-      path8 = castPath(path8, object2);
-      var index = -1, length = path8.length, result = false;
+    function hasPath(object2, path9, hasFunc) {
+      path9 = castPath(path9, object2);
+      var index = -1, length = path9.length, result = false;
       while (++index < length) {
-        var key = toKey(path8[index]);
+        var key = toKey(path9[index]);
         if (!(result = object2 != null && hasFunc(object2, key))) {
           break;
         }
@@ -6006,8 +6006,8 @@ var require_hasIn = __commonJS({
   "../../../../ext/maps/node_modules/lodash/hasIn.js"(exports2, module2) {
     var baseHasIn = require_baseHasIn();
     var hasPath = require_hasPath();
-    function hasIn(object2, path8) {
-      return object2 != null && hasPath(object2, path8, baseHasIn);
+    function hasIn(object2, path9) {
+      return object2 != null && hasPath(object2, path9, baseHasIn);
     }
     module2.exports = hasIn;
   }
@@ -6025,13 +6025,13 @@ var require_baseMatchesProperty = __commonJS({
     var toKey = require_toKey();
     var COMPARE_PARTIAL_FLAG = 1;
     var COMPARE_UNORDERED_FLAG = 2;
-    function baseMatchesProperty(path8, srcValue) {
-      if (isKey(path8) && isStrictComparable(srcValue)) {
-        return matchesStrictComparable(toKey(path8), srcValue);
+    function baseMatchesProperty(path9, srcValue) {
+      if (isKey(path9) && isStrictComparable(srcValue)) {
+        return matchesStrictComparable(toKey(path9), srcValue);
       }
       return function(object2) {
-        var objValue = get(object2, path8);
-        return objValue === void 0 && objValue === srcValue ? hasIn(object2, path8) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+        var objValue = get(object2, path9);
+        return objValue === void 0 && objValue === srcValue ? hasIn(object2, path9) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
       };
     }
     module2.exports = baseMatchesProperty;
@@ -6064,9 +6064,9 @@ var require_baseProperty = __commonJS({
 var require_basePropertyDeep = __commonJS({
   "../../../../ext/maps/node_modules/lodash/_basePropertyDeep.js"(exports2, module2) {
     var baseGet = require_baseGet();
-    function basePropertyDeep(path8) {
+    function basePropertyDeep(path9) {
       return function(object2) {
-        return baseGet(object2, path8);
+        return baseGet(object2, path9);
       };
     }
     module2.exports = basePropertyDeep;
@@ -6080,8 +6080,8 @@ var require_property = __commonJS({
     var basePropertyDeep = require_basePropertyDeep();
     var isKey = require_isKey();
     var toKey = require_toKey();
-    function property(path8) {
-      return isKey(path8) ? baseProperty(toKey(path8)) : basePropertyDeep(path8);
+    function property(path9) {
+      return isKey(path9) ? baseProperty(toKey(path9)) : basePropertyDeep(path9);
     }
     module2.exports = property;
   }
@@ -6301,8 +6301,8 @@ var require_has = __commonJS({
   "../../../../ext/maps/node_modules/lodash/has.js"(exports2, module2) {
     var baseHas = require_baseHas();
     var hasPath = require_hasPath();
-    function has(object2, path8) {
-      return object2 != null && hasPath(object2, path8, baseHas);
+    function has(object2, path9) {
+      return object2 != null && hasPath(object2, path9, baseHas);
     }
     module2.exports = has;
   }
@@ -7198,14 +7198,14 @@ var require_baseSet = __commonJS({
     var isIndex = require_isIndex();
     var isObject2 = require_isObject();
     var toKey = require_toKey();
-    function baseSet(object2, path8, value, customizer) {
+    function baseSet(object2, path9, value, customizer) {
       if (!isObject2(object2)) {
         return object2;
       }
-      path8 = castPath(path8, object2);
-      var index = -1, length = path8.length, lastIndex = length - 1, nested = object2;
+      path9 = castPath(path9, object2);
+      var index = -1, length = path9.length, lastIndex = length - 1, nested = object2;
       while (nested != null && ++index < length) {
-        var key = toKey(path8[index]), newValue = value;
+        var key = toKey(path9[index]), newValue = value;
         if (key === "__proto__" || key === "constructor" || key === "prototype") {
           return object2;
         }
@@ -7213,7 +7213,7 @@ var require_baseSet = __commonJS({
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : void 0;
           if (newValue === void 0) {
-            newValue = isObject2(objValue) ? objValue : isIndex(path8[index + 1]) ? [] : {};
+            newValue = isObject2(objValue) ? objValue : isIndex(path9[index + 1]) ? [] : {};
           }
         }
         assignValue(nested, key, newValue);
@@ -7234,9 +7234,9 @@ var require_basePickBy = __commonJS({
     function basePickBy(object2, paths, predicate) {
       var index = -1, length = paths.length, result = {};
       while (++index < length) {
-        var path8 = paths[index], value = baseGet(object2, path8);
-        if (predicate(value, path8)) {
-          baseSet(result, castPath(path8, object2), value);
+        var path9 = paths[index], value = baseGet(object2, path9);
+        if (predicate(value, path9)) {
+          baseSet(result, castPath(path9, object2), value);
         }
       }
       return result;
@@ -7260,8 +7260,8 @@ var require_pickBy = __commonJS({
         return [prop];
       });
       predicate = baseIteratee(predicate);
-      return basePickBy(object2, props, function(value, path8) {
-        return predicate(value, path8[0]);
+      return basePickBy(object2, props, function(value, path9) {
+        return predicate(value, path9[0]);
       });
     }
     module2.exports = pickBy;
@@ -11009,12 +11009,12 @@ var require_tokens = __commonJS({
       });
     }
     exports2.assignCategoriesMapProp = assignCategoriesMapProp;
-    function singleAssignCategoriesToksMap(path8, nextNode) {
-      (0, forEach_1.default)(path8, function(pathNode) {
+    function singleAssignCategoriesToksMap(path9, nextNode) {
+      (0, forEach_1.default)(path9, function(pathNode) {
         nextNode.categoryMatchesMap[pathNode.tokenTypeIdx] = true;
       });
       (0, forEach_1.default)(nextNode.CATEGORIES, function(nextCategory) {
-        var newPath = path8.concat(nextNode);
+        var newPath = path9.concat(nextNode);
         if (!(0, includes_1.default)(newPath, nextCategory)) {
           singleAssignCategoriesToksMap(newPath, nextCategory);
         }
@@ -12121,10 +12121,10 @@ var require_interpreter = __commonJS({
       /** @class */
       (function(_super) {
         __extends(AbstractNextPossibleTokensWalker2, _super);
-        function AbstractNextPossibleTokensWalker2(topProd, path8) {
+        function AbstractNextPossibleTokensWalker2(topProd, path9) {
           var _this = _super.call(this) || this;
           _this.topProd = topProd;
-          _this.path = path8;
+          _this.path = path9;
           _this.possibleTokTypes = [];
           _this.nextProductionName = "";
           _this.nextProductionOccurrence = 0;
@@ -12178,9 +12178,9 @@ var require_interpreter = __commonJS({
       /** @class */
       (function(_super) {
         __extends(NextAfterTokenWalker2, _super);
-        function NextAfterTokenWalker2(topProd, path8) {
-          var _this = _super.call(this, topProd, path8) || this;
-          _this.path = path8;
+        function NextAfterTokenWalker2(topProd, path9) {
+          var _this = _super.call(this, topProd, path9) || this;
+          _this.path = path9;
           _this.nextTerminalName = "";
           _this.nextTerminalOccurrence = 0;
           _this.nextTerminalName = _this.path.lastTok.name;
@@ -12898,10 +12898,10 @@ var require_lookahead = __commonJS({
       }
       return result;
     }
-    function pathToHashKeys(path8) {
+    function pathToHashKeys(path9) {
       var keys = [""];
-      for (var i2 = 0; i2 < path8.length; i2++) {
-        var tokType = path8[i2];
+      for (var i2 = 0; i2 < path9.length; i2++) {
+        var tokType = path9[i2];
         var longerKeys = [];
         for (var j = 0; j < keys.length; j++) {
           var currShorterKey = keys[j];
@@ -13242,9 +13242,9 @@ var require_checks = __commonJS({
       return errors;
     }
     exports2.validateRuleIsOverridden = validateRuleIsOverridden;
-    function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path8) {
-      if (path8 === void 0) {
-        path8 = [];
+    function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path9) {
+      if (path9 === void 0) {
+        path9 = [];
       }
       var errors = [];
       var nextNonTerminals = getFirstNoneTerminal(currRule.definition);
@@ -13257,15 +13257,15 @@ var require_checks = __commonJS({
           errors.push({
             message: errMsgProvider.buildLeftRecursionError({
               topLevelRule: topRule,
-              leftRecursionPath: path8
+              leftRecursionPath: path9
             }),
             type: parser_1.ParserDefinitionErrorType.LEFT_RECURSION,
             ruleName
           });
         }
-        var validNextSteps = (0, difference_1.default)(nextNonTerminals, path8.concat([topRule]));
+        var validNextSteps = (0, difference_1.default)(nextNonTerminals, path9.concat([topRule]));
         var errorsFromNextSteps = (0, flatMap_1.default)(validNextSteps, function(currRefRule) {
-          var newPath = (0, clone_1.default)(path8);
+          var newPath = (0, clone_1.default)(path9);
           newPath.push(currRefRule);
           return validateNoLeftRecursion(topRule, currRefRule, errMsgProvider, newPath);
         });
@@ -20040,8 +20040,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path8) {
-      let input = path8;
+    function removeDotSegments(path9) {
+      let input = path9;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -20115,11 +20115,11 @@ var require_utils = __commonJS({
       }
       return output.join("");
     }
-    function removeDotSegmentsRelative(path8) {
-      if (path8 === "" || path8[0] === "/") {
-        return removeDotSegments(path8);
+    function removeDotSegmentsRelative(path9) {
+      if (path9 === "" || path9[0] === "/") {
+        return removeDotSegments(path9);
       }
-      const segments = path8.split("/");
+      const segments = path9.split("/");
       const last = segments.length - 1;
       const output = [];
       let trailingDirectory = false;
@@ -20482,8 +20482,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path8 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path8 && path8 !== "/" ? path8 : void 0;
+        const path9 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path9 && path9 !== "/" ? path9 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -24577,14 +24577,14 @@ var require_dynamicDefaults = __commonJS({
         compile(schema, _parentSchema, it) {
           if (!it.opts.useDefaults || it.compositeRule)
             return () => true;
-          const fs7 = {};
+          const fs8 = {};
           for (const key in schema)
-            fs7[key] = getDefault(schema[key]);
+            fs8[key] = getDefault(schema[key]);
           const empty = it.opts.useDefaults === "empty";
           return (data) => {
             for (const prop in schema) {
               if (data[prop] === void 0 || empty && (data[prop] === null || data[prop] === "")) {
-                data[prop] = fs7[prop]();
+                data[prop] = fs8[prop]();
               }
             }
             return true;
@@ -25572,25 +25572,25 @@ var require_utils2 = __commonJS({
       }
       mkdirSync(folder);
     };
-    Utils.prototype.writeFileTo = function(path8, content, overwrite, attr) {
+    Utils.prototype.writeFileTo = function(path9, content, overwrite, attr) {
       const self2 = this;
-      if (self2.fs.existsSync(path8)) {
+      if (self2.fs.existsSync(path9)) {
         if (!overwrite) return false;
-        var stat = self2.fs.statSync(path8);
+        var stat = self2.fs.statSync(path9);
         if (stat.isDirectory()) {
           return false;
         }
       }
-      var folder = pth.dirname(path8);
+      var folder = pth.dirname(path9);
       if (!self2.fs.existsSync(folder)) {
         self2.makeDir(folder);
       }
       var fd;
       try {
-        fd = self2.fs.openSync(path8, "w", 438);
+        fd = self2.fs.openSync(path9, "w", 438);
       } catch (e2) {
-        self2.fs.chmodSync(path8, 438);
-        fd = self2.fs.openSync(path8, "w", 438);
+        self2.fs.chmodSync(path9, 438);
+        fd = self2.fs.openSync(path9, "w", 438);
       }
       if (fd) {
         try {
@@ -25599,22 +25599,22 @@ var require_utils2 = __commonJS({
           self2.fs.closeSync(fd);
         }
       }
-      self2.fs.chmodSync(path8, attr || 438);
+      self2.fs.chmodSync(path9, attr || 438);
       return true;
     };
-    Utils.prototype.writeFileToAsync = function(path8, content, overwrite, attr, callback) {
+    Utils.prototype.writeFileToAsync = function(path9, content, overwrite, attr, callback) {
       if (typeof attr === "function") {
         callback = attr;
         attr = void 0;
       }
       const self2 = this;
-      self2.fs.exists(path8, function(exist) {
+      self2.fs.exists(path9, function(exist) {
         if (exist && !overwrite) return callback(false);
-        self2.fs.stat(path8, function(err, stat) {
+        self2.fs.stat(path9, function(err, stat) {
           if (exist && stat && stat.isDirectory()) {
             return callback(false);
           }
-          var folder = pth.dirname(path8);
+          var folder = pth.dirname(path9);
           self2.fs.exists(folder, function(exists) {
             if (!exists) {
               try {
@@ -25627,16 +25627,16 @@ var require_utils2 = __commonJS({
               self2.fs.write(fd, content, 0, content.length, 0, function(writeErr) {
                 self2.fs.close(fd, function() {
                   if (writeErr) return callback(false);
-                  self2.fs.chmod(path8, attr || 438, function() {
+                  self2.fs.chmod(path9, attr || 438, function() {
                     callback(true);
                   });
                 });
               });
             };
-            self2.fs.open(path8, "w", 438, function(err2, fd) {
+            self2.fs.open(path9, "w", 438, function(err2, fd) {
               if (err2) {
-                self2.fs.chmod(path8, 438, function() {
-                  self2.fs.open(path8, "w", 438, function(retryErr, fd2) {
+                self2.fs.chmod(path9, 438, function() {
+                  self2.fs.open(path9, "w", 438, function(retryErr, fd2) {
                     if (retryErr || !fd2) return callback(false);
                     writeToFd(fd2);
                   });
@@ -25672,10 +25672,10 @@ var require_utils2 = __commonJS({
         if (stat.isSymbolicLink()) throw Errors.FILE_IN_THE_WAY(`"${cur}"`);
       }
     };
-    Utils.prototype.findFiles = function(path8) {
+    Utils.prototype.findFiles = function(path9) {
       const self2 = this;
       const canLstat = typeof self2.fs.lstatSync === "function";
-      const rootReal = self2.fs.realpathSync(path8);
+      const rootReal = self2.fs.realpathSync(path9);
       function escapesRoot(p) {
         if (!canLstat) return false;
         if (!self2.fs.lstatSync(p).isSymbolicLink()) return false;
@@ -25694,23 +25694,23 @@ var require_utils2 = __commonJS({
         }
         let files = [];
         self2.fs.readdirSync(dir).forEach(function(file) {
-          const path9 = pth.join(dir, file);
-          if (escapesRoot(path9)) return;
-          const stat = self2.fs.statSync(path9);
-          if (!pattern || pattern.test(path9)) {
-            files.push(pth.normalize(path9) + (stat.isDirectory() ? self2.sep : ""));
+          const path10 = pth.join(dir, file);
+          if (escapesRoot(path10)) return;
+          const stat = self2.fs.statSync(path10);
+          if (!pattern || pattern.test(path10)) {
+            files.push(pth.normalize(path10) + (stat.isDirectory() ? self2.sep : ""));
           }
           if (stat.isDirectory() && recursive) {
-            const realDir = self2.fs.realpathSync(path9);
+            const realDir = self2.fs.realpathSync(path10);
             if (!visited.has(realDir)) {
               visited.add(realDir);
-              files = files.concat(findSync(path9, pattern, recursive, visited));
+              files = files.concat(findSync(path10, pattern, recursive, visited));
             }
           }
         });
         return files;
       }
-      return findSync(path8, void 0, true, /* @__PURE__ */ new Set([rootReal]));
+      return findSync(path9, void 0, true, /* @__PURE__ */ new Set([rootReal]));
     };
     Utils.prototype.findFilesAsync = function(dir, cb) {
       const self2 = this;
@@ -25807,14 +25807,14 @@ var require_utils2 = __commonJS({
           return "UNSUPPORTED (" + method + ")";
       }
     };
-    Utils.canonical = function(path8) {
-      if (!path8) return "";
-      const safeSuffix = pth.posix.normalize("/" + path8.split("\\").join("/"));
+    Utils.canonical = function(path9) {
+      if (!path9) return "";
+      const safeSuffix = pth.posix.normalize("/" + path9.split("\\").join("/"));
       return pth.join(".", safeSuffix);
     };
-    Utils.zipnamefix = function(path8) {
-      if (!path8) return "";
-      const safeSuffix = pth.posix.normalize("/" + path8.split("\\").join("/"));
+    Utils.zipnamefix = function(path9) {
+      if (!path9) return "";
+      const safeSuffix = pth.posix.normalize("/" + path9.split("\\").join("/"));
       return pth.posix.join(".", safeSuffix);
     };
     Utils.findLast = function(arr, callback) {
@@ -25831,9 +25831,9 @@ var require_utils2 = __commonJS({
       prefix = pth.resolve(pth.normalize(prefix));
       var parts = name.split("/");
       for (var i2 = 0, l2 = parts.length; i2 < l2; i2++) {
-        var path8 = pth.normalize(pth.join(prefix, parts.slice(i2, l2).join(pth.sep)));
-        if (path8 === prefix || path8.startsWith(prefix + pth.sep)) {
-          return path8;
+        var path9 = pth.normalize(pth.join(prefix, parts.slice(i2, l2).join(pth.sep)));
+        if (path9 === prefix || path9.startsWith(prefix + pth.sep)) {
+          return path9;
         }
       }
       return pth.normalize(pth.join(prefix, pth.basename(name)));
@@ -25883,8 +25883,8 @@ var require_utils2 = __commonJS({
 var require_fattr = __commonJS({
   "../../../../ext/maps/node_modules/adm-zip/util/fattr.js"(exports2, module2) {
     var pth = require("path");
-    module2.exports = function(path8, { fs: fs7 }) {
-      var _path = path8 || "", _obj = newAttr(), _stat = null;
+    module2.exports = function(path9, { fs: fs8 }) {
+      var _path = path9 || "", _obj = newAttr(), _stat = null;
       function newAttr() {
         return {
           directory: false,
@@ -25895,8 +25895,8 @@ var require_fattr = __commonJS({
           atime: 0
         };
       }
-      if (_path && fs7.existsSync(_path)) {
-        _stat = fs7.statSync(_path);
+      if (_path && fs8.existsSync(_path)) {
+        _stat = fs8.statSync(_path);
         _obj.directory = _stat.isDirectory();
         _obj.mtime = _stat.mtime;
         _obj.atime = _stat.atime;
@@ -34230,7 +34230,7 @@ var require_geojson_vt_dev = __commonJS({
         return dx * dx + dy * dy;
       }
       function createFeature(id, type, geom, tags) {
-        var feature2 = {
+        var feature3 = {
           id: typeof id === "undefined" ? null : id,
           type,
           geometry: geom,
@@ -34240,32 +34240,32 @@ var require_geojson_vt_dev = __commonJS({
           maxX: -Infinity,
           maxY: -Infinity
         };
-        calcBBox2(feature2);
-        return feature2;
+        calcBBox2(feature3);
+        return feature3;
       }
-      function calcBBox2(feature2) {
-        var geom = feature2.geometry;
-        var type = feature2.type;
+      function calcBBox2(feature3) {
+        var geom = feature3.geometry;
+        var type = feature3.type;
         if (type === "Point" || type === "MultiPoint" || type === "LineString") {
-          calcLineBBox(feature2, geom);
+          calcLineBBox(feature3, geom);
         } else if (type === "Polygon" || type === "MultiLineString") {
           for (var i2 = 0; i2 < geom.length; i2++) {
-            calcLineBBox(feature2, geom[i2]);
+            calcLineBBox(feature3, geom[i2]);
           }
         } else if (type === "MultiPolygon") {
           for (i2 = 0; i2 < geom.length; i2++) {
             for (var j = 0; j < geom[i2].length; j++) {
-              calcLineBBox(feature2, geom[i2][j]);
+              calcLineBBox(feature3, geom[i2][j]);
             }
           }
         }
       }
-      function calcLineBBox(feature2, geom) {
+      function calcLineBBox(feature3, geom) {
         for (var i2 = 0; i2 < geom.length; i2 += 3) {
-          feature2.minX = Math.min(feature2.minX, geom[i2]);
-          feature2.minY = Math.min(feature2.minY, geom[i2 + 1]);
-          feature2.maxX = Math.max(feature2.maxX, geom[i2]);
-          feature2.maxY = Math.max(feature2.maxY, geom[i2 + 1]);
+          feature3.minX = Math.min(feature3.minX, geom[i2]);
+          feature3.minY = Math.min(feature3.minY, geom[i2 + 1]);
+          feature3.maxX = Math.max(feature3.maxX, geom[i2]);
+          feature3.maxY = Math.max(feature3.maxY, geom[i2 + 1]);
         }
       }
       function convert(data, options) {
@@ -34388,13 +34388,13 @@ var require_geojson_vt_dev = __commonJS({
         else if (maxAll < k1 || minAll >= k2) return null;
         var clipped = [];
         for (var i2 = 0; i2 < features.length; i2++) {
-          var feature2 = features[i2];
-          var geometry = feature2.geometry;
-          var type = feature2.type;
-          var min = axis === 0 ? feature2.minX : feature2.minY;
-          var max = axis === 0 ? feature2.maxX : feature2.maxY;
+          var feature3 = features[i2];
+          var geometry = feature3.geometry;
+          var type = feature3.type;
+          var min = axis === 0 ? feature3.minX : feature3.minY;
+          var max = axis === 0 ? feature3.maxX : feature3.maxY;
           if (min >= k1 && max < k2) {
-            clipped.push(feature2);
+            clipped.push(feature3);
             continue;
           } else if (max < k1 || min >= k2) {
             continue;
@@ -34420,7 +34420,7 @@ var require_geojson_vt_dev = __commonJS({
           if (newGeometry.length) {
             if (options.lineMetrics && type === "LineString") {
               for (j = 0; j < newGeometry.length; j++) {
-                clipped.push(createFeature(feature2.id, type, newGeometry[j], feature2.tags));
+                clipped.push(createFeature(feature3.id, type, newGeometry[j], feature3.tags));
               }
               continue;
             }
@@ -34435,7 +34435,7 @@ var require_geojson_vt_dev = __commonJS({
             if (type === "Point" || type === "MultiPoint") {
               type = newGeometry.length === 3 ? "Point" : "MultiPoint";
             }
-            clipped.push(createFeature(feature2.id, type, newGeometry, feature2.tags));
+            clipped.push(createFeature(feature3.id, type, newGeometry, feature3.tags));
           }
         }
         return clipped.length ? clipped : null;
@@ -34553,26 +34553,26 @@ var require_geojson_vt_dev = __commonJS({
       function shiftFeatureCoords(features, offset) {
         var newFeatures = [];
         for (var i2 = 0; i2 < features.length; i2++) {
-          var feature2 = features[i2], type = feature2.type;
+          var feature3 = features[i2], type = feature3.type;
           var newGeometry;
           if (type === "Point" || type === "MultiPoint" || type === "LineString") {
-            newGeometry = shiftCoords(feature2.geometry, offset);
+            newGeometry = shiftCoords(feature3.geometry, offset);
           } else if (type === "MultiLineString" || type === "Polygon") {
             newGeometry = [];
-            for (var j = 0; j < feature2.geometry.length; j++) {
-              newGeometry.push(shiftCoords(feature2.geometry[j], offset));
+            for (var j = 0; j < feature3.geometry.length; j++) {
+              newGeometry.push(shiftCoords(feature3.geometry[j], offset));
             }
           } else if (type === "MultiPolygon") {
             newGeometry = [];
-            for (j = 0; j < feature2.geometry.length; j++) {
+            for (j = 0; j < feature3.geometry.length; j++) {
               var newPolygon = [];
-              for (var k2 = 0; k2 < feature2.geometry[j].length; k2++) {
-                newPolygon.push(shiftCoords(feature2.geometry[j][k2], offset));
+              for (var k2 = 0; k2 < feature3.geometry[j].length; k2++) {
+                newPolygon.push(shiftCoords(feature3.geometry[j][k2], offset));
               }
               newGeometry.push(newPolygon);
             }
           }
-          newFeatures.push(createFeature(feature2.id, type, newGeometry, feature2.tags));
+          newFeatures.push(createFeature(feature3.id, type, newGeometry, feature3.tags));
         }
         return newFeatures;
       }
@@ -34592,11 +34592,11 @@ var require_geojson_vt_dev = __commonJS({
         if (tile.transformed) return tile;
         var z2 = 1 << tile.z, tx = tile.x, ty = tile.y, i2, j, k2;
         for (i2 = 0; i2 < tile.features.length; i2++) {
-          var feature2 = tile.features[i2], geom = feature2.geometry, type = feature2.type;
-          feature2.geometry = [];
+          var feature3 = tile.features[i2], geom = feature3.geometry, type = feature3.type;
+          feature3.geometry = [];
           if (type === 1) {
             for (j = 0; j < geom.length; j += 2) {
-              feature2.geometry.push(transformPoint(geom[j], geom[j + 1], extent, z2, tx, ty));
+              feature3.geometry.push(transformPoint(geom[j], geom[j + 1], extent, z2, tx, ty));
             }
           } else {
             for (j = 0; j < geom.length; j++) {
@@ -34604,7 +34604,7 @@ var require_geojson_vt_dev = __commonJS({
               for (k2 = 0; k2 < geom[j].length; k2 += 2) {
                 ring.push(transformPoint(geom[j][k2], geom[j][k2 + 1], extent, z2, tx, ty));
               }
-              feature2.geometry.push(ring);
+              feature3.geometry.push(ring);
             }
           }
         }
@@ -34648,8 +34648,8 @@ var require_geojson_vt_dev = __commonJS({
         }
         return tile;
       }
-      function addFeature(tile, feature2, tolerance, options) {
-        var geom = feature2.geometry, type = feature2.type, simplified = [];
+      function addFeature(tile, feature3, tolerance, options) {
+        var geom = feature3.geometry, type = feature3.type, simplified = [];
         if (type === "Point" || type === "MultiPoint") {
           for (var i2 = 0; i2 < geom.length; i2 += 3) {
             simplified.push(geom[i2]);
@@ -34672,10 +34672,10 @@ var require_geojson_vt_dev = __commonJS({
           }
         }
         if (simplified.length) {
-          var tags = feature2.tags || null;
+          var tags = feature3.tags || null;
           if (type === "LineString" && options.lineMetrics) {
             tags = {};
-            for (var key in feature2.tags) tags[key] = feature2.tags[key];
+            for (var key in feature3.tags) tags[key] = feature3.tags[key];
             tags["mapbox_clip_start"] = geom.start / geom.size;
             tags["mapbox_clip_end"] = geom.end / geom.size;
           }
@@ -34684,8 +34684,8 @@ var require_geojson_vt_dev = __commonJS({
             type: type === "Polygon" || type === "MultiPolygon" ? 3 : type === "LineString" || type === "MultiLineString" ? 2 : 1,
             tags
           };
-          if (feature2.id !== null) {
-            tileFeature.id = feature2.id;
+          if (feature3.id !== null) {
+            tileFeature.id = feature3.id;
           }
           tile.features.push(tileFeature);
         }
@@ -35837,17 +35837,17 @@ var require_vectortilefeature = __commonJS({
       this._values = values;
       pbf.readFields(readFeature, this, end);
     }
-    function readFeature(tag, feature2, pbf) {
-      if (tag == 1) feature2.id = pbf.readVarint();
-      else if (tag == 2) readTag(pbf, feature2);
-      else if (tag == 3) feature2.type = pbf.readVarint();
-      else if (tag == 4) feature2._geometry = pbf.pos;
+    function readFeature(tag, feature3, pbf) {
+      if (tag == 1) feature3.id = pbf.readVarint();
+      else if (tag == 2) readTag(pbf, feature3);
+      else if (tag == 3) feature3.type = pbf.readVarint();
+      else if (tag == 4) feature3._geometry = pbf.pos;
     }
-    function readTag(pbf, feature2) {
+    function readTag(pbf, feature3) {
       var end = pbf.readVarint() + pbf.pos;
       while (pbf.pos < end) {
-        var key = feature2._keys[pbf.readVarint()], value = feature2._values[pbf.readVarint()];
-        feature2.properties[key] = value;
+        var key = feature3._keys[pbf.readVarint()], value = feature3._values[pbf.readVarint()];
+        feature3.properties[key] = value;
       }
     }
     VectorTileFeature.types = ["Unknown", "Point", "LineString", "Polygon"];
@@ -36072,11 +36072,11 @@ var require_geojson_wrapper = __commonJS({
     GeoJSONWrapper.prototype.feature = function(i2) {
       return new FeatureWrapper(this.features[i2], this.options.extent);
     };
-    function FeatureWrapper(feature2, extent) {
-      this.id = typeof feature2.id === "number" ? feature2.id : void 0;
-      this.type = feature2.type;
-      this.rawGeometry = feature2.type === 1 ? [feature2.geometry] : feature2.geometry;
-      this.properties = feature2.tags;
+    function FeatureWrapper(feature3, extent) {
+      this.id = typeof feature3.id === "number" ? feature3.id : void 0;
+      this.type = feature3.type;
+      this.rawGeometry = feature3.type === 1 ? [feature3.geometry] : feature3.geometry;
+      this.properties = feature3.tags;
       this.extent = extent || 4096;
     }
     FeatureWrapper.prototype.loadGeometry = function() {
@@ -36170,22 +36170,22 @@ var require_vt_pbf = __commonJS({
       }
     }
     function writeFeature(context, pbf) {
-      var feature2 = context.feature;
-      if (feature2.id !== void 0) {
-        pbf.writeVarintField(1, feature2.id);
+      var feature3 = context.feature;
+      if (feature3.id !== void 0) {
+        pbf.writeVarintField(1, feature3.id);
       }
       pbf.writeMessage(2, writeProperties, context);
-      pbf.writeVarintField(3, feature2.type);
-      pbf.writeMessage(4, writeGeometry, feature2);
+      pbf.writeVarintField(3, feature3.type);
+      pbf.writeMessage(4, writeGeometry, feature3);
     }
     function writeProperties(context, pbf) {
-      var feature2 = context.feature;
+      var feature3 = context.feature;
       var keys = context.keys;
       var values = context.values;
       var keycache = context.keycache;
       var valuecache = context.valuecache;
-      for (var key in feature2.properties) {
-        var value = feature2.properties[key];
+      for (var key in feature3.properties) {
+        var value = feature3.properties[key];
         var keyIndex = keycache[key];
         if (value === null) continue;
         if (typeof keyIndex === "undefined") {
@@ -36214,9 +36214,9 @@ var require_vt_pbf = __commonJS({
     function zigzag(num) {
       return num << 1 ^ num >> 31;
     }
-    function writeGeometry(feature2, pbf) {
-      var geometry = feature2.loadGeometry();
-      var type = feature2.type;
+    function writeGeometry(feature3, pbf) {
+      var geometry = feature3.loadGeometry();
+      var type = feature3.type;
       var x2 = 0;
       var y3 = 0;
       var rings = geometry.length;
@@ -36263,18 +36263,2593 @@ var require_vt_pbf = __commonJS({
   }
 });
 
+// node_modules/topojson-client/dist/topojson-client.js
+var require_topojson_client = __commonJS({
+  "node_modules/topojson-client/dist/topojson-client.js"(exports2, module2) {
+    (function(global2, factory) {
+      typeof exports2 === "object" && typeof module2 !== "undefined" ? factory(exports2) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = global2 || self, factory(global2.topojson = global2.topojson || {}));
+    })(exports2, function(exports3) {
+      "use strict";
+      function identity(x2) {
+        return x2;
+      }
+      function transform(transform2) {
+        if (transform2 == null) return identity;
+        var x0, y0, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
+        return function(input, i2) {
+          if (!i2) x0 = y0 = 0;
+          var j = 2, n2 = input.length, output = new Array(n2);
+          output[0] = (x0 += input[0]) * kx + dx;
+          output[1] = (y0 += input[1]) * ky + dy;
+          while (j < n2) output[j] = input[j], ++j;
+          return output;
+        };
+      }
+      function bbox(topology) {
+        var t2 = transform(topology.transform), key, x0 = Infinity, y0 = x0, x1 = -x0, y1 = -x0;
+        function bboxPoint(p) {
+          p = t2(p);
+          if (p[0] < x0) x0 = p[0];
+          if (p[0] > x1) x1 = p[0];
+          if (p[1] < y0) y0 = p[1];
+          if (p[1] > y1) y1 = p[1];
+        }
+        function bboxGeometry(o3) {
+          switch (o3.type) {
+            case "GeometryCollection":
+              o3.geometries.forEach(bboxGeometry);
+              break;
+            case "Point":
+              bboxPoint(o3.coordinates);
+              break;
+            case "MultiPoint":
+              o3.coordinates.forEach(bboxPoint);
+              break;
+          }
+        }
+        topology.arcs.forEach(function(arc) {
+          var i2 = -1, n2 = arc.length, p;
+          while (++i2 < n2) {
+            p = t2(arc[i2], i2);
+            if (p[0] < x0) x0 = p[0];
+            if (p[0] > x1) x1 = p[0];
+            if (p[1] < y0) y0 = p[1];
+            if (p[1] > y1) y1 = p[1];
+          }
+        });
+        for (key in topology.objects) {
+          bboxGeometry(topology.objects[key]);
+        }
+        return [x0, y0, x1, y1];
+      }
+      function reverse(array, n2) {
+        var t2, j = array.length, i2 = j - n2;
+        while (i2 < --j) t2 = array[i2], array[i2++] = array[j], array[j] = t2;
+      }
+      function feature3(topology, o3) {
+        if (typeof o3 === "string") o3 = topology.objects[o3];
+        return o3.type === "GeometryCollection" ? { type: "FeatureCollection", features: o3.geometries.map(function(o4) {
+          return feature$1(topology, o4);
+        }) } : feature$1(topology, o3);
+      }
+      function feature$1(topology, o3) {
+        var id = o3.id, bbox2 = o3.bbox, properties = o3.properties == null ? {} : o3.properties, geometry = object2(topology, o3);
+        return id == null && bbox2 == null ? { type: "Feature", properties, geometry } : bbox2 == null ? { type: "Feature", id, properties, geometry } : { type: "Feature", id, bbox: bbox2, properties, geometry };
+      }
+      function object2(topology, o3) {
+        var transformPoint = transform(topology.transform), arcs = topology.arcs;
+        function arc(i2, points) {
+          if (points.length) points.pop();
+          for (var a2 = arcs[i2 < 0 ? ~i2 : i2], k2 = 0, n2 = a2.length; k2 < n2; ++k2) {
+            points.push(transformPoint(a2[k2], k2));
+          }
+          if (i2 < 0) reverse(points, n2);
+        }
+        function point2(p) {
+          return transformPoint(p);
+        }
+        function line(arcs2) {
+          var points = [];
+          for (var i2 = 0, n2 = arcs2.length; i2 < n2; ++i2) arc(arcs2[i2], points);
+          if (points.length < 2) points.push(points[0]);
+          return points;
+        }
+        function ring(arcs2) {
+          var points = line(arcs2);
+          while (points.length < 4) points.push(points[0]);
+          return points;
+        }
+        function polygon2(arcs2) {
+          return arcs2.map(ring);
+        }
+        function geometry(o4) {
+          var type = o4.type, coordinates;
+          switch (type) {
+            case "GeometryCollection":
+              return { type, geometries: o4.geometries.map(geometry) };
+            case "Point":
+              coordinates = point2(o4.coordinates);
+              break;
+            case "MultiPoint":
+              coordinates = o4.coordinates.map(point2);
+              break;
+            case "LineString":
+              coordinates = line(o4.arcs);
+              break;
+            case "MultiLineString":
+              coordinates = o4.arcs.map(line);
+              break;
+            case "Polygon":
+              coordinates = polygon2(o4.arcs);
+              break;
+            case "MultiPolygon":
+              coordinates = o4.arcs.map(polygon2);
+              break;
+            default:
+              return null;
+          }
+          return { type, coordinates };
+        }
+        return geometry(o3);
+      }
+      function stitch(topology, arcs) {
+        var stitchedArcs = {}, fragmentByStart = {}, fragmentByEnd = {}, fragments = [], emptyIndex = -1;
+        arcs.forEach(function(i2, j) {
+          var arc = topology.arcs[i2 < 0 ? ~i2 : i2], t2;
+          if (arc.length < 3 && !arc[1][0] && !arc[1][1]) {
+            t2 = arcs[++emptyIndex], arcs[emptyIndex] = i2, arcs[j] = t2;
+          }
+        });
+        arcs.forEach(function(i2) {
+          var e2 = ends(i2), start = e2[0], end = e2[1], f3, g3;
+          if (f3 = fragmentByEnd[start]) {
+            delete fragmentByEnd[f3.end];
+            f3.push(i2);
+            f3.end = end;
+            if (g3 = fragmentByStart[end]) {
+              delete fragmentByStart[g3.start];
+              var fg = g3 === f3 ? f3 : f3.concat(g3);
+              fragmentByStart[fg.start = f3.start] = fragmentByEnd[fg.end = g3.end] = fg;
+            } else {
+              fragmentByStart[f3.start] = fragmentByEnd[f3.end] = f3;
+            }
+          } else if (f3 = fragmentByStart[end]) {
+            delete fragmentByStart[f3.start];
+            f3.unshift(i2);
+            f3.start = start;
+            if (g3 = fragmentByEnd[start]) {
+              delete fragmentByEnd[g3.end];
+              var gf = g3 === f3 ? f3 : g3.concat(f3);
+              fragmentByStart[gf.start = g3.start] = fragmentByEnd[gf.end = f3.end] = gf;
+            } else {
+              fragmentByStart[f3.start] = fragmentByEnd[f3.end] = f3;
+            }
+          } else {
+            f3 = [i2];
+            fragmentByStart[f3.start = start] = fragmentByEnd[f3.end = end] = f3;
+          }
+        });
+        function ends(i2) {
+          var arc = topology.arcs[i2 < 0 ? ~i2 : i2], p0 = arc[0], p1;
+          if (topology.transform) p1 = [0, 0], arc.forEach(function(dp) {
+            p1[0] += dp[0], p1[1] += dp[1];
+          });
+          else p1 = arc[arc.length - 1];
+          return i2 < 0 ? [p1, p0] : [p0, p1];
+        }
+        function flush(fragmentByEnd2, fragmentByStart2) {
+          for (var k2 in fragmentByEnd2) {
+            var f3 = fragmentByEnd2[k2];
+            delete fragmentByStart2[f3.start];
+            delete f3.start;
+            delete f3.end;
+            f3.forEach(function(i2) {
+              stitchedArcs[i2 < 0 ? ~i2 : i2] = 1;
+            });
+            fragments.push(f3);
+          }
+        }
+        flush(fragmentByEnd, fragmentByStart);
+        flush(fragmentByStart, fragmentByEnd);
+        arcs.forEach(function(i2) {
+          if (!stitchedArcs[i2 < 0 ? ~i2 : i2]) fragments.push([i2]);
+        });
+        return fragments;
+      }
+      function mesh(topology) {
+        return object2(topology, meshArcs.apply(this, arguments));
+      }
+      function meshArcs(topology, object3, filter) {
+        var arcs, i2, n2;
+        if (arguments.length > 1) arcs = extractArcs(topology, object3, filter);
+        else for (i2 = 0, arcs = new Array(n2 = topology.arcs.length); i2 < n2; ++i2) arcs[i2] = i2;
+        return { type: "MultiLineString", arcs: stitch(topology, arcs) };
+      }
+      function extractArcs(topology, object3, filter) {
+        var arcs = [], geomsByArc = [], geom;
+        function extract0(i2) {
+          var j = i2 < 0 ? ~i2 : i2;
+          (geomsByArc[j] || (geomsByArc[j] = [])).push({ i: i2, g: geom });
+        }
+        function extract1(arcs2) {
+          arcs2.forEach(extract0);
+        }
+        function extract2(arcs2) {
+          arcs2.forEach(extract1);
+        }
+        function extract3(arcs2) {
+          arcs2.forEach(extract2);
+        }
+        function geometry(o3) {
+          switch (geom = o3, o3.type) {
+            case "GeometryCollection":
+              o3.geometries.forEach(geometry);
+              break;
+            case "LineString":
+              extract1(o3.arcs);
+              break;
+            case "MultiLineString":
+            case "Polygon":
+              extract2(o3.arcs);
+              break;
+            case "MultiPolygon":
+              extract3(o3.arcs);
+              break;
+          }
+        }
+        geometry(object3);
+        geomsByArc.forEach(filter == null ? function(geoms) {
+          arcs.push(geoms[0].i);
+        } : function(geoms) {
+          if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i);
+        });
+        return arcs;
+      }
+      function planarRingArea(ring) {
+        var i2 = -1, n2 = ring.length, a2, b2 = ring[n2 - 1], area = 0;
+        while (++i2 < n2) a2 = b2, b2 = ring[i2], area += a2[0] * b2[1] - a2[1] * b2[0];
+        return Math.abs(area);
+      }
+      function merge(topology) {
+        return object2(topology, mergeArcs.apply(this, arguments));
+      }
+      function mergeArcs(topology, objects) {
+        var polygonsByArc = {}, polygons = [], groups = [];
+        objects.forEach(geometry);
+        function geometry(o3) {
+          switch (o3.type) {
+            case "GeometryCollection":
+              o3.geometries.forEach(geometry);
+              break;
+            case "Polygon":
+              extract(o3.arcs);
+              break;
+            case "MultiPolygon":
+              o3.arcs.forEach(extract);
+              break;
+          }
+        }
+        function extract(polygon2) {
+          polygon2.forEach(function(ring) {
+            ring.forEach(function(arc) {
+              (polygonsByArc[arc = arc < 0 ? ~arc : arc] || (polygonsByArc[arc] = [])).push(polygon2);
+            });
+          });
+          polygons.push(polygon2);
+        }
+        function area(ring) {
+          return planarRingArea(object2(topology, { type: "Polygon", arcs: [ring] }).coordinates[0]);
+        }
+        polygons.forEach(function(polygon2) {
+          if (!polygon2._) {
+            var group = [], neighbors2 = [polygon2];
+            polygon2._ = 1;
+            groups.push(group);
+            while (polygon2 = neighbors2.pop()) {
+              group.push(polygon2);
+              polygon2.forEach(function(ring) {
+                ring.forEach(function(arc) {
+                  polygonsByArc[arc < 0 ? ~arc : arc].forEach(function(polygon3) {
+                    if (!polygon3._) {
+                      polygon3._ = 1;
+                      neighbors2.push(polygon3);
+                    }
+                  });
+                });
+              });
+            }
+          }
+        });
+        polygons.forEach(function(polygon2) {
+          delete polygon2._;
+        });
+        return {
+          type: "MultiPolygon",
+          arcs: groups.map(function(polygons2) {
+            var arcs = [], n2;
+            polygons2.forEach(function(polygon2) {
+              polygon2.forEach(function(ring) {
+                ring.forEach(function(arc) {
+                  if (polygonsByArc[arc < 0 ? ~arc : arc].length < 2) {
+                    arcs.push(arc);
+                  }
+                });
+              });
+            });
+            arcs = stitch(topology, arcs);
+            if ((n2 = arcs.length) > 1) {
+              for (var i2 = 1, k2 = area(arcs[0]), ki, t2; i2 < n2; ++i2) {
+                if ((ki = area(arcs[i2])) > k2) {
+                  t2 = arcs[0], arcs[0] = arcs[i2], arcs[i2] = t2, k2 = ki;
+                }
+              }
+            }
+            return arcs;
+          }).filter(function(arcs) {
+            return arcs.length > 0;
+          })
+        };
+      }
+      function bisect(a2, x2) {
+        var lo = 0, hi = a2.length;
+        while (lo < hi) {
+          var mid = lo + hi >>> 1;
+          if (a2[mid] < x2) lo = mid + 1;
+          else hi = mid;
+        }
+        return lo;
+      }
+      function neighbors(objects) {
+        var indexesByArc = {}, neighbors2 = objects.map(function() {
+          return [];
+        });
+        function line(arcs, i3) {
+          arcs.forEach(function(a2) {
+            if (a2 < 0) a2 = ~a2;
+            var o3 = indexesByArc[a2];
+            if (o3) o3.push(i3);
+            else indexesByArc[a2] = [i3];
+          });
+        }
+        function polygon2(arcs, i3) {
+          arcs.forEach(function(arc) {
+            line(arc, i3);
+          });
+        }
+        function geometry(o3, i3) {
+          if (o3.type === "GeometryCollection") o3.geometries.forEach(function(o4) {
+            geometry(o4, i3);
+          });
+          else if (o3.type in geometryType) geometryType[o3.type](o3.arcs, i3);
+        }
+        var geometryType = {
+          LineString: line,
+          MultiLineString: polygon2,
+          Polygon: polygon2,
+          MultiPolygon: function(arcs, i3) {
+            arcs.forEach(function(arc) {
+              polygon2(arc, i3);
+            });
+          }
+        };
+        objects.forEach(geometry);
+        for (var i2 in indexesByArc) {
+          for (var indexes = indexesByArc[i2], m2 = indexes.length, j = 0; j < m2; ++j) {
+            for (var k2 = j + 1; k2 < m2; ++k2) {
+              var ij = indexes[j], ik = indexes[k2], n2;
+              if ((n2 = neighbors2[ij])[i2 = bisect(n2, ik)] !== ik) n2.splice(i2, 0, ik);
+              if ((n2 = neighbors2[ik])[i2 = bisect(n2, ij)] !== ij) n2.splice(i2, 0, ij);
+            }
+          }
+        }
+        return neighbors2;
+      }
+      function untransform(transform2) {
+        if (transform2 == null) return identity;
+        var x0, y0, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
+        return function(input, i2) {
+          if (!i2) x0 = y0 = 0;
+          var j = 2, n2 = input.length, output = new Array(n2), x1 = Math.round((input[0] - dx) / kx), y1 = Math.round((input[1] - dy) / ky);
+          output[0] = x1 - x0, x0 = x1;
+          output[1] = y1 - y0, y0 = y1;
+          while (j < n2) output[j] = input[j], ++j;
+          return output;
+        };
+      }
+      function quantize(topology, transform2) {
+        if (topology.transform) throw new Error("already quantized");
+        if (!transform2 || !transform2.scale) {
+          if (!((n2 = Math.floor(transform2)) >= 2)) throw new Error("n must be \u22652");
+          box2 = topology.bbox || bbox(topology);
+          var x0 = box2[0], y0 = box2[1], x1 = box2[2], y1 = box2[3], n2;
+          transform2 = { scale: [x1 - x0 ? (x1 - x0) / (n2 - 1) : 1, y1 - y0 ? (y1 - y0) / (n2 - 1) : 1], translate: [x0, y0] };
+        } else {
+          box2 = topology.bbox;
+        }
+        var t2 = untransform(transform2), box2, key, inputs = topology.objects, outputs = {};
+        function quantizePoint(point2) {
+          return t2(point2);
+        }
+        function quantizeGeometry(input) {
+          var output;
+          switch (input.type) {
+            case "GeometryCollection":
+              output = { type: "GeometryCollection", geometries: input.geometries.map(quantizeGeometry) };
+              break;
+            case "Point":
+              output = { type: "Point", coordinates: quantizePoint(input.coordinates) };
+              break;
+            case "MultiPoint":
+              output = { type: "MultiPoint", coordinates: input.coordinates.map(quantizePoint) };
+              break;
+            default:
+              return input;
+          }
+          if (input.id != null) output.id = input.id;
+          if (input.bbox != null) output.bbox = input.bbox;
+          if (input.properties != null) output.properties = input.properties;
+          return output;
+        }
+        function quantizeArc(input) {
+          var i2 = 0, j = 1, n3 = input.length, p, output = new Array(n3);
+          output[0] = t2(input[0], 0);
+          while (++i2 < n3) if ((p = t2(input[i2], i2))[0] || p[1]) output[j++] = p;
+          if (j === 1) output[j++] = [0, 0];
+          output.length = j;
+          return output;
+        }
+        for (key in inputs) outputs[key] = quantizeGeometry(inputs[key]);
+        return {
+          type: "Topology",
+          bbox: box2,
+          transform: transform2,
+          objects: outputs,
+          arcs: topology.arcs.map(quantizeArc)
+        };
+      }
+      exports3.bbox = bbox;
+      exports3.feature = feature3;
+      exports3.merge = merge;
+      exports3.mergeArcs = mergeArcs;
+      exports3.mesh = mesh;
+      exports3.meshArcs = meshArcs;
+      exports3.neighbors = neighbors;
+      exports3.quantize = quantize;
+      exports3.transform = transform;
+      exports3.untransform = untransform;
+      Object.defineProperty(exports3, "__esModule", { value: true });
+    });
+  }
+});
+
+// ../../../../ext/maps/node_modules/splaytree/dist/splay.js
+var require_splay = __commonJS({
+  "../../../../ext/maps/node_modules/splaytree/dist/splay.js"(exports2, module2) {
+    /**
+     * splaytree v3.1.2
+     * Fast Splay tree for Node and browser
+     *
+     * @author Alexander Milevski <info@w8r.name>
+     * @license MIT
+     * @preserve
+     */
+    (function(global2, factory) {
+      typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : global2.SplayTree = factory();
+    })(exports2, (function() {
+      "use strict";
+      /*! *****************************************************************************
+          Copyright (c) Microsoft Corporation. All rights reserved.
+          Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+          this file except in compliance with the License. You may obtain a copy of the
+          License at http://www.apache.org/licenses/LICENSE-2.0
+      
+          THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+          KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+          WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+          MERCHANTABLITY OR NON-INFRINGEMENT.
+      
+          See the Apache Version 2.0 License for specific language governing permissions
+          and limitations under the License.
+          ***************************************************************************** */
+      function __generator(thisArg, body) {
+        var _3 = { label: 0, sent: function() {
+          if (t2[0] & 1) throw t2[1];
+          return t2[1];
+        }, trys: [], ops: [] }, f3, y3, t2, g3;
+        return g3 = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g3[Symbol.iterator] = function() {
+          return this;
+        }), g3;
+        function verb(n2) {
+          return function(v2) {
+            return step([n2, v2]);
+          };
+        }
+        function step(op) {
+          if (f3) throw new TypeError("Generator is already executing.");
+          while (_3) try {
+            if (f3 = 1, y3 && (t2 = op[0] & 2 ? y3["return"] : op[0] ? y3["throw"] || ((t2 = y3["return"]) && t2.call(y3), 0) : y3.next) && !(t2 = t2.call(y3, op[1])).done) return t2;
+            if (y3 = 0, t2) op = [op[0] & 2, t2.value];
+            switch (op[0]) {
+              case 0:
+              case 1:
+                t2 = op;
+                break;
+              case 4:
+                _3.label++;
+                return { value: op[1], done: false };
+              case 5:
+                _3.label++;
+                y3 = op[1];
+                op = [0];
+                continue;
+              case 7:
+                op = _3.ops.pop();
+                _3.trys.pop();
+                continue;
+              default:
+                if (!(t2 = _3.trys, t2 = t2.length > 0 && t2[t2.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                  _3 = 0;
+                  continue;
+                }
+                if (op[0] === 3 && (!t2 || op[1] > t2[0] && op[1] < t2[3])) {
+                  _3.label = op[1];
+                  break;
+                }
+                if (op[0] === 6 && _3.label < t2[1]) {
+                  _3.label = t2[1];
+                  t2 = op;
+                  break;
+                }
+                if (t2 && _3.label < t2[2]) {
+                  _3.label = t2[2];
+                  _3.ops.push(op);
+                  break;
+                }
+                if (t2[2]) _3.ops.pop();
+                _3.trys.pop();
+                continue;
+            }
+            op = body.call(thisArg, _3);
+          } catch (e2) {
+            op = [6, e2];
+            y3 = 0;
+          } finally {
+            f3 = t2 = 0;
+          }
+          if (op[0] & 5) throw op[1];
+          return { value: op[0] ? op[1] : void 0, done: true };
+        }
+      }
+      var Node = (
+        /** @class */
+        /* @__PURE__ */ (function() {
+          function Node2(key, data) {
+            this.next = null;
+            this.key = key;
+            this.data = data;
+            this.left = null;
+            this.right = null;
+          }
+          return Node2;
+        })()
+      );
+      function DEFAULT_COMPARE(a2, b2) {
+        return a2 > b2 ? 1 : a2 < b2 ? -1 : 0;
+      }
+      function splay(i2, t2, comparator) {
+        var N3 = new Node(null, null);
+        var l2 = N3;
+        var r4 = N3;
+        while (true) {
+          var cmp = comparator(i2, t2.key);
+          if (cmp < 0) {
+            if (t2.left === null)
+              break;
+            if (comparator(i2, t2.left.key) < 0) {
+              var y3 = t2.left;
+              t2.left = y3.right;
+              y3.right = t2;
+              t2 = y3;
+              if (t2.left === null)
+                break;
+            }
+            r4.left = t2;
+            r4 = t2;
+            t2 = t2.left;
+          } else if (cmp > 0) {
+            if (t2.right === null)
+              break;
+            if (comparator(i2, t2.right.key) > 0) {
+              var y3 = t2.right;
+              t2.right = y3.left;
+              y3.left = t2;
+              t2 = y3;
+              if (t2.right === null)
+                break;
+            }
+            l2.right = t2;
+            l2 = t2;
+            t2 = t2.right;
+          } else
+            break;
+        }
+        l2.right = t2.left;
+        r4.left = t2.right;
+        t2.left = N3.right;
+        t2.right = N3.left;
+        return t2;
+      }
+      function insert(i2, data, t2, comparator) {
+        var node = new Node(i2, data);
+        if (t2 === null) {
+          node.left = node.right = null;
+          return node;
+        }
+        t2 = splay(i2, t2, comparator);
+        var cmp = comparator(i2, t2.key);
+        if (cmp < 0) {
+          node.left = t2.left;
+          node.right = t2;
+          t2.left = null;
+        } else if (cmp >= 0) {
+          node.right = t2.right;
+          node.left = t2;
+          t2.right = null;
+        }
+        return node;
+      }
+      function split(key, v2, comparator) {
+        var left = null;
+        var right = null;
+        if (v2) {
+          v2 = splay(key, v2, comparator);
+          var cmp = comparator(v2.key, key);
+          if (cmp === 0) {
+            left = v2.left;
+            right = v2.right;
+          } else if (cmp < 0) {
+            right = v2.right;
+            v2.right = null;
+            left = v2;
+          } else {
+            left = v2.left;
+            v2.left = null;
+            right = v2;
+          }
+        }
+        return { left, right };
+      }
+      function merge(left, right, comparator) {
+        if (right === null)
+          return left;
+        if (left === null)
+          return right;
+        right = splay(left.key, right, comparator);
+        right.left = left;
+        return right;
+      }
+      function printRow(root, prefix, isTail, out, printNode) {
+        if (root) {
+          out("" + prefix + (isTail ? "\u2514\u2500\u2500 " : "\u251C\u2500\u2500 ") + printNode(root) + "\n");
+          var indent = prefix + (isTail ? "    " : "\u2502   ");
+          if (root.left)
+            printRow(root.left, indent, false, out, printNode);
+          if (root.right)
+            printRow(root.right, indent, true, out, printNode);
+        }
+      }
+      var Tree = (
+        /** @class */
+        (function() {
+          function Tree2(comparator) {
+            if (comparator === void 0) {
+              comparator = DEFAULT_COMPARE;
+            }
+            this._root = null;
+            this._size = 0;
+            this._comparator = comparator;
+          }
+          Tree2.prototype.insert = function(key, data) {
+            this._size++;
+            return this._root = insert(key, data, this._root, this._comparator);
+          };
+          Tree2.prototype.add = function(key, data) {
+            var node = new Node(key, data);
+            if (this._root === null) {
+              node.left = node.right = null;
+              this._size++;
+              this._root = node;
+            }
+            var comparator = this._comparator;
+            var t2 = splay(key, this._root, comparator);
+            var cmp = comparator(key, t2.key);
+            if (cmp === 0)
+              this._root = t2;
+            else {
+              if (cmp < 0) {
+                node.left = t2.left;
+                node.right = t2;
+                t2.left = null;
+              } else if (cmp > 0) {
+                node.right = t2.right;
+                node.left = t2;
+                t2.right = null;
+              }
+              this._size++;
+              this._root = node;
+            }
+            return this._root;
+          };
+          Tree2.prototype.remove = function(key) {
+            this._root = this._remove(key, this._root, this._comparator);
+          };
+          Tree2.prototype._remove = function(i2, t2, comparator) {
+            var x2;
+            if (t2 === null)
+              return null;
+            t2 = splay(i2, t2, comparator);
+            var cmp = comparator(i2, t2.key);
+            if (cmp === 0) {
+              if (t2.left === null) {
+                x2 = t2.right;
+              } else {
+                x2 = splay(i2, t2.left, comparator);
+                x2.right = t2.right;
+              }
+              this._size--;
+              return x2;
+            }
+            return t2;
+          };
+          Tree2.prototype.pop = function() {
+            var node = this._root;
+            if (node) {
+              while (node.left)
+                node = node.left;
+              this._root = splay(node.key, this._root, this._comparator);
+              this._root = this._remove(node.key, this._root, this._comparator);
+              return { key: node.key, data: node.data };
+            }
+            return null;
+          };
+          Tree2.prototype.findStatic = function(key) {
+            var current = this._root;
+            var compare = this._comparator;
+            while (current) {
+              var cmp = compare(key, current.key);
+              if (cmp === 0)
+                return current;
+              else if (cmp < 0)
+                current = current.left;
+              else
+                current = current.right;
+            }
+            return null;
+          };
+          Tree2.prototype.find = function(key) {
+            if (this._root) {
+              this._root = splay(key, this._root, this._comparator);
+              if (this._comparator(key, this._root.key) !== 0)
+                return null;
+            }
+            return this._root;
+          };
+          Tree2.prototype.contains = function(key) {
+            var current = this._root;
+            var compare = this._comparator;
+            while (current) {
+              var cmp = compare(key, current.key);
+              if (cmp === 0)
+                return true;
+              else if (cmp < 0)
+                current = current.left;
+              else
+                current = current.right;
+            }
+            return false;
+          };
+          Tree2.prototype.forEach = function(visitor, ctx) {
+            var current = this._root;
+            var Q2 = [];
+            var done = false;
+            while (!done) {
+              if (current !== null) {
+                Q2.push(current);
+                current = current.left;
+              } else {
+                if (Q2.length !== 0) {
+                  current = Q2.pop();
+                  visitor.call(ctx, current);
+                  current = current.right;
+                } else
+                  done = true;
+              }
+            }
+            return this;
+          };
+          Tree2.prototype.range = function(low, high, fn, ctx) {
+            var Q2 = [];
+            var compare = this._comparator;
+            var node = this._root;
+            var cmp;
+            while (Q2.length !== 0 || node) {
+              if (node) {
+                Q2.push(node);
+                node = node.left;
+              } else {
+                node = Q2.pop();
+                cmp = compare(node.key, high);
+                if (cmp > 0) {
+                  break;
+                } else if (compare(node.key, low) >= 0) {
+                  if (fn.call(ctx, node))
+                    return this;
+                }
+                node = node.right;
+              }
+            }
+            return this;
+          };
+          Tree2.prototype.keys = function() {
+            var keys = [];
+            this.forEach(function(_a) {
+              var key = _a.key;
+              return keys.push(key);
+            });
+            return keys;
+          };
+          Tree2.prototype.values = function() {
+            var values = [];
+            this.forEach(function(_a) {
+              var data = _a.data;
+              return values.push(data);
+            });
+            return values;
+          };
+          Tree2.prototype.min = function() {
+            if (this._root)
+              return this.minNode(this._root).key;
+            return null;
+          };
+          Tree2.prototype.max = function() {
+            if (this._root)
+              return this.maxNode(this._root).key;
+            return null;
+          };
+          Tree2.prototype.minNode = function(t2) {
+            if (t2 === void 0) {
+              t2 = this._root;
+            }
+            if (t2)
+              while (t2.left)
+                t2 = t2.left;
+            return t2;
+          };
+          Tree2.prototype.maxNode = function(t2) {
+            if (t2 === void 0) {
+              t2 = this._root;
+            }
+            if (t2)
+              while (t2.right)
+                t2 = t2.right;
+            return t2;
+          };
+          Tree2.prototype.at = function(index) {
+            var current = this._root;
+            var done = false;
+            var i2 = 0;
+            var Q2 = [];
+            while (!done) {
+              if (current) {
+                Q2.push(current);
+                current = current.left;
+              } else {
+                if (Q2.length > 0) {
+                  current = Q2.pop();
+                  if (i2 === index)
+                    return current;
+                  i2++;
+                  current = current.right;
+                } else
+                  done = true;
+              }
+            }
+            return null;
+          };
+          Tree2.prototype.next = function(d2) {
+            var root = this._root;
+            var successor = null;
+            if (d2.right) {
+              successor = d2.right;
+              while (successor.left)
+                successor = successor.left;
+              return successor;
+            }
+            var comparator = this._comparator;
+            while (root) {
+              var cmp = comparator(d2.key, root.key);
+              if (cmp === 0)
+                break;
+              else if (cmp < 0) {
+                successor = root;
+                root = root.left;
+              } else
+                root = root.right;
+            }
+            return successor;
+          };
+          Tree2.prototype.prev = function(d2) {
+            var root = this._root;
+            var predecessor = null;
+            if (d2.left !== null) {
+              predecessor = d2.left;
+              while (predecessor.right)
+                predecessor = predecessor.right;
+              return predecessor;
+            }
+            var comparator = this._comparator;
+            while (root) {
+              var cmp = comparator(d2.key, root.key);
+              if (cmp === 0)
+                break;
+              else if (cmp < 0)
+                root = root.left;
+              else {
+                predecessor = root;
+                root = root.right;
+              }
+            }
+            return predecessor;
+          };
+          Tree2.prototype.clear = function() {
+            this._root = null;
+            this._size = 0;
+            return this;
+          };
+          Tree2.prototype.toList = function() {
+            return toList(this._root);
+          };
+          Tree2.prototype.load = function(keys, values, presort) {
+            if (values === void 0) {
+              values = [];
+            }
+            if (presort === void 0) {
+              presort = false;
+            }
+            var size = keys.length;
+            var comparator = this._comparator;
+            if (presort)
+              sort(keys, values, 0, size - 1, comparator);
+            if (this._root === null) {
+              this._root = loadRecursive(keys, values, 0, size);
+              this._size = size;
+            } else {
+              var mergedList = mergeLists(this.toList(), createList(keys, values), comparator);
+              size = this._size + size;
+              this._root = sortedListToBST({ head: mergedList }, 0, size);
+            }
+            return this;
+          };
+          Tree2.prototype.isEmpty = function() {
+            return this._root === null;
+          };
+          Object.defineProperty(Tree2.prototype, "size", {
+            get: function() {
+              return this._size;
+            },
+            enumerable: true,
+            configurable: true
+          });
+          Object.defineProperty(Tree2.prototype, "root", {
+            get: function() {
+              return this._root;
+            },
+            enumerable: true,
+            configurable: true
+          });
+          Tree2.prototype.toString = function(printNode) {
+            if (printNode === void 0) {
+              printNode = function(n2) {
+                return String(n2.key);
+              };
+            }
+            var out = [];
+            printRow(this._root, "", true, function(v2) {
+              return out.push(v2);
+            }, printNode);
+            return out.join("");
+          };
+          Tree2.prototype.update = function(key, newKey, newData) {
+            var comparator = this._comparator;
+            var _a = split(key, this._root, comparator), left = _a.left, right = _a.right;
+            if (comparator(key, newKey) < 0) {
+              right = insert(newKey, newData, right, comparator);
+            } else {
+              left = insert(newKey, newData, left, comparator);
+            }
+            this._root = merge(left, right, comparator);
+          };
+          Tree2.prototype.split = function(key) {
+            return split(key, this._root, this._comparator);
+          };
+          Tree2.prototype[Symbol.iterator] = function() {
+            var current, Q2, done;
+            return __generator(this, function(_a) {
+              switch (_a.label) {
+                case 0:
+                  current = this._root;
+                  Q2 = [];
+                  done = false;
+                  _a.label = 1;
+                case 1:
+                  if (!!done) return [3, 6];
+                  if (!(current !== null)) return [3, 2];
+                  Q2.push(current);
+                  current = current.left;
+                  return [3, 5];
+                case 2:
+                  if (!(Q2.length !== 0)) return [3, 4];
+                  current = Q2.pop();
+                  return [4, current];
+                case 3:
+                  _a.sent();
+                  current = current.right;
+                  return [3, 5];
+                case 4:
+                  done = true;
+                  _a.label = 5;
+                case 5:
+                  return [3, 1];
+                case 6:
+                  return [
+                    2
+                    /*return*/
+                  ];
+              }
+            });
+          };
+          return Tree2;
+        })()
+      );
+      function loadRecursive(keys, values, start, end) {
+        var size = end - start;
+        if (size > 0) {
+          var middle = start + Math.floor(size / 2);
+          var key = keys[middle];
+          var data = values[middle];
+          var node = new Node(key, data);
+          node.left = loadRecursive(keys, values, start, middle);
+          node.right = loadRecursive(keys, values, middle + 1, end);
+          return node;
+        }
+        return null;
+      }
+      function createList(keys, values) {
+        var head = new Node(null, null);
+        var p = head;
+        for (var i2 = 0; i2 < keys.length; i2++) {
+          p = p.next = new Node(keys[i2], values[i2]);
+        }
+        p.next = null;
+        return head.next;
+      }
+      function toList(root) {
+        var current = root;
+        var Q2 = [];
+        var done = false;
+        var head = new Node(null, null);
+        var p = head;
+        while (!done) {
+          if (current) {
+            Q2.push(current);
+            current = current.left;
+          } else {
+            if (Q2.length > 0) {
+              current = p = p.next = Q2.pop();
+              current = current.right;
+            } else
+              done = true;
+          }
+        }
+        p.next = null;
+        return head.next;
+      }
+      function sortedListToBST(list, start, end) {
+        var size = end - start;
+        if (size > 0) {
+          var middle = start + Math.floor(size / 2);
+          var left = sortedListToBST(list, start, middle);
+          var root = list.head;
+          root.left = left;
+          list.head = list.head.next;
+          root.right = sortedListToBST(list, middle + 1, end);
+          return root;
+        }
+        return null;
+      }
+      function mergeLists(l1, l2, compare) {
+        var head = new Node(null, null);
+        var p = head;
+        var p1 = l1;
+        var p2 = l2;
+        while (p1 !== null && p2 !== null) {
+          if (compare(p1.key, p2.key) < 0) {
+            p.next = p1;
+            p1 = p1.next;
+          } else {
+            p.next = p2;
+            p2 = p2.next;
+          }
+          p = p.next;
+        }
+        if (p1 !== null) {
+          p.next = p1;
+        } else if (p2 !== null) {
+          p.next = p2;
+        }
+        return head.next;
+      }
+      function sort(keys, values, left, right, compare) {
+        if (left >= right)
+          return;
+        var pivot = keys[left + right >> 1];
+        var i2 = left - 1;
+        var j = right + 1;
+        while (true) {
+          do
+            i2++;
+          while (compare(keys[i2], pivot) < 0);
+          do
+            j--;
+          while (compare(keys[j], pivot) > 0);
+          if (i2 >= j)
+            break;
+          var tmp = keys[i2];
+          keys[i2] = keys[j];
+          keys[j] = tmp;
+          tmp = values[i2];
+          values[i2] = values[j];
+          values[j] = tmp;
+        }
+        sort(keys, values, left, j, compare);
+        sort(keys, values, j + 1, right, compare);
+      }
+      return Tree;
+    }));
+  }
+});
+
+// ../../../../ext/maps/node_modules/polygon-clipping/dist/polygon-clipping.cjs.js
+var require_polygon_clipping_cjs = __commonJS({
+  "../../../../ext/maps/node_modules/polygon-clipping/dist/polygon-clipping.cjs.js"(exports2, module2) {
+    "use strict";
+    var SplayTree = require_splay();
+    function _interopDefaultLegacy(e2) {
+      return e2 && typeof e2 === "object" && "default" in e2 ? e2 : { "default": e2 };
+    }
+    var SplayTree__default = /* @__PURE__ */ _interopDefaultLegacy(SplayTree);
+    var isInBbox = (bbox, point2) => {
+      return bbox.ll.x <= point2.x && point2.x <= bbox.ur.x && bbox.ll.y <= point2.y && point2.y <= bbox.ur.y;
+    };
+    var getBboxOverlap = (b1, b2) => {
+      if (b2.ur.x < b1.ll.x || b1.ur.x < b2.ll.x || b2.ur.y < b1.ll.y || b1.ur.y < b2.ll.y) return null;
+      const lowerX = b1.ll.x < b2.ll.x ? b2.ll.x : b1.ll.x;
+      const upperX = b1.ur.x < b2.ur.x ? b1.ur.x : b2.ur.x;
+      const lowerY = b1.ll.y < b2.ll.y ? b2.ll.y : b1.ll.y;
+      const upperY = b1.ur.y < b2.ur.y ? b1.ur.y : b2.ur.y;
+      return {
+        ll: {
+          x: lowerX,
+          y: lowerY
+        },
+        ur: {
+          x: upperX,
+          y: upperY
+        }
+      };
+    };
+    var epsilon$1 = Number.EPSILON;
+    if (epsilon$1 === void 0) epsilon$1 = Math.pow(2, -52);
+    var EPSILON_SQ = epsilon$1 * epsilon$1;
+    var cmp = (a2, b2) => {
+      if (-epsilon$1 < a2 && a2 < epsilon$1) {
+        if (-epsilon$1 < b2 && b2 < epsilon$1) {
+          return 0;
+        }
+      }
+      const ab2 = a2 - b2;
+      if (ab2 * ab2 < EPSILON_SQ * a2 * b2) {
+        return 0;
+      }
+      return a2 < b2 ? -1 : 1;
+    };
+    var PtRounder = class {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.xRounder = new CoordRounder();
+        this.yRounder = new CoordRounder();
+      }
+      round(x2, y3) {
+        return {
+          x: this.xRounder.round(x2),
+          y: this.yRounder.round(y3)
+        };
+      }
+    };
+    var CoordRounder = class {
+      constructor() {
+        this.tree = new SplayTree__default["default"]();
+        this.round(0);
+      }
+      // Note: this can rounds input values backwards or forwards.
+      //       You might ask, why not restrict this to just rounding
+      //       forwards? Wouldn't that allow left endpoints to always
+      //       remain left endpoints during splitting (never change to
+      //       right). No - it wouldn't, because we snap intersections
+      //       to endpoints (to establish independence from the segment
+      //       angle for t-intersections).
+      round(coord) {
+        const node = this.tree.add(coord);
+        const prevNode = this.tree.prev(node);
+        if (prevNode !== null && cmp(node.key, prevNode.key) === 0) {
+          this.tree.remove(coord);
+          return prevNode.key;
+        }
+        const nextNode = this.tree.next(node);
+        if (nextNode !== null && cmp(node.key, nextNode.key) === 0) {
+          this.tree.remove(coord);
+          return nextNode.key;
+        }
+        return coord;
+      }
+    };
+    var rounder = new PtRounder();
+    var epsilon = 11102230246251565e-32;
+    var splitter = 134217729;
+    var resulterrbound = (3 + 8 * epsilon) * epsilon;
+    function sum(elen, e2, flen, f3, h2) {
+      let Q2, Qnew, hh, bvirt;
+      let enow = e2[0];
+      let fnow = f3[0];
+      let eindex = 0;
+      let findex = 0;
+      if (fnow > enow === fnow > -enow) {
+        Q2 = enow;
+        enow = e2[++eindex];
+      } else {
+        Q2 = fnow;
+        fnow = f3[++findex];
+      }
+      let hindex = 0;
+      if (eindex < elen && findex < flen) {
+        if (fnow > enow === fnow > -enow) {
+          Qnew = enow + Q2;
+          hh = Q2 - (Qnew - enow);
+          enow = e2[++eindex];
+        } else {
+          Qnew = fnow + Q2;
+          hh = Q2 - (Qnew - fnow);
+          fnow = f3[++findex];
+        }
+        Q2 = Qnew;
+        if (hh !== 0) {
+          h2[hindex++] = hh;
+        }
+        while (eindex < elen && findex < flen) {
+          if (fnow > enow === fnow > -enow) {
+            Qnew = Q2 + enow;
+            bvirt = Qnew - Q2;
+            hh = Q2 - (Qnew - bvirt) + (enow - bvirt);
+            enow = e2[++eindex];
+          } else {
+            Qnew = Q2 + fnow;
+            bvirt = Qnew - Q2;
+            hh = Q2 - (Qnew - bvirt) + (fnow - bvirt);
+            fnow = f3[++findex];
+          }
+          Q2 = Qnew;
+          if (hh !== 0) {
+            h2[hindex++] = hh;
+          }
+        }
+      }
+      while (eindex < elen) {
+        Qnew = Q2 + enow;
+        bvirt = Qnew - Q2;
+        hh = Q2 - (Qnew - bvirt) + (enow - bvirt);
+        enow = e2[++eindex];
+        Q2 = Qnew;
+        if (hh !== 0) {
+          h2[hindex++] = hh;
+        }
+      }
+      while (findex < flen) {
+        Qnew = Q2 + fnow;
+        bvirt = Qnew - Q2;
+        hh = Q2 - (Qnew - bvirt) + (fnow - bvirt);
+        fnow = f3[++findex];
+        Q2 = Qnew;
+        if (hh !== 0) {
+          h2[hindex++] = hh;
+        }
+      }
+      if (Q2 !== 0 || hindex === 0) {
+        h2[hindex++] = Q2;
+      }
+      return hindex;
+    }
+    function estimate(elen, e2) {
+      let Q2 = e2[0];
+      for (let i2 = 1; i2 < elen; i2++) Q2 += e2[i2];
+      return Q2;
+    }
+    function vec(n2) {
+      return new Float64Array(n2);
+    }
+    var ccwerrboundA = (3 + 16 * epsilon) * epsilon;
+    var ccwerrboundB = (2 + 12 * epsilon) * epsilon;
+    var ccwerrboundC = (9 + 64 * epsilon) * epsilon * epsilon;
+    var B2 = vec(4);
+    var C1 = vec(8);
+    var C22 = vec(12);
+    var D2 = vec(16);
+    var u3 = vec(4);
+    function orient2dadapt(ax, ay, bx, by, cx, cy, detsum) {
+      let acxtail, acytail, bcxtail, bcytail;
+      let bvirt, c3, ahi, alo, bhi, blo, _i, _j, _0, s1, s0, t1, t02, u32;
+      const acx = ax - cx;
+      const bcx = bx - cx;
+      const acy = ay - cy;
+      const bcy = by - cy;
+      s1 = acx * bcy;
+      c3 = splitter * acx;
+      ahi = c3 - (c3 - acx);
+      alo = acx - ahi;
+      c3 = splitter * bcy;
+      bhi = c3 - (c3 - bcy);
+      blo = bcy - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acy * bcx;
+      c3 = splitter * acy;
+      ahi = c3 - (c3 - acy);
+      alo = acy - ahi;
+      c3 = splitter * bcx;
+      bhi = c3 - (c3 - bcx);
+      blo = bcx - bhi;
+      t02 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t02;
+      bvirt = s0 - _i;
+      B2[0] = s0 - (_i + bvirt) + (bvirt - t02);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      B2[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u32 = _j + _i;
+      bvirt = u32 - _j;
+      B2[2] = _j - (u32 - bvirt) + (_i - bvirt);
+      B2[3] = u32;
+      let det = estimate(4, B2);
+      let errbound = ccwerrboundB * detsum;
+      if (det >= errbound || -det >= errbound) {
+        return det;
+      }
+      bvirt = ax - acx;
+      acxtail = ax - (acx + bvirt) + (bvirt - cx);
+      bvirt = bx - bcx;
+      bcxtail = bx - (bcx + bvirt) + (bvirt - cx);
+      bvirt = ay - acy;
+      acytail = ay - (acy + bvirt) + (bvirt - cy);
+      bvirt = by - bcy;
+      bcytail = by - (bcy + bvirt) + (bvirt - cy);
+      if (acxtail === 0 && acytail === 0 && bcxtail === 0 && bcytail === 0) {
+        return det;
+      }
+      errbound = ccwerrboundC * detsum + resulterrbound * Math.abs(det);
+      det += acx * bcytail + bcy * acxtail - (acy * bcxtail + bcx * acytail);
+      if (det >= errbound || -det >= errbound) return det;
+      s1 = acxtail * bcy;
+      c3 = splitter * acxtail;
+      ahi = c3 - (c3 - acxtail);
+      alo = acxtail - ahi;
+      c3 = splitter * bcy;
+      bhi = c3 - (c3 - bcy);
+      blo = bcy - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acytail * bcx;
+      c3 = splitter * acytail;
+      ahi = c3 - (c3 - acytail);
+      alo = acytail - ahi;
+      c3 = splitter * bcx;
+      bhi = c3 - (c3 - bcx);
+      blo = bcx - bhi;
+      t02 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t02;
+      bvirt = s0 - _i;
+      u3[0] = s0 - (_i + bvirt) + (bvirt - t02);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      u3[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u32 = _j + _i;
+      bvirt = u32 - _j;
+      u3[2] = _j - (u32 - bvirt) + (_i - bvirt);
+      u3[3] = u32;
+      const C1len = sum(4, B2, 4, u3, C1);
+      s1 = acx * bcytail;
+      c3 = splitter * acx;
+      ahi = c3 - (c3 - acx);
+      alo = acx - ahi;
+      c3 = splitter * bcytail;
+      bhi = c3 - (c3 - bcytail);
+      blo = bcytail - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acy * bcxtail;
+      c3 = splitter * acy;
+      ahi = c3 - (c3 - acy);
+      alo = acy - ahi;
+      c3 = splitter * bcxtail;
+      bhi = c3 - (c3 - bcxtail);
+      blo = bcxtail - bhi;
+      t02 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t02;
+      bvirt = s0 - _i;
+      u3[0] = s0 - (_i + bvirt) + (bvirt - t02);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      u3[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u32 = _j + _i;
+      bvirt = u32 - _j;
+      u3[2] = _j - (u32 - bvirt) + (_i - bvirt);
+      u3[3] = u32;
+      const C2len = sum(C1len, C1, 4, u3, C22);
+      s1 = acxtail * bcytail;
+      c3 = splitter * acxtail;
+      ahi = c3 - (c3 - acxtail);
+      alo = acxtail - ahi;
+      c3 = splitter * bcytail;
+      bhi = c3 - (c3 - bcytail);
+      blo = bcytail - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acytail * bcxtail;
+      c3 = splitter * acytail;
+      ahi = c3 - (c3 - acytail);
+      alo = acytail - ahi;
+      c3 = splitter * bcxtail;
+      bhi = c3 - (c3 - bcxtail);
+      blo = bcxtail - bhi;
+      t02 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t02;
+      bvirt = s0 - _i;
+      u3[0] = s0 - (_i + bvirt) + (bvirt - t02);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      u3[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u32 = _j + _i;
+      bvirt = u32 - _j;
+      u3[2] = _j - (u32 - bvirt) + (_i - bvirt);
+      u3[3] = u32;
+      const Dlen = sum(C2len, C22, 4, u3, D2);
+      return D2[Dlen - 1];
+    }
+    function orient2d(ax, ay, bx, by, cx, cy) {
+      const detleft = (ay - cy) * (bx - cx);
+      const detright = (ax - cx) * (by - cy);
+      const det = detleft - detright;
+      const detsum = Math.abs(detleft + detright);
+      if (Math.abs(det) >= ccwerrboundA * detsum) return det;
+      return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
+    }
+    var crossProduct2 = (a2, b2) => a2.x * b2.y - a2.y * b2.x;
+    var dotProduct = (a2, b2) => a2.x * b2.x + a2.y * b2.y;
+    var compareVectorAngles = (basePt, endPt1, endPt2) => {
+      const res = orient2d(basePt.x, basePt.y, endPt1.x, endPt1.y, endPt2.x, endPt2.y);
+      if (res > 0) return -1;
+      if (res < 0) return 1;
+      return 0;
+    };
+    var length = (v2) => Math.sqrt(dotProduct(v2, v2));
+    var sineOfAngle = (pShared, pBase, pAngle) => {
+      const vBase = {
+        x: pBase.x - pShared.x,
+        y: pBase.y - pShared.y
+      };
+      const vAngle = {
+        x: pAngle.x - pShared.x,
+        y: pAngle.y - pShared.y
+      };
+      return crossProduct2(vAngle, vBase) / length(vAngle) / length(vBase);
+    };
+    var cosineOfAngle = (pShared, pBase, pAngle) => {
+      const vBase = {
+        x: pBase.x - pShared.x,
+        y: pBase.y - pShared.y
+      };
+      const vAngle = {
+        x: pAngle.x - pShared.x,
+        y: pAngle.y - pShared.y
+      };
+      return dotProduct(vAngle, vBase) / length(vAngle) / length(vBase);
+    };
+    var horizontalIntersection = (pt, v2, y3) => {
+      if (v2.y === 0) return null;
+      return {
+        x: pt.x + v2.x / v2.y * (y3 - pt.y),
+        y: y3
+      };
+    };
+    var verticalIntersection = (pt, v2, x2) => {
+      if (v2.x === 0) return null;
+      return {
+        x: x2,
+        y: pt.y + v2.y / v2.x * (x2 - pt.x)
+      };
+    };
+    var intersection$1 = (pt1, v1, pt2, v2) => {
+      if (v1.x === 0) return verticalIntersection(pt2, v2, pt1.x);
+      if (v2.x === 0) return verticalIntersection(pt1, v1, pt2.x);
+      if (v1.y === 0) return horizontalIntersection(pt2, v2, pt1.y);
+      if (v2.y === 0) return horizontalIntersection(pt1, v1, pt2.y);
+      const kross = crossProduct2(v1, v2);
+      if (kross == 0) return null;
+      const ve2 = {
+        x: pt2.x - pt1.x,
+        y: pt2.y - pt1.y
+      };
+      const d1 = crossProduct2(ve2, v1) / kross;
+      const d2 = crossProduct2(ve2, v2) / kross;
+      const x1 = pt1.x + d2 * v1.x, x2 = pt2.x + d1 * v2.x;
+      const y1 = pt1.y + d2 * v1.y, y22 = pt2.y + d1 * v2.y;
+      const x3 = (x1 + x2) / 2;
+      const y3 = (y1 + y22) / 2;
+      return {
+        x: x3,
+        y: y3
+      };
+    };
+    var SweepEvent = class _SweepEvent {
+      // for ordering sweep events in the sweep event queue
+      static compare(a2, b2) {
+        const ptCmp = _SweepEvent.comparePoints(a2.point, b2.point);
+        if (ptCmp !== 0) return ptCmp;
+        if (a2.point !== b2.point) a2.link(b2);
+        if (a2.isLeft !== b2.isLeft) return a2.isLeft ? 1 : -1;
+        return Segment.compare(a2.segment, b2.segment);
+      }
+      // for ordering points in sweep line order
+      static comparePoints(aPt, bPt) {
+        if (aPt.x < bPt.x) return -1;
+        if (aPt.x > bPt.x) return 1;
+        if (aPt.y < bPt.y) return -1;
+        if (aPt.y > bPt.y) return 1;
+        return 0;
+      }
+      // Warning: 'point' input will be modified and re-used (for performance)
+      constructor(point2, isLeft) {
+        if (point2.events === void 0) point2.events = [this];
+        else point2.events.push(this);
+        this.point = point2;
+        this.isLeft = isLeft;
+      }
+      link(other) {
+        if (other.point === this.point) {
+          throw new Error("Tried to link already linked events");
+        }
+        const otherEvents = other.point.events;
+        for (let i2 = 0, iMax = otherEvents.length; i2 < iMax; i2++) {
+          const evt = otherEvents[i2];
+          this.point.events.push(evt);
+          evt.point = this.point;
+        }
+        this.checkForConsuming();
+      }
+      /* Do a pass over our linked events and check to see if any pair
+       * of segments match, and should be consumed. */
+      checkForConsuming() {
+        const numEvents = this.point.events.length;
+        for (let i2 = 0; i2 < numEvents; i2++) {
+          const evt1 = this.point.events[i2];
+          if (evt1.segment.consumedBy !== void 0) continue;
+          for (let j = i2 + 1; j < numEvents; j++) {
+            const evt2 = this.point.events[j];
+            if (evt2.consumedBy !== void 0) continue;
+            if (evt1.otherSE.point.events !== evt2.otherSE.point.events) continue;
+            evt1.segment.consume(evt2.segment);
+          }
+        }
+      }
+      getAvailableLinkedEvents() {
+        const events = [];
+        for (let i2 = 0, iMax = this.point.events.length; i2 < iMax; i2++) {
+          const evt = this.point.events[i2];
+          if (evt !== this && !evt.segment.ringOut && evt.segment.isInResult()) {
+            events.push(evt);
+          }
+        }
+        return events;
+      }
+      /**
+       * Returns a comparator function for sorting linked events that will
+       * favor the event that will give us the smallest left-side angle.
+       * All ring construction starts as low as possible heading to the right,
+       * so by always turning left as sharp as possible we'll get polygons
+       * without uncessary loops & holes.
+       *
+       * The comparator function has a compute cache such that it avoids
+       * re-computing already-computed values.
+       */
+      getLeftmostComparator(baseEvent) {
+        const cache = /* @__PURE__ */ new Map();
+        const fillCache = (linkedEvent) => {
+          const nextEvent = linkedEvent.otherSE;
+          cache.set(linkedEvent, {
+            sine: sineOfAngle(this.point, baseEvent.point, nextEvent.point),
+            cosine: cosineOfAngle(this.point, baseEvent.point, nextEvent.point)
+          });
+        };
+        return (a2, b2) => {
+          if (!cache.has(a2)) fillCache(a2);
+          if (!cache.has(b2)) fillCache(b2);
+          const {
+            sine: asine,
+            cosine: acosine
+          } = cache.get(a2);
+          const {
+            sine: bsine,
+            cosine: bcosine
+          } = cache.get(b2);
+          if (asine >= 0 && bsine >= 0) {
+            if (acosine < bcosine) return 1;
+            if (acosine > bcosine) return -1;
+            return 0;
+          }
+          if (asine < 0 && bsine < 0) {
+            if (acosine < bcosine) return -1;
+            if (acosine > bcosine) return 1;
+            return 0;
+          }
+          if (bsine < asine) return -1;
+          if (bsine > asine) return 1;
+          return 0;
+        };
+      }
+    };
+    var segmentId = 0;
+    var Segment = class _Segment {
+      /* This compare() function is for ordering segments in the sweep
+       * line tree, and does so according to the following criteria:
+       *
+       * Consider the vertical line that lies an infinestimal step to the
+       * right of the right-more of the two left endpoints of the input
+       * segments. Imagine slowly moving a point up from negative infinity
+       * in the increasing y direction. Which of the two segments will that
+       * point intersect first? That segment comes 'before' the other one.
+       *
+       * If neither segment would be intersected by such a line, (if one
+       * or more of the segments are vertical) then the line to be considered
+       * is directly on the right-more of the two left inputs.
+       */
+      static compare(a2, b2) {
+        const alx = a2.leftSE.point.x;
+        const blx = b2.leftSE.point.x;
+        const arx = a2.rightSE.point.x;
+        const brx = b2.rightSE.point.x;
+        if (brx < alx) return 1;
+        if (arx < blx) return -1;
+        const aly = a2.leftSE.point.y;
+        const bly = b2.leftSE.point.y;
+        const ary = a2.rightSE.point.y;
+        const bry = b2.rightSE.point.y;
+        if (alx < blx) {
+          if (bly < aly && bly < ary) return 1;
+          if (bly > aly && bly > ary) return -1;
+          const aCmpBLeft = a2.comparePoint(b2.leftSE.point);
+          if (aCmpBLeft < 0) return 1;
+          if (aCmpBLeft > 0) return -1;
+          const bCmpARight = b2.comparePoint(a2.rightSE.point);
+          if (bCmpARight !== 0) return bCmpARight;
+          return -1;
+        }
+        if (alx > blx) {
+          if (aly < bly && aly < bry) return -1;
+          if (aly > bly && aly > bry) return 1;
+          const bCmpALeft = b2.comparePoint(a2.leftSE.point);
+          if (bCmpALeft !== 0) return bCmpALeft;
+          const aCmpBRight = a2.comparePoint(b2.rightSE.point);
+          if (aCmpBRight < 0) return 1;
+          if (aCmpBRight > 0) return -1;
+          return 1;
+        }
+        if (aly < bly) return -1;
+        if (aly > bly) return 1;
+        if (arx < brx) {
+          const bCmpARight = b2.comparePoint(a2.rightSE.point);
+          if (bCmpARight !== 0) return bCmpARight;
+        }
+        if (arx > brx) {
+          const aCmpBRight = a2.comparePoint(b2.rightSE.point);
+          if (aCmpBRight < 0) return 1;
+          if (aCmpBRight > 0) return -1;
+        }
+        if (arx !== brx) {
+          const ay = ary - aly;
+          const ax = arx - alx;
+          const by = bry - bly;
+          const bx = brx - blx;
+          if (ay > ax && by < bx) return 1;
+          if (ay < ax && by > bx) return -1;
+        }
+        if (arx > brx) return 1;
+        if (arx < brx) return -1;
+        if (ary < bry) return -1;
+        if (ary > bry) return 1;
+        if (a2.id < b2.id) return -1;
+        if (a2.id > b2.id) return 1;
+        return 0;
+      }
+      /* Warning: a reference to ringWindings input will be stored,
+       *  and possibly will be later modified */
+      constructor(leftSE, rightSE, rings, windings) {
+        this.id = ++segmentId;
+        this.leftSE = leftSE;
+        leftSE.segment = this;
+        leftSE.otherSE = rightSE;
+        this.rightSE = rightSE;
+        rightSE.segment = this;
+        rightSE.otherSE = leftSE;
+        this.rings = rings;
+        this.windings = windings;
+      }
+      static fromRing(pt1, pt2, ring) {
+        let leftPt, rightPt, winding;
+        const cmpPts = SweepEvent.comparePoints(pt1, pt2);
+        if (cmpPts < 0) {
+          leftPt = pt1;
+          rightPt = pt2;
+          winding = 1;
+        } else if (cmpPts > 0) {
+          leftPt = pt2;
+          rightPt = pt1;
+          winding = -1;
+        } else throw new Error(`Tried to create degenerate segment at [${pt1.x}, ${pt1.y}]`);
+        const leftSE = new SweepEvent(leftPt, true);
+        const rightSE = new SweepEvent(rightPt, false);
+        return new _Segment(leftSE, rightSE, [ring], [winding]);
+      }
+      /* When a segment is split, the rightSE is replaced with a new sweep event */
+      replaceRightSE(newRightSE) {
+        this.rightSE = newRightSE;
+        this.rightSE.segment = this;
+        this.rightSE.otherSE = this.leftSE;
+        this.leftSE.otherSE = this.rightSE;
+      }
+      bbox() {
+        const y1 = this.leftSE.point.y;
+        const y22 = this.rightSE.point.y;
+        return {
+          ll: {
+            x: this.leftSE.point.x,
+            y: y1 < y22 ? y1 : y22
+          },
+          ur: {
+            x: this.rightSE.point.x,
+            y: y1 > y22 ? y1 : y22
+          }
+        };
+      }
+      /* A vector from the left point to the right */
+      vector() {
+        return {
+          x: this.rightSE.point.x - this.leftSE.point.x,
+          y: this.rightSE.point.y - this.leftSE.point.y
+        };
+      }
+      isAnEndpoint(pt) {
+        return pt.x === this.leftSE.point.x && pt.y === this.leftSE.point.y || pt.x === this.rightSE.point.x && pt.y === this.rightSE.point.y;
+      }
+      /* Compare this segment with a point.
+       *
+       * A point P is considered to be colinear to a segment if there
+       * exists a distance D such that if we travel along the segment
+       * from one * endpoint towards the other a distance D, we find
+       * ourselves at point P.
+       *
+       * Return value indicates:
+       *
+       *   1: point lies above the segment (to the left of vertical)
+       *   0: point is colinear to segment
+       *  -1: point lies below the segment (to the right of vertical)
+       */
+      comparePoint(point2) {
+        if (this.isAnEndpoint(point2)) return 0;
+        const lPt = this.leftSE.point;
+        const rPt = this.rightSE.point;
+        const v2 = this.vector();
+        if (lPt.x === rPt.x) {
+          if (point2.x === lPt.x) return 0;
+          return point2.x < lPt.x ? 1 : -1;
+        }
+        const yDist = (point2.y - lPt.y) / v2.y;
+        const xFromYDist = lPt.x + yDist * v2.x;
+        if (point2.x === xFromYDist) return 0;
+        const xDist = (point2.x - lPt.x) / v2.x;
+        const yFromXDist = lPt.y + xDist * v2.y;
+        if (point2.y === yFromXDist) return 0;
+        return point2.y < yFromXDist ? -1 : 1;
+      }
+      /**
+       * Given another segment, returns the first non-trivial intersection
+       * between the two segments (in terms of sweep line ordering), if it exists.
+       *
+       * A 'non-trivial' intersection is one that will cause one or both of the
+       * segments to be split(). As such, 'trivial' vs. 'non-trivial' intersection:
+       *
+       *   * endpoint of segA with endpoint of segB --> trivial
+       *   * endpoint of segA with point along segB --> non-trivial
+       *   * endpoint of segB with point along segA --> non-trivial
+       *   * point along segA with point along segB --> non-trivial
+       *
+       * If no non-trivial intersection exists, return null
+       * Else, return null.
+       */
+      getIntersection(other) {
+        const tBbox = this.bbox();
+        const oBbox = other.bbox();
+        const bboxOverlap = getBboxOverlap(tBbox, oBbox);
+        if (bboxOverlap === null) return null;
+        const tlp = this.leftSE.point;
+        const trp = this.rightSE.point;
+        const olp = other.leftSE.point;
+        const orp = other.rightSE.point;
+        const touchesOtherLSE = isInBbox(tBbox, olp) && this.comparePoint(olp) === 0;
+        const touchesThisLSE = isInBbox(oBbox, tlp) && other.comparePoint(tlp) === 0;
+        const touchesOtherRSE = isInBbox(tBbox, orp) && this.comparePoint(orp) === 0;
+        const touchesThisRSE = isInBbox(oBbox, trp) && other.comparePoint(trp) === 0;
+        if (touchesThisLSE && touchesOtherLSE) {
+          if (touchesThisRSE && !touchesOtherRSE) return trp;
+          if (!touchesThisRSE && touchesOtherRSE) return orp;
+          return null;
+        }
+        if (touchesThisLSE) {
+          if (touchesOtherRSE) {
+            if (tlp.x === orp.x && tlp.y === orp.y) return null;
+          }
+          return tlp;
+        }
+        if (touchesOtherLSE) {
+          if (touchesThisRSE) {
+            if (trp.x === olp.x && trp.y === olp.y) return null;
+          }
+          return olp;
+        }
+        if (touchesThisRSE && touchesOtherRSE) return null;
+        if (touchesThisRSE) return trp;
+        if (touchesOtherRSE) return orp;
+        const pt = intersection$1(tlp, this.vector(), olp, other.vector());
+        if (pt === null) return null;
+        if (!isInBbox(bboxOverlap, pt)) return null;
+        return rounder.round(pt.x, pt.y);
+      }
+      /**
+       * Split the given segment into multiple segments on the given points.
+       *  * Each existing segment will retain its leftSE and a new rightSE will be
+       *    generated for it.
+       *  * A new segment will be generated which will adopt the original segment's
+       *    rightSE, and a new leftSE will be generated for it.
+       *  * If there are more than two points given to split on, new segments
+       *    in the middle will be generated with new leftSE and rightSE's.
+       *  * An array of the newly generated SweepEvents will be returned.
+       *
+       * Warning: input array of points is modified
+       */
+      split(point2) {
+        const newEvents = [];
+        const alreadyLinked = point2.events !== void 0;
+        const newLeftSE = new SweepEvent(point2, true);
+        const newRightSE = new SweepEvent(point2, false);
+        const oldRightSE = this.rightSE;
+        this.replaceRightSE(newRightSE);
+        newEvents.push(newRightSE);
+        newEvents.push(newLeftSE);
+        const newSeg = new _Segment(newLeftSE, oldRightSE, this.rings.slice(), this.windings.slice());
+        if (SweepEvent.comparePoints(newSeg.leftSE.point, newSeg.rightSE.point) > 0) {
+          newSeg.swapEvents();
+        }
+        if (SweepEvent.comparePoints(this.leftSE.point, this.rightSE.point) > 0) {
+          this.swapEvents();
+        }
+        if (alreadyLinked) {
+          newLeftSE.checkForConsuming();
+          newRightSE.checkForConsuming();
+        }
+        return newEvents;
+      }
+      /* Swap which event is left and right */
+      swapEvents() {
+        const tmpEvt = this.rightSE;
+        this.rightSE = this.leftSE;
+        this.leftSE = tmpEvt;
+        this.leftSE.isLeft = true;
+        this.rightSE.isLeft = false;
+        for (let i2 = 0, iMax = this.windings.length; i2 < iMax; i2++) {
+          this.windings[i2] *= -1;
+        }
+      }
+      /* Consume another segment. We take their rings under our wing
+       * and mark them as consumed. Use for perfectly overlapping segments */
+      consume(other) {
+        let consumer = this;
+        let consumee = other;
+        while (consumer.consumedBy) consumer = consumer.consumedBy;
+        while (consumee.consumedBy) consumee = consumee.consumedBy;
+        const cmp2 = _Segment.compare(consumer, consumee);
+        if (cmp2 === 0) return;
+        if (cmp2 > 0) {
+          const tmp = consumer;
+          consumer = consumee;
+          consumee = tmp;
+        }
+        if (consumer.prev === consumee) {
+          const tmp = consumer;
+          consumer = consumee;
+          consumee = tmp;
+        }
+        for (let i2 = 0, iMax = consumee.rings.length; i2 < iMax; i2++) {
+          const ring = consumee.rings[i2];
+          const winding = consumee.windings[i2];
+          const index2 = consumer.rings.indexOf(ring);
+          if (index2 === -1) {
+            consumer.rings.push(ring);
+            consumer.windings.push(winding);
+          } else consumer.windings[index2] += winding;
+        }
+        consumee.rings = null;
+        consumee.windings = null;
+        consumee.consumedBy = consumer;
+        consumee.leftSE.consumedBy = consumer.leftSE;
+        consumee.rightSE.consumedBy = consumer.rightSE;
+      }
+      /* The first segment previous segment chain that is in the result */
+      prevInResult() {
+        if (this._prevInResult !== void 0) return this._prevInResult;
+        if (!this.prev) this._prevInResult = null;
+        else if (this.prev.isInResult()) this._prevInResult = this.prev;
+        else this._prevInResult = this.prev.prevInResult();
+        return this._prevInResult;
+      }
+      beforeState() {
+        if (this._beforeState !== void 0) return this._beforeState;
+        if (!this.prev) this._beforeState = {
+          rings: [],
+          windings: [],
+          multiPolys: []
+        };
+        else {
+          const seg = this.prev.consumedBy || this.prev;
+          this._beforeState = seg.afterState();
+        }
+        return this._beforeState;
+      }
+      afterState() {
+        if (this._afterState !== void 0) return this._afterState;
+        const beforeState = this.beforeState();
+        this._afterState = {
+          rings: beforeState.rings.slice(0),
+          windings: beforeState.windings.slice(0),
+          multiPolys: []
+        };
+        const ringsAfter = this._afterState.rings;
+        const windingsAfter = this._afterState.windings;
+        const mpsAfter = this._afterState.multiPolys;
+        for (let i2 = 0, iMax = this.rings.length; i2 < iMax; i2++) {
+          const ring = this.rings[i2];
+          const winding = this.windings[i2];
+          const index2 = ringsAfter.indexOf(ring);
+          if (index2 === -1) {
+            ringsAfter.push(ring);
+            windingsAfter.push(winding);
+          } else windingsAfter[index2] += winding;
+        }
+        const polysAfter = [];
+        const polysExclude = [];
+        for (let i2 = 0, iMax = ringsAfter.length; i2 < iMax; i2++) {
+          if (windingsAfter[i2] === 0) continue;
+          const ring = ringsAfter[i2];
+          const poly = ring.poly;
+          if (polysExclude.indexOf(poly) !== -1) continue;
+          if (ring.isExterior) polysAfter.push(poly);
+          else {
+            if (polysExclude.indexOf(poly) === -1) polysExclude.push(poly);
+            const index2 = polysAfter.indexOf(ring.poly);
+            if (index2 !== -1) polysAfter.splice(index2, 1);
+          }
+        }
+        for (let i2 = 0, iMax = polysAfter.length; i2 < iMax; i2++) {
+          const mp = polysAfter[i2].multiPoly;
+          if (mpsAfter.indexOf(mp) === -1) mpsAfter.push(mp);
+        }
+        return this._afterState;
+      }
+      /* Is this segment part of the final result? */
+      isInResult() {
+        if (this.consumedBy) return false;
+        if (this._isInResult !== void 0) return this._isInResult;
+        const mpsBefore = this.beforeState().multiPolys;
+        const mpsAfter = this.afterState().multiPolys;
+        switch (operation.type) {
+          case "union": {
+            const noBefores = mpsBefore.length === 0;
+            const noAfters = mpsAfter.length === 0;
+            this._isInResult = noBefores !== noAfters;
+            break;
+          }
+          case "intersection": {
+            let least;
+            let most;
+            if (mpsBefore.length < mpsAfter.length) {
+              least = mpsBefore.length;
+              most = mpsAfter.length;
+            } else {
+              least = mpsAfter.length;
+              most = mpsBefore.length;
+            }
+            this._isInResult = most === operation.numMultiPolys && least < most;
+            break;
+          }
+          case "xor": {
+            const diff = Math.abs(mpsBefore.length - mpsAfter.length);
+            this._isInResult = diff % 2 === 1;
+            break;
+          }
+          case "difference": {
+            const isJustSubject = (mps) => mps.length === 1 && mps[0].isSubject;
+            this._isInResult = isJustSubject(mpsBefore) !== isJustSubject(mpsAfter);
+            break;
+          }
+          default:
+            throw new Error(`Unrecognized operation type found ${operation.type}`);
+        }
+        return this._isInResult;
+      }
+    };
+    var RingIn = class {
+      constructor(geomRing, poly, isExterior) {
+        if (!Array.isArray(geomRing) || geomRing.length === 0) {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        this.poly = poly;
+        this.isExterior = isExterior;
+        this.segments = [];
+        if (typeof geomRing[0][0] !== "number" || typeof geomRing[0][1] !== "number") {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        const firstPoint = rounder.round(geomRing[0][0], geomRing[0][1]);
+        this.bbox = {
+          ll: {
+            x: firstPoint.x,
+            y: firstPoint.y
+          },
+          ur: {
+            x: firstPoint.x,
+            y: firstPoint.y
+          }
+        };
+        let prevPoint = firstPoint;
+        for (let i2 = 1, iMax = geomRing.length; i2 < iMax; i2++) {
+          if (typeof geomRing[i2][0] !== "number" || typeof geomRing[i2][1] !== "number") {
+            throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+          }
+          let point2 = rounder.round(geomRing[i2][0], geomRing[i2][1]);
+          if (point2.x === prevPoint.x && point2.y === prevPoint.y) continue;
+          this.segments.push(Segment.fromRing(prevPoint, point2, this));
+          if (point2.x < this.bbox.ll.x) this.bbox.ll.x = point2.x;
+          if (point2.y < this.bbox.ll.y) this.bbox.ll.y = point2.y;
+          if (point2.x > this.bbox.ur.x) this.bbox.ur.x = point2.x;
+          if (point2.y > this.bbox.ur.y) this.bbox.ur.y = point2.y;
+          prevPoint = point2;
+        }
+        if (firstPoint.x !== prevPoint.x || firstPoint.y !== prevPoint.y) {
+          this.segments.push(Segment.fromRing(prevPoint, firstPoint, this));
+        }
+      }
+      getSweepEvents() {
+        const sweepEvents = [];
+        for (let i2 = 0, iMax = this.segments.length; i2 < iMax; i2++) {
+          const segment = this.segments[i2];
+          sweepEvents.push(segment.leftSE);
+          sweepEvents.push(segment.rightSE);
+        }
+        return sweepEvents;
+      }
+    };
+    var PolyIn = class {
+      constructor(geomPoly, multiPoly) {
+        if (!Array.isArray(geomPoly)) {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        this.exteriorRing = new RingIn(geomPoly[0], this, true);
+        this.bbox = {
+          ll: {
+            x: this.exteriorRing.bbox.ll.x,
+            y: this.exteriorRing.bbox.ll.y
+          },
+          ur: {
+            x: this.exteriorRing.bbox.ur.x,
+            y: this.exteriorRing.bbox.ur.y
+          }
+        };
+        this.interiorRings = [];
+        for (let i2 = 1, iMax = geomPoly.length; i2 < iMax; i2++) {
+          const ring = new RingIn(geomPoly[i2], this, false);
+          if (ring.bbox.ll.x < this.bbox.ll.x) this.bbox.ll.x = ring.bbox.ll.x;
+          if (ring.bbox.ll.y < this.bbox.ll.y) this.bbox.ll.y = ring.bbox.ll.y;
+          if (ring.bbox.ur.x > this.bbox.ur.x) this.bbox.ur.x = ring.bbox.ur.x;
+          if (ring.bbox.ur.y > this.bbox.ur.y) this.bbox.ur.y = ring.bbox.ur.y;
+          this.interiorRings.push(ring);
+        }
+        this.multiPoly = multiPoly;
+      }
+      getSweepEvents() {
+        const sweepEvents = this.exteriorRing.getSweepEvents();
+        for (let i2 = 0, iMax = this.interiorRings.length; i2 < iMax; i2++) {
+          const ringSweepEvents = this.interiorRings[i2].getSweepEvents();
+          for (let j = 0, jMax = ringSweepEvents.length; j < jMax; j++) {
+            sweepEvents.push(ringSweepEvents[j]);
+          }
+        }
+        return sweepEvents;
+      }
+    };
+    var MultiPolyIn = class {
+      constructor(geom, isSubject) {
+        if (!Array.isArray(geom)) {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        try {
+          if (typeof geom[0][0][0] === "number") geom = [geom];
+        } catch (ex) {
+        }
+        this.polys = [];
+        this.bbox = {
+          ll: {
+            x: Number.POSITIVE_INFINITY,
+            y: Number.POSITIVE_INFINITY
+          },
+          ur: {
+            x: Number.NEGATIVE_INFINITY,
+            y: Number.NEGATIVE_INFINITY
+          }
+        };
+        for (let i2 = 0, iMax = geom.length; i2 < iMax; i2++) {
+          const poly = new PolyIn(geom[i2], this);
+          if (poly.bbox.ll.x < this.bbox.ll.x) this.bbox.ll.x = poly.bbox.ll.x;
+          if (poly.bbox.ll.y < this.bbox.ll.y) this.bbox.ll.y = poly.bbox.ll.y;
+          if (poly.bbox.ur.x > this.bbox.ur.x) this.bbox.ur.x = poly.bbox.ur.x;
+          if (poly.bbox.ur.y > this.bbox.ur.y) this.bbox.ur.y = poly.bbox.ur.y;
+          this.polys.push(poly);
+        }
+        this.isSubject = isSubject;
+      }
+      getSweepEvents() {
+        const sweepEvents = [];
+        for (let i2 = 0, iMax = this.polys.length; i2 < iMax; i2++) {
+          const polySweepEvents = this.polys[i2].getSweepEvents();
+          for (let j = 0, jMax = polySweepEvents.length; j < jMax; j++) {
+            sweepEvents.push(polySweepEvents[j]);
+          }
+        }
+        return sweepEvents;
+      }
+    };
+    var RingOut = class _RingOut {
+      /* Given the segments from the sweep line pass, compute & return a series
+       * of closed rings from all the segments marked to be part of the result */
+      static factory(allSegments) {
+        const ringsOut = [];
+        for (let i2 = 0, iMax = allSegments.length; i2 < iMax; i2++) {
+          const segment = allSegments[i2];
+          if (!segment.isInResult() || segment.ringOut) continue;
+          let prevEvent = null;
+          let event = segment.leftSE;
+          let nextEvent = segment.rightSE;
+          const events = [event];
+          const startingPoint = event.point;
+          const intersectionLEs = [];
+          while (true) {
+            prevEvent = event;
+            event = nextEvent;
+            events.push(event);
+            if (event.point === startingPoint) break;
+            while (true) {
+              const availableLEs = event.getAvailableLinkedEvents();
+              if (availableLEs.length === 0) {
+                const firstPt = events[0].point;
+                const lastPt = events[events.length - 1].point;
+                throw new Error(`Unable to complete output ring starting at [${firstPt.x}, ${firstPt.y}]. Last matching segment found ends at [${lastPt.x}, ${lastPt.y}].`);
+              }
+              if (availableLEs.length === 1) {
+                nextEvent = availableLEs[0].otherSE;
+                break;
+              }
+              let indexLE = null;
+              for (let j = 0, jMax = intersectionLEs.length; j < jMax; j++) {
+                if (intersectionLEs[j].point === event.point) {
+                  indexLE = j;
+                  break;
+                }
+              }
+              if (indexLE !== null) {
+                const intersectionLE = intersectionLEs.splice(indexLE)[0];
+                const ringEvents = events.splice(intersectionLE.index);
+                ringEvents.unshift(ringEvents[0].otherSE);
+                ringsOut.push(new _RingOut(ringEvents.reverse()));
+                continue;
+              }
+              intersectionLEs.push({
+                index: events.length,
+                point: event.point
+              });
+              const comparator = event.getLeftmostComparator(prevEvent);
+              nextEvent = availableLEs.sort(comparator)[0].otherSE;
+              break;
+            }
+          }
+          ringsOut.push(new _RingOut(events));
+        }
+        return ringsOut;
+      }
+      constructor(events) {
+        this.events = events;
+        for (let i2 = 0, iMax = events.length; i2 < iMax; i2++) {
+          events[i2].segment.ringOut = this;
+        }
+        this.poly = null;
+      }
+      getGeom() {
+        let prevPt = this.events[0].point;
+        const points = [prevPt];
+        for (let i2 = 1, iMax = this.events.length - 1; i2 < iMax; i2++) {
+          const pt2 = this.events[i2].point;
+          const nextPt2 = this.events[i2 + 1].point;
+          if (compareVectorAngles(pt2, prevPt, nextPt2) === 0) continue;
+          points.push(pt2);
+          prevPt = pt2;
+        }
+        if (points.length === 1) return null;
+        const pt = points[0];
+        const nextPt = points[1];
+        if (compareVectorAngles(pt, prevPt, nextPt) === 0) points.shift();
+        points.push(points[0]);
+        const step = this.isExteriorRing() ? 1 : -1;
+        const iStart = this.isExteriorRing() ? 0 : points.length - 1;
+        const iEnd = this.isExteriorRing() ? points.length : -1;
+        const orderedPoints = [];
+        for (let i2 = iStart; i2 != iEnd; i2 += step) orderedPoints.push([points[i2].x, points[i2].y]);
+        return orderedPoints;
+      }
+      isExteriorRing() {
+        if (this._isExteriorRing === void 0) {
+          const enclosing = this.enclosingRing();
+          this._isExteriorRing = enclosing ? !enclosing.isExteriorRing() : true;
+        }
+        return this._isExteriorRing;
+      }
+      enclosingRing() {
+        if (this._enclosingRing === void 0) {
+          this._enclosingRing = this._calcEnclosingRing();
+        }
+        return this._enclosingRing;
+      }
+      /* Returns the ring that encloses this one, if any */
+      _calcEnclosingRing() {
+        let leftMostEvt = this.events[0];
+        for (let i2 = 1, iMax = this.events.length; i2 < iMax; i2++) {
+          const evt = this.events[i2];
+          if (SweepEvent.compare(leftMostEvt, evt) > 0) leftMostEvt = evt;
+        }
+        let prevSeg = leftMostEvt.segment.prevInResult();
+        let prevPrevSeg = prevSeg ? prevSeg.prevInResult() : null;
+        while (true) {
+          if (!prevSeg) return null;
+          if (!prevPrevSeg) return prevSeg.ringOut;
+          if (prevPrevSeg.ringOut !== prevSeg.ringOut) {
+            if (prevPrevSeg.ringOut.enclosingRing() !== prevSeg.ringOut) {
+              return prevSeg.ringOut;
+            } else return prevSeg.ringOut.enclosingRing();
+          }
+          prevSeg = prevPrevSeg.prevInResult();
+          prevPrevSeg = prevSeg ? prevSeg.prevInResult() : null;
+        }
+      }
+    };
+    var PolyOut = class {
+      constructor(exteriorRing) {
+        this.exteriorRing = exteriorRing;
+        exteriorRing.poly = this;
+        this.interiorRings = [];
+      }
+      addInterior(ring) {
+        this.interiorRings.push(ring);
+        ring.poly = this;
+      }
+      getGeom() {
+        const geom = [this.exteriorRing.getGeom()];
+        if (geom[0] === null) return null;
+        for (let i2 = 0, iMax = this.interiorRings.length; i2 < iMax; i2++) {
+          const ringGeom = this.interiorRings[i2].getGeom();
+          if (ringGeom === null) continue;
+          geom.push(ringGeom);
+        }
+        return geom;
+      }
+    };
+    var MultiPolyOut = class {
+      constructor(rings) {
+        this.rings = rings;
+        this.polys = this._composePolys(rings);
+      }
+      getGeom() {
+        const geom = [];
+        for (let i2 = 0, iMax = this.polys.length; i2 < iMax; i2++) {
+          const polyGeom = this.polys[i2].getGeom();
+          if (polyGeom === null) continue;
+          geom.push(polyGeom);
+        }
+        return geom;
+      }
+      _composePolys(rings) {
+        const polys = [];
+        for (let i2 = 0, iMax = rings.length; i2 < iMax; i2++) {
+          const ring = rings[i2];
+          if (ring.poly) continue;
+          if (ring.isExteriorRing()) polys.push(new PolyOut(ring));
+          else {
+            const enclosingRing = ring.enclosingRing();
+            if (!enclosingRing.poly) polys.push(new PolyOut(enclosingRing));
+            enclosingRing.poly.addInterior(ring);
+          }
+        }
+        return polys;
+      }
+    };
+    var SweepLine = class {
+      constructor(queue2) {
+        let comparator = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : Segment.compare;
+        this.queue = queue2;
+        this.tree = new SplayTree__default["default"](comparator);
+        this.segments = [];
+      }
+      process(event) {
+        const segment = event.segment;
+        const newEvents = [];
+        if (event.consumedBy) {
+          if (event.isLeft) this.queue.remove(event.otherSE);
+          else this.tree.remove(segment);
+          return newEvents;
+        }
+        const node = event.isLeft ? this.tree.add(segment) : this.tree.find(segment);
+        if (!node) throw new Error(`Unable to find segment #${segment.id} [${segment.leftSE.point.x}, ${segment.leftSE.point.y}] -> [${segment.rightSE.point.x}, ${segment.rightSE.point.y}] in SweepLine tree.`);
+        let prevNode = node;
+        let nextNode = node;
+        let prevSeg = void 0;
+        let nextSeg = void 0;
+        while (prevSeg === void 0) {
+          prevNode = this.tree.prev(prevNode);
+          if (prevNode === null) prevSeg = null;
+          else if (prevNode.key.consumedBy === void 0) prevSeg = prevNode.key;
+        }
+        while (nextSeg === void 0) {
+          nextNode = this.tree.next(nextNode);
+          if (nextNode === null) nextSeg = null;
+          else if (nextNode.key.consumedBy === void 0) nextSeg = nextNode.key;
+        }
+        if (event.isLeft) {
+          let prevMySplitter = null;
+          if (prevSeg) {
+            const prevInter = prevSeg.getIntersection(segment);
+            if (prevInter !== null) {
+              if (!segment.isAnEndpoint(prevInter)) prevMySplitter = prevInter;
+              if (!prevSeg.isAnEndpoint(prevInter)) {
+                const newEventsFromSplit = this._splitSafely(prevSeg, prevInter);
+                for (let i2 = 0, iMax = newEventsFromSplit.length; i2 < iMax; i2++) {
+                  newEvents.push(newEventsFromSplit[i2]);
+                }
+              }
+            }
+          }
+          let nextMySplitter = null;
+          if (nextSeg) {
+            const nextInter = nextSeg.getIntersection(segment);
+            if (nextInter !== null) {
+              if (!segment.isAnEndpoint(nextInter)) nextMySplitter = nextInter;
+              if (!nextSeg.isAnEndpoint(nextInter)) {
+                const newEventsFromSplit = this._splitSafely(nextSeg, nextInter);
+                for (let i2 = 0, iMax = newEventsFromSplit.length; i2 < iMax; i2++) {
+                  newEvents.push(newEventsFromSplit[i2]);
+                }
+              }
+            }
+          }
+          if (prevMySplitter !== null || nextMySplitter !== null) {
+            let mySplitter = null;
+            if (prevMySplitter === null) mySplitter = nextMySplitter;
+            else if (nextMySplitter === null) mySplitter = prevMySplitter;
+            else {
+              const cmpSplitters = SweepEvent.comparePoints(prevMySplitter, nextMySplitter);
+              mySplitter = cmpSplitters <= 0 ? prevMySplitter : nextMySplitter;
+            }
+            this.queue.remove(segment.rightSE);
+            newEvents.push(segment.rightSE);
+            const newEventsFromSplit = segment.split(mySplitter);
+            for (let i2 = 0, iMax = newEventsFromSplit.length; i2 < iMax; i2++) {
+              newEvents.push(newEventsFromSplit[i2]);
+            }
+          }
+          if (newEvents.length > 0) {
+            this.tree.remove(segment);
+            newEvents.push(event);
+          } else {
+            this.segments.push(segment);
+            segment.prev = prevSeg;
+          }
+        } else {
+          if (prevSeg && nextSeg) {
+            const inter = prevSeg.getIntersection(nextSeg);
+            if (inter !== null) {
+              if (!prevSeg.isAnEndpoint(inter)) {
+                const newEventsFromSplit = this._splitSafely(prevSeg, inter);
+                for (let i2 = 0, iMax = newEventsFromSplit.length; i2 < iMax; i2++) {
+                  newEvents.push(newEventsFromSplit[i2]);
+                }
+              }
+              if (!nextSeg.isAnEndpoint(inter)) {
+                const newEventsFromSplit = this._splitSafely(nextSeg, inter);
+                for (let i2 = 0, iMax = newEventsFromSplit.length; i2 < iMax; i2++) {
+                  newEvents.push(newEventsFromSplit[i2]);
+                }
+              }
+            }
+          }
+          this.tree.remove(segment);
+        }
+        return newEvents;
+      }
+      /* Safely split a segment that is currently in the datastructures
+       * IE - a segment other than the one that is currently being processed. */
+      _splitSafely(seg, pt) {
+        this.tree.remove(seg);
+        const rightSE = seg.rightSE;
+        this.queue.remove(rightSE);
+        const newEvents = seg.split(pt);
+        newEvents.push(rightSE);
+        if (seg.consumedBy === void 0) this.tree.add(seg);
+        return newEvents;
+      }
+    };
+    var POLYGON_CLIPPING_MAX_QUEUE_SIZE = typeof process !== "undefined" && process.env.POLYGON_CLIPPING_MAX_QUEUE_SIZE || 1e6;
+    var POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS = typeof process !== "undefined" && process.env.POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS || 1e6;
+    var Operation = class {
+      run(type, geom, moreGeoms) {
+        operation.type = type;
+        rounder.reset();
+        const multipolys = [new MultiPolyIn(geom, true)];
+        for (let i2 = 0, iMax = moreGeoms.length; i2 < iMax; i2++) {
+          multipolys.push(new MultiPolyIn(moreGeoms[i2], false));
+        }
+        operation.numMultiPolys = multipolys.length;
+        if (operation.type === "difference") {
+          const subject = multipolys[0];
+          let i2 = 1;
+          while (i2 < multipolys.length) {
+            if (getBboxOverlap(multipolys[i2].bbox, subject.bbox) !== null) i2++;
+            else multipolys.splice(i2, 1);
+          }
+        }
+        if (operation.type === "intersection") {
+          for (let i2 = 0, iMax = multipolys.length; i2 < iMax; i2++) {
+            const mpA = multipolys[i2];
+            for (let j = i2 + 1, jMax = multipolys.length; j < jMax; j++) {
+              if (getBboxOverlap(mpA.bbox, multipolys[j].bbox) === null) return [];
+            }
+          }
+        }
+        const queue2 = new SplayTree__default["default"](SweepEvent.compare);
+        for (let i2 = 0, iMax = multipolys.length; i2 < iMax; i2++) {
+          const sweepEvents = multipolys[i2].getSweepEvents();
+          for (let j = 0, jMax = sweepEvents.length; j < jMax; j++) {
+            queue2.insert(sweepEvents[j]);
+            if (queue2.size > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {
+              throw new Error("Infinite loop when putting segment endpoints in a priority queue (queue size too big).");
+            }
+          }
+        }
+        const sweepLine = new SweepLine(queue2);
+        let prevQueueSize = queue2.size;
+        let node = queue2.pop();
+        while (node) {
+          const evt = node.key;
+          if (queue2.size === prevQueueSize) {
+            const seg = evt.segment;
+            throw new Error(`Unable to pop() ${evt.isLeft ? "left" : "right"} SweepEvent [${evt.point.x}, ${evt.point.y}] from segment #${seg.id} [${seg.leftSE.point.x}, ${seg.leftSE.point.y}] -> [${seg.rightSE.point.x}, ${seg.rightSE.point.y}] from queue.`);
+          }
+          if (queue2.size > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {
+            throw new Error("Infinite loop when passing sweep line over endpoints (queue size too big).");
+          }
+          if (sweepLine.segments.length > POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS) {
+            throw new Error("Infinite loop when passing sweep line over endpoints (too many sweep line segments).");
+          }
+          const newEvents = sweepLine.process(evt);
+          for (let i2 = 0, iMax = newEvents.length; i2 < iMax; i2++) {
+            const evt2 = newEvents[i2];
+            if (evt2.consumedBy === void 0) queue2.insert(evt2);
+          }
+          prevQueueSize = queue2.size;
+          node = queue2.pop();
+        }
+        rounder.reset();
+        const ringsOut = RingOut.factory(sweepLine.segments);
+        const result = new MultiPolyOut(ringsOut);
+        return result.getGeom();
+      }
+    };
+    var operation = new Operation();
+    var union = function(geom) {
+      for (var _len = arguments.length, moreGeoms = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        moreGeoms[_key - 1] = arguments[_key];
+      }
+      return operation.run("union", geom, moreGeoms);
+    };
+    var intersection2 = function(geom) {
+      for (var _len2 = arguments.length, moreGeoms = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        moreGeoms[_key2 - 1] = arguments[_key2];
+      }
+      return operation.run("intersection", geom, moreGeoms);
+    };
+    var xor = function(geom) {
+      for (var _len3 = arguments.length, moreGeoms = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        moreGeoms[_key3 - 1] = arguments[_key3];
+      }
+      return operation.run("xor", geom, moreGeoms);
+    };
+    var difference = function(subjectGeom) {
+      for (var _len4 = arguments.length, clippingGeoms = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+        clippingGeoms[_key4 - 1] = arguments[_key4];
+      }
+      return operation.run("difference", subjectGeom, clippingGeoms);
+    };
+    var index = {
+      union,
+      intersection: intersection2,
+      xor,
+      difference
+    };
+    module2.exports = index;
+  }
+});
+
 // extraire.ts
-var import_fs6 = __toESM(require("fs"));
+var import_fs7 = __toESM(require("fs"));
 var import_os2 = __toESM(require("os"));
-var import_path7 = __toESM(require("path"));
+var import_path8 = __toESM(require("path"));
 
 // dir-archive.ts
 var import_fs = __toESM(require("fs"));
 var import_path = __toESM(require("path"));
 var import_cityhash = __toESM(require_cityhash());
 var DirArchive = class {
-  constructor(path8, scsSource) {
-    this.path = path8;
+  constructor(path9, scsSource) {
+    this.path = path9;
     this.scsSource = scsSource;
   }
   isValid() {
@@ -37089,9 +39664,9 @@ function lineOffset(geojson, distance2, options = {}) {
       return lineOffsetFeature(geojson, distance2, units);
     case "MultiLineString":
       var coords = [];
-      flattenEach(geojson, function(feature2) {
+      flattenEach(geojson, function(feature3) {
         coords.push(
-          lineOffsetFeature(feature2, distance2, units).geometry.coordinates
+          lineOffsetFeature(feature3, distance2, units).geometry.coordinates
         );
       });
       return multiLineString(coords, properties);
@@ -42736,8 +45311,8 @@ function parseDefFiles(entries, application) {
   const companies = /* @__PURE__ */ new Map();
   const cargoes = /* @__PURE__ */ new Map();
   const ferries = /* @__PURE__ */ new Map();
-  const processAndAdd = (path8, dlcGuard, schema, p, m2) => {
-    const t2 = convertSiiToJson(path8, entries, schema);
+  const processAndAdd = (path9, dlcGuard, schema, p, m2) => {
+    const t2 = convertSiiToJson(path9, entries, schema);
     const u3 = p(t2, entries);
     if (u3) {
       m2.set(u3.token, { ...u3, dlcGuard });
@@ -42757,17 +45332,17 @@ function parseDefFiles(entries, application) {
       dlcGuard = 0;
     }
     const includePaths = parseIncludeOnlySii(`def/${f3}`, entries);
-    for (const path8 of includePaths) {
+    for (const path9 of includePaths) {
       if (f3.startsWith("city.")) {
-        processAndAdd(path8, dlcGuard, CitySiiSchema, processCityJson, cities);
+        processAndAdd(path9, dlcGuard, CitySiiSchema, processCityJson, cities);
       } else if (f3.startsWith("country.")) {
         const partialCountry = processCountryJson(
-          convertSiiToJson(path8, entries, CountrySiiSchema)
+          convertSiiToJson(path9, entries, CountrySiiSchema)
         );
         if (partialCountry) {
           const truckSpeedLimits = processSpeedLimitJson(
             convertSiiToJson(
-              path8.replace(".sui", "/speed_limits.sii"),
+              path9.replace(".sui", "/speed_limits.sii"),
               entries,
               SpeedLimitSiiSchema
             )
@@ -42779,7 +45354,7 @@ function parseDefFiles(entries, application) {
         }
       } else if (f3.startsWith("company.")) {
         processAndAdd(
-          path8,
+          path9,
           dlcGuard,
           CompanySiiSchema,
           processCompanyJson,
@@ -42787,7 +45362,7 @@ function parseDefFiles(entries, application) {
         );
       } else if (f3.startsWith("cargo.")) {
         processAndAdd(
-          path8,
+          path9,
           dlcGuard,
           CargoDataSiiSchema,
           processCargoJson,
@@ -42795,7 +45370,7 @@ function parseDefFiles(entries, application) {
         );
       } else if (f3.startsWith("ferry.")) {
         processAndAdd(
-          path8,
+          path9,
           dlcGuard,
           FerrySiiSchema,
           processFerryJson,
@@ -43177,28 +45752,28 @@ function processPrefabJson(obj, entries) {
     ([key, o3]) => [key.split(".")[1], o3.prefabDesc.substring(1)]
   );
   const prefabs = /* @__PURE__ */ new Map();
-  for (const [token2, path8] of prefabTuples) {
-    const ppdFile = entries.files.get(path8);
+  for (const [token2, path9] of prefabTuples) {
+    const ppdFile = entries.files.get(path9);
     if (!ppdFile) {
       logger.warn(`could not find prefab file for ${token2}`);
       continue;
     }
     const ppd = parsePrefabPpd(ppdFile.read());
     if (false) {
-      const pmgPath = path8.replace(
+      const pmgPath = path9.replace(
         /(_spawn|_roof_trigger_rt|_rt|_trigger)?\.ppd$/,
         ".pmg"
       );
       const pmgFile = entries.files.get(pmgPath);
       if (!pmgFile) {
         logger.warn(
-          `could not find pmg file ${pmgPath} for ${token2} (${path8})`
+          `could not find pmg file ${pmgPath} for ${token2} (${path9})`
         );
       } else {
       }
     }
     prefabs.set(token2, {
-      path: path8,
+      path: path9,
       ...ppd
     });
   }
@@ -43241,25 +45816,25 @@ function processModelJson(obj, entries) {
     ([key, o3]) => [key.split(".")[1], o3.modelDesc?.substring(1)]
   );
   const buildings = /* @__PURE__ */ new Map();
-  for (const [token2, path8] of modelTuples) {
-    if (path8 == null) {
+  for (const [token2, path9] of modelTuples) {
+    if (path9 == null) {
       continue;
     }
-    if (!path8.endsWith(".pmd")) {
+    if (!path9.endsWith(".pmd")) {
       continue;
     }
-    const isProbablyBuildingModel = /^model2?\/building\//.exec(path8) ?? /^model2?\/panorama\/.*building/.exec(path8);
+    const isProbablyBuildingModel = /^model2?\/building\//.exec(path9) ?? /^model2?\/panorama\/.*building/.exec(path9);
     if (true) {
       continue;
     }
-    const pmgPath = path8.replace(/\.pmd$/, ".pmg");
+    const pmgPath = path9.replace(/\.pmd$/, ".pmg");
     const pmgFile = entries.files.get(pmgPath);
     if (!pmgFile) {
       logger.warn(`could not find pmg file ${pmgPath} for ${token2}`);
       continue;
     }
     const pmg = parseModelPmg(pmgFile.read());
-    buildings.set(token2, { path: path8, ...pmg });
+    buildings.set(token2, { path: path9, ...pmg });
   }
   return { buildings, vegetation };
 }
@@ -43632,10 +46207,10 @@ var MetadataEntryHeader = new Struct({
   type: uint8
 });
 var ScsArchive = class {
-  constructor(path8, scsSource) {
-    this.path = path8;
+  constructor(path9, scsSource) {
+    this.path = path9;
     this.scsSource = scsSource;
-    this.fd = import_fs2.default.openSync(path8, "r");
+    this.fd = import_fs2.default.openSync(path9, "r");
     const buffer = Buffer.alloc(FileHeader.size());
     import_fs2.default.readSync(this.fd, buffer, { length: buffer.length });
     this.header = FileHeader.fromBuffer(buffer);
@@ -45087,7 +47662,7 @@ var fromEts2CoordsToWgs84 = ([x2, y3]) => {
   y3 -= ets2DefData.mapOffset[1];
   const ukScaleFactor = 0.75;
   const calais = [-31100, -5500];
-  const isUk = sx <= -8 && sy <= -2 && !(sx === -8 && sy === -2) && sy >= -14;
+  const isUk = sx <= -8 && sy <= -2 && !(sx === -8 && sy === -2) && sy >= -20;
   if (isUk) {
     x2 = (x2 + calais[0] / 2) * ukScaleFactor;
     y3 = (y3 + calais[1] / 2) * ukScaleFactor;
@@ -46056,13 +48631,13 @@ var RBush = class {
     if (!item) return this;
     let node = this.data;
     const bbox = this.toBBox(item);
-    const path8 = [];
+    const path9 = [];
     const indexes = [];
     let i2, parent, goingUp;
-    while (node || path8.length) {
+    while (node || path9.length) {
       if (!node) {
-        node = path8.pop();
-        parent = path8[path8.length - 1];
+        node = path9.pop();
+        parent = path9[path9.length - 1];
         i2 = indexes.pop();
         goingUp = true;
       }
@@ -46070,13 +48645,13 @@ var RBush = class {
         const index = findItem(item, node.children, equalsFn);
         if (index !== -1) {
           node.children.splice(index, 1);
-          path8.push(node);
-          this._condense(path8);
+          path9.push(node);
+          this._condense(path9);
           return this;
         }
       }
       if (!goingUp && !node.leaf && contains(node, bbox)) {
-        path8.push(node);
+        path9.push(node);
         indexes.push(i2);
         i2 = 0;
         parent = node;
@@ -46144,10 +48719,10 @@ var RBush = class {
     calcBBox(node, this.toBBox);
     return node;
   }
-  _chooseSubtree(bbox, node, level, path8) {
+  _chooseSubtree(bbox, node, level, path9) {
     while (true) {
-      path8.push(node);
-      if (node.leaf || path8.length - 1 === level) break;
+      path9.push(node);
+      if (node.leaf || path9.length - 1 === level) break;
       let minArea = Infinity;
       let minEnlargement = Infinity;
       let targetNode;
@@ -46254,19 +48829,19 @@ var RBush = class {
     }
     return margin;
   }
-  _adjustParentBBoxes(bbox, path8, level) {
+  _adjustParentBBoxes(bbox, path9, level) {
     for (let i2 = level; i2 >= 0; i2--) {
-      extend(path8[i2], bbox);
+      extend(path9[i2], bbox);
     }
   }
-  _condense(path8) {
-    for (let i2 = path8.length - 1, siblings; i2 >= 0; i2--) {
-      if (path8[i2].children.length === 0) {
+  _condense(path9) {
+    for (let i2 = path9.length - 1, siblings; i2 >= 0; i2--) {
+      if (path9[i2].children.length === 0) {
         if (i2 > 0) {
-          siblings = path8[i2 - 1].children;
-          siblings.splice(siblings.indexOf(path8[i2]), 1);
+          siblings = path9[i2 - 1].children;
+          siblings.splice(siblings.indexOf(path9[i2]), 1);
         } else this.clear();
-      } else calcBBox(path8[i2], this.toBBox);
+      } else calcBBox(path9[i2], this.toBBox);
     }
   }
 };
@@ -46495,33 +49070,33 @@ function buildDlcGuardSpatialIndex(tsMapData) {
 // ../../../../ext/maps/packages/clis/generator/geo-json/normalize.ts
 function createNormalizeFeature(map, decimalPoints) {
   const normalize = createNormalizeCoordinates(map, decimalPoints);
-  return (feature2) => {
-    switch (feature2.geometry.type) {
+  return (feature3) => {
+    switch (feature3.geometry.type) {
       case "LineString":
-        feature2.geometry.coordinates = feature2.geometry.coordinates.map(normalize);
+        feature3.geometry.coordinates = feature3.geometry.coordinates.map(normalize);
         break;
       case "MultiLineString":
-        feature2.geometry.coordinates = feature2.geometry.coordinates.map(
+        feature3.geometry.coordinates = feature3.geometry.coordinates.map(
           (l2) => l2.map(normalize)
         );
         break;
       case "Polygon":
-        feature2.geometry.coordinates = feature2.geometry.coordinates.map(
+        feature3.geometry.coordinates = feature3.geometry.coordinates.map(
           (p) => p.map(normalize)
         );
         break;
       case "MultiPolygon":
-        feature2.geometry.coordinates = feature2.geometry.coordinates.map(
+        feature3.geometry.coordinates = feature3.geometry.coordinates.map(
           (p) => p.map((pp) => pp.map((ppp) => normalize(ppp)))
         );
         break;
       case "Point":
-        feature2.geometry.coordinates = normalize(feature2.geometry.coordinates);
+        feature3.geometry.coordinates = normalize(feature3.geometry.coordinates);
         break;
       default:
-        throw new UnreachableError(feature2.geometry);
+        throw new UnreachableError(feature3.geometry);
     }
-    return feature2;
+    return feature3;
   };
 }
 function createNormalizeCoordinates(map, decimalPoints) {
@@ -46743,13 +49318,13 @@ function convertToMapGeoJson(tsMapData, options) {
   logger3.log("creating roads and quadtree of prefab-adjacent roads...");
   const roadFeatures = [];
   for (const r4 of roads.values()) {
-    const fs7 = roadToFeature(
+    const fs8 = roadToFeature(
       r4,
       assertExists(roadLooks.get(r4.roadLookToken)),
       nodes,
       dividerFeatures
     );
-    for (const f3 of fs7) {
+    for (const f3 of fs8) {
       roadFeatures.push(f3);
       if (prefabNodeUids.has(r4.startNodeUid)) {
         const node = assertExists(nodes.get(r4.startNodeUid));
@@ -47084,17 +49659,17 @@ function convertToMapGeoJson(tsMapData, options) {
     features: features.map((f3) => normalizeFeature(f3))
   };
 }
-function withDlcGuard2(feature2, dlcGuardSpatialIndex) {
-  if ("dlcGuard" in feature2.properties && feature2.properties.dlcGuard != null) {
-    return feature2;
+function withDlcGuard2(feature3, dlcGuardSpatialIndex) {
+  if ("dlcGuard" in feature3.properties && feature3.properties.dlcGuard != null) {
+    return feature3;
   }
-  const [x2, y3] = feature2.geometry.coordinates;
+  const [x2, y3] = feature3.geometry.coordinates;
   const entry = dlcGuardSpatialIndex.findClosest(x2, y3);
   if (!entry) {
-    return feature2;
+    return feature3;
   }
-  feature2.properties.dlcGuard = entry.dlcGuard;
-  return feature2;
+  feature3.properties.dlcGuard = entry.dlcGuard;
+  return feature3;
 }
 function createTrafficFeatures(map, nodes, prefabs, prefabDescriptions) {
   const features = [];
@@ -47716,8 +50291,255 @@ var import_fs5 = __toESM(require("fs"));
 var import_path6 = __toESM(require("path"));
 var import_geojson_vt = __toESM(require_geojson_vt_dev());
 var import_vt_pbf = __toESM(require_vt_pbf());
-var ZMIN = 4;
+
+// terre.ts
+function terreDuJeu(features, opts = {}) {
+  const cellKm = opts.cellKm ?? 1.2, rayonKm = opts.rayonKm ?? 3.5;
+  const limiteKm = opts.fond && opts.fond.length ? opts.limiteKm ?? 150 : 0;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  const parcourir = (g3, fn) => {
+    const w2 = (a3) => {
+      if (typeof a3[0] === "number") fn(a3);
+      else for (const b2 of a3) w2(b2);
+    };
+    w2(g3.coordinates);
+  };
+  for (const f3 of features) parcourir(f3.geometry, ([x2, y3]) => {
+    if (x2 < x0) x0 = x2;
+    if (x2 > x1) x1 = x2;
+    if (y3 < y0) y0 = y3;
+    if (y3 > y1) y1 = y3;
+  });
+  if (!isFinite(x0)) return [];
+  const marge = Math.max(rayonKm * 3, limiteKm + rayonKm * 3) / 111;
+  x0 -= marge * 2;
+  x1 += marge * 2;
+  y0 -= marge;
+  y1 += marge;
+  const lat0 = (y0 + y1) / 2, kx = Math.cos(lat0 * Math.PI / 180) * 111.32, ky = 110.57;
+  const W2 = Math.ceil((x1 - x0) * kx / cellKm) + 1, H = Math.ceil((y1 - y0) * ky / cellKm) + 1;
+  const gx = (x2) => (x2 - x0) * kx / cellKm, gy = (y3) => (y3 - y0) * ky / cellKm;
+  const lng = (i2) => x0 + i2 * cellKm / kx, lat = (j) => y0 + j * cellKm / ky;
+  const INF = 1e9;
+  const d2 = new Float32Array(W2 * H).fill(INF);
+  const marquer = (i2, j) => {
+    const a3 = Math.round(i2), b2 = Math.round(j);
+    if (a3 >= 0 && b2 >= 0 && a3 < W2 && b2 < H) d2[b2 * W2 + a3] = 0;
+  };
+  const segment = (p, q2) => {
+    const ax = gx(p[0]), ay = gy(p[1]), bx = gx(q2[0]), by = gy(q2[1]);
+    const n2 = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) * 2));
+    for (let k2 = 0; k2 <= n2; k2++) marquer(ax + (bx - ax) * k2 / n2, ay + (by - ay) * k2 / n2);
+  };
+  for (const f3 of features) {
+    const g3 = f3.geometry;
+    if (g3.type === "Point") marquer(gx(g3.coordinates[0]), gy(g3.coordinates[1]));
+    else if (g3.type === "LineString") for (let i2 = 1; i2 < g3.coordinates.length; i2++) segment(g3.coordinates[i2 - 1], g3.coordinates[i2]);
+    else if (g3.type === "Polygon" || g3.type === "MultiPolygon") {
+      const polys = g3.type === "Polygon" ? [g3.coordinates] : g3.coordinates;
+      for (const poly of polys) for (const ring of poly) for (let i2 = 1; i2 < ring.length; i2++) segment(ring[i2 - 1], ring[i2]);
+    }
+  }
+  const terreReelle = new Uint8Array(W2 * H);
+  for (const f3 of opts.fond || []) {
+    const g3 = f3.geometry;
+    if (!g3) continue;
+    const polys = g3.type === "Polygon" ? [g3.coordinates] : g3.type === "MultiPolygon" ? g3.coordinates : [];
+    for (const poly of polys) {
+      const aretes = [];
+      let bj0 = Infinity, bj1 = -Infinity;
+      for (const ring of poly) for (let i2 = 1; i2 < ring.length; i2++) {
+        const ax = gx(ring[i2 - 1][0]), ay = gy(ring[i2 - 1][1]), bx = gx(ring[i2][0]), by = gy(ring[i2][1]);
+        if (ay === by) continue;
+        aretes.push([ax, ay, bx, by]);
+        bj0 = Math.min(bj0, ay, by);
+        bj1 = Math.max(bj1, ay, by);
+      }
+      for (let j = Math.max(0, Math.ceil(bj0)); j <= Math.min(H - 1, Math.floor(bj1)); j++) {
+        const xs = [];
+        for (const [ax, ay, bx, by] of aretes) if (ay <= j !== by <= j) xs.push(ax + (j - ay) * (bx - ax) / (by - ay));
+        xs.sort((a3, b2) => a3 - b2);
+        for (let k2 = 0; k2 + 1 < xs.length; k2 += 2) for (let i2 = Math.max(0, Math.ceil(xs[k2])); i2 <= Math.min(W2 - 1, Math.floor(xs[k2 + 1])); i2++) terreReelle[j * W2 + i2] ^= 1;
+      }
+    }
+  }
+  const a1 = 1, a2 = Math.SQRT2;
+  for (let j = 0; j < H; j++) for (let i2 = 0; i2 < W2; i2++) {
+    const k2 = j * W2 + i2;
+    let v2 = d2[k2];
+    if (i2 > 0) v2 = Math.min(v2, d2[k2 - 1] + a1);
+    if (j > 0) {
+      v2 = Math.min(v2, d2[k2 - W2] + a1);
+      if (i2 > 0) v2 = Math.min(v2, d2[k2 - W2 - 1] + a2);
+      if (i2 < W2 - 1) v2 = Math.min(v2, d2[k2 - W2 + 1] + a2);
+    }
+    d2[k2] = v2;
+  }
+  for (let j = H - 1; j >= 0; j--) for (let i2 = W2 - 1; i2 >= 0; i2--) {
+    const k2 = j * W2 + i2;
+    let v2 = d2[k2];
+    if (i2 < W2 - 1) v2 = Math.min(v2, d2[k2 + 1] + a1);
+    if (j < H - 1) {
+      v2 = Math.min(v2, d2[k2 + W2] + a1);
+      if (i2 < W2 - 1) v2 = Math.min(v2, d2[k2 + W2 + 1] + a2);
+      if (i2 > 0) v2 = Math.min(v2, d2[k2 + W2 - 1] + a2);
+    }
+    d2[k2] = v2;
+  }
+  const niveau = rayonKm / cellKm;
+  const limite = limiteKm / cellKm;
+  for (let k2 = 0; k2 < d2.length; k2++) if (terreReelle[k2] && d2[k2] <= limite) d2[k2] = 0;
+  const val = (i2, j) => i2 < 0 || j < 0 || i2 >= W2 || j >= H ? INF : d2[j * W2 + i2];
+  const inter = (va, vb) => va === vb ? 0.5 : Math.min(1, Math.max(0, (niveau - va) / (vb - va)));
+  const suivant = /* @__PURE__ */ new Map();
+  const cle = (p) => `${Math.round(p[0] * 1e3)},${Math.round(p[1] * 1e3)}`;
+  const ajouter = (p, q2) => {
+    suivant.set(cle(p), [p, q2]);
+  };
+  for (let j = -1; j < H; j++) for (let i2 = -1; i2 < W2; i2++) {
+    const tl = val(i2, j + 1), tr = val(i2 + 1, j + 1), br = val(i2 + 1, j), bl = val(i2, j);
+    const c3 = (tl <= niveau ? 8 : 0) | (tr <= niveau ? 4 : 0) | (br <= niveau ? 2 : 0) | (bl <= niveau ? 1 : 0);
+    if (c3 === 0 || c3 === 15) continue;
+    const T3 = [i2 + inter(tl, tr), j + 1], R3 = [i2 + 1, j + inter(br, tr)], B2 = [i2 + inter(bl, br), j], L3 = [i2, j + inter(bl, tl)];
+    switch (c3) {
+      case 1:
+        ajouter(B2, L3);
+        break;
+      case 2:
+        ajouter(R3, B2);
+        break;
+      case 3:
+        ajouter(R3, L3);
+        break;
+      case 4:
+        ajouter(T3, R3);
+        break;
+      case 5:
+        ajouter(T3, L3);
+        ajouter(B2, R3);
+        break;
+      case 6:
+        ajouter(T3, B2);
+        break;
+      case 7:
+        ajouter(T3, L3);
+        break;
+      case 8:
+        ajouter(L3, T3);
+        break;
+      case 9:
+        ajouter(B2, T3);
+        break;
+      case 10:
+        ajouter(L3, B2);
+        ajouter(R3, T3);
+        break;
+      case 11:
+        ajouter(R3, T3);
+        break;
+      case 12:
+        ajouter(L3, R3);
+        break;
+      case 13:
+        ajouter(B2, R3);
+        break;
+      case 14:
+        ajouter(L3, B2);
+        break;
+    }
+  }
+  const anneaux = [];
+  for (const [k0, s0] of suivant) {
+    if (!suivant.has(k0)) continue;
+    const ring = [s0[0]];
+    let k2 = k0, garde = 0;
+    while (suivant.has(k2) && garde++ < 5e6) {
+      const [, q2] = suivant.get(k2);
+      suivant.delete(k2);
+      ring.push(q2);
+      k2 = cle(q2);
+    }
+    if (ring.length >= 4) anneaux.push(ring);
+  }
+  const simplifier = (pts, tol) => {
+    if (pts.length < 4) return pts;
+    const garder = new Uint8Array(pts.length);
+    garder[0] = garder[pts.length - 1] = 1;
+    let loin = 0, dl = -1;
+    for (let i2 = 1; i2 < pts.length - 1; i2++) {
+      const dd = Math.hypot(pts[i2][0] - pts[0][0], pts[i2][1] - pts[0][1]);
+      if (dd > dl) {
+        dl = dd;
+        loin = i2;
+      }
+    }
+    garder[loin] = 1;
+    const pile = [[0, loin], [loin, pts.length - 1]];
+    while (pile.length) {
+      const [a3, b2] = pile.pop();
+      let m2 = -1, dm = tol;
+      const [ax, ay] = pts[a3], [bx, by] = pts[b2], L3 = Math.hypot(bx - ax, by - ay) || 1e-9;
+      for (let i2 = a3 + 1; i2 < b2; i2++) {
+        const dd = Math.abs((bx - ax) * (ay - pts[i2][1]) - (ax - pts[i2][0]) * (by - ay)) / L3;
+        if (dd > dm) {
+          dm = dd;
+          m2 = i2;
+        }
+      }
+      if (m2 >= 0) {
+        garder[m2] = 1;
+        pile.push([a3, m2], [m2, b2]);
+      }
+    }
+    return pts.filter((_3, i2) => garder[i2]);
+  };
+  const aire = (r4) => {
+    let s2 = 0;
+    for (let i2 = 1; i2 < r4.length; i2++) s2 += r4[i2 - 1][0] * r4[i2][1] - r4[i2][0] * r4[i2 - 1][1];
+    return s2 / 2;
+  };
+  const exterieurs = [], trous = [];
+  let sens = 1, plusGrande = 0;
+  for (const r4 of anneaux) {
+    const a3 = aire(r4);
+    if (Math.abs(a3) > plusGrande) {
+      plusGrande = Math.abs(a3);
+      sens = Math.sign(a3) || 1;
+    }
+  }
+  for (const r0 of anneaux) {
+    const r4 = simplifier(r0, 0.4);
+    if (r4.length < 4) continue;
+    const a3 = aire(r4) * sens;
+    if (Math.abs(a3) < 1.5) continue;
+    let geo = r4.map(([i2, j]) => [Math.round(lng(i2) * 1e5) / 1e5, Math.round(lat(j) * 1e5) / 1e5]);
+    if (sens < 0) geo = geo.reverse();
+    if (a3 > 0) {
+      const xs = geo.map((p) => p[0]), ys = geo.map((p) => p[1]);
+      exterieurs.push({ r: geo, bb: [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)], trous: [] });
+    } else trous.push(geo);
+  }
+  const dedans = (p, r4) => {
+    let c3 = false;
+    for (let i2 = 0, j = r4.length - 1; i2 < r4.length; j = i2++) {
+      if (r4[i2][1] > p[1] !== r4[j][1] > p[1] && p[0] < (r4[j][0] - r4[i2][0]) * (p[1] - r4[i2][1]) / (r4[j][1] - r4[i2][1]) + r4[i2][0]) c3 = !c3;
+    }
+    return c3;
+  };
+  const surface = (e2) => (e2.bb[2] - e2.bb[0]) * (e2.bb[3] - e2.bb[1]);
+  const tries = [...exterieurs].sort((a3, b2) => surface(a3) - surface(b2));
+  for (const t2 of trous) {
+    const p = t2[0];
+    const e2 = tries.find((e3) => p[0] >= e3.bb[0] && p[0] <= e3.bb[2] && p[1] >= e3.bb[1] && p[1] <= e3.bb[3] && dedans(p, e3.r));
+    if (e2) e2.trous.push(t2);
+  }
+  return exterieurs.map((e2) => ({ type: "Feature", properties: { t: "l" }, geometry: { type: "Polygon", coordinates: [e2.r, ...e2.trous] } }));
+}
+
+// tuiles.ts
+var ZMIN = 2;
 var ZMAX = 10;
+var FORMAT = 3;
 function gardesVisibles(map, fichiersScs) {
   const src2 = map === "usa" ? AtsScsSourceToDlcGuard : Ets2ScsSourceToDlcGuard;
   const gardes = map === "usa" ? AtsDlcGuards : Ets2DlcGuards;
@@ -47730,8 +50552,9 @@ function gardesVisibles(map, fichiersScs) {
   for (const [g3, req] of Object.entries(gardes)) if ([...req].every((d2) => possedees.has(d2))) ok.add(Number(g3));
   return ok;
 }
-function ecrireCarte(gj, outDir2, gardes) {
+function ecrireCarte(gj, outDir2, gardes, fond = []) {
   const feats = [];
+  const contenu = [];
   const villes = [];
   for (const f3 of gj.features) {
     const p = f3.properties;
@@ -47739,10 +50562,12 @@ function ecrireCarte(gj, outDir2, gardes) {
     switch (p.type) {
       case "mapArea":
       case "prefab":
+        contenu.push(f3);
         feats.push({ type: "Feature", geometry: f3.geometry, properties: { t: p.type === "prefab" ? "p" : "a", c: p.color ?? 0, z: p.zIndex ?? 0 } });
         break;
       case "road":
         if (p.hidden || p.roadType === "train" || p.roadType === "tram") break;
+        contenu.push(f3);
         feats.push({ type: "Feature", geometry: f3.geometry, properties: { t: "r", r: p.roadType, s: p.secret ? 1 : 0 } });
         break;
       case "ferry":
@@ -47750,10 +50575,13 @@ function ecrireCarte(gj, outDir2, gardes) {
         feats.push({ type: "Feature", geometry: f3.geometry, properties: { t: p.type === "ferry" ? "f" : "tr" } });
         break;
       case "city":
+        contenu.push(f3);
         villes.push({ n: p.name, r: p.scaleRank, c: p.capital ? 1 : 0, p: f3.geometry.coordinates.map((v2) => Math.round(v2 * 1e5) / 1e5) });
         break;
     }
   }
+  feats.unshift(...terreDuJeu(contenu, { fond }));
+  contenu.length = 0;
   gj.features = [];
   const index = (0, import_geojson_vt.default)({ type: "FeatureCollection", features: feats }, { maxZoom: ZMAX, indexMaxZoom: 5, indexMaxPoints: 1e5, tolerance: 3, buffer: 64 });
   feats.length = 0;
@@ -47776,7 +50604,214 @@ function ecrireCarte(gj, outDir2, gardes) {
   import_fs5.default.renameSync(import_path6.default.join(outDir2, "tuiles.bin.tmp"), import_path6.default.join(outDir2, "tuiles.bin"));
   import_fs5.default.writeFileSync(import_path6.default.join(outDir2, "tuiles.json"), JSON.stringify({ zmin: ZMIN, zmax: ZMAX, tuiles }));
   import_fs5.default.writeFileSync(import_path6.default.join(outDir2, "villes.json"), JSON.stringify(villes));
-  return { tuiles: Object.keys(tuiles).length, octets: pos, villes: villes.length };
+  return { format: FORMAT, zmin: ZMIN, zmax: ZMAX, tuiles: Object.keys(tuiles).length, octets: pos, villes: villes.length };
+}
+
+// fond-jeu.ts
+var import_fs6 = __toESM(require("fs"));
+var import_path7 = __toESM(require("path"));
+var topojson = __toESM(require_topojson_client());
+var import_polygon_clipping = __toESM(require_polygon_clipping_cjs());
+var ressources = () => process.env.TCH_RESSOURCES || import_path7.default.dirname(process.argv[1]);
+var lire = (f3) => JSON.parse(import_fs6.default.readFileSync(import_path7.default.join(ressources(), "resources", f3), "utf8"));
+var COMPLEMENTS = {
+  // Islande
+  blonduos: [-20.29, 65.66],
+  holmavik: [-21.68, 65.71],
+  husavik: [-17.34, 66.04],
+  olafsvik: [-23.71, 64.89],
+  patreksfjord: [-23.99, 65.6],
+  thorshofn: [-15.33, 66.2],
+  // Grand Nord et Scandinavie
+  honningsvag: [25.97, 70.98],
+  ivalo: [27.54, 68.66],
+  kajaani: [27.73, 64.23],
+  karesuando: [22.48, 68.44],
+  kuusamo: [29.19, 65.97],
+  tornio: [24.15, 65.85],
+  haparanda: [24.14, 65.84],
+  arvidsjaur: [19.17, 65.59],
+  andenes: [16.12, 69.32],
+  dombas: [9.12, 62.07],
+  kristiansund: [7.73, 63.11],
+  hirtshals: [9.96, 57.59],
+  kapellskar: [19.06, 59.72],
+  sodertalje: [17.63, 59.2],
+  nynashamn: [17.95, 58.9],
+  trelleborg: [13.16, 55.38],
+  gedser: [11.93, 54.57],
+  alesund: [6.15, 62.47],
+  svolvaer: [14.57, 68.23],
+  // Finlande, pays baltes, Russie
+  kotka: [26.94, 60.47],
+  naantali: [22.02, 60.47],
+  loviisa: [26.23, 60.46],
+  olkiluoto: [21.44, 61.24],
+  paldiski: [24.05, 59.36],
+  kunda: [26.53, 59.5],
+  liepaja: [21.01, 56.51],
+  valmiera: [25.43, 57.54],
+  utena: [25.6, 55.5],
+  mazeikiai: [22.34, 56.31],
+  sosnovy_bor: [29.12, 59.9],
+  // Grèce et Balkans
+  patras: [21.73, 38.25],
+  rhodes: [28.22, 36.43],
+  chania: [24.02, 35.51],
+  heraklion: [25.14, 35.34],
+  argostoli: [20.49, 38.18],
+  trikala: [21.77, 39.56],
+  bihac: [15.87, 44.82],
+  karakaj: [19.12, 44.41],
+  bijelo_polje: [19.75, 43.04],
+  niksic: [18.94, 42.77],
+  koper: [13.73, 45.55],
+  novo_mesto: [15.17, 45.8],
+  hunedoara: [22.9, 45.75],
+  cernavoda: [28.03, 44.34],
+  mangalia: [28.58, 43.82],
+  veli_tarnovo: [25.63, 43.08],
+  kozloduy: [23.73, 43.78],
+  pirdop: [24.18, 42.7],
+  karlovo: [24.81, 42.64],
+  // Iberia
+  a_coruna: [-8.41, 43.36],
+  almaraz: [-5.69, 39.8],
+  bailen: [-3.78, 38.09],
+  ciudad_real: [-3.93, 38.99],
+  el_ejido: [-2.81, 36.78],
+  lleida: [0.62, 41.62],
+  mengibar: [-3.81, 37.97],
+  navia: [-6.72, 43.54],
+  o_barco: [-6.98, 42.42],
+  olhao: [-7.84, 37.03],
+  ponte_de_sor: [-8.01, 39.25],
+  port_sagunt: [-0.22, 39.66],
+  puertollano: [-4.11, 38.69],
+  sines: [-8.87, 37.96],
+  soria: [-2.46, 41.76],
+  vandellos: [0.88, 40.95],
+  villarreal: [-0.1, 39.94],
+  teruel: [-1.11, 40.34],
+  corticadas: [-8.2, 38.63],
+  // France, Italie, Corse, Royaume-Uni, Allemagne
+  roscoff: [-3.98, 48.73],
+  civaux: [0.66, 46.44],
+  bayonne: [-1.47, 43.49],
+  lacq: [-0.62, 43.41],
+  golfech: [0.85, 44.11],
+  calvi: [8.76, 42.57],
+  porto_vecchi: [9.28, 41.59],
+  lile_rousse: [8.94, 42.64],
+  bonifacio: [9.16, 41.39],
+  cassino: [13.83, 41.49],
+  terni: [12.65, 42.56],
+  suzzara: [10.74, 45],
+  sangiovanni: [15.65, 38.21],
+  felixstowe: [1.35, 51.96],
+  grimsby: [-0.08, 53.57],
+  travemunde: [10.87, 53.96],
+  werlte: [7.68, 52.85],
+  winsen: [10.21, 53.36]
+};
+var norm = (s2) => String(s2 || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/ß/g, "ss").replace(/ø/g, "o").replace(/æ/g, "ae").replace(/ł/g, "l").replace(/đ/g, "d").replace(/ı/g, "i").replace(/þ/g, "th").replace(/ð/g, "d").replace(/[^a-z]/g, "");
+function fondDuJeu(villes, usa) {
+  const lat0 = usa ? 39 : 52, K = Math.cos(lat0 * Math.PI / 180);
+  const km = (p) => [p[0] * 111.32 * K, p[1] * 110.57];
+  const unkm = (p) => [p[0] / (111.32 * K), p[1] / 110.57];
+  const dist = (a2, b2) => Math.hypot(a2[0] - b2[0], a2[1] - b2[1]);
+  const lieux = lire("ne_10m_populated_places_simple.geojson").features.map((f3) => f3.properties);
+  const index = /* @__PURE__ */ new Map();
+  for (const p of lieux) for (const champ of ["name", "nameascii", "namealt", "namepar", "ls_name", "meganame"])
+    for (const v2 of String(p[champ] || "").split(/[|,]/)) {
+      const k2 = norm(v2);
+      if (k2.length < 3) continue;
+      if (!index.has(k2)) index.set(k2, []);
+      index.get(k2).push(p);
+    }
+  let reperes = [];
+  for (const v2 of villes) {
+    const g3 = km(v2.ll);
+    let best = COMPLEMENTS[v2.token] ? km(COMPLEMENTS[v2.token]) : null, bd = best ? dist(best, g3) : 1e9;
+    for (const k2 of [v2.token, v2.name, v2.nameLocalized, v2.token.replace(/_/g, " ")])
+      for (const p of index.get(norm(k2)) || []) {
+        const r4 = km([p.longitude, p.latitude]);
+        const d2 = dist(r4, g3);
+        if (d2 < bd) {
+          bd = d2;
+          best = r4;
+        }
+      }
+    if (best && bd < 350) reperes.push({ id: v2.token, r: best, g: g3 });
+  }
+  const dep = (p) => [p.g[0] - p.r[0], p.g[1] - p.r[1]];
+  const ecartes = /* @__PURE__ */ new Set();
+  for (const p of reperes) {
+    const v2 = reperes.filter((q2) => q2 !== p).sort((a2, b2) => dist(a2.r, p.r) - dist(b2.r, p.r)).slice(0, 6).map(dep);
+    if (v2.length < 3) continue;
+    const med = [0, 1].map((i2) => v2.map((x2) => x2[i2]).sort((a2, b2) => a2 - b2)[Math.floor(v2.length / 2)]);
+    const d2 = dep(p);
+    if (Math.hypot(d2[0] - med[0], d2[1] - med[1]) > 60) ecartes.add(p.id);
+  }
+  reperes = reperes.filter((p) => !ecartes.has(p.id));
+  if (reperes.length < 10) return { terres: [], reperes: reperes.length };
+  const src2 = reperes.map((p) => p.r), dx = reperes.map((p) => p.g[0] - p.r[0]), dy = reperes.map((p) => p.g[1] - p.r[1]);
+  const SIG2 = 120 * 120;
+  const deformer = (q2) => {
+    const [x2, y3] = km(q2);
+    let r2min = Infinity;
+    const r22 = new Float64Array(src2.length);
+    for (let i2 = 0; i2 < src2.length; i2++) {
+      const a2 = x2 - src2[i2][0], b2 = y3 - src2[i2][1];
+      r22[i2] = a2 * a2 + b2 * b2;
+      if (r22[i2] < r2min) r2min = r22[i2];
+    }
+    let sw = 0, sx = 0, sy = 0;
+    for (let i2 = 0; i2 < src2.length; i2++) {
+      const w2 = Math.exp(-(r22[i2] - r2min) / SIG2);
+      sw += w2;
+      sx += w2 * dx[i2];
+      sy += w2 * dy[i2];
+    }
+    return unkm([x2 + sx / sw, y3 + sy / sw]);
+  };
+  const boite = usa ? [[-135, 15], [-55, 60]] : [[-32, 25], [62, 76]];
+  const [[x0, y0], [x1, y1]] = boite;
+  const land = lire("land-10m.json");
+  const terresBrutes = topojson.feature(land, land.objects.land).features[0].geometry.coordinates;
+  for (const poly of terresBrutes) {
+    let a2 = 1e9, b2 = -1e9;
+    for (const [x2] of poly[0]) {
+      if (x2 < a2) a2 = x2;
+      if (x2 > b2) b2 = x2;
+    }
+    if (b2 - a2 > 180) {
+      for (const ring of poly) for (const p of ring) if (p[0] < -150) p[0] += 360;
+    }
+  }
+  const rect = [[[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]]];
+  const dans = (poly) => {
+    const r4 = poly[0];
+    let a2 = 1e9, b2 = -1e9, c3 = 1e9, d2 = -1e9;
+    for (const [x2, y3] of r4) {
+      if (x2 < a2) a2 = x2;
+      if (x2 > b2) b2 = x2;
+      if (y3 < c3) c3 = y3;
+      if (y3 > d2) d2 = y3;
+    }
+    return b2 > x0 && a2 < x1 && d2 > y0 && c3 < y1;
+  };
+  const terres = [];
+  for (const poly of terresBrutes.filter(dans)) {
+    let morceaux;
+    try {
+      morceaux = import_polygon_clipping.default.intersection(poly, rect);
+    } catch {
+      continue;
+    }
+    for (const mp of morceaux) terres.push({ type: "Feature", properties: { t: "l" }, geometry: { type: "Polygon", coordinates: mp.map((r4) => r4.map(deformer)) } });
+  }
+  return { terres, reperes: reperes.length };
 }
 
 // ouvriers.ts
@@ -48635,84 +51670,132 @@ function toNode(rawNode) {
 // ouvriers.ts
 var estOuvrier = !import_worker_threads.isMainThread && !!(import_worker_threads.workerData && import_worker_threads.workerData.tchOuvrier);
 function nombreOuvriers() {
-  const env2 = Number(process.env.TCH_OUVRIERS);
+  const brut = process.env.TCH_OUVRIERS;
+  const env2 = Number(brut);
+  if (brut != null && brut !== "" && env2 === 0) return 0;
   if (env2 > 0) return Math.min(32, Math.floor(env2));
   const coeurs = typeof import_os.default.availableParallelism === "function" ? import_os.default.availableParallelism() : import_os.default.cpus().length;
   const libreGo = import_os.default.freemem() / 2 ** 30;
   return Math.max(1, Math.min(coeurs - 2, 8, Math.floor((libreGo - 1.5) / 0.4)));
 }
-function creerOuvriers(modeles) {
-  const n2 = nombreOuvriers();
+function creerOuvriers(modeles, decoderIci) {
+  let n2 = nombreOuvriers();
   const fichier = __filename;
-  const ouvriers = Array.from({ length: n2 }, () => {
-    const w2 = new import_worker_threads.Worker(fichier, { workerData: { tchOuvrier: true, modeles }, resourceLimits: { maxOldGenerationSizeMb: 1024 } });
+  const ouvriers = [];
+  let id = 0;
+  const enAttente = [];
+  const total = () => ouvriers.reduce((s2, o3) => s2 + o3.charge, 0);
+  const libere = () => {
+    while (enAttente.length && total() < 2 * Math.max(1, vivants().length)) enAttente.shift()();
+  };
+  const vivants = () => ouvriers.filter((o3) => o3.w);
+  const panne = (o3, raison) => {
+    if (!o3.w) return;
+    process.stderr.write(`[TCH Map] ouvrier arr\xEAt\xE9 (${raison}) : reprise sur le fil principal
+`);
+    try {
+      o3.w.terminate();
+    } catch {
+    }
+    o3.w = null;
+    for (const [, a2] of o3.attentes) {
+      try {
+        a2.ok(decoderIci(a2.ab));
+      } catch (e2) {
+        a2.ko(e2);
+      }
+    }
+    o3.attentes.clear();
+    o3.charge = 0;
+    libere();
+  };
+  for (let k2 = 0; k2 < n2; k2++) {
+    let w2;
+    try {
+      w2 = new import_worker_threads.Worker(fichier, { workerData: { tchOuvrier: true, modeles } });
+    } catch (e2) {
+      process.stderr.write(`[TCH Map] ouvrier impossible : ${e2.message}
+`);
+      break;
+    }
     const o3 = { w: w2, charge: 0, attentes: /* @__PURE__ */ new Map() };
     w2.on("message", (m2) => {
       const a2 = o3.attentes.get(m2.id);
       if (!a2) return;
       o3.attentes.delete(m2.id);
       o3.charge--;
+      if (m2.erreur) a2.ko(new Error(m2.erreur));
+      else a2.ok(m2);
       libere();
-      if (m2.erreur) a2[1](new Error(m2.erreur));
-      else a2[0](m2);
     });
-    w2.on("error", (e2) => {
-      for (const [, a2] of o3.attentes) a2[1](e2);
-      o3.attentes.clear();
+    w2.on("error", (e2) => panne(o3, e2 && e2.message || "erreur"));
+    w2.on("exit", (c3) => {
+      if (o3.w) panne(o3, "sortie " + c3);
     });
-    return o3;
-  });
-  let id = 0, enAttente = [];
-  const total = () => ouvriers.reduce((s2, o3) => s2 + o3.charge, 0);
-  const libere = () => {
-    while (enAttente.length && total() < 2 * n2) enAttente.shift()();
-  };
+    ouvriers.push(o3);
+  }
   return {
-    n: n2,
-    // Attend qu'une place se libère (au plus 2 secteurs par ouvrier en même temps)
-    place: () => total() < 2 * n2 ? Promise.resolve() : new Promise((r4) => enAttente.push(r4)),
+    get n() {
+      return vivants().length;
+    },
+    place: () => vivants().length && total() < 2 * vivants().length ? Promise.resolve() : vivants().length ? new Promise((r4) => enAttente.push(r4)) : Promise.resolve(),
     confier(ab2) {
-      const o3 = ouvriers.reduce((a2, b2) => b2.charge < a2.charge ? b2 : a2);
+      const v2 = vivants();
+      if (!v2.length) {
+        try {
+          return Promise.resolve(decoderIci(ab2));
+        } catch (e2) {
+          return Promise.reject(e2);
+        }
+      }
+      const o3 = v2.reduce((a2, b2) => b2.charge < a2.charge ? b2 : a2);
       const i2 = ++id;
       o3.charge++;
-      return new Promise((res, rej) => {
-        o3.attentes.set(i2, [res, rej]);
+      const copie = ab2.slice(0);
+      return new Promise((ok, ko) => {
+        o3.attentes.set(i2, { ab: copie, ok, ko });
         o3.w.postMessage({ id: i2, ab: ab2 }, [ab2]);
       });
     },
-    fermer: () => Promise.all(ouvriers.map((o3) => o3.w.terminate()))
+    // Fermeture normale : on oublie l'ouvrier avant de l'arrêter (sa sortie n'est pas une panne)
+    fermer: () => Promise.all(ouvriers.map((o3) => {
+      const w2 = o3.w;
+      o3.w = null;
+      return w2 ? w2.terminate() : 0;
+    }))
   };
 }
+var INUTILES = /* @__PURE__ */ new Set([1 /* Terrain */, 2 /* Building */, 44 /* Curve */, 36 /* Sign */, 5 /* Model */, 41 /* TrajectoryItem */]);
+var AUCUN = { has: () => false };
+function decoderSecteur(ab2) {
+  const s2 = parseSector(Buffer.from(ab2), AUCUN);
+  const items = s2.items.filter((it) => !INUTILES.has(it.type));
+  const n2 = s2.nodes.length;
+  const u3 = new BigUint64Array(3 * n2), f3 = new Float32Array(8 * n2), c3 = new Uint8Array(2 * n2);
+  for (let i2 = 0; i2 < n2; i2++) {
+    const d2 = s2.nodes[i2];
+    u3[3 * i2] = BigInt.asUintN(64, d2.uid);
+    u3[3 * i2 + 1] = BigInt.asUintN(64, d2.forwardItemUid);
+    u3[3 * i2 + 2] = BigInt.asUintN(64, d2.backwardItemUid);
+    const q2 = d2.rotationQuat || [0, 0, 0, 0], k2 = 8 * i2;
+    f3[k2] = d2.x;
+    f3[k2 + 1] = d2.y;
+    f3[k2 + 2] = d2.z;
+    f3[k2 + 3] = d2.rotation;
+    f3[k2 + 4] = q2[0];
+    f3[k2 + 5] = q2[1];
+    f3[k2 + 6] = q2[2];
+    f3[k2 + 7] = q2[3];
+    c3[2 * i2] = d2.forwardCountryId;
+    c3[2 * i2 + 1] = d2.backwardCountryId;
+  }
+  return { items, n: n2, u: u3.buffer, f: f3.buffer, c: c3.buffer };
+}
 function lancerOuvrier() {
-  const modeles = new Set(import_worker_threads.workerData.modeles || []);
-  const aucun = { has: () => false };
-  const inutiles = /* @__PURE__ */ new Set([1 /* Terrain */, 2 /* Building */, 44 /* Curve */, 36 /* Sign */, 5 /* Model */, 41 /* TrajectoryItem */]);
-  const garder = (it) => !inutiles.has(it.type);
-  void modeles;
   import_worker_threads.parentPort.on("message", ({ id, ab: ab2 }) => {
     try {
-      const s2 = parseSector(Buffer.from(ab2), aucun);
-      const items = s2.items.filter(garder);
-      const n2 = s2.nodes.length;
-      const u3 = new BigUint64Array(3 * n2), f3 = new Float32Array(8 * n2), c3 = new Uint8Array(2 * n2);
-      for (let i2 = 0; i2 < n2; i2++) {
-        const d2 = s2.nodes[i2];
-        u3[3 * i2] = BigInt.asUintN(64, d2.uid);
-        u3[3 * i2 + 1] = BigInt.asUintN(64, d2.forwardItemUid);
-        u3[3 * i2 + 2] = BigInt.asUintN(64, d2.backwardItemUid);
-        const q2 = d2.rotationQuat || [0, 0, 0, 0], k2 = 8 * i2;
-        f3[k2] = d2.x;
-        f3[k2 + 1] = d2.y;
-        f3[k2 + 2] = d2.z;
-        f3[k2 + 3] = d2.rotation;
-        f3[k2 + 4] = q2[0];
-        f3[k2 + 5] = q2[1];
-        f3[k2 + 6] = q2[2];
-        f3[k2 + 7] = q2[3];
-        c3[2 * i2] = d2.forwardCountryId;
-        c3[2 * i2 + 1] = d2.backwardCountryId;
-      }
-      import_worker_threads.parentPort.postMessage({ id, items, n: n2, u: u3.buffer, f: f3.buffer, c: c3.buffer }, [u3.buffer, f3.buffer, c3.buffer]);
+      const r4 = decoderSecteur(ab2);
+      import_worker_threads.parentPort.postMessage({ id, ...r4 }, [r4.u, r4.f, r4.c]);
     } catch (e2) {
       import_worker_threads.parentPort.postMessage({ id, erreur: String(e2 && e2.message || e2) });
     }
@@ -48733,7 +51816,7 @@ async function principal() {
     } catch {
     }
     let dernier = -1;
-    globalThis.__tchOuvriers = (modeles) => creerOuvriers(modeles);
+    globalThis.__tchOuvriers = (modeles) => creerOuvriers(modeles, decoderSecteur);
     globalThis.__tchProgression = (fait, total) => {
       const pct = Math.floor(fait / total * 100);
       if (pct !== dernier) {
@@ -48741,11 +51824,11 @@ async function principal() {
         etape("lecture", { fait, total });
       }
     };
-    import_fs6.default.mkdirSync(outDir, { recursive: true });
-    const scs = import_fs6.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path7.default.join(gameDir, f3));
+    import_fs7.default.mkdirSync(outDir, { recursive: true });
+    const scs = import_fs7.default.readdirSync(gameDir).filter((f3) => f3.endsWith(".scs")).map((f3) => import_path8.default.join(gameDir, f3));
     const empreinte = scs.map((f3) => {
-      const st = import_fs6.default.statSync(f3);
-      return [import_path7.default.basename(f3), st.size, Math.round(st.mtimeMs)];
+      const st = import_fs7.default.statSync(f3);
+      return [import_path8.default.basename(f3), st.size, Math.round(st.mtimeMs)];
     });
     etape("lecture", { fait: 0, total: 0, ouvriers: nombreOuvriers() });
     let r4 = await parseMapFiles(scs, { includeDlc: true, mode: "all" });
@@ -48765,16 +51848,39 @@ async function principal() {
       let data = readMapData(source, map, { mapDataKeys: geoJsonMapDataKeys, includeHiddenRoadsAndPrefabs: false });
       for (const k2 of Object.keys(donnees)) delete donnees[k2];
       const gj = convertToMapGeoJson(data, { includeDebug: false, skipCoalescing: false });
+      etape("fond");
+      const proj = map === "usa" ? fromAtsCoordsToWgs84 : fromEts2CoordsToWgs84;
+      const villes = [...data.cities.values()].map((c3) => ({ token: c3.token, name: c3.name, nameLocalized: c3.nameLocalized, ll: proj([c3.x, c3.y]) }));
       data = null;
+      let fond = [], reperes = 0;
+      try {
+        const r22 = fondDuJeu(villes, map === "usa");
+        fond = r22.terres;
+        reperes = r22.reperes;
+      } catch (e2) {
+        process.stderr.write("[TCH Map] fond non recal\xE9 : " + (e2 && e2.message) + "\n");
+      }
+      if (process.env.TCH_DEBUG) import_fs7.default.writeFileSync(import_path8.default.join(outDir, "fond-debug.geojson"), JSON.stringify({ type: "FeatureCollection", features: fond }));
+      if (!fond.length) {
+        try {
+          const f3 = process.env.TCH_FOND || import_path8.default.join(import_path8.default.dirname(process.argv[1]), "..", "viewer", "fond", map === "usa" ? "terres.geojson" : "terres-ets2.geojson");
+          fond = JSON.parse(import_fs7.default.readFileSync(f3, "utf8")).features;
+        } catch {
+        }
+      }
       etape("tuiles");
-      const res = ecrireCarte(gj, outDir, gardesVisibles(map, scs));
-      import_fs6.default.writeFileSync(import_path7.default.join(outDir, "info.json"), JSON.stringify({ jeu: map === "usa" ? "ats" : "ets2", version, date: (/* @__PURE__ */ new Date()).toISOString(), empreinte, ...res }));
+      const res = { ...ecrireCarte(gj, outDir, gardesVisibles(map, scs), fond), reperes };
+      import_fs7.default.writeFileSync(import_path8.default.join(outDir, "info.json"), JSON.stringify({ jeu: map === "usa" ? "ats" : "ets2", version, date: (/* @__PURE__ */ new Date()).toISOString(), empreinte, ...res }));
       etape("fini", res);
     }
+    terminer(0);
   } catch (e2) {
     etape("erreur", { message: String(e2?.message || e2) });
-    process.exitCode = 1;
+    terminer(1);
   }
+}
+function terminer(code) {
+  process.stdout.write("", () => process.exit(code));
 }
 if (estOuvrier) lancerOuvrier();
 else principal();

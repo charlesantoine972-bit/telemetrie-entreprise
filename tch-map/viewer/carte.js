@@ -24,7 +24,7 @@ const ZONES = ['match', ['get', 'c'],
   4, 'hsl(0, 70%, 25%)', 5, 'hsl(107, 40%, 25%)', 6, 'hsl(201, 45%, 25%)', 7, 'hsl(53, 60%, 25%)', 8, 'hsl(267, 35%, 25%)',
   'hsl(200, 2%, 30%)'];
 // Routes en gris comme dans le jeu (autoroutes plus claires) : seule ta trace est en couleur
-const ROUTES = ['match', ['get', 'r'], 'freeway', '#8e9196', 'divided', '#74787d', 'local', '#5c6065', 'no_vehicles', '#404246', '#5c6065'];
+const ROUTES = ['match', ['get', 'r'], 'freeway', '#9a9da2', 'divided', '#83878c', 'local', '#6d7176', 'no_vehicles', '#45474b', '#6d7176'];
 const ROUTES_BORD = ['match', ['get', 'r'], 'freeway', '#2d3034', '#24272b'];
 const LARGEUR = ['interpolate', ['exponential', 1.5], ['zoom'], 3, ['match', ['get', 'r'], 'freeway', 0.6, 0.35], 6, ['match', ['get', 'r'], 'freeway', 1.2, 0.7], 9, 2.4, 12, 7, 14, 22];
 
@@ -34,21 +34,22 @@ const map = new maplibregl.Map({
   renderWorldCopies: false,
   center: VIEW.ets2.center,
   zoom: VIEW.ets2.zoom,
-  minZoom: 2.5,
+  minZoom: 2,
   maxZoom: 15,
   dragRotate: false,
   pitchWithRotate: false,
   style: {
     version: 8,
     sources: {
-      terres: { type: 'geojson', data: 'fond/terres.geojson' },
-      frontieres: { type: 'geojson', data: 'fond/frontieres.geojson' },
+      terres: { type: 'geojson', data: 'fond/terres-ets2.geojson' },
+      frontieres: { type: 'geojson', data: 'fond/frontieres-ets2.geojson' },
       trace: { type: 'geojson', data: { type: 'FeatureCollection', features: [] } },
     },
     layers: [
       { id: 'fond', type: 'background', paint: { 'background-color': css('--bg') } },
+      // Terres réelles, déformées comme la carte du jeu (le reste du monde) ; la carte du jeu ajoute ses propres terres
       { id: 'terres', type: 'fill', source: 'terres', paint: { 'fill-color': css('--land'), 'fill-antialias': false } },
-      { id: 'frontieres', type: 'line', source: 'frontieres', paint: { 'line-color': css('--border'), 'line-opacity': .7, 'line-width': 1, 'line-dasharray': [3, 2] } },
+      { id: 'frontieres', type: 'line', source: 'frontieres', paint: { 'line-color': css('--border'), 'line-opacity': ['interpolate', ['linear'], ['zoom'], 6, .7, 9, .25], 'line-width': 1, 'line-dasharray': [3, 2] } },
       // Routes parcourues : ce que tu as exploré, en couleur
       { id: 'trace-halo', type: 'line', source: 'trace', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#000', 'line-opacity': .35, 'line-width': ['interpolate', ['linear'], ['zoom'], 3, 3, 10, 8] } },
       { id: 'trace', type: 'line', source: 'trace', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': css('--trail'), 'line-width': ['interpolate', ['linear'], ['zoom'], 3, 1.5, 10, 5] } },
@@ -60,10 +61,14 @@ map.on('dragstart', () => { S.follow = false; });
 map.on('zoom', () => syncCityLabels());
 
 // ---------- Carte du jeu (tuiles extraites des fichiers du jeu) ----------
-const COUCHES = ['jeu-zones', 'jeu-carrefours', 'jeu-routes-bord', 'jeu-routes', 'jeu-ferries'];
+const COUCHES = ['jeu-terre', 'jeu-zones', 'jeu-carrefours', 'jeu-routes-bord', 'jeu-routes', 'jeu-ferries'];
+// Fond « monde » (terres réelles non recalées) : seulement tant que la carte du jeu n'est pas prête.
+// Ensuite, fond uni + terres du jeu (côtes recalées sur le jeu et tout son contenu) : pas de doublon ni de route dans l'eau.
+const fondMonde = (visible) => { for (const id of ['terres', 'frontieres']) if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none'); };
 function retirerJeu() {
   for (const id of COUCHES) if (map.getLayer(id)) map.removeLayer(id);
   if (map.getSource('jeu')) map.removeSource('jeu');
+  fondMonde(true);
 }
 async function chargerJeu(game) {
   retirerJeu();
@@ -81,9 +86,12 @@ async function chargerJeu(game) {
     return;
   }
   note('');
+  fondMonde(false);
   const base = new URL(`data/${game}/tuiles/`, location.href).href;
-  map.addSource('jeu', { type: 'vector', tiles: [`${base}{z}/{x}/{y}.pbf?v=${encodeURIComponent(info.date)}`], minzoom: 4, maxzoom: 10 });
+  map.addSource('jeu', { type: 'vector', tiles: [`${base}{z}/{x}/{y}.pbf?v=${encodeURIComponent(info.date)}`], minzoom: info.zmin || 4, maxzoom: info.zmax || 10 });
   const avant = 'trace-halo';
+  // Terres du jeu : côtes réelles recalées + tout ce que le jeu contient (aucune route dans l'eau)
+  map.addLayer({ id: 'jeu-terre', type: 'fill', source: 'jeu', 'source-layer': 'jeu', filter: ['==', ['get', 't'], 'l'], paint: { 'fill-color': css('--land'), 'fill-antialias': false } }, avant);
   map.addLayer({ id: 'jeu-zones', type: 'fill', source: 'jeu', 'source-layer': 'jeu', filter: ['==', ['get', 't'], 'a'], layout: { 'fill-sort-key': ['get', 'z'] }, paint: { 'fill-color': ZONES } }, avant);
   map.addLayer({ id: 'jeu-carrefours', type: 'fill', source: 'jeu', 'source-layer': 'jeu', filter: ['==', ['get', 't'], 'p'], layout: { 'fill-sort-key': ['get', 'z'] }, paint: { 'fill-color': ZONES } }, avant);
   map.addLayer({ id: 'jeu-routes-bord', type: 'line', source: 'jeu', 'source-layer': 'jeu', minzoom: 7, filter: ['==', ['get', 't'], 'r'], layout: { 'line-cap': 'round', 'line-join': 'bevel' }, paint: { 'line-color': ROUTES_BORD, 'line-gap-width': LARGEUR, 'line-width': ['interpolate', ['linear'], ['zoom'], 7, 0.5, 12, 1.5] } }, avant);
@@ -135,7 +143,6 @@ function syncCityLabels() {
     el.classList.toggle('dest', isDest);
     // Comme dans le jeu : les grandes villes d'abord, les petites en zoomant
     const seuil = c.rank <= 3 ? 3.4 : c.rank <= 6 ? 4.6 : 5.6;
-    el.classList.toggle('hidden', !isDest && z < seuil - 1.2);
     el.classList.toggle('small', !isDest && z < seuil);
   }
 }
@@ -193,6 +200,9 @@ function setState(s) {
 
 function setGame(game) {
   S.game = game === 'ats' ? 'ats' : 'ets2';
+  const suffixe = S.game === 'ets2' ? '-ets2' : '';
+  map.getSource('terres')?.setData(`fond/terres${suffixe}.geojson`);
+  map.getSource('frontieres')?.setData(`fond/frontieres${suffixe}.geojson`);
   if (S.truck) { S.truck.remove(); S.truck = null; }
   map.fitBounds(VIEW[S.game].bounds, { animate: false, padding: 20 });
   setTrail([]);
@@ -209,10 +219,11 @@ function lighten(hex, f) {
 function setTheme(t) {
   const root = document.documentElement.style;
   for (const k of ['bg', 'border', 'text', 'muted', 'accent', 'trail']) if (t[k]) root.setProperty('--' + k, t[k]);
-  if (t.bg) root.setProperty('--land', lighten(t.bg, .035));
+  if (t.bg) root.setProperty('--land', lighten(t.bg, .055));
   if (!map.isStyleLoaded()) return map.once('load', () => setTheme(t));
   map.setPaintProperty('fond', 'background-color', css('--bg'));
   map.setPaintProperty('terres', 'fill-color', css('--land'));
+  if (map.getLayer('jeu-terre')) map.setPaintProperty('jeu-terre', 'fill-color', css('--land'));
   map.setPaintProperty('frontieres', 'line-color', css('--border'));
   map.setPaintProperty('trace', 'line-color', css('--trail'));
   if (S.truck) S.truck.getElement().style.color = css('--accent');
