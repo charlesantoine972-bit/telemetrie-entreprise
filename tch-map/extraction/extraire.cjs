@@ -24577,14 +24577,14 @@ var require_dynamicDefaults = __commonJS({
         compile(schema, _parentSchema, it) {
           if (!it.opts.useDefaults || it.compositeRule)
             return () => true;
-          const fs8 = {};
+          const fs7 = {};
           for (const key in schema)
-            fs8[key] = getDefault(schema[key]);
+            fs7[key] = getDefault(schema[key]);
           const empty = it.opts.useDefaults === "empty";
           return (data2) => {
             for (const prop in schema) {
               if (data2[prop] === void 0 || empty && (data2[prop] === null || data2[prop] === "")) {
-                data2[prop] = fs8[prop]();
+                data2[prop] = fs7[prop]();
               }
             }
             return true;
@@ -25884,7 +25884,7 @@ var require_utils2 = __commonJS({
 var require_fattr = __commonJS({
   "../node_modules/adm-zip/util/fattr.js"(exports2, module2) {
     var pth = require("path");
-    module2.exports = function(path7, { fs: fs8 }) {
+    module2.exports = function(path7, { fs: fs7 }) {
       var _path = path7 || "", _obj = newAttr(), _stat = null;
       function newAttr() {
         return {
@@ -25896,8 +25896,8 @@ var require_fattr = __commonJS({
           atime: 0
         };
       }
-      if (_path && fs8.existsSync(_path)) {
-        _stat = fs8.statSync(_path);
+      if (_path && fs7.existsSync(_path)) {
+        _stat = fs7.statSync(_path);
         _obj.directory = _stat.isDirectory();
         _obj.mtime = _stat.mtime;
         _obj.atime = _stat.atime;
@@ -42788,7 +42788,7 @@ function parseMapFiles(scsFilePaths, { includeDlc, mode }) {
   }).map((p) => {
     const scsSource = import_path2.default.basename(p);
     logger.log("adding", scsSource);
-    return fs.statSync(p).isDirectory() ? new DirArchive(p, scsSource) : new ScsArchive(p, scsSource);
+    return require("fs").statSync(p).isDirectory() ? new DirArchive(p, scsSource) : new ScsArchive(p, scsSource);
   });
   const entries = new CombinedEntries(archives);
   try {
@@ -44312,14 +44312,14 @@ function toBigInt(v2) {
 }
 
 // ../packages/libs/io/write.ts
-var fs5 = __toESM(require("node:fs"), 1);
+var fs4 = __toESM(require("node:fs"), 1);
 function writeArrayFile(array, outputFile) {
-  fs5.writeFileSync(outputFile, JSON.stringify(array, null, 2));
+  fs4.writeFileSync(outputFile, JSON.stringify(array, null, 2));
 }
 function writeGeojsonFile(path7, data2) {
-  const fd = fs5.openSync(path7, "w");
+  const fd = fs4.openSync(path7, "w");
   let pos = 0;
-  const writeln = (str) => pos += fs5.writeSync(fd, str + "\n", pos, "utf-8");
+  const writeln = (str) => pos += fs4.writeSync(fd, str + "\n", pos, "utf-8");
   writeln("{");
   writeln('"type": "FeatureCollection",');
   writeln('"features":[');
@@ -44333,7 +44333,7 @@ function writeGeojsonFile(path7, data2) {
   }
   writeln("]");
   writeln("}");
-  fs5.closeSync(fd);
+  fs4.closeSync(fd);
 }
 BigInt.prototype.toJSON = function() {
   return this.toString(16);
@@ -45513,13 +45513,13 @@ function convertToMapGeoJson(tsMapData, options) {
   logger3.log("creating roads and quadtree of prefab-adjacent roads...");
   const roadFeatures = [];
   for (const r5 of roads.values()) {
-    const fs8 = roadToFeature(
+    const fs7 = roadToFeature(
       r5,
       assertExists(roadLooks.get(r5.roadLookToken)),
       nodes,
       dividerFeatures
     );
-    for (const f3 of fs8) {
+    for (const f3 of fs7) {
       roadFeatures.push(f3);
       if (prefabNodeUids.has(r5.startNodeUid)) {
         const node = assertExists(nodes.get(r5.startNodeUid));
