@@ -7,14 +7,13 @@
 //   1. terres et frontières à l'échelle 1:50 000 000 ;
 //   2. Groenland retiré (absent d'ETS2) ;
 //   3. Antarctique retiré ; polygones qui traversent l'antiméridien recalés (seulement leurs points de l'extrême est) ;
-//   4. Islande : côte détaillée (1:10 000 000) recalée sur sa place dans ETS2. SCS l'a rapprochée du continent
-//      et agrandi la région de Reykjavík. Plaque mince (thin-plate spline) des vraies positions de ses 15 villes
-//      vers leurs positions dans le jeu : chaque ville tombe à sa place, la côte reste lisse.
+//   4. Islande : côte détaillée (1:10 000 000) recalée sur sa place dans ETS2 (SCS l'a rapprochée du continent et
+//      un peu déformée). Plaque mince (thin-plate spline) des vraies positions de ses 14 villes officielles vers leurs
+//      positions dans le jeu : chaque ville tombe à sa place, la côte reste lisse.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { toLngLat } from '../viewer/projection.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const [atlasDir, topoClient] = process.argv.slice(2);
@@ -23,17 +22,18 @@ const round = (g) => JSON.parse(JSON.stringify(g, (k, v) => (typeof v === 'numbe
 const land = JSON.parse(fs.readFileSync(path.join(atlasDir, 'land-50m.json')));
 const ctry = JSON.parse(fs.readFileSync(path.join(atlasDir, 'countries-50m.json')));
 
-// Vraies positions (longitude, latitude) des villes d'Islande présentes dans ETS2
+// Les 14 villes d'Islande du DLC officiel : [vraie position, position sur la carte du jeu] (longitude, latitude).
+// Positions dans le jeu : lues dans les fichiers du jeu 1.62 par l'extraction TCH Map (villes.json).
 const ICELAND = {
-  akranes: [-22.08, 64.32], akureyri: [-18.09, 65.68], blonduos: [-20.29, 65.66], bolungarvik: [-23.25, 66.15],
-  borgarnes: [-21.92, 64.54], hofn: [-15.21, 64.25], holmavik: [-21.68, 65.71], isafjordur: [-23.13, 66.07],
-  keflavik: [-22.61, 63.99], krafla: [-16.78, 65.71], reydar: [-14.22, 65.03], reykjavik: [-21.94, 64.15],
-  selfoss: [-21.0, 63.93], seydis: [-14.01, 65.26], vik: [-19.01, 63.42],
+  akureyri: [[-18.09, 65.68], [-19.05858, 65.67586]], blonduos: [[-20.29, 65.66], [-20.73218, 65.65688]],
+  borgarnes: [[-21.92, 64.54], [-22.36895, 64.53506]], egilsstadir: [[-14.40, 65.27], [-15.36038, 65.21257]],
+  hofn: [[-15.21, 64.25], [-15.99948, 64.23302]], holmavik: [[-21.68, 65.71], [-22.07181, 65.71227]],
+  husavik: [[-17.34, 66.04], [-18.25756, 66.23838]], isafjordur: [[-23.13, 66.07], [-24.18269, 66.16932]],
+  keflavik: [[-22.56, 64.00], [-23.22265, 63.75991]], olafsvik: [[-23.71, 64.89], [-24.4786, 64.75068]],
+  patreksfjordur: [[-23.99, 65.60], [-25.45462, 65.54137]], reykjavik: [[-21.94, 64.15], [-22.10628, 63.98038]],
+  selfoss: [[-21.00, 63.93], [-20.8487, 63.78794]], thorshofn: [[-15.33, 66.20], [-15.66428, 66.34413]],
 };
-const villes = fs.readFileSync(path.join(here, '..', '..', 'app', 'data', 'villes.js'), 'utf8');
-const V = JSON.parse(villes.slice(villes.indexOf('{'), villes.lastIndexOf('}') + 1)).ets2;
-
-const pairs = Object.entries(ICELAND).map(([id, real]) => { const c = V.find(v => v[0] === id); return c && [real, toLngLat('ets2', c[2], c[3])]; }).filter(Boolean);
+const pairs = Object.values(ICELAND);
 // Le jeu déforme l'île (la région de Reykjavík est agrandie, comme les grandes villes partout dans ETS2).
 // On suit cette déformation avec une plaque mince (thin-plate spline) : elle passe exactement par les 15 villes
 // et plie la côte le moins possible entre elles, sans bosses autour de chaque ville.

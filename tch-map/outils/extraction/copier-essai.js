@@ -1,7 +1,7 @@
 // Outil d'essai : copie le sous-ensemble des fichiers du jeu lus par l'extraction (trace) + les secteurs de carte.
 'use strict';
 const fs = require('fs'), path = require('path');
-const { openArchive } = require('../lecteur/archive.js');
+const { openArchive } = require('../../lecteur/archive.js');
 const [gameDir, traceFile, outDir] = process.argv.slice(2);
 const ouverts = new Map();
 const arch = (n) => { if (!ouverts.has(n)) ouverts.set(n, openArchive(path.join(gameDir, n))); return ouverts.get(n); };

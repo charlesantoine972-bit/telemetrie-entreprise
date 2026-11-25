@@ -24,9 +24,9 @@ const ZONES = ['match', ['get', 'c'],
   4, 'hsl(0, 70%, 25%)', 5, 'hsl(107, 40%, 25%)', 6, 'hsl(201, 45%, 25%)', 7, 'hsl(53, 60%, 25%)', 8, 'hsl(267, 35%, 25%)',
   'hsl(200, 2%, 30%)'];
 // Routes en gris comme dans le jeu (autoroutes plus claires) : seule ta trace est en couleur
-const ROUTES = ['match', ['get', 'r'], 'freeway', '#a3a6ab', 'divided', '#83878c', 'local', '#676b70', 'no_vehicles', '#45474b', '#676b70'];
+const ROUTES = ['match', ['get', 'r'], 'freeway', '#8e9196', 'divided', '#74787d', 'local', '#5c6065', 'no_vehicles', '#404246', '#5c6065'];
 const ROUTES_BORD = ['match', ['get', 'r'], 'freeway', '#2d3034', '#24272b'];
-const LARGEUR = ['interpolate', ['exponential', 1.5], ['zoom'], 3, ['match', ['get', 'r'], 'freeway', 0.9, 0.5], 6, ['match', ['get', 'r'], 'freeway', 1.6, 0.9], 9, 2.6, 12, 7, 14, 22];
+const LARGEUR = ['interpolate', ['exponential', 1.5], ['zoom'], 3, ['match', ['get', 'r'], 'freeway', 0.6, 0.35], 6, ['match', ['get', 'r'], 'freeway', 1.2, 0.7], 9, 2.4, 12, 7, 14, 22];
 
 const map = new maplibregl.Map({
   container: 'carte',
@@ -134,7 +134,7 @@ function syncCityLabels() {
     el.classList.toggle('new', !visited && !isDest);
     el.classList.toggle('dest', isDest);
     // Comme dans le jeu : les grandes villes d'abord, les petites en zoomant
-    const seuil = c.rank <= 3 ? 3.6 : c.rank <= 6 ? 5 : 6.2;
+    const seuil = c.rank <= 3 ? 3.4 : c.rank <= 6 ? 4.6 : 5.6;
     el.classList.toggle('hidden', !isDest && z < seuil - 1.2);
     el.classList.toggle('small', !isDest && z < seuil);
   }

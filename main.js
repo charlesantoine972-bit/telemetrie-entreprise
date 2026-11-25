@@ -299,6 +299,71 @@ const carteJeu = {
     try { for (const d of fs.readdirSync(this.dir(game))) if (d !== garder && d !== 'courant.txt') fs.rmSync(path.join(this.dir(game), d), { recursive: true, force: true }); } catch {}
   },
 };
+// ---------- Mods & sauvegarde : analyse par le programme séparé tch-mods/ (GPL-3) ----------
+// L'appli lui prépare une demande (dossiers, mods actifs de chaque profil, sauvegarde récente déchiffrée en texte)
+// et affiche son rapport. Lecture seule : rien n'est modifié dans les mods, les profils ni le jeu.
+const modsAnalyse = {
+  proc: null,
+  async lancer(game) {
+    game = game === 'ats' ? 'ats' : 'ets2';
+    if (this.proc) throw new Error('Une analyse est déjà en cours.');
+    const envoyer = (m) => { try { if (win && !win.isDestroyed()) win.webContents.send('mods:progression', { game, ...m }); } catch {} };
+    const g = (() => { try { return installer.findGames(settings.customGamePaths).find(x => x.id === game) || null; } catch { return null; } })();
+    const tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), 'tch-mods-'));
+    try {
+      envoyer({ etape: 'profils' });
+      const profils = [];
+      const liste = atelier.profiles().filter(p => p.game === game);
+      for (const [i, p] of liste.entries()) {
+        const dir = atelier.resolve(p.id).dir;
+        let actifs = [];
+        try {
+          const t = await atelier.editor.readAsync(path.join(dir, 'profile.sii'));
+          actifs = [...t.matchAll(/^\s*active_mods\[\d+\]:\s*"([^"|]*)\|?[^"]*"/gm)].map(m => m[1]);
+        } catch {}
+        const pr = { id: p.id, nom: p.name, actifs };
+        // Sauvegarde la plus récente des 3 profils les plus récents (les plus longues à lire)
+        if (i < 3) {
+          const slot = atelier.editor.slots(dir)[0];
+          if (slot) {
+            try {
+              const txt = await atelier.editor.readAsync(path.join(dir, 'save', slot.slot, 'game.sii'));
+              const f = path.join(tmp, `sauvegarde-${i}.sii`);
+              fs.writeFileSync(f, txt);
+              pr.sauvegarde = f; pr.sauvegardeNom = slot.label;
+            } catch {}
+          }
+        }
+        profils.push(pr);
+      }
+      const dem = {
+        jeu: game, documents: atelier.gameDir(game), jeuDossier: g ? g.dir : null,
+        workshop: g ? path.join(g.dir, '..', '..', 'workshop', 'content', game === 'ats' ? '270880' : '227300') : null,
+        profils,
+      };
+      const fDem = path.join(tmp, 'demande.json');
+      fs.writeFileSync(fDem, JSON.stringify(dem));
+      return await new Promise((resolve, reject) => {
+        const p = utilityProcess.fork(path.join(__dirname, 'tch-mods', 'analyse.js'), [fDem], { serviceName: 'TCH Mods — analyse', stdio: 'pipe' });
+        this.proc = p;
+        let buf = '', rapport = null, erreur = null;
+        p.stdout.on('data', (d) => {
+          buf += d.toString();
+          let i;
+          while ((i = buf.indexOf('\n')) >= 0) {
+            const l = buf.slice(0, i); buf = buf.slice(i + 1);
+            if (!l.startsWith('@TCH ')) continue;
+            try { const m = JSON.parse(l.slice(5)); if (m.etape === 'fini') rapport = m.rapport; else if (m.etape === 'erreur') erreur = m.message; else envoyer({ etape: m.etape }); } catch {}
+          }
+        });
+        p.stderr && p.stderr.on('data', () => {});
+        p.on('exit', () => { this.proc = null; if (rapport) resolve(rapport); else reject(new Error(erreur || 'L’analyse s’est arrêtée.')); });
+      });
+    } finally {
+      try { fs.rmSync(tmp, { recursive: true, force: true }); } catch {}
+    }
+  },
+};
 // Villes du jeu (app/data/villes.js, licence MIT) envoyées une fois à la carte
 function tchMapCities() {
   try { const s = fs.readFileSync(path.join(__dirname, 'app', 'data', 'villes.js'), 'utf8'); return JSON.parse(s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1)); } catch { return { ets2: [], ats: [] }; }
@@ -489,6 +554,16 @@ function setupIpc() {
   ipcMain.handle('map:clearCache', () => carte.clearCache(mapCache()));
   // ----- Atelier (outils avancés) : chaque appel renvoie { ok, data | error }
   const safe = (fn) => async (_e, ...a) => { try { return { ok: true, data: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
+  ipcMain.handle('mods:analyser', safe((game) => modsAnalyse.lancer(game)));
+  ipcMain.handle('mods:ouvrir', (_e, quoi) => {
+    // Dossier des mods, ou page Workshop d'un mod (seulement des identifiants numériques)
+    if (quoi && /^\d{1,20}$/.test(String(quoi.workshopId || ''))) return shell.openExternal(`https://steamcommunity.com/sharedfiles/filedetails/?id=${quoi.workshopId}`);
+    const game = quoi && quoi.game === 'ats' ? 'ats' : 'ets2';
+    const dir = path.join(atelier.gameDir(game), 'mod');
+    const nom = quoi && typeof quoi.fichier === 'string' ? path.basename(quoi.fichier) : '';
+    if (nom && fs.existsSync(path.join(dir, nom))) return shell.showItemInFolder(path.join(dir, nom));
+    return shell.openPath(dir);
+  });
   ipcMain.handle('atelier:status', safe(() => atelier.status()));
   ipcMain.handle('atelier:profiles', safe(() => atelier.profiles()));
   ipcMain.handle('atelier:duplicate', safe((id, name) => atelier.duplicate(id, name)));
