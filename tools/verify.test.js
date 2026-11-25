@@ -825,3 +825,80 @@ test('TCH Map : séparée de l’appli (aucun code partagé) et livrée avec ell
   assert.match(html, /frame-src http:\/\/127\.0\.0\.1:\*/);
   assert.match(html, /<iframe id="tchFrame"[^>]*sandbox="allow-scripts allow-same-origin allow-popups"/);
 });
+
+test('TCH Map : CityHash64 en JavaScript (mêmes résultats que la version native)', () => {
+  const { city64 } = require('../tch-map/lecteur/cityhash.js');
+  assert.equal(city64('manifest.sii'), 13366683130979122325n);
+  assert.equal(city64('def/vehicle/truck/renault.t_evo/data.sii'), 13486561534269033072n);
+  assert.equal(city64('a'), 2603192927274642682n);
+  assert.equal(city64('abcdefghijklmnopq'), 237482408704357350n);
+});
+
+test('TCH Map : lecteur d’archives (dossier) qui ne sort jamais de son dossier', () => {
+  const { openArchive } = require('../tch-map/lecteur/archive.js');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-arch-'));
+  fs.mkdirSync(path.join(root, 'def'));
+  fs.writeFileSync(path.join(root, 'manifest.sii'), 'SiiNunit');
+  fs.writeFileSync(path.join(root, 'def', 'a.sii'), 'x');
+  const a = openArchive(root);
+  assert.equal(a.kind, 'dossier');
+  assert.equal(a.read('manifest.sii').toString(), 'SiiNunit');
+  assert.deepEqual([...a.list('').dirs], ['def']);
+  assert.equal(a.read('../package.json'), null);
+  assert.equal(a.read('/def/../../x'), null);
+});
+
+test('TCH Map : tuiles et données de la carte du jeu servies depuis le dossier courant', async () => {
+  const { fork } = require('node:child_process');
+  const http = require('node:http');
+  const data = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-data-'));
+  fs.mkdirSync(path.join(data, 'ets2', '2026-essai'), { recursive: true });
+  fs.writeFileSync(path.join(data, 'ets2', 'courant.txt'), '2026-essai');
+  fs.writeFileSync(path.join(data, 'ets2', '2026-essai', 'tuiles.bin'), Buffer.from('xxABCDyy'));
+  fs.writeFileSync(path.join(data, 'ets2', '2026-essai', 'tuiles.json'), JSON.stringify({ tuiles: { '5/16/10': [2, 4] } }));
+  fs.writeFileSync(path.join(data, 'ets2', '2026-essai', 'info.json'), '{"version":"1.62"}');
+  const child = fork(path.resolve(__dirname, '..', 'tch-map', 'server.js'), [data], { stdio: 'ignore' });
+  try {
+    const ready = await new Promise((res, rej) => { child.on('message', m => m.type === 'ready' && res(m)); setTimeout(() => rej(new Error('pas prêt')), 5000); });
+    const get = (u) => new Promise((res) => http.get(u, r => { const c = []; r.on('data', d => c.push(d)); r.on('end', () => res({ code: r.statusCode, body: Buffer.concat(c), h: r.headers })); }));
+    const t = await get(ready.url + 'data/ets2/tuiles/5/16/10.pbf');
+    assert.equal(t.code, 200); assert.equal(t.body.toString(), 'ABCD'); assert.equal(t.h['content-type'], 'application/x-protobuf');
+    assert.equal((await get(ready.url + 'data/ets2/tuiles/5/0/0.pbf')).code, 204);
+    assert.equal((await get(ready.url + 'data/ets2/info.json')).body.toString(), '{"version":"1.62"}');
+    assert.notEqual((await get(ready.url + 'data/ets2/courant.txt')).code, 200);
+    assert.notEqual((await get(ready.url + 'data/ets2/..%2f..%2fcourant.txt')).code, 200);
+    assert.equal((await get(ready.url + 'data/pirate/info.json')).code, 404);
+  } finally { child.kill(); }
+});
+
+test('TCH Map : extraction de la carte (programme séparé, sources fournies)', () => {
+  const ext = fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'extraction', 'extraire.cjs'), 'utf8');
+  assert.match(ext.slice(0, 300), /truckermudgeon\/maps \(GPL-3\)/);
+  assert.doesNotMatch(ext, /require\(["']bindings["']\)/, 'aucun module natif');
+  for (const f of ['build.mjs', 'extraire.ts', 'tuiles.ts', 'patch-secteurs.mjs', 'LISEZMOI.md']) assert.ok(fs.existsSync(path.resolve(__dirname, '..', 'tch-map', 'outils', 'extraction', f)), f);
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /utilityProcess\.fork\(path\.join\(ext, 'extraire\.cjs'\)/);
+  const pkg = require('../package.json');
+  assert.ok(pkg.build.asarUnpack.includes('tch-map/extraction/**'));
+  assert.ok(pkg.build.files.includes('!tch-map/outils/**'));
+});
+
+test('Mods & sauvegarde : analyse (familles, versions, manifeste) et programme séparé', () => {
+  const { famille, compatible, lireManifest } = require('../tch-mods/analyse.js');
+  assert.equal(famille('promods-eu-map-v283'), famille('promods-eu-map-v284'));
+  assert.notEqual(famille('BBM Trailer LB3'), famille('BBM Trailer LB4'));
+  assert.equal(compatible(['1.62.*'], '1.62.3.3'), true);
+  assert.equal(compatible(['1.53.*', '1.54.*'], '1.62.3.3'), false);
+  assert.equal(compatible([], '1.62.3.3'), null);
+  const m = lireManifest(Buffer.from('SiiNunit\n{\nmod_package : .x\n{\n package_version: "2.84"\n display_name: "ProMods"\n compatible_versions[]: "1.62.*"\n}\n}'));
+  assert.equal(m.nom, 'ProMods'); assert.deepEqual([...m.compatibles], ['1.62.*']);
+  const t = fs.readFileSync(path.resolve(__dirname, '..', 'tch-mods', 'analyse.js'), 'utf8');
+  assert.match(t, /GNU General Public License v3/);
+  assert.doesNotMatch(t, /require\(['"]\.\.\/(src|app)/);
+  assert.doesNotMatch(t, /writeFile|rmSync|unlink|rename/, 'lecture seule');
+  const pkg = require('../package.json');
+  assert.ok(pkg.build.files.includes('tch-mods/**/*'));
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /data-view="at-mods"/);
+  assert.match(html, /Ta sauvegarde en a besoin : ne pas retirer/);
+});

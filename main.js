@@ -221,6 +221,149 @@ const tchMap = {
   },
   stop() { try { if (this.proc) this.proc.kill(); } catch {} this.proc = null; this.url = null; this.waiting = null; },
 };
+// ---------- Carte du jeu : extraction depuis les fichiers du jeu (programme séparé tch-map/extraction, GPL-3) ----------
+// Lecture seule des .scs du jeu. Résultat dans userData/TCH Map/<jeu>/<date>/, désigné par userData/TCH Map/<jeu>/courant.txt
+// (un nouveau dossier à chaque fois : la carte affichée garde ses fichiers ouverts pendant la mise à jour).
+const carteJeu = {
+  proc: null, game: null, etat: null,
+  dir(game) { return path.join(app.getPath('userData'), 'TCH Map', game); },
+  jeu(game) { try { return installer.findGames(settings.customGamePaths).find(g => g.id === game) || null; } catch { return null; } },
+  empreinte(dir) {
+    try { return fs.readdirSync(dir).filter(f => f.endsWith('.scs')).map(f => { const st = fs.statSync(path.join(dir, f)); return [f, st.size, Math.round(st.mtimeMs)]; }); } catch { return null; }
+  },
+  info(game) {
+    try {
+      const cur = fs.readFileSync(path.join(this.dir(game), 'courant.txt'), 'utf8').trim();
+      if (!/^[0-9a-z-]+$/i.test(cur)) return null;
+      return JSON.parse(fs.readFileSync(path.join(this.dir(game), cur, 'info.json'), 'utf8'));
+    } catch { return null; }
+  },
+  statut(game) {
+    game = game === 'ats' ? 'ats' : 'ets2';
+    if (this.proc && this.game === game) return { game, etat: 'en-cours', ...(this.etat || {}) };
+    const g = this.jeu(game), info = this.info(game);
+    if (!g) return { game, etat: info ? 'a-jour' : 'sans-jeu', version: info && info.version, date: info && info.date };
+    if (!info) return { game, etat: 'a-faire' };
+    const now = JSON.stringify(this.empreinte(g.dir)), avant = JSON.stringify(info.empreinte || null);
+    return { game, etat: now === avant ? 'a-jour' : 'perimee', version: info.version, date: info.date, villes: info.villes };
+  },
+  envoyer(m) { try { if (win && !win.isDestroyed()) win.webContents.send('tchmap:progression', m); } catch {} },
+  lancer(game) {
+    game = game === 'ats' ? 'ats' : 'ets2';
+    if (this.proc) return { ok: false, error: 'Une préparation de carte est déjà en cours.' };
+    const g = this.jeu(game);
+    if (!g) return { ok: false, error: 'Jeu introuvable : indique son dossier dans Paramètres → Jeu.' };
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const out = path.join(this.dir(game), stamp);
+    fs.mkdirSync(out, { recursive: true });
+    const ext = path.join(__dirname, 'tch-map', 'extraction').replace('app.asar', 'app.asar.unpacked');
+    const p = utilityProcess.fork(path.join(ext, 'extraire.cjs'), [g.dir, out], {
+      serviceName: 'TCH Map — préparation de la carte', stdio: 'pipe', execArgv: ['--max-old-space-size=6144'],
+      env: { ...process.env, TCH_LANGUE: 'fr_fr', TCH_RESSOURCES: ext },
+    });
+    this.proc = p; this.game = game; this.etat = { etape: 'lecture', s: 0 };
+    let buf = '', fini = false, erreur = null;
+    p.stdout.on('data', (d) => {
+      buf += d.toString();
+      let i;
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const l = buf.slice(0, i); buf = buf.slice(i + 1);
+        if (!l.startsWith('@TCH ')) continue;
+        try {
+          const m = JSON.parse(l.slice(5));
+          this.etat = { etape: m.etape, s: m.s, mo: m.mo, version: m.version || (this.etat && this.etat.version) };
+          if (m.etape === 'fini') fini = true;
+          if (m.etape === 'erreur') erreur = m.message;
+          this.envoyer({ game, ...this.etat });
+        } catch {}
+      }
+    });
+    p.stderr && p.stderr.on('data', () => {});
+    p.on('exit', (code) => {
+      this.proc = null; this.etat = null;
+      if (fini && code === 0) {
+        fs.writeFileSync(path.join(this.dir(game), 'courant.txt'), stamp);
+        this.nettoyer(game, stamp);
+        tchMap.post({ type: 'donnees', game, rev: stamp });
+        this.envoyer({ game, etape: 'fini', ...this.statut(game) });
+      } else {
+        try { fs.rmSync(out, { recursive: true, force: true }); } catch {}
+        this.envoyer({ game, etape: 'erreur', message: erreur || `La préparation s'est arrêtée (code ${code}).` });
+      }
+    });
+    return { ok: true };
+  },
+  annuler() { try { if (this.proc) this.proc.kill(); } catch {} },
+  // Anciennes cartes : supprimées quand elles ne sont plus utilisées (au pire au prochain lancement)
+  nettoyer(game, garder) {
+    try { for (const d of fs.readdirSync(this.dir(game))) if (d !== garder && d !== 'courant.txt') fs.rmSync(path.join(this.dir(game), d), { recursive: true, force: true }); } catch {}
+  },
+};
+// ---------- Mods & sauvegarde : analyse par le programme séparé tch-mods/ (GPL-3) ----------
+// L'appli lui prépare une demande (dossiers, mods actifs de chaque profil, sauvegarde récente déchiffrée en texte)
+// et affiche son rapport. Lecture seule : rien n'est modifié dans les mods, les profils ni le jeu.
+const modsAnalyse = {
+  proc: null,
+  async lancer(game) {
+    game = game === 'ats' ? 'ats' : 'ets2';
+    if (this.proc) throw new Error('Une analyse est déjà en cours.');
+    const envoyer = (m) => { try { if (win && !win.isDestroyed()) win.webContents.send('mods:progression', { game, ...m }); } catch {} };
+    const g = (() => { try { return installer.findGames(settings.customGamePaths).find(x => x.id === game) || null; } catch { return null; } })();
+    const tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), 'tch-mods-'));
+    try {
+      envoyer({ etape: 'profils' });
+      const profils = [];
+      const liste = atelier.profiles().filter(p => p.game === game);
+      for (const [i, p] of liste.entries()) {
+        const dir = atelier.resolve(p.id).dir;
+        let actifs = [];
+        try {
+          const t = await atelier.editor.readAsync(path.join(dir, 'profile.sii'));
+          actifs = [...t.matchAll(/^\s*active_mods\[\d+\]:\s*"([^"|]*)\|?[^"]*"/gm)].map(m => m[1]);
+        } catch {}
+        const pr = { id: p.id, nom: p.name, actifs };
+        // Sauvegarde la plus récente des 3 profils les plus récents (les plus longues à lire)
+        if (i < 3) {
+          const slot = atelier.editor.slots(dir)[0];
+          if (slot) {
+            try {
+              const txt = await atelier.editor.readAsync(path.join(dir, 'save', slot.slot, 'game.sii'));
+              const f = path.join(tmp, `sauvegarde-${i}.sii`);
+              fs.writeFileSync(f, txt);
+              pr.sauvegarde = f; pr.sauvegardeNom = slot.label;
+            } catch {}
+          }
+        }
+        profils.push(pr);
+      }
+      const dem = {
+        jeu: game, documents: atelier.gameDir(game), jeuDossier: g ? g.dir : null,
+        workshop: g ? path.join(g.dir, '..', '..', 'workshop', 'content', game === 'ats' ? '270880' : '227300') : null,
+        profils,
+      };
+      const fDem = path.join(tmp, 'demande.json');
+      fs.writeFileSync(fDem, JSON.stringify(dem));
+      return await new Promise((resolve, reject) => {
+        const p = utilityProcess.fork(path.join(__dirname, 'tch-mods', 'analyse.js'), [fDem], { serviceName: 'TCH Mods — analyse', stdio: 'pipe' });
+        this.proc = p;
+        let buf = '', rapport = null, erreur = null;
+        p.stdout.on('data', (d) => {
+          buf += d.toString();
+          let i;
+          while ((i = buf.indexOf('\n')) >= 0) {
+            const l = buf.slice(0, i); buf = buf.slice(i + 1);
+            if (!l.startsWith('@TCH ')) continue;
+            try { const m = JSON.parse(l.slice(5)); if (m.etape === 'fini') rapport = m.rapport; else if (m.etape === 'erreur') erreur = m.message; else envoyer({ etape: m.etape }); } catch {}
+          }
+        });
+        p.stderr && p.stderr.on('data', () => {});
+        p.on('exit', () => { this.proc = null; if (rapport) resolve(rapport); else reject(new Error(erreur || 'L’analyse s’est arrêtée.')); });
+      });
+    } finally {
+      try { fs.rmSync(tmp, { recursive: true, force: true }); } catch {}
+    }
+  },
+};
 // Villes du jeu (app/data/villes.js, licence MIT) envoyées une fois à la carte
 function tchMapCities() {
   try { const s = fs.readFileSync(path.join(__dirname, 'app', 'data', 'villes.js'), 'utf8'); return JSON.parse(s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1)); } catch { return { ets2: [], ats: [] }; }
@@ -404,10 +547,23 @@ function setupIpc() {
   ipcMain.handle('tchmap:start', async () => { try { return { ok: true, url: await tchMap.start() }; } catch (e) { return { ok: false, error: e.message }; } });
   ipcMain.handle('tchmap:visible', (_e, on, opts) => { tchMap.visible(!!on, opts || {}); return true; });
   ipcMain.handle('tchmap:theme', (_e, t) => { tchMap.post({ type: 'theme', ...pickTheme(t) }); return true; });
+  ipcMain.handle('tchmap:jeuStatut', (_e, game) => carteJeu.statut(game));
+  ipcMain.handle('tchmap:preparer', (_e, game) => carteJeu.lancer(game));
+  ipcMain.handle('tchmap:annuler', () => { carteJeu.annuler(); return true; });
   ipcMain.handle('map:cache', () => carte.cacheSize(mapCache()));
   ipcMain.handle('map:clearCache', () => carte.clearCache(mapCache()));
   // ----- Atelier (outils avancés) : chaque appel renvoie { ok, data | error }
   const safe = (fn) => async (_e, ...a) => { try { return { ok: true, data: await fn(...a) }; } catch (e) { return { ok: false, error: e.message }; } };
+  ipcMain.handle('mods:analyser', safe((game) => modsAnalyse.lancer(game)));
+  ipcMain.handle('mods:ouvrir', (_e, quoi) => {
+    // Dossier des mods, ou page Workshop d'un mod (seulement des identifiants numériques)
+    if (quoi && /^\d{1,20}$/.test(String(quoi.workshopId || ''))) return shell.openExternal(`https://steamcommunity.com/sharedfiles/filedetails/?id=${quoi.workshopId}`);
+    const game = quoi && quoi.game === 'ats' ? 'ats' : 'ets2';
+    const dir = path.join(atelier.gameDir(game), 'mod');
+    const nom = quoi && typeof quoi.fichier === 'string' ? path.basename(quoi.fichier) : '';
+    if (nom && fs.existsSync(path.join(dir, nom))) return shell.showItemInFolder(path.join(dir, nom));
+    return shell.openPath(dir);
+  });
   ipcMain.handle('atelier:status', safe(() => atelier.status()));
   ipcMain.handle('atelier:profiles', safe(() => atelier.profiles()));
   ipcMain.handle('atelier:duplicate', safe((id, name) => atelier.duplicate(id, name)));
@@ -562,6 +718,7 @@ if (!app.requestSingleInstanceLock()) {
   app.on('before-quit', () => {
     if (telemetry) telemetry.stop();
     tchMap.stop();
+    carteJeu.annuler();
     if (discordPresence) discordPresence.disconnect().catch((e) => console.error('Discord Rich Presence :', e.message));
   });
   app.on('window-all-closed', () => app.quit());

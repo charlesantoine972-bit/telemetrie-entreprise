@@ -143,6 +143,14 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 6', date: '2026-11-25', titre: 'Vraie carte du jeu et analyse des mods', notes: [
+    ['nouveau', 'Carte : la nouvelle carte est lue directement dans tes fichiers du jeu, avec toutes tes DLC (Iberia, Balkans, Grèce, Nordic Horizons, Islande…) : routes, carrefours, ferries et villes officielles, à leur place exacte. Bouton « Préparer la carte » dans la page Carte : environ 5 minutes, une fois par version du jeu, en lecture seule.'],
+    ['nouveau', 'Carte : style proche de la carte du jeu (routes grises, villes en jaune, noms en français, grandes villes d’abord) ; ta trace reste la seule route en couleur.'],
+    ['nouveau', 'Truck & Coach Tools → Mods : repère les mods signalés par le jeu, pas mis à jour pour ta version, abîmés ou en double, et ceux dont ta sauvegarde a besoin (à ne jamais retirer). Lecture seule, rien n’est modifié.'],
+    ['corrige', 'Carte : fond uni, sans la mosaïque de bandes bleues et grises qui traversait la France.'],
+    ['corrige', 'Carte : Islande recalée sur les 14 villes officielles du DLC.'],
+    ['change', 'La lecture de la carte et l’analyse des mods tournent dans de petits programmes séparés, sous licence libre GPL-3 (code de TruckSim Maps), comme la carte elle-même.'],
+  ]},
   { version: '0.12.0.5 bêta 5', date: '2026-11-24', titre: 'Nouvelle carte, mode Paramètres, aperçu de Compte & accès et sécurité', notes: [
     ['nouveau', 'Nouvelle carte (aperçu) : carte vectorielle nette à tous les zooms, avec l’Islande, ton camion en direct, ta trace et les villes déjà visitées. Elle suit le thème de l’appli. Un bouton en haut de la page Carte permet de revenir à l’ancienne carte.'],
     ['nouveau', 'La nouvelle carte tourne dans un petit programme à part, sous licence libre GPL-3 (lien vers son code dans Aide & infos → Licences). Le reste de l’appli n’est pas concerné.'],

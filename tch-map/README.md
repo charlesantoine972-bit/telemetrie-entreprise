@@ -8,14 +8,16 @@ Truck & Coach Hub, lui, n'est pas libre : les deux sont des **programmes sépar�
 - Sert une carte (MapLibre GL) **sur ce PC uniquement** : adresse `127.0.0.1`, port choisi au hasard, jeton secret dans chaque adresse.
 - Convertit les coordonnées du jeu (ETS2, ATS) en vraies longitudes et latitudes (projection de SCS, d'après TruckSim Maps).
 - Affiche le camion en direct, la trace parcourue (routes « explorées »), les villes (visitées ou pas encore) et la destination.
-- Fond géographique réel (Natural Earth), recalé sur le jeu : l'Islande est déplacée comme dans ETS2, et le Groenland, absent du jeu, est retiré.
-- Routes du jeu : chargées depuis `data/<jeu>/routes.geojson` quand elles ont été générées depuis les fichiers du jeu (étape suivante).
+- **Carte du jeu lue dans les fichiers du jeu du joueur** (`extraction/extraire.cjs`, lecture seule) : zones, carrefours, routes par type, ferries et villes officielles de toutes ses DLC, découpées en tuiles vectorielles et dessinées dans le style de TruckSim Maps.
+- Fond uni, avec les terres réelles (Natural Earth) à peine plus claires : l'Islande est recalée sur ses 14 villes officielles du jeu, le Groenland et l'Antarctique sont retirés.
 
 ## Fichiers
 - `server.js` : serveur local + relais des messages de l'hôte vers la page (flux `events`).
 - `viewer/` : la page de carte (`index.html`, `carte.js`, `carte.css`, `projection.js`).
 - `viewer/vendor/` : MapLibre GL JS 6.19.0 (BSD-3-Clause, voir `LICENSE-maplibre.txt`).
-- `viewer/fond/` : terres et frontières, d'après world-atlas (ISC) / Natural Earth (domaine public).
+- `viewer/fond/` : terres et frontières, d'après world-atlas (ISC) / Natural Earth (domaine public) ; refaits par `tools/fond.mjs`.
+- `lecteur/` : lecture des archives SCS en JavaScript pur (HashFS v1 et v2, ZIP, dossier) et CityHash64.
+- `extraction/extraire.cjs` : extraction de la carte, compilée depuis `outils/extraction/` et TruckSim Maps (voir `outils/extraction/LISEZMOI.md`).
 
 ## Crédits
 - **TruckSim Maps**, par truckermudgeon : <https://github.com/truckermudgeon/maps> (GPL-3.0-or-later). La projection ETS2 / ATS (`viewer/projection.js`) en est adaptée, y compris la correction de l'Islande (novembre 2026).

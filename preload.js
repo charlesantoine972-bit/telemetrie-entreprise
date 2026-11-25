@@ -13,7 +13,11 @@ contextBridge.exposeInMainWorld('tel', {
   onSettingsChanged: (cb) => ipcRenderer.on('settings:changed', (_e, s) => cb(s)),
   steamNews: (game) => ipcRenderer.invoke('news:steam', game),
   // Nouvelle carte (TCH Map, programme séparé) : démarrer, signaler qu'elle est affichée, lui passer le thème
-  tchMap: { start: () => ipcRenderer.invoke('tchmap:start'), visible: (on, opts) => ipcRenderer.invoke('tchmap:visible', on, opts), theme: (t) => ipcRenderer.invoke('tchmap:theme', t) },
+  mods: { analyser: (g) => ipcRenderer.invoke('mods:analyser', g), ouvrir: (q) => ipcRenderer.invoke('mods:ouvrir', q),
+    onProgression: (cb) => { const h = (_e, m) => cb(m); ipcRenderer.on('mods:progression', h); return () => ipcRenderer.removeListener('mods:progression', h); } },
+  tchMap: { start: () => ipcRenderer.invoke('tchmap:start'), visible: (on, opts) => ipcRenderer.invoke('tchmap:visible', on, opts), theme: (t) => ipcRenderer.invoke('tchmap:theme', t),
+    jeuStatut: (g) => ipcRenderer.invoke('tchmap:jeuStatut', g), preparer: (g) => ipcRenderer.invoke('tchmap:preparer', g), annuler: () => ipcRenderer.invoke('tchmap:annuler'),
+    onProgression: (cb) => { const h = (_e, m) => cb(m); ipcRenderer.on('tchmap:progression', h); return () => ipcRenderer.removeListener('tchmap:progression', h); } },
   // Accès, rangs et clés (préparation : aperçu local). Chaque appel renvoie { ok, value } ou { ok:false, error }.
   acces: {
     info: () => ipcRenderer.invoke('acces:info'),

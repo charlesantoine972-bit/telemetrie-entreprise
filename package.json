@@ -1,6 +1,6 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.13.36-beta.5",
+  "version": "0.13.36-beta.6",
   "description": "Truck & Coach Hub - télémétrie, carrière, entreprise et mods pour ETS2 / ATS",
   "author": "charlesantoine972-bit",
   "main": "main.js",
@@ -23,7 +23,9 @@
       "preload.js",
       "src/**/*",
       "app/**/*",
-      "tch-map/**/*"
+      "tch-map/**/*",
+      "tch-mods/**/*",
+      "!tch-map/outils/**"
     ],
     "win": {
       "target": "nsis"
@@ -58,8 +60,11 @@
       }
     ],
     "releaseInfo": {
-      "releaseName": "0.12.0.5 bêta 5"
-    }
+      "releaseName": "0.12.0.5 bêta 6"
+    },
+    "asarUnpack": [
+      "tch-map/extraction/**"
+    ]
   },
   "dependencies": {
     "discord-rpc": "^4.0.1",
