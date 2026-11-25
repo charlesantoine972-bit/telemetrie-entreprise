@@ -143,6 +143,9 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 9', date: '2026-11-26', titre: 'Correctif : erreur à la fin de la préparation de la carte', notes: [
+    ['corrige', 'Carte : plus de fenêtre « A JavaScript error occurred in the main process » (this.auto is not a function) quelques secondes après la fin de la préparation de la carte.'],
+  ]},
   { version: '0.12.0.5 bêta 8', date: '2026-11-26', titre: 'Carte du jeu fiable : plus de blocage, routes sur la terre ferme', notes: [
     ['corrige', 'Carte : la préparation ne peut plus rester bloquée. Si un des cœurs de calcul plante, son travail est repris ; si plus rien n’avance pendant 3 minutes, elle recommence en mode simple. Un journal est gardé pour comprendre un échec.'],
     ['corrige', 'Carte : routes et villes visibles quand on dézoome (elles disparaissaient en vue d’ensemble).'],

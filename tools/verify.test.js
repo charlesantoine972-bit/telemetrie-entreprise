@@ -938,3 +938,9 @@ test('TCH Map : préparation qui ne bloque jamais, carte visible à tous les zoo
   assert.match(carte, /sy >= -20/.source ? /jeu-terre/ : /jeu-terre/);
   assert.match(fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'viewer', 'projection.js'), 'utf8'), /sy >= -20/);
 });
+
+test('Carte du jeu : le lancement automatique reste une fonction (plus d’erreur à la fin de la préparation)', () => {
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.doesNotMatch(main, /this\.auto\s*=/, 'aucune valeur ne doit écraser la fonction auto()');
+  assert.match(main, /this\.lanceAuto = !!opts\.auto/);
+});

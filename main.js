@@ -274,7 +274,7 @@ const carteJeu = {
     const p = utilityProcess.fork(path.join(ext, 'extraire.cjs'), [g.dir, out], {
       serviceName: 'TCH Map — préparation de la carte', stdio: 'pipe', execArgv: ['--max-old-space-size=4096'], env,
     });
-    this.proc = p; this.game = game; this.auto = !!opts.auto; this.etat = { etape: 'lecture', s: 0, auto: this.auto };
+    this.proc = p; this.game = game; this.lanceAuto = !!opts.auto; this.etat = { etape: 'lecture', s: 0, auto: this.lanceAuto };
     let buf = '', fini = false, erreur = null, bloque = false;
     // Sécurité : si plus rien n'avance pendant 3 minutes, on arrête et on recommence en mode simple
     let vu = Date.now();
@@ -289,7 +289,7 @@ const carteJeu = {
         if (!l.startsWith('@TCH ')) continue;
         try {
           const m = JSON.parse(l.slice(5));
-          this.etat = { etape: m.etape, s: m.s, mo: m.mo, fait: m.fait, total: m.total, auto: this.auto, version: m.version || (this.etat && this.etat.version) };
+          this.etat = { etape: m.etape, s: m.s, mo: m.mo, fait: m.fait, total: m.total, auto: this.lanceAuto, version: m.version || (this.etat && this.etat.version) };
           if (m.etape === 'fini') fini = true;
           if (m.etape === 'erreur') erreur = m.message;
           this.envoyer({ game, ...this.etat });
