@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen, s
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { Telemetry } = require('./src/telemetry');
 const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch } = require('./src/settings');
 const installer = require('./src/plugin-installer');
@@ -248,7 +249,7 @@ const carteJeu = {
     return { game, etat: now === avant ? 'a-jour' : 'perimee', version: info.version, date: info.date, villes: info.villes };
   },
   envoyer(m) { try { if (win && !win.isDestroyed()) win.webContents.send('tchmap:progression', m); } catch {} },
-  lancer(game) {
+  lancer(game, opts = {}) {
     game = game === 'ats' ? 'ats' : 'ets2';
     if (this.proc) return { ok: false, error: 'Une préparation de carte est déjà en cours.' };
     const g = this.jeu(game);
@@ -257,11 +258,15 @@ const carteJeu = {
     const out = path.join(this.dir(game), stamp);
     fs.mkdirSync(out, { recursive: true });
     const ext = path.join(__dirname, 'tch-map', 'extraction').replace('app.asar', 'app.asar.unpacked');
+    // Pendant une partie, la préparation se fait discrète : moitié moins de cœurs (et toujours en priorité basse)
+    const coeurs = typeof os.availableParallelism === 'function' ? os.availableParallelism() : os.cpus().length;
+    const enJeu = !!(telemetry && telemetry.snapshot().connected);
+    const env = { ...process.env, TCH_LANGUE: 'fr_fr', TCH_RESSOURCES: ext };
+    if (enJeu) env.TCH_OUVRIERS = String(Math.max(1, Math.min(4, Math.floor((coeurs - 2) / 2))));
     const p = utilityProcess.fork(path.join(ext, 'extraire.cjs'), [g.dir, out], {
-      serviceName: 'TCH Map — préparation de la carte', stdio: 'pipe', execArgv: ['--max-old-space-size=6144'],
-      env: { ...process.env, TCH_LANGUE: 'fr_fr', TCH_RESSOURCES: ext },
+      serviceName: 'TCH Map — préparation de la carte', stdio: 'pipe', execArgv: ['--max-old-space-size=4096'], env,
     });
-    this.proc = p; this.game = game; this.etat = { etape: 'lecture', s: 0 };
+    this.proc = p; this.game = game; this.auto = !!opts.auto; this.etat = { etape: 'lecture', s: 0, auto: this.auto };
     let buf = '', fini = false, erreur = null;
     p.stdout.on('data', (d) => {
       buf += d.toString();
@@ -271,7 +276,7 @@ const carteJeu = {
         if (!l.startsWith('@TCH ')) continue;
         try {
           const m = JSON.parse(l.slice(5));
-          this.etat = { etape: m.etape, s: m.s, mo: m.mo, version: m.version || (this.etat && this.etat.version) };
+          this.etat = { etape: m.etape, s: m.s, mo: m.mo, fait: m.fait, total: m.total, auto: this.auto, version: m.version || (this.etat && this.etat.version) };
           if (m.etape === 'fini') fini = true;
           if (m.etape === 'erreur') erreur = m.message;
           this.envoyer({ game, ...this.etat });
@@ -286,6 +291,7 @@ const carteJeu = {
         this.nettoyer(game, stamp);
         tchMap.post({ type: 'donnees', game, rev: stamp });
         this.envoyer({ game, etape: 'fini', ...this.statut(game) });
+        setTimeout(() => this.auto(), 5000); // l'autre jeu ensuite, s'il en a besoin
       } else {
         try { fs.rmSync(out, { recursive: true, force: true }); } catch {}
         this.envoyer({ game, etape: 'erreur', message: erreur || `La préparation s'est arrêtée (code ${code}).` });
@@ -294,6 +300,16 @@ const carteJeu = {
     return { ok: true };
   },
   annuler() { try { if (this.proc) this.proc.kill(); } catch {} },
+  // Comme les logiciels qui se mettent à jour en arrière-plan : au lancement, la carte du jeu se prépare toute seule
+  // si elle n'existe pas encore ou si le jeu / les DLC ont changé (une fois par mise à jour du jeu).
+  auto() {
+    if (settings.carteAuto === false || this.proc) return;
+    const jeux = [settings.activeGame === 'ats' ? 'ats' : 'ets2', settings.activeGame === 'ats' ? 'ets2' : 'ats'];
+    for (const g of jeux) {
+      const st = this.statut(g);
+      if (st.etat === 'a-faire' || st.etat === 'perimee') { this.lancer(g, { auto: true }); return; }
+    }
+  },
   // Anciennes cartes : supprimées quand elles ne sont plus utilisées (au pire au prochain lancement)
   nettoyer(game, garder) {
     try { for (const d of fs.readdirSync(this.dir(game))) if (d !== garder && d !== 'courant.txt') fs.rmSync(path.join(this.dir(game), d), { recursive: true, force: true }); } catch {}
@@ -695,6 +711,7 @@ if (!app.requestSingleInstanceLock()) {
       try { saveSettings(); } catch (e) { console.error('Réglages :', e.message); }
     });
     telemetry.start();
+    setTimeout(() => { try { carteJeu.auto(); } catch (e) { console.error('Carte du jeu :', e.message); } }, 20000);
     // Le jeu lancé décide des réglages de jeu chargés (ETS2 ou ATS)
     setInterval(() => {
       const L = telemetry.live; if (!L || !L.game || Date.now() - telemetry.lastPacket > 3000) return;

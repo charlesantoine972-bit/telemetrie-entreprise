@@ -143,6 +143,12 @@ window.NOTES_VERSION = [
 
 // Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 7', date: '2026-11-25', titre: 'Carte du jeu préparée plus vite, en arrière-plan', notes: [
+    ['ameliore', 'Carte : la préparation utilise plusieurs cœurs du processeur (en en laissant toujours libres pour le jeu et Windows) et ne lit plus les fichiers du jeu qu’une seule fois : environ 2 fois plus rapide avec 2 cœurs, bien plus sur un PC récent.'],
+    ['ameliore', 'Carte : moins de mémoire utilisée (pic d’environ 2,7 Go au lieu de 3 à 4 Go), et priorité basse pour que le jeu reste fluide. Pendant une partie, elle se fait encore plus discrète.'],
+    ['nouveau', 'Carte : la préparation se lance toute seule au démarrage de l’appli quand la carte n’existe pas ou que le jeu / tes DLC ont changé, comme une mise à jour en arrière-plan. Un petit indicateur en bas à droite montre l’avancement, sur toutes les pages.'],
+    ['ameliore', 'Carte : avancement réel (morceaux de carte lus sur le total) au lieu d’une estimation.'],
+  ]},
   { version: '0.12.0.5 bêta 6', date: '2026-11-25', titre: 'Vraie carte du jeu et analyse des mods', notes: [
     ['nouveau', 'Carte : la nouvelle carte est lue directement dans tes fichiers du jeu, avec toutes tes DLC (Iberia, Balkans, Grèce, Nordic Horizons, Islande…) : routes, carrefours, ferries et villes officielles, à leur place exacte. Bouton « Préparer la carte » dans la page Carte : environ 5 minutes, une fois par version du jeu, en lecture seule.'],
     ['nouveau', 'Carte : style proche de la carte du jeu (routes grises, villes en jaune, noms en français, grandes villes d’abord) ; ta trace reste la seule route en couleur.'],

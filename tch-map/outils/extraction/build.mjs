@@ -5,7 +5,8 @@
 //   - lecture des secteurs en deux passes (seulement les nœuds utiles : ~2,6 Go de mémoire au lieu de 8+) ;
 //   - pas d'icônes ni de modèles 3D (.pmg) : inutiles pour la carte ;
 //   - langue des noms au choix (TCH_LANGUE, par défaut fr_fr) ;
-//   - archives « dossier » acceptées (essais).
+//   - archives « dossier » acceptées (essais) ;
+//   - lecture des secteurs en parallèle (ouvriers.ts), données passées en mémoire à la conversion.
 import * as esbuild from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -50,6 +51,14 @@ await esbuild.build({
       s = remplacer(s, 'const __filename = url.fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);',
         "const __dirname = path.join(process.env.TCH_RESSOURCES || require('path').dirname(process.argv[1]), 'x');", 'ressources');
       return { contents: s, loader: 'ts', resolveDir: path.join(MAPS, 'packages/clis/generator/geo-json') };
+    });
+    b.onLoad({ filter: /libs[\\/]io[\\/]mapped-data\.ts$/ }, async (a) => {
+      let s = fs.readFileSync(a.path, 'utf8');
+      // Données passées en mémoire (pas d'aller-retour JSON sur le disque) : même traitement ensuite
+      s = remplacer(s, 'const results: unknown = JSON.parse(source.readUtf8(filename), reviver);',
+        'const __mem = (source as any).memoire; const results: unknown = __mem ? __mem(filename) : JSON.parse(source.readUtf8(filename), reviver);', 'lecture mémoire');
+      s = remplacer(s, "if (basename.endsWith('nodes')) {\n    for (const t of filtered) {", "if (basename.endsWith('nodes') && !(source as any).memoire) {\n    for (const t of filtered) {", 'nœuds mémoire');
+      return { contents: s, loader: 'ts', resolveDir: path.dirname(a.path) };
     });
     b.onLoad({ filter: /combined-entries\.ts$/ }, async (a) => {
       let s = fs.readFileSync(a.path, 'utf8');

@@ -76,7 +76,7 @@ async function chargerJeu(game) {
   if (game !== S.game) return;
   S.jeu[game] = info;
   if (!info) {
-    note('Carte du jeu pas encore préparée : utilise « Préparer la carte » au-dessus. En attendant, villes approximatives.');
+    note('Carte du jeu pas encore prête : elle se prépare en arrière-plan (avancement au-dessus). En attendant, villes approximatives.');
     buildCities();
     return;
   }

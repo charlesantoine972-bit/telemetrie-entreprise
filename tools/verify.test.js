@@ -902,3 +902,19 @@ test('Mods & sauvegarde : analyse (familles, versions, manifeste) et programme s
   assert.match(html, /data-view="at-mods"/);
   assert.match(html, /Ta sauvegarde en a besoin : ne pas retirer/);
 });
+
+test('TCH Map : préparation parallèle, économe et automatique', () => {
+  const src = (f) => fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'outils', 'extraction', f), 'utf8');
+  const ouv = src('ouvriers.ts');
+  assert.match(ouv, /new Worker\(/);
+  assert.match(ouv, /coeurs - 2/, 'des cœurs restent libres');
+  assert.match(ouv, /os\.freemem\(\)/, 'nombre d’ouvriers limité par la mémoire libre');
+  assert.match(src('extraire.ts'), /PRIORITY_BELOW_NORMAL/);
+  const ext = fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'extraction', 'extraire.cjs'), 'utf8');
+  assert.match(ext, /tchOuvrier/);
+  const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+  assert.match(main, /carteJeu\.auto\(\)/);
+  assert.match(main, /TCH_OUVRIERS/);
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  assert.match(html, /tchPrepMini/);
+});
