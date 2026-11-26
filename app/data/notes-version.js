@@ -12,8 +12,14 @@
 //   0.12.0 → 0.12.5 = 0.12.0 ; 0.12.6 → 0.12.9 = 0.12.0.1 ; 0.12.10 → 0.12.15 = 0.12.0.2 ;
 //   0.13.0 → 0.13.27 = 0.12.0.3 ; 0.13.28 → 0.13.34 = 0.12.0.4 ; ensuite 0.13.35 = 0.12.0.5, 0.13.36 = 0.12.0.6…
 // Bêta : « 0.13.(n)-beta.k » est l'essai de la version 0.13.(n-1) → affichée « <version> bêta k ».
+// Bêtas de la nouvelle interface regroupées en 4 : les essais techniques 0.13.35-beta.1 à 0.13.36-beta.9
+// deviennent 0.12.0.5 bêta 1 (essais 1-2), bêta 2 (3-4), bêta 3 (5) et bêta 4 (6-9) ; ensuite beta.10 = bêta 5…
 window.versionAffichee = function (v) {
   const b = /^(\d+)\.(\d+)\.(\d+)-beta\.(\d+)$/.exec(v || '');
+  if (b && b[1] === '0' && b[2] === '13' && (b[3] === '35' || b[3] === '36')) {
+    const k = Number(b[4]);
+    return '0.12.0.5 bêta ' + (k <= 2 ? 1 : k <= 4 ? 2 : k === 5 ? 3 : k <= 9 ? 4 : k - 5);
+  }
   if (b) return window.versionAffichee(`${b[1]}.${b[2]}.${Number(b[3]) - 1}`) + ' bêta ' + b[4];
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
   if (!m) return v;
@@ -141,67 +147,34 @@ window.NOTES_VERSION = [
   ]},
 ];
 
-// Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la version officielle du même numéro.
+// Version bêta (Truck & Coach Hub Bêta) : chaque bêta est l'essai de la prochaine version officielle.
+// Une bêta = un gros lot. Les petits correctifs entre deux lots complètent la note de la bêta en cours
+// au lieu d'en créer une nouvelle.
 window.NOTES_BETA = [
-  { version: '0.12.0.5 bêta 9', date: '2026-11-26', titre: 'Correctif : erreur à la fin de la préparation de la carte', notes: [
-    ['corrige', 'Carte : plus de fenêtre « A JavaScript error occurred in the main process » (this.auto is not a function) quelques secondes après la fin de la préparation de la carte.'],
+  { version: '0.12.0.5 bêta 4', date: '2026-11-26', titre: 'La vraie carte du jeu et l’analyse des mods', notes: [
+    ['nouveau', 'Carte lue directement dans tes fichiers du jeu, avec toutes tes DLC (Iberia, Balkans, Grèce, Nordic Horizons, Islande…) : routes, carrefours, ferries et villes à leur place exacte, dans un style proche de la carte du jeu.'],
+    ['nouveau', 'La carte se prépare toute seule en arrière-plan, une fois par version du jeu ou quand tes DLC changent. Un petit indicateur en bas à droite montre l’avancement.'],
+    ['nouveau', 'Truck & Coach Tools → Mods : repère les mods obsolètes, abîmés ou en double, et ceux dont ta sauvegarde a besoin. Lecture seule, rien n’est modifié.'],
+    ['ameliore', 'Préparation de la carte plus rapide et plus légère, avec une priorité basse pour que le jeu reste fluide.'],
+    ['corrige', 'Carte : plus de routes dans l’eau, plus de bandes sur le fond, et routes visibles en vue d’ensemble.'],
   ]},
-  { version: '0.12.0.5 bêta 8', date: '2026-11-26', titre: 'Carte du jeu fiable : plus de blocage, routes sur la terre ferme', notes: [
-    ['corrige', 'Carte : la préparation ne peut plus rester bloquée. Si un des cœurs de calcul plante, son travail est repris ; si plus rien n’avance pendant 3 minutes, elle recommence en mode simple. Un journal est gardé pour comprendre un échec.'],
-    ['corrige', 'Carte : routes et villes visibles quand on dézoome (elles disparaissaient en vue d’ensemble).'],
-    ['corrige', 'Carte : côtes recalées sur la géographie du jeu à partir de près de 380 villes, et terre dessinée sous tout le contenu du jeu : plus de routes dans l’eau (Islande, Norvège, Grèce…).'],
-    ['corrige', 'Carte : fond uni, sans les bandes et lignes droites qui traversaient la carte.'],
-    ['ameliore', 'Carte : petites routes un peu plus visibles ; nouvelle étape « Recalage des côtes sur le jeu » dans l’avancement.'],
-    ['change', 'Carte : elle se prépare une nouvelle fois automatiquement après cette mise à jour (nouveau format).'],
+  { version: '0.12.0.5 bêta 3', date: '2026-11-24', titre: 'Nouvelle carte, recherche dans les paramètres et sécurité', notes: [
+    ['nouveau', 'Aperçu de la nouvelle carte : nette à tous les zooms, avec ton camion en direct, ta trace et les villes visitées. Un bouton permet de revenir à l’ancienne.'],
+    ['nouveau', 'Mode Paramètres : la barre de gauche se transforme en dossiers de réglages (Compte, Appli, Jeu, Liens, Données, Aide).'],
+    ['nouveau', 'Recherche dans les paramètres : tape un mot (HUD, Discord, thème…) pour trouver le réglage.'],
+    ['nouveau', 'En préparation : Compte & accès (rangs, clés, VTC) et Notifications, visibles avec Interface → Pages en préparation.'],
+    ['ameliore', 'Sécurité : aucune permission web (caméra, micro…) n’est accordée, et les suppressions de profils sont mieux vérifiées.'],
   ]},
-  { version: '0.12.0.5 bêta 7', date: '2026-11-25', titre: 'Carte du jeu préparée plus vite, en arrière-plan', notes: [
-    ['ameliore', 'Carte : la préparation utilise plusieurs cœurs du processeur (en en laissant toujours libres pour le jeu et Windows) et ne lit plus les fichiers du jeu qu’une seule fois : environ 2 fois plus rapide avec 2 cœurs, bien plus sur un PC récent.'],
-    ['ameliore', 'Carte : moins de mémoire utilisée (pic d’environ 2,7 Go au lieu de 3 à 4 Go), et priorité basse pour que le jeu reste fluide. Pendant une partie, elle se fait encore plus discrète.'],
-    ['nouveau', 'Carte : la préparation se lance toute seule au démarrage de l’appli quand la carte n’existe pas ou que le jeu / tes DLC ont changé, comme une mise à jour en arrière-plan. Un petit indicateur en bas à droite montre l’avancement, sur toutes les pages.'],
-    ['ameliore', 'Carte : avancement réel (morceaux de carte lus sur le total) au lieu d’une estimation.'],
-  ]},
-  { version: '0.12.0.5 bêta 6', date: '2026-11-25', titre: 'Vraie carte du jeu et analyse des mods', notes: [
-    ['nouveau', 'Carte : la nouvelle carte est lue directement dans tes fichiers du jeu, avec toutes tes DLC (Iberia, Balkans, Grèce, Nordic Horizons, Islande…) : routes, carrefours, ferries et villes officielles, à leur place exacte. Bouton « Préparer la carte » dans la page Carte : environ 5 minutes, une fois par version du jeu, en lecture seule.'],
-    ['nouveau', 'Carte : style proche de la carte du jeu (routes grises, villes en jaune, noms en français, grandes villes d’abord) ; ta trace reste la seule route en couleur.'],
-    ['nouveau', 'Truck & Coach Tools → Mods : repère les mods signalés par le jeu, pas mis à jour pour ta version, abîmés ou en double, et ceux dont ta sauvegarde a besoin (à ne jamais retirer). Lecture seule, rien n’est modifié.'],
-    ['corrige', 'Carte : fond uni, sans la mosaïque de bandes bleues et grises qui traversait la France.'],
-    ['corrige', 'Carte : Islande recalée sur les 14 villes officielles du DLC.'],
-    ['change', 'La lecture de la carte et l’analyse des mods tournent dans de petits programmes séparés, sous licence libre GPL-3 (code de TruckSim Maps), comme la carte elle-même.'],
-  ]},
-  { version: '0.12.0.5 bêta 5', date: '2026-11-24', titre: 'Nouvelle carte, mode Paramètres, aperçu de Compte & accès et sécurité', notes: [
-    ['nouveau', 'Nouvelle carte (aperçu) : carte vectorielle nette à tous les zooms, avec l’Islande, ton camion en direct, ta trace et les villes déjà visitées. Elle suit le thème de l’appli. Un bouton en haut de la page Carte permet de revenir à l’ancienne carte.'],
-    ['nouveau', 'La nouvelle carte tourne dans un petit programme à part, sous licence libre GPL-3 (lien vers son code dans Aide & infos → Licences). Le reste de l’appli n’est pas concerné.'],
-    ['nouveau', 'Mode Paramètres : depuis Settings, la barre de gauche se transforme en dossiers de réglages (Compte, Appli, Jeu, Liens, Données, Aide). Retour en haut de la barre, ou la touche Échap, pour revenir.'],
-    ['nouveau', 'Recherche dans les paramètres : tape un mot (HUD, Discord, thème…) pour trouver un réglage dans toutes les catégories, y compris les paramètres du jeu. Un clic y mène et le met en surbrillance.'],
-    ['nouveau', 'Notifications et Données & confidentialité, en préparation : la liste des réglages prévus, visible avec Interface → Pages en préparation.'],
-    ['ameliore', 'Sécurité : les fenêtres de l’appli ne peuvent plus afficher autre chose que l’appli, aucune permission web (caméra, micro…) n’est jamais accordée, et les dossiers de profils sont vérifiés plus strictement avant une suppression ou une restauration.'],
-    ['nouveau', 'Paramètres généraux → Compte & accès, en préparation : ton rang, les accès qu’il donne, l’activation d’une clé, ta VTC sur TruckersMP, la création de rangs et de clés. Visible seulement avec Interface → Pages en préparation activé.'],
-    ['nouveau', 'Rangs de base : Fondateur, Administrateur, Testeur et Membre, plus tes propres rangs (nom, couleur, niveau, permissions). On ne gère que les rangs plus bas que le sien.'],
-    ['change', 'Rien n’est encore relié à un serveur : tout reste sur ce PC, rien n’est partagé ni protégé. « Voir l’appli comme… » permet de se mettre à la place d’un autre rang.'],
-  ]},
-  { version: '0.12.0.5 bêta 4', date: '2026-11-24', titre: 'Une carte et des outils par jeu', notes: [
-    ['nouveau', 'Interface → Éléments visibles : un interrupteur pour Truck & Coach Tools (ETS2) et un autre pour Truck & Road Trip Tools (ATS). Chaque jeu affiche ses outils seulement s’ils sont activés pour lui.'],
-    ['change', 'Dans ATS, l’espace des outils s’appelle Truck & Road Trip Tools, du nom du DLC de voyageurs d’ATS. Il reste Truck & Coach Tools dans ETS2.'],
-    ['change', 'Dans l’espace d’un jeu, la Carte n’affiche et ne charge que la carte de ce jeu. Map, dans la barre de gauche de l’accueil, permet de passer de l’Europe à l’Amérique.'],
-    ['change', 'La catégorie Truck & Coach Tools disparaît des Paramètres ETS2 / ATS : l’interrupteur est maintenant dans les Paramètres généraux.'],
-  ]},
-  { version: '0.12.0.5 bêta 3', date: '2026-11-24', titre: 'Paramètres par jeu, vraie page News et ATS', notes: [
-    ['nouveau', 'Paramètres sur deux niveaux. Paramètres généraux (bouton Settings de la barre) : Général, Interface, Accessibilité, Steam & Discord, Mises à jour, Aide. Paramètres ETS2 et Paramètres ATS, ouverts avec le bouton Paramètres du jeu choisi : Jeu & plugin, Conduite (profil de carrière, unités, seuils), HUD, Truck & Coach Tools. Ils se chargent tout seuls quand ce jeu est lancé.'],
-    ['nouveau', 'Bouton « Copier depuis l’autre jeu » dans les paramètres d’un jeu. Tes réglages actuels sont repris pour ETS2 et pour ATS.'],
-    ['nouveau', 'Vraie page News : les dernières actualités Steam d’Euro Truck Simulator 2 et d’American Truck Simulator, et les nouveautés de l’appli.'],
-    ['nouveau', 'American Truck Simulator : « Car » devient « Road Trip » (le DLC de transport de voyageurs d’ATS), et le HUD, la Télémétrie et les seuils passent en unités américaines (miles, mph, gallons). Réglable dans Paramètres ATS → Conduite.'],
-    ['change', 'Revenir au menu principal referme tout : le menu ☰ et l’espace ouvert. Si une sauvegarde a des modifications non enregistrées, l’appli te demande avant.'],
+  { version: '0.12.0.5 bêta 2', date: '2026-11-24', titre: 'Paramètres par jeu, page News et ATS', notes: [
+    ['nouveau', 'Paramètres généraux, et paramètres propres à ETS2 et à ATS, chargés tout seuls quand le jeu est lancé. Bouton « Copier depuis l’autre jeu ».'],
+    ['nouveau', 'Page News : les actualités Steam d’ETS2 et d’ATS, et les nouveautés de l’appli.'],
+    ['nouveau', 'ATS : unités américaines (miles, mph, gallons), « Car » devient « Road Trip » et les outils s’appellent Truck & Road Trip Tools.'],
+    ['change', 'Chaque jeu a sa carte et ses outils, avec un interrupteur par jeu dans Interface → Éléments visibles.'],
     ['change', 'La Marketplace est cachée en attendant d’être prête.'],
-    ['change', 'Comme dans la version officielle : Programme bêta (toujours activé ici), notes de version par rubriques et page Mises à jour réorganisée.'],
   ]},
-  { version: '0.12.0.4 bêta 2', date: '2026-11-24', titre: 'Mises à jour de la bêta', notes: [
-    ['corrige', 'La bêta trouve maintenant ses propres mises à jour.'],
-  ]},
-  { version: '0.12.0.4 bêta 1', date: '2026-11-24', titre: 'Entrée par le choix du jeu', notes: [
-    ['nouveau', 'Truck & Coach Hub Bêta : une appli séparée, avec son propre installateur, son raccourci « Truck & Coach Hub (Bêta) » et ses propres réglages. Au premier lancement, elle reprend une copie de tes données ; la version officielle n’est pas modifiée.'],
-    ['nouveau', 'L’appli s’ouvre sur Game : Euro Truck Simulator 2 et American Truck Simulator en grands visuels pleine page, avec l’état du jeu et du plugin. Choisis ton jeu pour ouvrir le Hub, la Marketplace et Truck & Coach Tools.'],
-    ['nouveau', 'Une barre à gauche de l’écran d’accueil donne accès à Game, News, Map, Settings et Support. Dans les espaces, la mise en page reste celle de la version officielle.'],
-    ['nouveau', 'Settings ouvert depuis la barre : seulement le menu des paramètres (Retour, puis les catégories). Nouvelle page Support.'],
-    ['ameliore', 'La carte et le bouton « Lancer » de l’Accueil suivent le jeu choisi. Le logo en bas du menu ramène au choix du jeu.'],
+  { version: '0.12.0.5 bêta 1', date: '2026-11-24', titre: 'Première bêta : choix du jeu à l’ouverture', notes: [
+    ['nouveau', 'Truck & Coach Hub Bêta : une appli séparée, avec son installateur, son raccourci et ses propres mises à jour. Elle reprend une copie de tes données ; la version officielle n’est pas modifiée.'],
+    ['nouveau', 'L’appli s’ouvre sur le choix du jeu, ETS2 ou ATS, avec l’état du jeu et du plugin.'],
+    ['nouveau', 'Barre de gauche sur l’accueil : Game, News, Map, Settings et Support.'],
   ]},
 ];
