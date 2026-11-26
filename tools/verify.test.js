@@ -575,9 +575,17 @@ test('notes de version : numéros affichés, rubriques et bêta', () => {
   assert.equal(va('0.13.28'), '0.12.0.4');
   assert.equal(va('0.13.34'), '0.12.0.4');
   assert.equal(va('0.13.35'), '0.12.0.5');
-  assert.equal(va('0.13.35-beta.1'), '0.12.0.4 bêta 1');
-  assert.equal(va('0.13.35-beta.2'), '0.12.0.4 bêta 2');
-  assert.equal(va('0.13.36-beta.1'), '0.12.0.5 bêta 1');
+  // bêtas de la nouvelle interface regroupées en 4
+  assert.equal(va('0.13.35-beta.1'), '0.12.0.5 bêta 1');
+  assert.equal(va('0.13.35-beta.2'), '0.12.0.5 bêta 1');
+  assert.equal(va('0.13.36-beta.3'), '0.12.0.5 bêta 2');
+  assert.equal(va('0.13.36-beta.4'), '0.12.0.5 bêta 2');
+  assert.equal(va('0.13.36-beta.5'), '0.12.0.5 bêta 3');
+  assert.equal(va('0.13.36-beta.6'), '0.12.0.5 bêta 4');
+  assert.equal(va('0.13.36-beta.9'), '0.12.0.5 bêta 4');
+  assert.equal(va('0.13.36-beta.10'), '0.12.0.5 bêta 4');
+  assert.equal(va('0.13.36-beta.11'), '0.12.0.5 bêta 5');
+  assert.equal(va('0.13.37-beta.1'), '0.12.0.6 bêta 1');
   const pkg = require('../package.json');
   // la série 0.12 est continue, sans trou
   const serie = w.NOTES_VERSION.map(n => n.version).filter(x => x.startsWith('0.12'));
