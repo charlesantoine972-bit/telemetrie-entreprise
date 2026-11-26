@@ -13,12 +13,12 @@
 //   0.13.0 → 0.13.27 = 0.12.0.3 ; 0.13.28 → 0.13.34 = 0.12.0.4 ; ensuite 0.13.35 = 0.12.0.5, 0.13.36 = 0.12.0.6…
 // Bêta : « 0.13.(n)-beta.k » est l'essai de la version 0.13.(n-1) → affichée « <version> bêta k ».
 // Bêtas de la nouvelle interface regroupées en 4 : les essais techniques 0.13.35-beta.1 à 0.13.36-beta.9
-// deviennent 0.12.0.5 bêta 1 (essais 1-2), bêta 2 (3-4), bêta 3 (5) et bêta 4 (6-9) ; ensuite beta.10 = bêta 5…
+// deviennent 0.12.0.5 bêta 1 (essais 1-2), bêta 2 (3-4), bêta 3 (5) et bêta 4 (6-10) ; ensuite beta.11 = bêta 5…
 window.versionAffichee = function (v) {
   const b = /^(\d+)\.(\d+)\.(\d+)-beta\.(\d+)$/.exec(v || '');
   if (b && b[1] === '0' && b[2] === '13' && (b[3] === '35' || b[3] === '36')) {
     const k = Number(b[4]);
-    return '0.12.0.5 bêta ' + (k <= 2 ? 1 : k <= 4 ? 2 : k === 5 ? 3 : k <= 9 ? 4 : k - 5);
+    return '0.12.0.5 bêta ' + (k <= 2 ? 1 : k <= 4 ? 2 : k === 5 ? 3 : k <= 10 ? 4 : k - 6);
   }
   if (b) return window.versionAffichee(`${b[1]}.${b[2]}.${Number(b[3]) - 1}`) + ' bêta ' + b[4];
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
