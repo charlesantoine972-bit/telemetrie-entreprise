@@ -328,14 +328,22 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - [ ] **Ne pas mélanger la refonte à la bêta 5** · Qui : tâche 7 · Quand : à l'ouverture de la PR
   - Comment : ne pas fusionner `claude/refonte-interface` ; écrire une ligne dans la PR qui dit qu'elle existe et sera branchée après.
 
+**Décisions de Charles (27 novembre 2026)**
+
+- [x] **Pages déjà faites dans cette bêta : on les garde telles quelles** (décidé par Charles)
+  - Pages concernées : Games (choix du jeu), Map, News, Settings (Paramètres) et Support.
+  - Ce que ça veut dire : leur contenu, leur disposition et leur fonctionnement ne changent pas. La refonte ne leur applique **que le nouveau style** (couleurs, police, espacements des tokens). Aucune maquette à faire pour elles.
+- [x] **Pages manquantes de l'espace Entreprise : on les met en place, on les branche, puis on les règle** (décidé par Charles)
+  - Pages concernées : celles que le guide marque « maquette à faire » (Flotte & chauffeurs, Garages, Finances).
+  - Ce que ça veut dire : **pas de maquette préalable**. Elles sont construites au même style que les autres pages Entreprise de la maquette, branchées sur les vraies données de la sauvegarde, puis ajustées ensuite avec Charles.
+
 **Avant de brancher (toi, Charles)**
 
-- [ ] **Faire les maquettes qui manquent** · Qui : Charles (avec une tâche de maquette) · Quand : avant les étapes 8 à 10
-  - Comment : maquette des pages Flotte & chauffeurs, Garages, Finances (prévues par le guide, « maquette à faire »), validée comme la première.
-- [ ] **Décider du sort des autres pages** · Qui : Charles · Quand : avant l'étape 3 (menu)
-  - Comment : Paramètres, News, Support, Truck & Coach Tools, Atelier, Marketplace ne sont ni dans le guide ni dans la maquette. Choisir pour chacune : simple passage au nouveau style (couleurs et police), nouvelle maquette, ou retrait du menu. Faire ajouter la décision au guide `REFONTE-INTERFACE.md`.
+- [ ] **Décider du sort des pages restantes** · Qui : Charles · Quand : avant l'étape 3 (menu)
+  - Pages concernées : Truck & Coach Tools, Atelier, Marketplace (ni dans le guide, ni dans la décision ci-dessus).
+  - Comment : choisir pour chacune « nouveau style seulement » (comme Games, Map, News, Settings, Support) ou autre chose.
 - [ ] **Lancer les tâches de branchement** · Qui : Charles · Quand : une fois la bêta 5 fusionnée dans `beta`
-  - Comment : programmer une petite tâche par étape ci-dessous, dans l'ordre, chacune sur la branche `claude/refonte-interface` (jamais sur `beta` ni `main`), avec la consigne de lire ce tableau de bord, `REFERENTIEL-UI.md`, `REFONTE-INTERFACE.md` et `REFONTE-PREPARATIF.md`, puis de cocher sa case ici.
+  - Comment : programmer une petite tâche par étape ci-dessous, dans l'ordre, chacune sur la branche `claude/refonte-interface` (jamais sur `beta` ni `main`), avec la consigne de lire ce tableau de bord, `REFERENTIEL-UI.md`, `REFONTE-INTERFACE.md` et `REFONTE-PREPARATIF.md`, puis de cocher sa case ici. La première tâche ajoute les deux décisions ci-dessus dans `REFONTE-INTERFACE.md`.
 
 **Après la bêta 5 : branchement (une petite tâche par case, dans l'ordre)**
 
@@ -348,7 +356,10 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - [ ] **3. Menu** · Qui : tâche de branchement
   - Comment : charger `commun/menu.css`, reprendre la structure du menu de `apercu-refonte.html` dans le dossier du menu, rebrancher burger, réduire, puce du jeu, maison et bandeau de mise à jour ; « Ma VTC » reste masquée ; appliquer les décisions sur les autres pages.
 - [ ] **4 à 10. Pages, dans l'ordre du guide** (§ 5) · Qui : une tâche par page
-  - Comment : Feuille de route (fusion de Ma carrière), Calendrier, Télémétrie, Accueil et HUD, Vue d'ensemble, puis Flotte / Garages / Finances (après vérification des champs de la sauvegarde) et Ma VTC (après un essai réel de l'API TruckersMP). Chaque page dans son dossier, comparée à la maquette ; toute nouvelle fonction du pont déclarée dans `CONTRAT-NOYAU.md`.
+  - Comment : Feuille de route (fusion de Ma carrière), Calendrier, Télémétrie, Accueil et HUD, Vue d'ensemble, puis Flotte / Garages / Finances et Ma VTC (après un essai réel de l'API TruckersMP). Chaque page dans son dossier, comparée à la maquette ; toute nouvelle fonction du pont déclarée dans `CONTRAT-NOYAU.md`.
+  - Flotte / Garages / Finances : pas de maquette (décision de Charles) ; même style que la Vue d'ensemble, données réelles de la sauvegarde (vérifier d'abord quels champs existent, ex. détail des chauffeurs), puis réglages avec Charles.
+- [ ] **Passage au nouveau style des pages gardées** · Qui : tâche de branchement, après l'étape 3
+  - Comment : Games, Map, News, Settings, Support : remplacer couleurs, tailles et graisses en dur par les tokens et la typographie ; **ne rien changer d'autre** (contenu, disposition, fonctionnement). Comparer avec les captures de `docs/captures/beta-5/` : seule l'apparence doit changer.
 - [ ] **11. Nettoyage** · Qui : dernière tâche de branchement
   - Comment : remplacer le test « fichiers non branchés » par « aucune couleur en dur hors `tokens.css` » ; déplacer les échantillons de l'aperçu dans `app/commun/composants.css` ; supprimer `app/apercu-refonte.html`.
 - [ ] **12. Contrôle de sécurité** · Qui : une tâche de vérification (comme la tâche 8)
@@ -382,3 +393,4 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - Tâche 1 (suite, à la demande de Charles) : ajout de la partie « Travaux en parallèle » (préparatif de la refonte de l'interface, branche `claude/refonte-interface`), le 27 novembre 2026.
 - Tâche 1 (suite) : « Travaux en parallèle » mis à jour avec les résultats réels du préparatif de la refonte (commit `1ac3b8a`), le 27 novembre 2026.
 - Tâche 1 (suite, à la demande de Charles) : partie « Refonte de l'interface » transformée en liste à cocher (qui, quand, comment), le 27 novembre 2026.
+- Tâche 1 (suite) : décisions de Charles ajoutées à la refonte (pages Games, Map, News, Settings, Support : style seulement ; Flotte, Garages, Finances : mises en place sans maquette, réglées ensuite), le 27 novembre 2026.
