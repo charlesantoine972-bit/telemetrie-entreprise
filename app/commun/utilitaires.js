@@ -8,7 +8,7 @@ const store = { get(k, d){ try { const v = localStorage.getItem('tch.' + k); ret
                 set(k, v){ try { localStorage.setItem('tch.' + k, JSON.stringify(v)); } catch {} } };
 // Accessibilité : état « appuyé » des boutons de choix, annonces pour les lecteurs d'écran
 function announce(t){ const r = document.getElementById('srLive'); r.textContent = ''; setTimeout(() => { r.textContent = t; }, 60); }
-function syncPressed(root){ (root || document).querySelectorAll('.seg button, .sideswitch button, .vtcbar button').forEach(b => b.setAttribute('aria-pressed', b.classList.contains('on') ? 'true' : 'false')); }
+function syncPressed(root){ (root || document).querySelectorAll('.seg button, .sideswitch button').forEach(b => b.setAttribute('aria-pressed', b.classList.contains('on') ? 'true' : 'false')); }
 /* ---------- Fenêtre de confirmation ---------- */
 function ask(title, html, yes = 'Confirmer'){
   return new Promise(res => {

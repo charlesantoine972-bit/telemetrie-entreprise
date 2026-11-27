@@ -53,7 +53,7 @@ document.getElementById('rail').addEventListener('keydown', e => {
 });
 document.getElementById('lfNotes').onclick = () => { showLauncher(false); openOptCat('maj'); go('reglages', 'settings'); };
 document.getElementById('lfAbout').onclick = () => { showLauncher(false); go('support', 'support'); };
-new MutationObserver(muts => { for (const m of muts) { const t = m.target; if (t.matches && t.matches('.seg button, .sideswitch button, .vtcbar button')) t.setAttribute('aria-pressed', t.classList.contains('on') ? 'true' : 'false'); else if (m.type === 'childList') syncPressed(t); } })
+new MutationObserver(muts => { for (const m of muts) { const t = m.target; if (t.matches && t.matches('.seg button, .sideswitch button')) t.setAttribute('aria-pressed', t.classList.contains('on') ? 'true' : 'false'); else if (m.type === 'childList') syncPressed(t); } })
   .observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'], childList: true });
 syncPressed();
 document.querySelector('.skip').onclick = (e) => { e.preventDefault(); document.getElementById('mainContent').focus(); };
@@ -374,21 +374,6 @@ if (window.tel) window.tel.getSettings().then(st => { if (st.look) applyLook(st.
 const M = { map: null, info: MAP_FALLBACK, game: store.get('mapGame', 'ets2'), follow: true, tiles: null, truck: null, dest: null,
             trail: null, jobs: null, cities: null, firstFix: true, hist: null, histAt: 0, tileOk: 0, tileErr: 0, lastLive: null };
 
-/* ===== Hub — voir fonctionnalites/hub/hub.js ===== */
-(function drawMap(){
-  const svg = document.getElementById('roads');
-  svg.innerHTML = ROADS.map(([a,b]) => { const [x1,y1]=CITIES[a],[x2,y2]=CITIES[b];
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2A3A4A" stroke-width="3" stroke-linecap="round"/>`; }).join('');
-  const map = document.getElementById('map');
-  Object.entries(CITIES).forEach(([n,[x,y]]) => {
-    map.insertAdjacentHTML('beforeend', `<div class="citydot" style="left:${x/6}%;top:${y/5.2}%"></div><div class="city" style="left:${x/6}%;top:${y/5.2}%">${n}</div>`);
-  });
-  LIVE.forEach((d,i) => {
-    const c = d.loaded ? 'var(--loaded)' : 'var(--empty)';
-    map.insertAdjacentHTML('beforeend', `<div class="truck" id="tr${i}"><div class="tag" style="background:${c}">${d.name} · <span id="sp${i}">${d.speed}</span></div><div class="pt" style="background:${c}"></div></div>`);
-  });
-})();
-
 /* ===== Télémétrie — voir fonctionnalites/telemetrie/telemetrie.js ===== */
 document.getElementById('telTabs').addEventListener('click', e => {
   const b = e.target.closest('button[data-tt]'); if (!b) return;
@@ -509,8 +494,5 @@ renderMk();
  go('accueil');
  if (activeGame) applyGame(activeGame);
  showLauncher(true);
-renderRanking();
- tickMap();
  tickTablet();
-setInterval(tickMap, 1000);
 setInterval(tickTablet, 3000);

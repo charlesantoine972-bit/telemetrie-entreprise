@@ -16,7 +16,6 @@
   #launcher{left:var(--railw)}
   #spacePanel{inset:0 0 0 calc(var(--railw) + var(--navw,264px))}
   html[data-rail="news"] .side,html[data-rail="map"] .side,html[data-rail="support"] .side{display:none}
-  html[data-rail="map"] .vtcbar{display:none}
   /* Dans les espaces (Hub, Marketplace, Truck & Coach Tools) : mise en page 0.12.0.7, sans barre globale */
   html.in-space{--railw:0px}
   html.in-space .rail{display:none}
