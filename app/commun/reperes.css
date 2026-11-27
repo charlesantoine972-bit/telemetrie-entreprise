@@ -1,7 +1,7 @@
 /* Repères : barre de page collante, transitions, menu redimensionnable
    (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
   /* ---------- Repères : barre de page collante, transitions, apparition au défilement ---------- */
-  .pagebar{position:sticky;top:calc(-1 * var(--mpy));z-index:20;margin:calc(-1 * var(--mpy)) calc(-1 * var(--mpx)) 12px;padding:12px var(--mpx) 8px;display:flex;align-items:center;gap:12px;min-height:22px;border-bottom:1px solid transparent;transition:background .25s,border-color .25s,box-shadow .25s,padding .25s}
+  .pagebar{position:sticky;top:calc(-1 * var(--mpy));z-index:20;margin:calc(-1 * var(--mpy)) calc(-1 * var(--mpx)) var(--sp-4);padding:12px var(--mpx) 8px;display:flex;align-items:center;gap:12px;min-height:22px;border-bottom:1px solid transparent;transition:background .25s,border-color .25s,box-shadow .25s,padding .25s}
   .pb-crumb{display:flex;align-items:center;gap:7px;font-size:var(--fs-meta);font-weight:var(--fw-gras);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden}
   .pb-crumb i{font-style:normal;opacity:.55}
   .pb-crumb .cur{color:var(--accent-strong)}

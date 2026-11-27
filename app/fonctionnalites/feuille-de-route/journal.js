@@ -1,10 +1,11 @@
-/* Feuille de route : onglets (Trajets, Calendrier, Rapport de la semaine, Rapport du mois).
+/* Feuille de route : onglets (Trajets, Calendrier, Rapport de la semaine, Rapport du mois, Dépenses : voir depenses.js).
    Données : window.tel.journal() (lecture seule, voir CONTRAT-NOYAU.md) = kilomètres par jour + 300 derniers trajets.
    Règle : rien d'inventé. Un repère n'apparaît que s'il se calcule avec ce qui est enregistré ;
    « matières dangereuses » n'est pas affiché : le jeu ne le transmet pas à l'appli. */
 
+const frCalOuverts = new Set(); // trajets dépliés dans le calendrier
 let frDernierFin = null, frJournalCache = null, frOnglet = 'trajets', frMoisVu = null, frJourChoisi = null, frDecalSemaine = 0, frDecalMois = 0;
-const FR_ONGLETS = ['trajets', 'calendrier', 'semaine', 'mois'];
+const FR_ONGLETS = ['trajets', 'calendrier', 'semaine', 'mois', 'depenses'];
 const frJourCle = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const frEstCar = j => j.missionType === 'bus';
 const frTermine = j => j.status === 'livrée' || (!j.abandoned && j.status !== 'annulée' && j.status !== 'interrompue');
@@ -64,16 +65,21 @@ function frRendreOnglet(){
   if (frOnglet === 'calendrier') frRenderCalendrier();
   else if (frOnglet === 'semaine') frRenderRapport('semaine');
   else if (frOnglet === 'mois') frRenderRapport('mois');
+  else if (frOnglet === 'depenses') frRenderDepenses();
 }
 function frBrancherOnglets(){
   const liste = document.getElementById('frOnglets'); if (!liste) return;
   liste.addEventListener('click', e => { const b = e.target.closest('[role="tab"]'); if (b) frOuvrirOnglet(b.dataset.fr); });
   liste.addEventListener('keydown', e => {
     const i = FR_ONGLETS.indexOf(frOnglet); let n = null;
-    if (e.key === 'ArrowRight') n = FR_ONGLETS[(i + 1) % 4]; else if (e.key === 'ArrowLeft') n = FR_ONGLETS[(i + 3) % 4];
-    else if (e.key === 'Home') n = FR_ONGLETS[0]; else if (e.key === 'End') n = FR_ONGLETS[3];
+    const nb = FR_ONGLETS.length;
+    if (e.key === 'ArrowRight') n = FR_ONGLETS[(i + 1) % nb]; else if (e.key === 'ArrowLeft') n = FR_ONGLETS[(i + nb - 1) % nb];
+    else if (e.key === 'Home') n = FR_ONGLETS[0]; else if (e.key === 'End') n = FR_ONGLETS[nb - 1];
     if (n) { e.preventDefault(); frOuvrirOnglet(n, true); }
   });
+  if (typeof frBrancherDepenses === 'function') frBrancherDepenses();
+  const cal = document.getElementById('frCal');
+  if (cal) cal.addEventListener('toggle', e => { const d = e.target; if (d.classList && d.classList.contains('rt-item')) d.open ? frCalOuverts.add(d.dataset.key) : frCalOuverts.delete(d.dataset.key); }, true);
   for (const id of ['frCal', 'frSemaine', 'frMois']) {
     const box = document.getElementById(id);
     box.addEventListener('click', e => {
@@ -142,7 +148,9 @@ function frRenderCalendrier(){
     const nom = new Date(frJourChoisi + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
     detail = `<div class="panel fr-jour" aria-live="polite"><h3 class="t-sous">${escM(nom)}</h3>
       ${v ? `<p class="soft">${km((v.loaded || 0) + (v.empty || 0))} roulés · chargé ${km(v.loaded || 0)} · à vide ${km(v.empty || 0)}</p>` : '<p class="muted">Aucun kilomètre enregistré ce jour-là.</p>'}
-      ${r && r.trajets.length ? `<ul class="ent-liste">${r.trajets.map(j => `<li><span><b>${escM(j.from || '—')} → ${escM(j.to || '—')}</b> <span class="muted">· ${frEstCar(j) ? 'Car' : escM(j.cargo || 'Camion')}${j.special ? ' · ⚑ convoi exceptionnel' : ''}</span></span><span class="muted">${km(j.distance)} · ${escM(routeStatus(j).label)}</span></li>`).join('')}</ul>` : '<p class="muted">Aucun trajet terminé ce jour-là.</p>'}</div>`;
+      ${r && r.trajets.length ? `<p class="muted fr-note">Clique sur un trajet (ou Entrée) pour le dérouler : arrêts, kilomètres, carburant, dégâts, revenu, dépenses et solde.</p>
+      <div class="rt-row rt-head" aria-hidden="true"><span>Date</span><span>Trajet</span><span>Km</span><span>Statut</span><span>Dépenses</span><span>Revenu</span><span>Solde</span></div>
+      <div class="fr-jour-trajets">${r.trajets.slice().sort((a, b) => b.ended - a.ended).map(j => routeItemHtml(j, frCalOuverts.has(String(j.ended)))).join('')}</div>` : '<p class="muted">Aucun trajet terminé ce jour-là.</p>'}</div>`;
   }
   box.innerHTML = `<div class="fr-cal-tete"><button type="button" class="btn" data-fr-act="mois-" aria-label="Mois précédent">‹</button><h2 class="t-section fr-mois">${escM(titre.charAt(0).toUpperCase() + titre.slice(1))}</h2><button type="button" class="btn" data-fr-act="mois+" aria-label="Mois suivant">›</button></div>
     <div class="fr-legende muted">Repères : ⚑ convoi exceptionnel · ◆ nouvelle ville · ↻ ligne répétée · ★ record du mois. Les matières dangereuses ne sont pas indiquées : le jeu ne transmet pas cette information.</div>

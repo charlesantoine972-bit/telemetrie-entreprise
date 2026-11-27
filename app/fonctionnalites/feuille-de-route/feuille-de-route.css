@@ -70,3 +70,14 @@
 .fr-table thead th{color:var(--muted);font-weight:var(--fw-demi);font-size:var(--fs-meta);border-top:0}
 .fr-table tbody th{font-weight:var(--fw-normal);color:var(--soft)}
 @media (max-width:700px){ .fr-case{min-height:64px;padding:var(--sp-4)} }
+/* Calendrier : trajets du jour dépliables (bêta 6). Tokens uniquement. */
+.fr-jour-trajets{display:flex;flex-direction:column;border-bottom:var(--border) solid var(--line)}
+.fr-jour .rt-head{margin-top:var(--sp-4)}
+.rt-item>summary:focus-visible{outline:var(--focus-w) solid var(--focus);outline-offset:calc(-1 * var(--focus-w))}
+/* Onglet Dépenses (bêta 6). Tokens uniquement. */
+.dep-filtres{display:flex;flex-wrap:wrap;gap:var(--sp-12);align-items:flex-end}
+.dep-filtres .field{min-width:200px}
+.dep-mission{display:flex;flex-direction:column;gap:var(--sp-4)}
+.dep-mission p{margin:0;font-size:var(--fs-second)}
+.dep-note{font-size:var(--fs-meta);margin:0}
+.dep-num,.fr-table .dep-num{text-align:right}

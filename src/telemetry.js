@@ -39,13 +39,15 @@ function gameMission(s) {
   if (s.job) {
     const j = s.job, planned = numv(j['planned_distance.km']);
     const deadline = numv(j['delivery.time']);
-    const loaded = typeof j['is.cargo.loaded'] === 'boolean' ? j['is.cargo.loaded'] : !!s.trailerConnected;
+    // Nom exact du SDK : « cargo.loaded » (scssdk_telemetry_common_configs.h) ; l’ancienne lecture « is.cargo.loaded » reste acceptée.
+    const loadedAttr = typeof j['cargo.loaded'] === 'boolean' ? j['cargo.loaded'] : j['is.cargo.loaded'];
+    const loaded = typeof loadedAttr === 'boolean' ? loadedAttr : !!s.trailerConnected;
     return {
       type: 'truck',
       from: str(j['source.city']), fromCompany: str(j['source.company']),
       to: str(j['destination.city']), toCompany: str(j['destination.company']),
       cargo: str(j.cargo), mass: numv(j['cargo.mass']), units: numv(j['cargo.unit.count']),
-      income: numv(j.income), market: str(j['job.market']), special: j['special_job'] === true,
+      income: numv(j.income), market: str(j['job.market']), special: isSpecialJob(j),
       planned, remainingKm: navKm, remainingMin: navMin,
       // Avancement d’après le jeu : distance prévue de la mission et distance GPS restante.
       progress: planned > 0 && navKm != null ? Math.max(0, Math.min(1, 1 - navKm / planned)) : null,
@@ -61,6 +63,22 @@ function gameMission(s) {
     stageCount: b.stageCount, stageCurrent: b.stageCurrent, income: b.income || null,
     planned: b.planned || null, remainingKm: navKm, remainingMin: navMin,
     passengers: b.passengers, capacity: b.capacity
+  };
+}
+
+// Convoi exceptionnel : attribut « is.special.job » du SDK (transport spécial). Rien d’autre n’est deviné.
+function isSpecialJob(j) { return !!j && j['is.special.job'] === true; }
+
+// Mission « car_job » (ATS, SDK : configuration car_job, évènements car_job.delivered / car_job.cancelled).
+// Le plugin la transmet telle quelle dans un message « config » : seuls les attributs documentés sont lus.
+function carJobMission(c) {
+  if (!c || typeof c !== 'object' || !Object.keys(c).length) return null;
+  return {
+    key: `car_job|${c['source.city'] || ''}|${c['destination.city'] || ''}|${c.cargo || ''}|${c.income || ''}`,
+    missionType: 'car_job', from: str(c['source.city']), fromCompany: str(c['source.company']),
+    to: str(c['destination.city']), toCompany: str(c['destination.company']),
+    cargo: str(c.cargo), units: numv(c['cargo.unit.count']), income: numv(c.income), planned: numv(c['planned_distance.km']) || 0,
+    market: str(c['car_job.market']), fromId: str(c['source.city.id']), toId: str(c['destination.city.id'])
   };
 }
 
@@ -129,8 +147,11 @@ class Telemetry extends EventEmitter {
       this.lastPacket = Date.now();
       if (msg.type === 'state') this.onState(msg);
       else if (msg.type === 'gameplay') this.onGameplay(msg);
-      else if (msg.type === 'config' && typeof msg.id === 'string') (this.configs ||= {})[msg.id] = msg.data; // diagnostic
-      else if (msg.type === 'shutdown') { this.live = null; this.lastOdo = null; this.lastFuel = null; this.lastTruck = null; this.lastFuelGame = null; }
+      else if (msg.type === 'config' && typeof msg.id === 'string') {
+        (this.configs ||= {})[msg.id] = msg.data; // diagnostic
+        if (msg.id === 'car_job') this.carJob = msg.data && typeof msg.data === 'object' ? msg.data : null;
+      }
+      else if (msg.type === 'shutdown') { this.live = null; this.lastOdo = null; this.lastFuel = null; this.lastTruck = null; this.lastFuelGame = null; this.carJob = null; }
     });
     this.sock.on('error', (e) => { this.socketError = e.message; });
     this.sock.bind(PORT, '127.0.0.1');
@@ -188,8 +209,9 @@ class Telemetry extends EventEmitter {
       to: s.job['destination.city'], toCompany: s.job['destination.company'],
       cargo: s.job.cargo, mass: s.job['cargo.mass'] || 0, income: s.job.income || 0,
       planned: s.job['planned_distance.km'] || 0,
+      units: numv(s.job['cargo.unit.count']), market: str(s.job['job.market']), special: isSpecialJob(s.job),
       fromId: s.job['source.city.id'] || null, toId: s.job['destination.city.id'] || null
-    } : null);
+    } : carJobMission(this.carJob));
     const jobKey = activeMission ? activeMission.key : null;
     if (!jobKey) this.finishedKey = null;
     if (jobKey && jobKey !== this.finishedKey && (!this.current || this.current.key !== jobKey)) {
@@ -215,7 +237,7 @@ class Telemetry extends EventEmitter {
       // Ancienne version du jeu sans évènement de livraison : on clôture quand la mission disparaît
       this.pendingFinish = setTimeout(() => {
         this.pendingFinish = null;
-        if (this.current && !(this.live && (this.live.job || this.live.busJob))) this.finishJob('terminée');
+        if (this.current && !(this.live && (this.live.job || this.live.busJob)) && !carJobMission(this.carJob)) this.finishJob('terminée');
       }, this.current.missionType === 'bus' ? BUS_JOB_COMPLETION_GRACE_MS : 2000);
     }
 
@@ -309,18 +331,21 @@ class Telemetry extends EventEmitter {
   onGameplay(e) {
     this.lastEvent = { id: e.id, at: Date.now(), data: e.data };
     const t = this.data.totals;
-    if (e.id === 'job.delivered' || e.id === 'bus_job.completed') this.finishJob('livrée', e.data);
-    else if (e.id === 'job.cancelled' || e.id === 'bus_job.cancelled') {
+    if (e.id === 'job.delivered' || e.id === 'car_job.delivered' || e.id === 'bus_job.completed') this.finishJob('livrée', e.data);
+    else if (e.id === 'job.cancelled' || e.id === 'car_job.cancelled' || e.id === 'bus_job.cancelled') {
       this.recordExpense('annulation', e.data && e.data['cancel.penalty']);
       this.finishJob('annulée', e.data);
     } else if (e.id === 'player.fined') {
       const amount = e.data && e.data['fine.amount'];
       t.fines++; t.finesAmount += Number.isFinite(amount) ? amount : 0;
-      this.recordExpense('amende', amount);
+      this.recordExpense('amende', amount, { offence: e.data && typeof e.data['fine.offence'] === 'string' ? e.data['fine.offence'] : null });
       this.dirty = true;
     } else if (e.id === 'player.tollgate.paid') this.recordExpense('péage', e.data && e.data['pay.amount']);
-    else if (e.id === 'player.use.ferry') this.recordExpense('ferry', e.data && e.data['pay.amount']);
-    else if (e.id === 'player.use.train') this.recordExpense('train', e.data && e.data['pay.amount']);
+    else if (e.id === 'player.use.ferry' || e.id === 'player.use.train') {
+      // Trajet du ferry / train : noms de départ et d’arrivée donnés par le jeu (source.name, target.name)
+      const d = e.data || {};
+      this.recordExpense(e.id === 'player.use.ferry' ? 'ferry' : 'train', d['pay.amount'], { from: str(d['source.name']), to: str(d['target.name']) });
+    }
     this.emit('event', this.lastEvent);
   }
 
@@ -331,14 +356,17 @@ class Telemetry extends EventEmitter {
     return (t.money[g] ||= { revenue: 0, expenses: 0 });
   }
 
-  recordExpense(type, amount) {
+  // Dépense reçue du jeu. Hors mission, elle compte dans les totaux mais n’est rattachée à aucune mission.
+  recordExpense(type, amount, extra) {
     if (!Number.isFinite(amount) || amount <= 0) return;
     this.data.totals.expenses = (this.data.totals.expenses || 0) + amount;
     this.moneyFor().expenses += amount;
     this.dirty = true;
     if (this.current) {
       this.current.expenses += amount;
-      this.current.expenseItems.push({ type, amount, at: Date.now() });
+      const item = { type, amount, at: Date.now() };
+      for (const [k, v] of Object.entries(extra || {})) if (v != null) item[k] = v;
+      this.current.expenseItems.push(item);
       this.dirty = true;
     }
   }
@@ -448,4 +476,4 @@ class Telemetry extends EventEmitter {
   }
 }
 
-module.exports = { Telemetry, PORT, gameMission };
+module.exports = { Telemetry, PORT, gameMission, carJobMission };

@@ -125,7 +125,7 @@ test('Feuille de route (bêta 5) : 4 onglets accessibles, Ma carrière fusionné
   const root = path.resolve(__dirname, '..');
   const html = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
   assert.doesNotMatch(html, /id="v-trajets"/, 'Ma carrière retirée (fusionnée)');
-  for (const o of ['trajets', 'calendrier', 'semaine', 'mois']) {
+  for (const o of ['trajets', 'calendrier', 'semaine', 'mois', 'depenses']) {
     assert.match(html, new RegExp(`role="tab" id="frTab-${o}"[^>]*aria-controls="frPan-${o}"`));
     assert.match(html, new RegExp(`role="tabpanel" id="frPan-${o}" aria-labelledby="frTab-${o}"`));
   }
@@ -1240,4 +1240,92 @@ test('contrat du noyau : chaque fonction du pont a son point d’entrée et figu
   // Et aucun canal du noyau n’existe sans fonction du pont (sauf ceux du noyau vers l’interface)
   const canaux = new Set(fonctions.map(f => f.ch));
   for (const m of main.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)) assert.ok(canaux.has(m[1]), `canal « ${m[1]} » dans main.js sans fonction dans preload.js`);
+});
+
+test('bêta 6 : dépenses des missions (Finances et Feuille de route), euros et dollars séparés, rien d’inventé', () => {
+  const root = path.resolve(__dirname, '..');
+  const ctx = { fmt: n => String(n), km: n => n + ' km', escM: x => String(x), routeStatus: () => ({ label: 'Livré' }), document: {}, window: {} };
+  vm.createContext(ctx);
+  vm.runInContext(['journal.js', 'depenses.js'].map(f => fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route', f), 'utf8')).join('\n')
+    + ';this.depBilanMission=depBilanMission;this.depTotaux=depTotaux;this.depLignes=depLignes;this.depBornes=depBornes;', ctx);
+  const a = { ended: 100, game: 'ets2', revenue: 5000, expenses: 1470, expenseItems: [{ type: 'péage', amount: 120, at: 10 }, { type: 'ferry', amount: 900, at: 20, from: 'Calais', to: 'Dover' }, { type: 'amende', amount: 450, at: 30, offence: 'speeding' }] };
+  const b = { ended: 200, game: 'ats', revenue: 3000, expenses: 0, expenseItems: [] };
+  const vieux = { ended: 50, game: 'ets2', revenue: 1000, expenses: 300 }; // ancienne mission sans détail
+  const sans = { ended: 60, game: 'ets2' }; // rien reçu
+  const ba = ctx.depBilanMission(a);
+  assert.equal(ba.solde, 3530); assert.equal(ba.parType['ferry'], 900);
+  assert.equal(ctx.depBilanMission(vieux).detailConnu, false);
+  assert.equal(ctx.depBilanMission(sans).solde, null, 'revenu inconnu : pas de solde inventé');
+  const t = JSON.parse(JSON.stringify(ctx.depTotaux([a, b, vieux])));
+  assert.equal(t.ets2.revenu, 6000); assert.equal(t.ets2.depenses, 1770); assert.equal(t.ats.revenu, 3000); assert.equal(t.ats.solde, 3000);
+  // Filtres de l'onglet Dépenses : dernière mission par défaut, type, période
+  assert.equal(ctx.depLignes([a, b], { mission: 'dernier', periode: 'tout', type: 'tous' }).length, 0, 'la dernière mission (ATS) n’a aucune dépense');
+  assert.equal(ctx.depLignes([a, b], { mission: 'tous', periode: 'tout', type: 'tous' }).length, 3);
+  assert.equal(ctx.depLignes([a, b], { mission: '100', periode: 'tout', type: 'amende' }).map(l => l.offence).join(), 'speeding');
+  const maintenant = new Date(2026, 10, 27, 15);
+  const [d, f] = ctx.depBornes('semaine', maintenant);
+  assert.equal(new Date(d).getDay(), 1, 'la semaine commence le lundi'); assert.equal(f - d, 7 * 864e5);
+  assert.equal(ctx.depLignes([a], { mission: 'tous', periode: 'mois', type: 'tous' }, maintenant).length, 0, 'dépenses de 1970 hors du mois');
+  // Finances : bloc « Missions terminées » branché, aucune nouvelle fonction du pont
+  const ent = fs.readFileSync(path.join(root, 'app/fonctionnalites/entreprise/entreprise.js'), 'utf8');
+  assert.match(ent, /Missions terminées/); assert.match(ent, /Cette semaine/); assert.match(ent, /Ce mois-ci/);
+  assert.match(ent, /ne transmet ni le prix du carburant ni le coût des réparations/);
+  const css = ['entreprise/entreprise.css', 'feuille-de-route/feuille-de-route.css'].map(f => fs.readFileSync(path.join(root, 'app/fonctionnalites', f), 'utf8')).join('\n');
+  const nouveau = css.slice(css.indexOf('bêta 6'));
+  assert.ok(!/#[0-9a-f]{3,8}\b|rgba?\(/i.test(nouveau), 'nouveaux styles : tokens uniquement');
+});
+
+test('bêta 6 : un trajet du calendrier se déroule comme dans l’historique (routeTimeline + même bilan)', () => {
+  const root = path.resolve(__dirname, '..');
+  const fr = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/feuille-de-route.js'), 'utf8');
+  const ctx = { fmt: n => String(n), km: n => n + ' km', dur: m => m + ' min', escM: x => String(x == null ? '' : x), document: {} };
+  vm.createContext(ctx); vm.runInContext(fr + ';this.routeItemHtml=routeItemHtml;', ctx);
+  const html = ctx.routeItemHtml({ from: 'Paris', to: 'Lyon', cargo: 'Transformateur', mass: 48000, special: true, ended: 5, status: 'livrée', game: 'ets2',
+    distance: 470, loaded: 460, empty: 10, fuelUsed: 150, fuelAdded: 80, damage: 0.02, revenue: 9000, expenses: 120,
+    expenseItems: [{ type: 'péage', amount: 120, at: 3 }],
+    stops: [{ kind: 'départ', name: 'Paris', at: 0, km: 0 }, { kind: 'arrivée', name: 'Lyon', at: 5, km: 470 }] }, true);
+  for (const t of [/Cargaison/, /Transformateur · 48 t/, /convoi exceptionnel/, /rt-tl/, /chargé 460 km · à vide 10 km/, /150 L consommés/, /Dégâts/, /9000 €/, /8880 €/, /péage/, / open>/]) assert.match(html, t);
+  const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8');
+  assert.match(js, /routeItemHtml\(j, frCalOuverts\.has/, 'le calendrier réutilise le bloc de l’historique');
+});
+
+test('bêta 6 : onglet Dépenses au clavier (tablist à 5 onglets), filtres mission / période / type, carburant et réparations non inventés', () => {
+  const root = path.resolve(__dirname, '..');
+  const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8');
+  assert.match(js, /FR_ONGLETS = \['trajets', 'calendrier', 'semaine', 'mois', 'depenses'\]/);
+  assert.doesNotMatch(js, /% 4\]|FR_ONGLETS\[3\]/, 'navigation au clavier calculée sur le nombre réel d’onglets');
+  const dep = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/depenses.js'), 'utf8');
+  for (const id of ['depMission', 'depPeriode', 'depType']) assert.match(dep, new RegExp(`<label class="field">[^<]+<select id="${id}"`), id + ' avec son étiquette');
+  assert.match(dep, /'Dernière mission'/); assert.match(dep, /depMission = 'dernier'/, 'dernière mission par défaut');
+  assert.match(dep, /Le jeu ne transmet ni le prix du carburant ni le coût des réparations/);
+  assert.doesNotMatch(dep.replace(/\/\*[\s\S]*?\*\//g, ''), /window\.tel\./, 'aucun appel au pont : données du journal déjà chargé');
+});
+
+test('bêta 6 : Entreprise lit seule la dernière sauvegarde du profil le plus récent, et dit clairement pourquoi si elle échoue', async () => {
+  const root = path.resolve(__dirname, '..');
+  const src = fs.readFileSync(path.join(root, 'app/fonctionnalites/entreprise/entreprise.js'), 'utf8');
+  const box = { innerHTML: '', querySelectorAll: () => [] };
+  const appels = [];
+  const mk = (summary) => {
+    const ctx = { escM: x => String(x), fmt: String, km: n => n + ' km', fmtDate: () => 'date', go() {}, HAS_APP: true, activeGame: 'ats', frJournalCache: { jobs: [], days: {} },
+      state: { view: 'finances' }, document: { getElementById: () => box },
+      atSel: { profiles: [{ id: 'ets2/p/a', game: 'ets2', name: 'A' }, { id: 'ats/p/b', game: 'ats', name: 'B' }], profileId: 'ets2/p/a', slots: [], slot: null, summary: null, info: { available: true }, msg: '' },
+      atEnsure: async () => true,
+      window: { tel: { atelier: { summary: async (id, slot) => { appels.push([id, slot]); return summary; } } } } };
+    ctx.atLoadSlots = async () => { ctx.atSel.slots = [{ slot: 'autosave', label: 'Auto', modified: 2 }, { slot: '1', label: 'Vieille', modified: 1 }]; ctx.atSel.slot = 'autosave'; };
+    vm.createContext(ctx); vm.runInContext(src + ';this.renderEntreprise=renderEntreprise;', ctx);
+    return ctx;
+  };
+  const a = mk({ ok: false, error: 'decrypt_truck a échoué (fichier abîmé)' });
+  await a.renderEntreprise('finances');
+  assert.deepEqual(appels.map(x => x.join()), ['ats/p/b,autosave'], 'profil le plus récent du jeu choisi (ATS), sauvegarde la plus récente, sans clic');
+  assert.match(box.innerHTML, /role="alert"/); assert.match(box.innerHTML, /Sauvegarde illisible : decrypt_truck a échoué/);
+  // Outil de déchiffrement absent : lecture tentée, échec expliqué clairement
+  appels.length = 0;
+  const b = mk({ ok: true, data: {} }); b.atSel.info.available = false;
+  b.window.tel.atelier.summary = async (id, slot) => { appels.push([id, slot]); return { ok: false, error: 'Outil de déchiffrement introuvable.' }; };
+  await b.renderEntreprise('finances');
+  assert.equal(appels.length, 1, 'essai quand même : une sauvegarde en texte clair se lit sans l’outil');
+  assert.match(box.innerHTML, /outil de déchiffrement des sauvegardes \(decrypt_truck\) est introuvable/);
+  assert.doesNotMatch(src, /atelier\.apply|atelier\.save\b/, 'lecture seule');
 });
