@@ -95,20 +95,39 @@ function saveSettings() {
 function integrationSecretsFile() {
   return path.join(app.getPath('userData'), 'integrations.json');
 }
-function readSteamApiKey() {
+// Clé Steam chiffrée par le système (DPAPI sous Windows) avec les fonctions ASYNCHRONES de safeStorage
+// (Electron 45+). Les fonctions synchrones sont dépréciées en Electron 45 et supprimées en 46 : elles ne
+// servent plus qu'en secours, pour relire une clé enregistrée par une ancienne version de l'appli
+// (elle est alors rechiffrée avec la nouvelle méthode).
+async function chiffrementDisponible() {
+  try { return await safeStorage.isAsyncEncryptionAvailable(); } catch { return false; }
+}
+async function readSteamApiKey() {
   const file = integrationSecretsFile();
   if (!fs.existsSync(file)) return '';
-  if (!safeStorage.isEncryptionAvailable()) throw new Error('Le stockage chiffré du système est indisponible.');
+  if (!(await chiffrementDisponible())) throw new Error('Le stockage chiffré du système est indisponible.');
   const stored = JSON.parse(fs.readFileSync(file, 'utf8'));
   if (!stored.steamApiKey) return '';
-  return safeStorage.decryptString(Buffer.from(stored.steamApiKey, 'base64'));
+  const encrypted = Buffer.from(stored.steamApiKey, 'base64');
+  let key, rechiffrer = false;
+  try {
+    const r = await safeStorage.decryptStringAsync(encrypted);
+    key = r.result; rechiffrer = !!r.shouldReEncrypt;
+  } catch (e) {
+    // Secours : clé écrite par une version précédente (méthode synchrone), tant qu'Electron la fournit encore.
+    if (typeof safeStorage.decryptString !== 'function') throw e;
+    key = safeStorage.decryptString(encrypted); rechiffrer = true;
+  }
+  if (rechiffrer && key) { try { await writeSteamApiKey(key); } catch {} }
+  return key;
 }
-function writeSteamApiKey(apiKey) {
-  if (!safeStorage.isEncryptionAvailable()) throw new Error('Le stockage chiffré du système est indisponible.');
+async function writeSteamApiKey(apiKey) {
+  if (!(await chiffrementDisponible())) throw new Error('Le stockage chiffré du système est indisponible.');
   const file = integrationSecretsFile();
+  const encrypted = (await safeStorage.encryptStringAsync(apiKey)).toString('base64');
   let stored = {};
   if (fs.existsSync(file)) stored = JSON.parse(fs.readFileSync(file, 'utf8'));
-  stored.steamApiKey = safeStorage.encryptString(apiKey).toString('base64');
+  stored.steamApiKey = encrypted;
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(stored, null, 2));
 }
@@ -523,14 +542,14 @@ function setupIpc() {
     steamKeyConfigured: fs.existsSync(integrationSecretsFile()) && !!JSON.parse(fs.readFileSync(integrationSecretsFile(), 'utf8')).steamApiKey,
     discordClientId: settings.discordClientId || ''
   }));
-  ipcMain.handle('steam:key:set', (_e, key) => {
+  ipcMain.handle('steam:key:set', async (_e, key) => {
     if (!steam.validApiKey(key)) throw new Error('La clé Steam Web API doit contenir 32 caractères hexadécimaux.');
-    writeSteamApiKey(key);
+    await writeSteamApiKey(key);
     return { configured: true };
   });
   ipcMain.handle('steam:key:clear', () => { clearSteamApiKey(); return { configured: false }; });
   ipcMain.handle('steam:profile', async () => {
-    const key = readSteamApiKey();
+    const key = await readSteamApiKey();
     if (!key) throw new Error('Enregistre une clé Steam Web API dans les options.');
     return steam.getProfile(key, settings.steamId);
   });

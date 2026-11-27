@@ -24,7 +24,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 
 ## Sécurité
 
-- [ ] **S1 — Electron 33 plus maintenu** · Urgent
+- [x] **S1 — Electron 33 plus maintenu** · Urgent (corrigé par la tâche 2 : Electron 45.5.0, voir « Mise à jour d'Electron » ; la tâche 3 vérifie que les failles listées ont disparu)
   - Où : `package.json:75` (`"electron": "^33.2.0"`, installé 33.4.11) ; dernière version 45.5.0.
   - Problème : Electron 33 ne reçoit plus de correctifs. `npm audit` liste 49 failles, dont « protocole personnalisé avec `supportFetchAPI` sans `corsEnabled` : lecture d'autres origines » (c’est exactement `tchmap://`, `src/map.js:51`), « une iframe en bac à sable peut contourner `allow-popups` » (iframe `tchFrame`) et « contournement de l'isolation par `Function.prototype.bind` ».
   - Risque concret : une page piégée (contenu distant, mod, carte) pourrait sortir de son bac à sable et atteindre le pont `tel`.
@@ -113,12 +113,14 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : `npm audit` signale `tar` (critique), `node-gyp`, `cacache`, `@electron/rebuild`… Ces paquets servent seulement à fabriquer l'installeur, ils ne sont pas livrés.
   - Risque concret : faible pour les utilisateurs ; existe sur la machine de construction (GitHub Actions).
   - Correction : electron-builder 26 avec Electron 45. → tâche 2.
+  - Tâche 2 : fait (electron-builder 26.18.0). `npm audit` passe de 18 failles (1 critique, 13 hautes) à **6 moyennes**, toutes dues à `minimatch` (7.0.0 à 11.0.0) dans la chaîne d'outils d'electron-builder 26 (`app-builder-lib`, `dmg-builder`, `@electron/universal`…). `npm audit fix --force` ne propose qu'un retour en arrière d'electron-builder : à laisser jusqu'à une prochaine version d'electron-builder. Case laissée ouverte pour ces 6 failles moyennes.
 
-- [ ] **S16 — Protections internes d'Electron (« fuses ») non réglées** · Plus tard
+- [x] **S16 — Protections internes d'Electron (« fuses ») non réglées** · Plus tard (corrigé par la tâche 2 : `build.electronFuses` dans `package.json`, repris par la config bêta)
   - Où : configuration electron-builder (`package.json`, `electron-builder-beta.js`).
   - Problème : les options `RunAsNode`, vérification d'intégrité de l'archive `app.asar`, etc. sont aux valeurs par défaut.
   - Risque concret : un programme déjà présent sur le PC peut plus facilement détourner l'appli.
   - Correction : régler `electronFuses` dans electron-builder 26 (désactiver `RunAsNode`, activer l'intégrité asar). → tâche 2 ou 3.
+  - Tâche 2 : `RunAsNode`, `NODE_OPTIONS` et `--inspect` désactivés ; vérification d'intégrité de `app.asar` et chargement uniquement depuis `app.asar` activés (contrôlé sur l'exécutable Windows produit). **Volontairement laissés** : chiffrement des cookies (réglage sans retour possible) et privilèges supplémentaires de `file://` (l'appli charge `app/index.html` en `file://` ; à couper seulement le jour où l'interface passera par un protocole maison).
 
 *Points S17 à S21 : ajoutés par un second passage de la tâche 1 (même jour), qui ne les trouvait pas plus haut.*
 
@@ -246,6 +248,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : Electron 33 (→ 45), electron-builder 25 (→ 26), `discord-rpc` 4.0.1 n'est plus maintenu depuis 2020.
   - Risque concret : voir S1, S15 ; `discord-rpc` pourrait cesser de marcher avec Discord.
   - Correction : mises à jour à la tâche 2 ; surveiller une alternative à `discord-rpc`.
+  - Tâche 2 : Electron 45.5.0, electron-builder 26.18.0 et electron-updater 6.8.11 faits. Reste `discord-rpc` (case laissée ouverte).
 
 - [ ] **G16 — `openLink('mods')` ouvre toujours ETS2** · Plus tard
   - Où : `main.js:659-662`.
@@ -284,6 +287,58 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : incohérence du contrat.
   - Risque concret : faible (erreur d'interface plus tard, ou dans la version Diamond).
   - Correction : aligner, et mettre à jour `CONTRAT-NOYAU.md`.
+
+- [ ] **G22 — Analyse des mods : le processus ne se ferme pas après son rapport (vu sous Linux)** · Important (à vérifier sous Windows)
+  - Où : `main.js:362-424` (`modsAnalyse.lancer` attend l'événement `exit` pour répondre), `tch-mods/analyse.js:197-205`.
+  - Problème : trouvé par la tâche 2 en testant l'appli. Sous Linux, `analyse.js` lancé par `utilityProcess.fork` écrit bien son rapport (`@TCH {"etape":"fini",…}`, en 10 ms) mais le processus reste ouvert ; comme l'appli ne répond qu'à sa fermeture, `mods.analyser` ne répond jamais. **Même comportement en Electron 33** (ce n'est pas causé par la mise à jour). Lancé avec Node seul, il se ferme normalement.
+  - Risque concret : si c'est pareil sous Windows, le bouton d'analyse des mods tourne sans fin, et toute nouvelle analyse est refusée (« déjà en cours ») jusqu'au redémarrage.
+  - Correction : répondre dès la réception de l'étape `fini` (ou `erreur`) puis arrêter le processus (`p.kill()`) ; ou terminer `analyse.js` par `process.exit()`. À faire avec G20.
+
+## Mise à jour d'Electron (tâche 2, 27 novembre 2026)
+
+**Versions**
+
+| | Avant | Après |
+|---|---|---|
+| Electron | 33.4.11 (`^33.2.0`, plus maintenu) | **45.5.0** (`^45.5.0`) |
+| electron-builder | 25.1.8 | **26.18.0** |
+| electron-updater | 6.3.9 (`^6.3.9`) | **6.8.11** (reste dans `dependencies`, donc livré dans l'appli) |
+
+Vérifié sur electronjs.org le 27 novembre 2026 : versions maintenues **43, 44 et 45** ; 45.5.0 est la dernière stable (Chromium 156, Node 24.22.3). La 46 n'existe qu'en alpha (`46.0.0-alpha.14`). La série 43 s'arrête en janvier 2027 : prévoir de passer en 46 ou 47 dans l'année qui vient (rythme Electron : une version majeure toutes les 8 semaines, 3 maintenues).
+
+**Changements de code**
+
+- `main.js` (clé Steam) : `safeStorage` passe aux fonctions **asynchrones** (`isAsyncEncryptionAvailable`, `encryptStringAsync`, `decryptStringAsync`), car les synchrones sont dépréciées en 45 et **supprimées en 46**. Secours : une clé enregistrée par une version précédente qui ne se relirait pas avec la nouvelle méthode est relue avec l'ancienne (tant qu'Electron 45 la fournit), puis rechiffrée aussitôt. Même chose si Electron demande un rechiffrement (`shouldReEncrypt`). Les points d'entrée `steam:key:set` et `steam:profile` attendent ces fonctions (ce sont déjà des promesses pour l'interface : rien ne change pour elle).
+- `package.json` : versions ci-dessus ; « fuses » réglés (voir S16) ; script `start` = `install-electron && electron .`. **Depuis Electron 42, `npm ci` ne télécharge plus le programme Electron** : `npm start` le télécharge maintenant la première fois. La construction (electron-builder) télécharge son propre Electron, rien à changer dans `release.yml`.
+- `CONTRAT-NOYAU.md` : numéros de ligne de `main.js` mis à jour (+19 après la ligne 117). **Attention** : les numéros `main.js:…` de ce tableau de bord, écrits par la tâche 1, n'ont pas été recalculés : ajouter 19 à ceux au-delà de la ligne 117.
+
+**Changements d'Electron 34 à 45 relus, sans adaptation nécessaire**
+
+- Preloads en bac à sable (45) : `preload.js` n'utilise que `contextBridge` et `ipcRenderer` (pas de `Buffer`, `events`, `timers`, `url`) : compatible.
+- Archives asar (45, descripteurs de fichiers réservés à `fs`) : la carte et l'analyse des mods ne lisent les fichiers qu'avec les fonctions normales de `fs` ; `tuiles.bin` est dans le dossier de données, pas dans l'archive ; l'extraction est hors archive (`asarUnpack`). Testé : le serveur de la carte, lancé depuis `app.asar` d'une version empaquetée, répond.
+- `window.open` (39, 45) : tout est refusé par `setWindowOpenHandler`, inchangé. Permissions (`display-capture`, 45) : tout est déjà refusé.
+- Presse-papiers (40, 44) : l'interface utilise `navigator.clipboard`, pas le module `clipboard`.
+- Windows 32 bits plus fourni depuis la 44 : l'appli est construite en x64 seulement.
+- Réglages de sécurité inchangés : `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true` sur les deux fenêtres.
+
+**Vérifications faites (Linux)**
+
+- `npm test` : 77 réussis avant, **77 réussis après**.
+- Appli lancée depuis les sources (xvfb) : aucune erreur JavaScript ; seul avertissement, celui de l'iframe de la carte (déjà noté en S5).
+- Version empaquetée (fuses actifs, code lu dans `app.asar`) : démarre, la carte démarre et répond, aucune erreur dans la page.
+- Chiffrement asynchrone : aller-retour réussi (sous Linux, l'ancien mode synchrone n'était même pas disponible, donc la relecture d'une ancienne clé n'a pas pu être testée ici).
+- Construction bêta `electron-builder --config electron-builder-beta.js --win nsis --x64 --publish never` : l'appli Windows est bien empaquetée (`win-unpacked`, `app-update.yml` sur le canal `beta` en pré-version, fuses appliqués), mais l'installeur NSIS n'a pas pu être fabriqué ici (il demande Wine sous Linux, et Wine plante dans ce conteneur). Sous Windows (GitHub Actions ou chez Charles), cette étape n'a pas besoin de Wine.
+- `npm audit` : 6 failles moyennes (outils de construction, voir S15) ; `npm audit --omit=dev` : 0.
+
+**À tester par Charles sous Windows** (avant de publier la bêta 5)
+
+1. Construire sans publier : `npm ci`, puis `npx electron-builder --config electron-builder-beta.js --win nsis --x64 --publish never` → un fichier `dist/Truck-and-Coach-Hub-Beta-Setup-….exe` doit apparaître. Installer et lancer.
+2. **Clé Steam** (le seul vrai changement de code) : dans Paramètres → Steam & Discord, avec une clé déjà enregistrée par la bêta 4, vérifier que le profil Steam s'affiche toujours (relecture de l'ancienne clé). Puis effacer la clé, la ressaisir, et revérifier.
+3. Carte : ouverture, extraction de la carte d'un jeu, affichage des tuiles.
+4. Mods : lancer l'analyse et vérifier qu'elle se termine (voir G22).
+5. HUD par-dessus le jeu, télémétrie, Atelier (liste des sauvegardes, résumé), choix d'un dossier de jeu (la fenêtre de choix de dossier peut s'ouvrir sur un autre dossier par défaut qu'avant : Electron 43 a changé ce point).
+6. Mise à jour automatique : vérifier que la recherche de mise à jour ne donne pas d'erreur (electron-updater 6.8).
+7. Antivirus / SmartScreen : l'exécutable est toujours non signé (S7), rien de nouveau, mais signaler si Windows Defender réagit différemment.
 
 ## Plan d'action
 
@@ -394,3 +449,4 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - Tâche 1 (suite) : « Travaux en parallèle » mis à jour avec les résultats réels du préparatif de la refonte (commit `1ac3b8a`), le 27 novembre 2026.
 - Tâche 1 (suite, à la demande de Charles) : partie « Refonte de l'interface » transformée en liste à cocher (qui, quand, comment), le 27 novembre 2026.
 - Tâche 1 (suite) : décisions de Charles ajoutées à la refonte (pages Games, Map, News, Settings, Support : style seulement ; Flotte, Garages, Finances : mises en place sans maquette, réglées ensuite), le 27 novembre 2026.
+- Tâche 2 (Electron) : terminée le 27 novembre 2026. Electron 33.4.11 → **45.5.0**, electron-builder 25.1.8 → 26.18.0, electron-updater 6.3.9 → 6.8.11 (dans `dependencies`). Clé Steam passée à `safeStorage` asynchrone, fuses réglés (S16), contrat mis à jour (numéros de ligne). `npm test` : 77 réussis. Appli et version empaquetée démarrées sous Linux sans erreur ; installeur Windows à vérifier sous Windows. Nouveau point G22 (analyse des mods, déjà présent en Electron 33). S1 et S16 cochés.
