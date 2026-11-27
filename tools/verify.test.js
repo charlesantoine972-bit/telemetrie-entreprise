@@ -171,9 +171,80 @@ test('barre globale Game / News / Map / Settings / Support et page de choix du j
   assert.doesNotMatch(html, />Truck Tools</);
 });
 
+test('refonte (bêta 5) : contrastes WCAG des tokens en sombre, clair et contraste élevé (tools/contrastes.mjs)', () => {
+  const { spawnSync } = require('node:child_process');
+  const root = path.resolve(__dirname, '..');
+  const r = spawnSync(process.execPath, [path.join(root, 'tools', 'contrastes.mjs')], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+test('refonte (bêta 5) : tokens et police branchés, aucune couleur / taille / graisse en dur dans commun/, police locale', () => {
+  const root = path.resolve(__dirname, '..');
+  const lire = f => fs.readFileSync(path.join(root, f), 'utf8');
+  const html = lire('app/index.html');
+  assert.match(html, /<link rel="stylesheet" href="commun\/tokens\.css">\s*<link rel="stylesheet" href="commun\/typographie\.css">/, 'tokens et typographie chargés en premier');
+  assert.ok(html.indexOf('commun/tokens.css') < html.indexOf('commun/accessibilite.css'));
+  assert.match(html, /<body class="tch-typo">/);
+  assert.ok(!fs.existsSync(path.join(root, 'app/commun/theme-actuel.css')), 'ancien fichier de couleurs supprimé');
+  assert.doesNotMatch(html, /data-theme-btn="base"/, 'thème « De base » retiré');
+  for (const f of fs.readdirSync(path.join(root, 'app/commun')).filter(f => f.endsWith('.css') && f !== 'tokens.css')) {
+    const src = lire('app/commun/' + f).replace(/\/\*[\s\S]*?\*\//g, '');
+    assert.ok(!/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i.test(src), `${f} : couleur codée en dur`);
+    for (const m of src.matchAll(/font-weight:\s*([^;}]+)/g)) assert.ok(/^var\(--fw-|^inherit/.test(m[1].trim()) || (f === 'typographie.css' && /^\d/.test(m[1])), `${f} : graisse en dur (${m[1]})`);
+    for (const m of src.matchAll(/font-size:\s*([^;}]+)/g)) assert.ok(/^var\(--fs-|^inherit|^\d*\.?\d+(rem|em|%)$/.test(m[1].trim()) || f === 'typographie.css', `${f} : taille en dur (${m[1]})`);
+    assert.ok(!/https?:\/\//.test(src), `${f} : appel réseau`);
+  }
+  // aucune graisse au-dessus de 700 dans l'interface (le HUD en jeu, hud.html et hud-*.css, ne change pas)
+  const fichiers = [];
+  const parcourir = d => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (!['vendor', 'polices'].includes(e.name)) parcourir(p); } else if (/\.(css|js|html)$/.test(e.name) && !/^hud[-.]/.test(e.name) && e.name !== 'apercu-refonte.html') fichiers.push(p); } };
+  parcourir(path.join(root, 'app'));
+  for (const f of fichiers) for (const m of fs.readFileSync(f, 'utf8').matchAll(/font-weight:\s*(\d{3})/g)) assert.ok(Number(m[1]) <= 700, `${path.relative(root, f)} : graisse ${m[1]}`);
+  for (const m of lire('app/commun/typographie.css').matchAll(/url\('([^']+)'\)/g)) assert.ok(fs.existsSync(path.join(root, 'app/commun', m[1])), `police introuvable : ${m[1]}`);
+  assert.ok(fs.existsSync(path.join(root, 'app/polices/mona-sans/OFL.txt')), 'licence de la police livrée');
+  const pkg = require('../package.json');
+  assert.ok(pkg.build.files.includes('app/**/*'), 'la police (app/polices) est incluse dans l’installeur');
+});
+
+test('refonte (bêta 5) : menu En jeu / Entreprise, espace Entreprise sur le modèle des Paramètres', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
+  const hub = html.slice(html.indexOf('id="navHub"'), html.indexOf('id="navEntreprise"'));
+  const vues = [...hub.matchAll(/data-view="([^"]+)"/g)].map(m => m[1]);
+  assert.deepEqual(vues, ['accueil', 'cartePerso', 'hud', 'entreprise'], 'Hub : Accueil, Carte, HUD puis une seule entrée Entreprise');
+  assert.match(hub, />En jeu</);
+  const ent = html.slice(html.indexOf('id="navEntreprise"'), html.indexOf('</nav>', html.indexOf('id="navEntreprise"')));
+  assert.match(ent, /id="entBack"/);
+  assert.deepEqual([...ent.matchAll(/data-view="([^"]+)"/g)].map(m => m[1]), ['entreprise', 'feuilleRoute', 'flotte', 'garages', 'finances', 'telemetrie']);
+  for (const v of ['entreprise', 'flotte', 'garages', 'finances']) assert.match(html, new RegExp(`<section id="v-${v}"`));
+  const nav = fs.readFileSync(path.join(root, 'app/commun/navigation.js'), 'utf8');
+  assert.match(nav, /ENT_VIEWS = \['entreprise', 'feuilleRoute', 'flotte', 'garages', 'finances', 'telemetrie'\]/);
+  assert.doesNotMatch(nav, /NAV_SNAP/, 'plus de zone morte au bord du menu');
+  const dem = fs.readFileSync(path.join(root, 'app/demarrage.js'), 'utf8');
+  for (const ev of ['pointercancel', 'lostpointercapture', 'dblclick', 'ArrowLeft']) assert.ok(dem.includes(ev), ev);
+  assert.match(dem, /e\.altKey && e\.key === 'ArrowLeft'/, 'Alt + ← revient au menu principal');
+});
+
+test('refonte (bêta 5) : bord du menu, suit la souris, repli au relâchement, hystérésis', () => {
+  const { largeurMenu, finGlissement, NAV_HYST } = require('../app/commun/menu-largeur.js');
+  const o = { min: 200, max: 380 };
+  assert.deepEqual(largeurMenu(260, false, o), { etat: 'large', largeur: 260 }, 'suit la souris');
+  assert.deepEqual(largeurMenu(201, false, o), { etat: 'large', largeur: 201 }, 'aucune zone morte jusqu’au minimum');
+  assert.deepEqual(largeurMenu(500, false, o), { etat: 'large', largeur: 380 }, 'borné au maximum');
+  assert.deepEqual(largeurMenu(199, false, o), { etat: 'replier', largeur: 200 }, 'sous le minimum : annonce, pas de saut');
+  assert.deepEqual(largeurMenu(40, false, o), { etat: 'replier', largeur: 200 });
+  assert.equal(finGlissement('replier'), 'reduit', 'repli seulement au relâchement');
+  assert.equal(finGlissement('large'), 'large');
+  assert.equal(NAV_HYST, 24);
+  assert.deepEqual(largeurMenu(210, true, o), { etat: 'reduit', largeur: null }, 'menu réduit : reste réduit près du seuil');
+  assert.deepEqual(largeurMenu(223, true, o), { etat: 'reduit', largeur: null });
+  assert.deepEqual(largeurMenu(224, true, o), { etat: 'large', largeur: 224 }, 'redéplie au-delà de NAV_MIN + 24');
+  // pas de clignotement : un aller-retour de quelques pixels autour du minimum ne change pas l'état
+  let reduit = true; for (const x of [215, 222, 218, 221]) { const r = largeurMenu(x, reduit, o); reduit = r.etat === 'reduit'; assert.ok(reduit); }
+});
+
 test('les profils HUD camion et bus restent indépendants et migrent les anciens réglages', () => {
   const defaults = {
-    look: { theme: 'base' },
+    look: { theme: 'systeme' },
     hud: {
       truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 },
       bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }

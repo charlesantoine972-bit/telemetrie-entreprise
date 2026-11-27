@@ -19,7 +19,9 @@ app/
 ├── demarrage.js           ce qui s'exécute au chargement, dans l'ordre d'origine (voir plus bas)
 ├── LISEZ-MOI.md           ce fichier
 ├── commun/                ce qui sert partout
-│   ├── theme-actuel.css   couleurs actuelles (thèmes, vision des couleurs, contraste) : la refonte le remplacera d'un bloc
+│   ├── tokens.css         SEUL fichier avec des couleurs : thèmes Système / Sombre / Clair, contraste renforcé et élevé, vision des couleurs, espacements, formes (refonte, bêta 5)
+│   ├── typographie.css    police Mona Sans (locale, app/polices/mona-sans/) et échelle des tailles / graisses (--fs-*, --fw-*)
+│   ├── menu-largeur.js    bord du menu : calcul de la largeur pendant le glissement (fonction pure, testée)
 │   ├── accessibilite.css, structure.css, controles.css, navigation.css, barre-globale.css,
 │   │   menu-lateral.css, reperes.css, responsive.css, menu-retractable.css, elements.css,
 │   │   mise-en-page.css, divers.css, boutons-et-champs.css
@@ -28,7 +30,7 @@ app/
 └── fonctionnalites/
     ├── choix-du-jeu/      écran de lancement (choix ETS2 / ATS), encart « Nouveautés »
     ├── accueil/           page Accueil du Hub (bouton « Lancer le jeu »)
-    ├── hub/               classement, fiche chauffeur, Ma VTC, tablette, carte simulée (pages en préparation)
+    ├── entreprise/        espace Entreprise : Vue d'ensemble, Flotte & chauffeurs, Garages, Finances (sauvegarde en lecture seule)
     ├── telemetrie/        télémétrie en direct (camion / car)
     ├── feuille-de-route/  Feuille de route et Mes trajets
     ├── hud/               page HUD de l'appli (aperçus, réglages, test)
@@ -41,7 +43,7 @@ app/
     ├── sauvegardes/       Truck & Coach Tools → Sauvegardes (profils, copies, analyse)
     ├── mods/              Truck & Coach Tools → Mods & sauvegarde
     ├── outils/            Truck & Coach Tools : éditeur de sauvegardes, cartes d'outils
-    ├── marketplace/       Marketplace (masquée dans la bêta)
+    ├── marketplace/       Marketplace (et tablette.js : aperçu du module tablette)
     ├── mises-a-jour/      mises à jour de l'appli
     └── notes-version/     notes de version et numéro affiché
 ```
@@ -73,4 +75,4 @@ Les captures des pages **avant le découpage** sont dans `docs/captures/beta-5/`
 
 ## La refonte de l'interface
 
-La refonte (branche `claude/refonte-interface`, pas encore fusionnée) **ajoutera ses fichiers dans `app/commun/`** : `tokens.css`, `typographie.css`, `menu.css`, puis `composants.css`. Ces noms sont réservés : ne pas les utiliser ici. Elle remplacera `commun/theme-actuel.css` d'un bloc.
+Branchée dans la bêta 5 (étapes B à E) : `commun/tokens.css` et `commun/typographie.css` sont chargés en premier, l'ancien `theme-actuel.css` est supprimé. **Règle** : aucune couleur, taille ou graisse écrite en dur dans un nouveau style, seulement les variables (`var(--…)`) ; graisse 700 au maximum. Un test le vérifie pour `commun/`. Les feuilles des dossiers `fonctionnalites/` contiennent encore d'anciennes valeurs en dur (voir « à finir » dans `TABLEAU-DE-BORD.md`). Le HUD en jeu (`hud.html`, `hud-*.css`) garde volontairement son propre style.

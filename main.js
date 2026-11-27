@@ -60,18 +60,19 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, autoTelemetry: true, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, coachVehicles: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, autoTelemetry: true, look: { theme: 'systeme', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, coachVehicles: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
   const pick = (v, list, d) => list.includes(String(v)) ? String(v) : d;
   const accent = /^#[0-9a-f]{6}$/i.test(String(l.accent)) ? String(l.accent).toUpperCase() : pick(l.accent, ['defaut', 'windows'], 'defaut');
-  return { theme: pick(l.theme, ['base', 'sombre', 'clair', 'systeme'], 'base'), accent, vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
+  return { theme: pick(l.theme, ['sombre', 'clair', 'systeme'], 'systeme'), accent, vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
     zoom: pick(l.zoom, ['100', '115', '130'], '100'), contrast: !!l.contrast, motion: !!l.motion };
 }
 function windowBackground(st) {
-  const t = st.look && st.look.theme === 'systeme' ? (nativeTheme.shouldUseDarkColors ? 'sombre' : 'clair') : (st.look && st.look.theme) || 'base';
-  return { base: '#0F1720', sombre: '#202020', clair: '#F3F3F3' }[t] || '#0F1720';
+  const th = st.look && ['sombre', 'clair'].includes(st.look.theme) ? st.look.theme : 'systeme';
+  const t = th === 'systeme' ? (nativeTheme.shouldUseDarkColors ? 'sombre' : 'clair') : th;
+  return { sombre: '#202020', clair: '#F3F3F3' }[t];
 }
 // Réglages illisibles au démarrage (G5) : le fichier abîmé est mis de côté, jamais écrasé ; l'utilisateur est prévenu.
 let reglagesRecuperes = null;

@@ -3,7 +3,7 @@ function mergeSavedSettings(defaults, saved) {
   if (settings.theme) {
     const theme = settings.theme;
     delete settings.theme;
-    settings.look = { ...defaults.look, theme: theme === 'sombre' ? 'base' : theme };
+    settings.look = { ...defaults.look, theme: ['sombre', 'clair'].includes(theme) ? theme : 'systeme' };
   }
   settings.look = { ...defaults.look, ...(settings.look || {}) };
   const savedHud = settings.hud || {};

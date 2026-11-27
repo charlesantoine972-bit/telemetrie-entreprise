@@ -70,14 +70,34 @@ setNavWidth(navWidth);
 (() => {
   const h = document.getElementById('sideResize');
   h.addEventListener('pointerdown', e => {
-    e.preventDefault(); h.setPointerCapture(e.pointerId); document.documentElement.classList.add('resizing');
+    if (e.button !== 0) return;
+    e.preventDefault(); h.setPointerCapture(e.pointerId);
+    const de = document.documentElement, gauche = document.querySelector('.side').getBoundingClientRect().left;
+    de.classList.add('resizing');
+    let etat = de.dataset.nav === 'mini' ? 'reduit' : 'large', annonce = false;
+    const depart = { mini: etat === 'reduit', largeur: navWidth };
     const move = ev => {
-      const x = ev.clientX;
-      if (x < NAV_SNAP) { if (document.documentElement.dataset.nav !== 'mini') applyNavMini(true, true); }
-      else { if (document.documentElement.dataset.nav === 'mini') applyNavMini(false, true); setNavWidth(x); }
+      const r = largeurMenu(ev.clientX - gauche, de.dataset.nav === 'mini', { min: NAV_MIN, max: NAV_MAX });
+      etat = r.etat;
+      if (r.etat === 'large' && de.dataset.nav === 'mini') applyNavMini(false);
+      if (r.largeur != null) setNavWidth(r.largeur);
+      de.classList.toggle('nav-va-replier', r.etat === 'replier');
+      if (r.etat === 'replier' && !annonce) { annonce = true; announce('Relâche pour replier le menu'); }
+      if (r.etat !== 'replier') annonce = false;
     };
-    const up = () => { h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up); document.documentElement.classList.remove('resizing'); store.set('navWidth', navWidth); };
+    let fini = false;
+    const fin = (annule) => {
+      if (fini) return; fini = true;
+      h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up);
+      h.removeEventListener('pointercancel', cancel); h.removeEventListener('lostpointercapture', lost);
+      de.classList.remove('resizing', 'nav-va-replier');
+      if (annule) { applyNavMini(depart.mini); setNavWidth(depart.largeur); return; }
+      if (finGlissement(etat) === 'reduit') applyNavMini(true, true); else applyNavMini(false, true);
+      store.set('navWidth', navWidth);
+    };
+    const up = () => fin(false), cancel = () => fin(true), lost = () => fin(false);
     h.addEventListener('pointermove', move); h.addEventListener('pointerup', up);
+    h.addEventListener('pointercancel', cancel); h.addEventListener('lostpointercapture', lost);
   });
   h.addEventListener('dblclick', () => { applyNavMini(false, true); setNavWidth(NAV_DEF, true); });
   h.addEventListener('keydown', e => {
@@ -123,6 +143,14 @@ document.getElementById('optNav').addEventListener('keydown', e => {
   };
   applyNavMini(document.documentElement.dataset.nav === 'mini'); // infobulles des nouvelles entrées en menu réduit
 })();
+/* Espace Entreprise : Retour (et Alt + ←) ramène au menu principal, sur l'entrée Entreprise */
+document.getElementById('entBack').onclick = () => {
+  go(lastEnJeu || 'accueil');
+  const b = document.getElementById('navEntBtn'); if (b) b.focus();
+};
+document.addEventListener('keydown', e => {
+  if (e.altKey && e.key === 'ArrowLeft' && inEntreprise() && railTab === 'game') { e.preventDefault(); document.getElementById('entBack').click(); }
+});
 openOptCat(optCat);
 
 /* ===== Navigation — voir commun/navigation.js ===== */
@@ -467,7 +495,7 @@ if (HAS_APP){
     const d = e.target; if (!d.classList || !d.classList.contains('rt-item')) return;
     d.open ? routeOpen.add(d.dataset.key) : routeOpen.delete(d.dataset.key);
   }, true);
-  document.querySelector('[data-view="trajets"]').addEventListener('click', () => window.tel.snapshot().then(renderHistory));
+  const btnTrajets = document.querySelector('[data-view="trajets"]'); if (btnTrajets) btnTrajets.addEventListener('click', () => window.tel.snapshot().then(renderHistory));
 } else {
   renderPlugin([]);
   document.getElementById('hUpdate').innerHTML = '<span class="d" style="background:var(--muted)"></span>Mises à jour : dans l\'appli';

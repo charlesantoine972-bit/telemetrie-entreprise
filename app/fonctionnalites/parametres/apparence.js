@@ -3,7 +3,7 @@
    Le branchement au démarrage (boutons, état initial, premiers affichages) est dans app/demarrage.js. */
 
 /* ---------- Apparence : thème, vision des couleurs, taille du texte ---------- */
-const DEF_LOOK = { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false };
+const DEF_LOOK = { theme: 'systeme', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false };
 let winAccent = null; // couleur d'accent de Windows (#RRGGBB), si disponible
 const ACC_PRESETS = ['#4FD1A5', '#3CC8D8', '#5B8CFF', '#A78BFA', '#F472B6', '#FF6B5B', '#E7B655'];
 // Contraste WCAG entre deux couleurs #RRGGBB
@@ -24,7 +24,7 @@ function applyAccent(){
   ['--accent', '--accent-strong', '--on-accent', '--accent-soft'].forEach(p => de.style.removeProperty(p));
   let want = null;
   if (/^#[0-9a-f]{6}$/i.test(look.accent)) want = look.accent;
-  else if (look.accent === 'windows' || (look.accent === 'defaut' && look.theme === 'systeme')) want = winAccent;
+  else if (look.accent === 'windows') want = winAccent;
   if (want){
     const cs = getComputedStyle(de), bg = cssHex(cs.getPropertyValue('--bg')), panel = cssHex(cs.getPropertyValue('--panel'));
     const acc = fitAccent(fitAccent(want, bg, 4.5), panel, 4.5);
@@ -41,7 +41,9 @@ function applyAccent(){
   const wb = document.getElementById('accentWin'); if (wb){ wb.classList.toggle('hidden', !winAccent); if (winAccent) wb.style.setProperty('--sw', winAccent); }
 }
 function applyLook(patch, save){
-  Object.assign(look, patch || {}); store.set('look', look);
+  Object.assign(look, patch || {});
+  if (!['sombre', 'clair', 'systeme'].includes(look.theme)) look.theme = 'systeme'; // thème « De base » retiré (bêta 5)
+  store.set('look', look);
   const de = document.documentElement;
   de.dataset.theme = look.theme === 'systeme' ? (mq && mq.matches ? 'clair' : 'sombre') : look.theme;
   if (look.vision === 'normale') delete de.dataset.vision; else de.dataset.vision = look.vision;

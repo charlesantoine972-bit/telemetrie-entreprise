@@ -50,7 +50,7 @@ const BIL = { ok: ['✓', 'var(--ok)'], warn: ['!', 'var(--warn)'], bad: ['✕',
 const AT_PAGE_NAMES = { 'at-remorque': 'Remorques', 'at-camion': 'Camions', 'at-profil': 'Profil' };
 function bilanHtml(b){
   if (!b) return '';
-  const ico = (l, sz = 22) => `<span aria-hidden="true" style="width:${sz}px;height:${sz}px;border-radius:50%;background:${BIL[l][1]};color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:${sz > 20 ? 13 : 11}px;flex:none">${BIL[l][0]}</span>`;
+  const ico = (l, sz = 22) => `<span aria-hidden="true" style="width:${sz}px;height:${sz}px;border-radius:50%;background:${BIL[l][1]};color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:${sz > 20 ? 13 : 11}px;flex:none">${BIL[l][0]}</span>`;
   const verdict = b.level === 'bad' ? 'À corriger : cette sauvegarde a un problème' : b.level === 'warn' ? 'Quelques points à surveiller' : 'Rien à toucher : tout est en ordre';
   const loans = (b.loans || []).map(l => `<li>${nf(l.amount)} € restants${l.original ? ' sur ' + nf(l.original) + ' €' : ''}${l.months != null ? ' · ' + l.months + ' mois restant(s)' : ''}${l.rate != null ? ' · taux ' + (l.rate * 100).toFixed(1).replace('.', ',') + ' %' : ''}</li>`).join('');
   return `<div class="panel" style="display:flex;flex-direction:column;gap:14px;margin-bottom:16px" role="region" aria-label="Bilan du profil">

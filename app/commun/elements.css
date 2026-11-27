@@ -1,14 +1,14 @@
 /* Éléments de base : page, titres, panneaux, onglets, barres
    (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
   .main{flex:1;overflow:auto;--mpy:28px;--mpx:32px;padding:var(--mpy) var(--mpx)}
-  .demo{display:inline-block;font-size:12px;color:var(--bg);background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
-  h1{margin:0 0 18px;font-size:30px}
-  h2{margin:0 0 12px;font-size:18px}
+  .demo{display:inline-block;font-size:var(--fs-meta);color:var(--bg);background:var(--muted);padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:10px}
+  h1{margin:0 0 18px;font-size:var(--fs-titre)}
+  h2{margin:0 0 12px;font-size:var(--fs-sous)}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
   .row{display:flex;gap:10px;align-items:center}
-  .pill{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:13px}
-  .pill.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
-  .tab{flex:1;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-weight:600;font-size:13px}
+  .pill{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:var(--fs-second)}
+  .pill.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:var(--fw-demi)}
+  .tab{flex:1;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-weight:var(--fw-demi);font-size:var(--fs-second)}
   .tab.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
   .bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line)}
   .bar .l{background:var(--loaded)} .bar .e{background:var(--empty);flex:1}

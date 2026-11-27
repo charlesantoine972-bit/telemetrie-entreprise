@@ -17,7 +17,7 @@
     .setrow{flex-wrap:wrap}
     .setrow .lab{min-width:0}
     .teltabs{flex-direction:column;align-items:flex-start}
-    .speed{font-size:64px}
+    .speed{font-size:var(--fs-chiffre)}
   }
   @media (max-width:900px){ .main{--mpy:20px;--mpx:18px} }
   /* Options : les catégories sont dans le menu latéral */

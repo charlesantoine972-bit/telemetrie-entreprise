@@ -1,0 +1,17 @@
+/* Espace Entreprise (Vue d'ensemble, Flotte & chauffeurs, Garages, Finances). Tokens uniquement (commun/tokens.css, commun/typographie.css). */
+.ent-page{display:flex;flex-direction:column;gap:var(--gap-bloc)}
+.ent-choix{display:flex;flex-wrap:wrap;gap:var(--sp-12);align-items:flex-end}
+.ent-choix .field{min-width:200px}
+.ent-tete{display:flex;flex-direction:column;gap:var(--sp-4)}
+.ent-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:var(--sp-12)}
+.ent-stats .stat{display:flex;flex-direction:column;gap:var(--sp-4)}
+.ent-aide{font-size:var(--fs-meta)}
+.ent-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--gap-bloc)}
+.ent-grille .panel,.ent-page>.panel{display:flex;flex-direction:column;gap:var(--sp-12);align-items:flex-start}
+.ent-grille .panel>*,.ent-page>.panel>*{align-self:stretch}
+.ent-grille .panel>.btn{align-self:flex-start}
+.ent-garage{display:flex;flex-direction:column;gap:var(--sp-4)}
+.ent-g-nom{font-weight:var(--fw-demi);color:var(--text);font-size:var(--fs-second)}
+.ent-liste{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.ent-liste li{display:flex;justify-content:space-between;gap:var(--sp-12);flex-wrap:wrap;padding:var(--sp-8) 0;border-top:var(--border) solid var(--line);font-size:var(--fs-second)}
+.ent-alerte{color:var(--warn);font-weight:var(--fw-demi)}

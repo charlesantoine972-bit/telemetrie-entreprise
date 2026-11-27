@@ -1,14 +1,14 @@
 /* Contrôles : bascule d’espace, catégories du menu, bandeau de mise à jour, progression, sélecteurs, nuancier
    (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
   .sideswitch{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:0 2px 8px}
-  .sideswitch button{flex:1;height:34px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:13px}
-  .sideswitch button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
-  .navcat{display:flex;align-items:center;justify-content:space-between;height:34px;padding:0 12px;margin-top:6px;border:none;border-radius:8px;background:transparent;color:var(--text);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .sideswitch button{flex:1;height:34px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:var(--fw-demi);font-size:var(--fs-second)}
+  .sideswitch button.on{background:var(--accent);color:var(--on-accent);font-weight:var(--fw-gras)}
+  .navcat{display:flex;align-items:center;justify-content:space-between;height:34px;padding:0 12px;margin-top:6px;border:none;border-radius:8px;background:transparent;color:var(--text);font-size:var(--fs-meta);font-weight:var(--fw-gras);letter-spacing:.08em;text-transform:uppercase}
   .navcat:hover{background:var(--hover)}
-  .navcat .arr{color:var(--muted);font-size:13px;letter-spacing:0}
+  .navcat .arr{color:var(--muted);font-size:var(--fs-second);letter-spacing:0}
   .navgroup{display:flex;flex-direction:column;gap:2px;padding-left:6px}
   .navgroup.closed{display:none}
-  .updbanner{margin:6px 2px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent);font-size:12px;color:var(--text);display:flex;flex-direction:column;gap:8px}
+  .updbanner{margin:6px 2px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent);font-size:var(--fs-meta);color:var(--text);display:flex;flex-direction:column;gap:8px}
   .updbanner.hidden{display:none}
   .progress{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
   .progress > div{height:100%;width:0;background:var(--accent);transition:width .3s}
@@ -17,15 +17,15 @@
   .spinner{width:44px;height:44px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--accent);animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .seg{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line);flex-wrap:wrap}
-  .seg button{height:38px;padding:0 16px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:600;font-size:14px}
-  .seg button.on{background:var(--accent);color:var(--on-accent);font-weight:700}
+  .seg button{height:38px;padding:0 16px;border:none;border-radius:9px;background:transparent;color:var(--soft);font-weight:var(--fw-demi);font-size:var(--fs-second)}
+  .seg button.on{background:var(--accent);color:var(--on-accent);font-weight:var(--fw-gras)}
   .swatches{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .swatch{position:relative;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--sw);padding:0;flex:none;cursor:pointer}
   .swatch.on{outline:3px solid var(--text);outline-offset:2px;border-color:var(--bg)}
   .swatch.on::after{content:"";position:absolute;inset:0;margin:auto;width:9px;height:9px;border-radius:50%;background:var(--bg)}
-  .swatch.wheel{background:conic-gradient(#FF4D4D,#FFB13D,#F5E663,#57D98A,#3CC8D8,#5B8CFF,#B07CFF,#F472B6,#FF4D4D)}
+  .swatch.wheel{background:var(--wheel)}
   .swatch.wheel input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0}
   .swatch.wheel:focus-within{outline:3px solid var(--accent);outline-offset:2px}
-  .swatch.win{width:auto;border-radius:999px;padding:0 12px 0 6px;display:inline-flex;align-items:center;gap:8px;background:var(--panel);color:var(--soft);font-weight:600;font-size:13px}
+  .swatch.win{width:auto;border-radius:999px;padding:0 12px 0 6px;display:inline-flex;align-items:center;gap:8px;background:var(--panel);color:var(--soft);font-weight:var(--fw-demi);font-size:var(--fs-second)}
   .swatch.win i{width:22px;height:22px;border-radius:50%;background:var(--sw);flex:none}
   .swatch.win.on::after{display:none}

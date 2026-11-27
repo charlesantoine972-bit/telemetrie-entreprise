@@ -5,6 +5,10 @@
 let state = { side:'hub', view:'accueil', metric:'total', period:'mois', profile:'lucas' };
 /* ---------- navigation ---------- */
 const lastView = { hub: 'accueil', market: 'mk-discover', atelier: 'at-saves' };
+/* Espace Entreprise : même mécanique que l'espace Paramètres (le menu du Hub est remplacé par le sien, avec Retour) */
+const ENT_VIEWS = ['entreprise', 'feuilleRoute', 'flotte', 'garages', 'finances', 'telemetrie'];
+let lastEnJeu = 'accueil';   // page « En jeu » où revenir avec Retour
+const inEntreprise = () => state.side === 'hub' && ENT_VIEWS.includes(state.view);
 function setSide(side){
   state.side = side;
   document.documentElement.dataset.side = side;
@@ -13,12 +17,15 @@ function setSide(side){
   document.getElementById('navMarket').classList.toggle('hidden', side !== 'market');
   // Dans Options, le menu latéral devient le menu des catégories d'options
   const inOpt = typeof state !== 'undefined' && state.view === 'reglages';
-  document.getElementById('navHub').classList.toggle('hidden', inOpt || side !== 'hub');
+  const inEnt = !inOpt && side === 'hub' && ENT_VIEWS.includes(state.view);
+  document.getElementById('navHub').classList.toggle('hidden', inOpt || inEnt || side !== 'hub');
+  document.getElementById('navEntreprise').classList.toggle('hidden', inOpt || !inEnt);
+  document.documentElement.toggleAttribute('data-espace-entreprise', inEnt);
   document.getElementById('navMarket').classList.toggle('hidden', inOpt || side !== 'market');
   document.getElementById('navAtelier').classList.toggle('hidden', inOpt || side !== 'atelier');
   document.getElementById('navOptions').classList.toggle('hidden', !inOpt);
   document.getElementById('navOptBtn').classList.toggle('hidden', inOpt);
-  setText('spaceTitle', inOpt ? (typeof railTab !== 'undefined' && railTab === 'settings' ? 'SETTINGS' : 'OPTIONS') : ({ hub: 'HUB', market: 'MARKETPLACE', atelier: toolsName().toUpperCase() }[side] || ''));
+  setText('spaceTitle', inOpt ? (typeof railTab !== 'undefined' && railTab === 'settings' ? 'SETTINGS' : 'OPTIONS') : inEnt ? 'Entreprise' : ({ hub: 'HUB', market: 'MARKETPLACE', atelier: toolsName().toUpperCase() }[side] || ''));
   document.querySelectorAll('.spacetile').forEach(t => { if (t.dataset.sideBtn === side) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current'); });
 }
 /* ---------- Burger : panneau des espaces ---------- */
@@ -56,7 +63,7 @@ function setRail(t){
   document.querySelectorAll('.railbtn').forEach(b => { const on = b.dataset.rail === t; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
 }
 /* ---------- Menu latéral rétractable (icônes seules) ---------- */
-const NAV_MIN = 200, NAV_MAX = 380, NAV_DEF = 264, NAV_SNAP = 150;
+const NAV_MIN = 200, NAV_MAX = 380, NAV_DEF = 264; // seuils de repli : commun/menu-largeur.js
 let navAuto = false; // menu réduit automatiquement parce que la fenêtre est étroite
 function applyNavMini(mini, save){
   const root = document.documentElement;
@@ -100,6 +107,7 @@ function go(view, rail){
   if (typeof setRail === 'function') setRail(rail || (view === 'support' ? 'support' : 'game'));
   const side = (view === 'reglages' || view === 'support') ? state.side : (view.startsWith('mk-') ? 'market' : view.startsWith('at-') ? 'atelier' : 'hub');
   if (view !== 'reglages' && view !== 'support' && !rail) lastView[side] = view;
+  if (side === 'hub' && !ENT_VIEWS.includes(view)) lastEnJeu = view;
   setSide(side);
   // ouvre la catégorie qui contient la page demandée
   for (const k of Object.keys(catState)) { const g = document.getElementById('cat-' + k); if (g && g.querySelector(`[data-view="${view}"]`) && !catState[k]) { catState[k] = true; applyCats(); } }
@@ -113,6 +121,7 @@ function go(view, rail){
   if (view === 'mk-news') renderMkNews();
   if (view === 'news') renderNewsPage();
   if (view === 'hud') renderHudPage();
+  if (['entreprise', 'flotte', 'garages', 'finances'].includes(view)) renderEntreprise(view);
   if (view === 'cartePerso') openMap();
   if (view === 'reglages') loadSettingsUI();
   if (view === 'at-saves') renderSaves();
@@ -154,7 +163,8 @@ function pageMarks(view){
     parts.push(SIDE_NAMES[state.side] || '');
     const btn = document.querySelector(`.side .navscroll:not(.hidden) .navbtn.on`);
     const grp = btn && btn.closest('.navgroup');
-    const cat = grp && grp.previousElementSibling && grp.previousElementSibling.matches('.navcat') ? grp.previousElementSibling.querySelector('span').textContent : '';
+    const lab = grp && grp.getAttribute('aria-labelledby') && document.getElementById(grp.getAttribute('aria-labelledby'));
+    const cat = inEntreprise() ? 'Entreprise' : lab ? lab.textContent : grp && grp.previousElementSibling && grp.previousElementSibling.matches('.navcat') ? grp.previousElementSibling.querySelector('span').textContent : '';
     if (cat) parts.push(cat);
   }
   const clean = parts.filter(Boolean);

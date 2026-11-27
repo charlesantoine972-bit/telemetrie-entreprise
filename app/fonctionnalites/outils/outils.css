@@ -8,7 +8,7 @@
   .prof{display:flex;flex-direction:column;gap:12px}
   .anl{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-size:13px}
   .anl .head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
-  .anl .ico{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--bg);flex:none}
+  .anl .ico{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);flex:none}
   .anl .ok{background:var(--ok)} .anl .warn{background:var(--warn)} .anl .bad{background:var(--race)}
   .anl summary{cursor:pointer;color:var(--soft);font-weight:600}
   .anl ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}

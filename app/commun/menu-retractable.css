@@ -31,5 +31,5 @@
   [data-nav="mini"] .navdot{display:block}
   [data-nav="mini"] .updbanner{display:none}
   [data-nav="mini"] [data-view="reglages"].hasupd::after{content:"";position:absolute;top:7px;left:30px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--nav)}
-  .side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px;line-height:1.5;
+  .side-foot{margin-top:auto;font-size:var(--fs-meta);color:var(--muted);padding:10px;line-height:1.5;
     border:1px dashed var(--line);border-radius:12px}

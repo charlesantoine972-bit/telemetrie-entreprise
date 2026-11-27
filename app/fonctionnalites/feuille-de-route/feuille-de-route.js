@@ -38,7 +38,7 @@ function renderRoadmap(sn){
   const routeMission = document.getElementById('routeMission');
   routeMission.innerHTML = j ? `
     <div class="between" style="gap:12px;flex-wrap:wrap"><span class="lbl" style="color:var(--ok)">MISSION EN COURS · ${escM(j.game === 'ats' ? 'ATS' : 'ETS2')}</span><span class="muted">${dateTime(j.started)}</span></div>
-    <div style="font-size:clamp(24px,4vw,36px);font-weight:800">${escM(j.from || '—')} <span style="color:var(--accent)">→</span> ${escM(j.to || '—')}</div>
+    <div style="font-size:clamp(24px,4vw,36px);font-weight:700">${escM(j.from || '—')} <span style="color:var(--accent)">→</span> ${escM(j.to || '—')}</div>
     <div class="soft">${escM(missionDescription)}</div>
     <div class="kv">
       <div class="k"><span>Véhicule</span><span>${escM(j.truck || '—')}</span></div>
