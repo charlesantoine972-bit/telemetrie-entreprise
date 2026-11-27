@@ -43,6 +43,7 @@ document.getElementById('rail').addEventListener('click', e => {
   showLauncher(false);
   if (t === 'news') go('news', 'news');
   else if (t === 'map') go('cartePerso', 'map');
+  else if (t === 'market') openMarketplace();
   else if (t === 'settings') { settingsFrom = wasSel ? 'game' : railTab; openOptCat(lastOptCat.general); go('reglages', 'settings'); }
   else if (t === 'support') go('support', 'support');
 });

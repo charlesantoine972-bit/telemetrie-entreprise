@@ -10,8 +10,10 @@
 // Numérotation : la mise à jour automatique exige un numéro technique x.y.z toujours plus haut
 // (package.json). Le numéro affiché est calculé ici :
 //   0.12.0 → 0.12.5 = 0.12.0 ; 0.12.6 → 0.12.9 = 0.12.0.1 ; 0.12.10 → 0.12.15 = 0.12.0.2 ;
-//   0.13.0 → 0.13.27 = 0.12.0.3 ; 0.13.28 → 0.13.34 = 0.12.0.4 ; ensuite 0.13.35 = 0.12.0.5, 0.13.36 = 0.12.0.6…
-// Bêta : « 0.13.(n)-beta.k » est l'essai de la version 0.13.(n-1) → affichée « <version> bêta k ».
+//   0.13.0 → 0.13.27 = 0.12.0.3 ; 0.13.28 → 0.13.35 = 0.12.0.4 ; ensuite 0.13.36 = 0.12.0.5, 0.13.37 = 0.12.0.6…
+// Renumérotation officielle (bêta 5, modèle Apple) : la 0.13.35 publiée sous « 0.12.0.5 » rejoint la 0.12.0.4
+// (une seule note « 0.12.0.4 ») ; la version officielle qui terminera la bêta 0.12.0.5 sera la 0.13.36.
+// Bêta : « 0.13.(n)-beta.k » est l'essai de la future version 0.13.(n) → affichée « <version> bêta k ».
 // Bêtas de la nouvelle interface regroupées en 4 : les essais techniques 0.13.35-beta.1 à 0.13.36-beta.9
 // deviennent 0.12.0.5 bêta 1 (essais 1-2), bêta 2 (3-4), bêta 3 (5) et bêta 4 (6-10) ; ensuite beta.11 = bêta 5…
 window.versionAffichee = function (v) {
@@ -20,11 +22,11 @@ window.versionAffichee = function (v) {
     const k = Number(b[4]);
     return '0.12.0.5 bêta ' + (k <= 2 ? 1 : k <= 4 ? 2 : k === 5 ? 3 : k <= 10 ? 4 : k - 6);
   }
-  if (b) return window.versionAffichee(`${b[1]}.${b[2]}.${Number(b[3]) - 1}`) + ' bêta ' + b[4];
+  if (b) return window.versionAffichee(`${b[1]}.${b[2]}.${b[3]}`) + ' bêta ' + b[4];
   const m = /^0\.(12|13)\.(\d+)$/.exec(v || '');
   if (!m) return v;
   const n = Number(m[2]);
-  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : n <= 34 ? '0.12.0.4' : '0.12.0.' + (n - 30);
+  if (m[1] === '13') return n <= 27 ? '0.12.0.3' : n <= 35 ? '0.12.0.4' : '0.12.0.' + (n - 31);
   return n <= 5 ? '0.12.0' : n <= 9 ? '0.12.0.1' : n <= 15 ? '0.12.0.2' : v;
 };
 
@@ -37,14 +39,7 @@ window.NOTES_RUBRIQUES = [
 
 // Version officielle
 window.NOTES_VERSION = [
-  { version: '0.12.0.5', date: '2026-11-24', titre: 'Programme bêta et notes de version plus claires', notes: [
-    ['nouveau', 'Programme bêta, dans Options → Interface → Éléments visibles. Désactivé par défaut. Activé, il affiche les notes de la bêta et le lien pour installer Truck & Coach Hub Bêta, une appli séparée qui s’installe à côté de celle-ci. Il n’installe rien et ne change pas ta version.'],
-    ['ameliore', 'Notes de version rangées par rubriques : Nouveautés, Améliorations, Changements et Corrections.'],
-    ['change', 'Options → Affichage devient Interface, avec une section Éléments visibles : menu réduit, pages en préparation et Programme bêta.'],
-    ['change', 'Options → Mises à jour : ta version et le bouton de recherche en haut, les notes à lire en dessous.'],
-    ['change', 'Numéros de version simplifiés : toute la nouvelle interface est regroupée dans la 0.12.0.4. Si ton appli affichait 0.12.0.9, c’est normal de voir maintenant 0.12.0.5.'],
-  ]},
-  { version: '0.12.0.4', date: '2026-11-23', titre: 'Nouvelle interface : Options, menus, navigation et HUD camion', notes: [
+  { version: '0.12.0.4', date: '2026-11-24', titre: 'Nouvelle interface, Programme bêta et notes de version plus claires', notes: [
     ['nouveau', 'Options rangées en catégories, comme les réglages d’un jeu : Général, Conduite, Jeu & plugin, HUD, Affichage, Accessibilité, Steam & Discord, Truck & Coach Tools, Mises à jour, Aide & infos. Quand tu ouvres Options, le menu latéral affiche Retour puis les catégories.'],
     ['nouveau', 'Menu ☰ en haut à gauche : passe du Hub à la Marketplace ou à Truck & Coach Tools, ou reviens à l’écran d’accueil.'],
     ['nouveau', 'Bandeau camion refait sur le modèle du bandeau car : mission, trajet, heure du jeu, rapport engagé, vitesse, limitation, régulateur, mode et dégâts du camion ; en dessous, route, heure limite de livraison, marchandise, carburant et pause.'],
@@ -52,13 +47,18 @@ window.NOTES_VERSION = [
     ['nouveau', 'Repères : une barre en haut de chaque page indique où tu es (par exemple Hub › Entreprise) et reste en haut quand tu fais défiler.'],
     ['nouveau', 'Animations : les pages arrivent du côté de leur place dans le menu et un trait marque la page active. Elles se coupent avec Options → Accessibilité → Réduire les animations.'],
     ['nouveau', 'Bouton Options sur l’écran d’accueil.'],
+    ['nouveau', 'Programme bêta, dans Options → Interface → Éléments visibles. Désactivé par défaut. Activé, il affiche les notes de la bêta et le lien pour installer Truck & Coach Hub Bêta, une appli séparée qui s’installe à côté de celle-ci. Il n’installe rien et ne change pas ta version.'],
     ['ameliore', 'L’appli s’adapte à la taille de la fenêtre : une seule colonne quand la place manque, menu réduit tout seul sur une petite fenêtre, utilisable dès 720 px de large.'],
     ['ameliore', 'Télémétrie : colonnes alignées dans les onglets Camion et Car. Sans le jeu, la page affiche l’attente, tes kilomètres et un lien vers Options → Jeu & plugin.'],
     ['ameliore', 'Plugin du jeu 1.5.0 : rapport engagé, régime moteur et régulateur. Ferme le jeu avant d’ouvrir l’appli pour qu’elle l’installe.'],
     ['ameliore', 'Après chaque mise à jour, l’écran d’accueil montre une seule fois ce qui a changé.'],
+    ['ameliore', 'Notes de version rangées par rubriques : Nouveautés, Améliorations, Changements et Corrections.'],
     ['change', 'Page HUD épurée : l’interrupteur et les aperçus des bandeaux camion et car. Tous les réglages sont dans Options → HUD.'],
     ['change', 'Menu latéral réorganisé : ☰ et réduction du menu en haut, l’espace en cours, Options, puis le logo et la version en bas (un clic ramène à l’écran d’accueil).'],
     ['change', 'Notes de version déplacées dans Options → Mises à jour.'],
+    ['change', 'Options → Affichage devient Interface, avec une section Éléments visibles : menu réduit, pages en préparation et Programme bêta.'],
+    ['change', 'Options → Mises à jour : ta version et le bouton de recherche en haut, les notes à lire en dessous.'],
+    ['change', 'Numéros de version simplifiés : toute la nouvelle interface, le Programme bêta et les notes plus claires sont regroupés dans la 0.12.0.4. Si ton appli affichait 0.12.0.5 ou plus, c’est normal de voir maintenant 0.12.0.4.'],
     ['corrige', 'Bandeau camion, bandeau car et Télémétrie lisent les mêmes données du jeu en direct : ce qui s’affiche est ce qui se passe en jeu.'],
     ['corrige', 'Télémétrie : les onglets Camion et Car restent visibles même quand le jeu n’est pas lancé.'],
     ['corrige', 'Options → Mises à jour affiche le numéro de version de l’appli, et non plus le numéro technique.'],
@@ -151,6 +151,15 @@ window.NOTES_VERSION = [
 // Une bêta = un gros lot. Les petits correctifs entre deux lots complètent la note de la bêta en cours
 // au lieu d'en créer une nouvelle.
 window.NOTES_BETA = [
+  { version: '0.12.0.5 bêta 5', date: '2026-11-27', titre: 'Nouvelle interface et espace Entreprise', notes: [
+    ['nouveau', 'Nouveau menu : « En jeu » (Accueil, Carte, HUD) et un espace Entreprise avec Vue d’ensemble, Feuille de route, Flotte & chauffeurs, Garages, Finances et Télémétrie. Ta sauvegarde y est lue sans jamais être modifiée.'],
+    ['nouveau', 'Feuille de route en quatre onglets : tes trajets, un calendrier du mois avec des repères (nouvelle ville, ligne répétée, record, convoi exceptionnel) et des rapports de la semaine et du mois à copier pour Discord.'],
+    ['ameliore', 'Télémétrie rangée par blocs (Conduite, Plein, Mission ou Service, Voyageurs, Aujourd’hui) ; l’Accueil résume ta mission en cours, ton dernier trajet et ton entreprise.'],
+    ['ameliore', 'Nouveaux thèmes Système (par défaut), Sombre et Clair sur fond neutre, nouvelle police et contrastes vérifiés ; le bord du menu se règle sans saccade.'],
+    ['ameliore', 'Moteur de l’appli mis à jour et sécurité renforcée ; nouvelles pages de paramètres en préparation.'],
+    ['change', 'Anciennes pages VTC retirées (Ma VTC, Calendrier, Infos VTC), Ma carrière rejoint la Feuille de route et le thème « De base » est retiré.'],
+    ['change', 'Marketplace dans la barre de gauche, en préparation : à afficher avec Paramètres → Interface → Pages en préparation.'],
+  ]},
   { version: '0.12.0.5 bêta 4', date: '2026-11-26', titre: 'La vraie carte du jeu et l’analyse des mods', notes: [
     ['nouveau', 'Carte lue directement dans tes fichiers du jeu, avec toutes tes DLC (Iberia, Balkans, Grèce, Nordic Horizons, Islande…) : routes, carrefours, ferries et villes à leur place exacte, dans un style proche de la carte du jeu.'],
     ['nouveau', 'La carte se prépare toute seule en arrière-plan, une fois par version du jeu ou quand tes DLC changent. Un petit indicateur en bas à droite montre l’avancement.'],

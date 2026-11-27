@@ -1,4 +1,4 @@
-/* Marketplace (masquée dans la bêta).
+/* Marketplace (en préparation : visible seulement avec Paramètres → Interface → « Pages en préparation »).
    Fonctions et déclarations déplacées telles quelles depuis app/index.html.
    Le branchement au démarrage (boutons, état initial, premiers affichages) est dans app/demarrage.js. */
 
@@ -15,6 +15,12 @@ const MK = [
     feat: ['Prochaine direction', 'Distance et temps restants, destination', 'Limitation de vitesse', 'Position, taille et transparence réglables'] }
 ];
 let mkGame = 'all';
+// Entrée globale (barre de gauche) : filtre réglé sur le jeu choisi ; un contenu commun aux deux jeux n'apparaît qu'une fois.
+function openMarketplace(){
+  mkGame = activeGame === 'ats' ? 'ATS' : 'ETS2';
+  document.querySelectorAll('#mkGame [data-g]').forEach(x => { const on = x.dataset.g === mkGame; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+  go('mk-discover', 'market');
+}
 function mkCard(m){
   return `<article class="mkcard"><div class="mkimg"><svg aria-hidden="true" focusable="false" width="34" height="34" viewBox="0 0 24 24" fill="currentColor">${m.id === 'gps' ? '<path d="M5.84 4.57a8.7 8.7 0 0 1 12.32 12.31l-1.19 1.18q-1.31 1.29-3.4 3.3c-.88.85-2.26.85-3.13 0l-3.5-3.39-1.1-1.09a8.7 8.7 0 0 1 0-12.31M17.1 5.63a7.2 7.2 0 1 0-10.2 10.2l1.5 1.46 3.08 3c.29.28.75.28 1.04 0l3.4-3.3 1.18-1.17a7.2 7.2 0 0 0 0-10.19M12 7.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7M12 9a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>' : '<path d="M19.75 4C20.99 4 22 5 22 6.25v11.5C22 19 21 20 19.75 20H4.25C3.01 20 2 19 2 17.75V6.25C2 5.01 3 4 4.25 4zm0 1.5H4.25a.75.75 0 0 0-.75.75v11.5c0 .42.34.75.75.75h15.5c.41 0 .75-.33.75-.75V6.25a.75.75 0 0 0-.75-.75m-9.5 10h3.5a.75.75 0 0 1 .1 1.5h-3.6a.75.75 0 0 1-.1-1.5zh3.5z"/>'}</svg></div>
     <div class="mkbody"><div class="row" style="gap:8px"><b style="font-size:15px">${escM(m.name)}</b><span class="soon" style="margin:0">Bientôt</span></div>

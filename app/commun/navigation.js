@@ -157,7 +157,7 @@ function pageMarks(view){
   const sec = main.querySelector(':scope > section:not(.hidden)');
   // Fil d'Ariane : espace › catégorie (le nom de la page apparaît en haut quand on fait défiler)
   const parts = [];
-  const RAIL_NAMES = { news: 'News', map: 'Map', support: 'Support' };
+  const RAIL_NAMES = { news: 'News', map: 'Map', support: 'Support', market: 'Marketplace' };
   if (RAIL_NAMES[railTab]) parts.push(RAIL_NAMES[railTab]);
   else if (view === 'reglages') parts.push(railTab === 'settings' ? 'Settings' : (typeof optMode !== 'undefined' && optMode === 'game' ? 'Paramètres ' + GAMES_UI[activeGame === 'ats' ? 'ats' : 'ets2'].tag : 'Options'));
   else {
@@ -188,6 +188,7 @@ function applySoon(show, save){
   store.set('showSoon', !!show);
   if (show) delete document.documentElement.dataset.hideSoon; else document.documentElement.dataset.hideSoon = '1';
   document.getElementById('soonSwitch').checked = !!show;
+  if (!show && typeof state !== 'undefined' && state.side === 'market') { if (typeof railTab !== 'undefined' && railTab === 'market') setRail('game'); go('accueil'); }   // Marketplace en préparation
   if (!show && typeof optCat !== 'undefined' && typeof catVisible === 'function' && !catVisible(optCat)) openOptCat('general');   // page de paramètres en préparation
   if (save && window.tel) window.tel.setSettings({ showSoon: !!show });
 }

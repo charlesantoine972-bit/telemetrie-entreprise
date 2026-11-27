@@ -187,8 +187,9 @@ test('barre globale Game / News / Map / Settings / Support et page de choix du j
   const html = lireInterface();
   const rail = html.match(/<nav class="rail" id="rail"[\s\S]*?<\/nav>/)[0];
   const order = [...rail.matchAll(/data-rail="(\w+)"/g)].map(m => m[1]);
-  assert.deepEqual(order, ['game', 'news', 'map', 'settings', 'support']);
-  assert.doesNotMatch(rail, /is-soon/);                     // jamais masqués avec les pages en préparation
+  assert.deepEqual(order, ['game', 'news', 'market', 'map', 'settings', 'support']);
+  // seule la Marketplace (en préparation) suit l'interrupteur ; les 5 autres ne sont jamais masquées
+  assert.deepEqual([...rail.matchAll(/class="railbtn is-soon" data-rail="(\w+)"/g)].map(m => m[1]), ['market']);
   const launcher = html.slice(html.indexOf('<div id="launcher">'), html.indexOf('<div id="modal"'));
   assert.match(launcher, /data-game="ets2"/); assert.match(launcher, /data-game="ats"/);
   assert.doesNotMatch(launcher, /data-open="(hub|market|atelier)"/); // plus de choix d'espace sur l'accueil
@@ -768,7 +769,9 @@ test('notes de version : numéros affichés, rubriques et bêta', () => {
   assert.equal(va('0.13.27'), '0.12.0.3');
   assert.equal(va('0.13.28'), '0.12.0.4');
   assert.equal(va('0.13.34'), '0.12.0.4');
-  assert.equal(va('0.13.35'), '0.12.0.5');
+  assert.equal(va('0.13.35'), '0.12.0.4', 'renumérotation officielle : 0.13.35 rejoint la 0.12.0.4');
+  assert.equal(va('0.13.36'), '0.12.0.5');
+  assert.equal(va('0.13.37'), '0.12.0.6');
   // bêtas de la nouvelle interface regroupées en 4
   assert.equal(va('0.13.35-beta.1'), '0.12.0.5 bêta 1');
   assert.equal(va('0.13.35-beta.2'), '0.12.0.5 bêta 1');
@@ -783,7 +786,7 @@ test('notes de version : numéros affichés, rubriques et bêta', () => {
   const pkg = require('../package.json');
   // la série 0.12 est continue, sans trou
   const serie = w.NOTES_VERSION.map(n => n.version).filter(x => x.startsWith('0.12'));
-  assert.deepEqual([...serie], ['0.12.0.5', '0.12.0.4', '0.12.0.3', '0.12.0.2', '0.12.0.1', '0.12.0']);
+  assert.deepEqual([...serie], ['0.12.0.4', '0.12.0.3', '0.12.0.2', '0.12.0.1', '0.12.0'], 'la note 0.12.0.5 officielle n’entre qu’à la publication officielle');
   const types = new Set(w.NOTES_RUBRIQUES.map(([k]) => k));
   for (const n of [...w.NOTES_VERSION, ...w.NOTES_BETA]) for (const [t] of n.notes) assert.ok(types.has(t), n.version + ' : ' + t);
   // la version installée a toujours sa note
@@ -836,11 +839,15 @@ test('bêta : unités US pour ATS dans le HUD', () => {
   assert.match(hud, /UNITS\.set\(d\.units\)/);
 });
 
-test('bêta : News, Marketplace cachée, paramètres généraux / du jeu, retour au menu', () => {
+test('bêta : News, Marketplace en préparation (barre de gauche), paramètres généraux / du jeu, retour au menu', () => {
   const html = lireInterface();
   assert.match(html, /<section id="v-news"/);
   assert.match(html, /if \(t === 'news'\) go\('news', 'news'\);/);
-  assert.match(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/);
+  assert.doesNotMatch(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/, 'plus de blocage CSS forcé');
+  assert.match(html, /<button class="railbtn is-soon" data-rail="market"/, 'entrée Marketplace globale, suit « Pages en préparation »');
+  assert.match(html, /<button class="spacetile is-soon" data-side-btn="market"/, 'raccourci depuis les espaces de jeu');
+  assert.match(html, /else if \(t === 'market'\) openMarketplace\(\);/);
+  assert.match(html, /mkGame = activeGame === 'ats' \? 'ATS' : 'ETS2';/);
   assert.match(html, /const OPT_GAME = \['jeu', 'conduite', 'hud'\];/);
   assert.match(html, /if \(on\) resetSpaces\(\);/);
   assert.match(html, /Quitter sans appliquer/);
