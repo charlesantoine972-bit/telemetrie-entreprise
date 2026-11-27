@@ -952,3 +952,23 @@ test('Carte du jeu : le lancement automatique reste une fonction (plus d’erreu
   assert.doesNotMatch(main, /this\.auto\s*=/, 'aucune valeur ne doit écraser la fonction auto()');
   assert.match(main, /this\.lanceAuto = !!opts\.auto/);
 });
+
+test('refonte : contrastes WCAG des tokens (tools/contrastes.mjs)', () => {
+  const { spawnSync } = require('node:child_process');
+  const root = path.resolve(__dirname, '..');
+  const r = spawnSync(process.execPath, [path.join(root, 'tools', 'contrastes.mjs')], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+test('refonte : fichiers préparés, non branchés, sans couleur ni graisse > 700 en dur', () => {
+  const root = path.resolve(__dirname, '..');
+  const lire = f => fs.readFileSync(path.join(root, f), 'utf8');
+  for (const f of ['app/index.html', 'app/hud.html', 'main.js', 'preload.js']) assert.ok(!/apercu-refonte|commun\/(tokens|typographie|menu)\.css/.test(lire(f)), `${f} ne doit pas encore charger la refonte`);
+  for (const f of ['app/commun/typographie.css', 'app/commun/menu.css', 'app/apercu-refonte.html']) {
+    const src = lire(f).replace(/\/\*[\s\S]*?\*\//g, '').replace(/<!--[\s\S]*?-->/g, '');
+    assert.ok(!/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i.test(src.replace(/href="#[^"]*"/g, '')), `${f} : couleur codée en dur`);
+    for (const m of src.matchAll(/font-weight:\s*(\d+)/g)) assert.ok(Number(m[1]) <= 700, `${f} : graisse ${m[1]}`);
+    assert.ok(!/https?:\/\//.test(src.replace(/content="[^"]*"/g, '')), `${f} : appel réseau`);
+  }
+  for (const m of lire('app/commun/typographie.css').matchAll(/url\('([^']+)'\)/g)) assert.ok(fs.existsSync(path.join(root, 'app/commun', m[1])), `police introuvable : ${m[1]}`);
+});

@@ -1,0 +1,206 @@
+/* =====================================================================
+   Truck & Coach Hub — Menu latéral (REFONTE-INTERFACE.md § 3)
+   Dépend de tokens.css et typographie.css. Aucune couleur en dur.
+   Structure attendue : voir app/apercu-refonte.html.
+   Mode réduit : <nav class="menu" data-reduit="true"> (icônes seules ;
+   le libellé reste lu par les lecteurs d'écran, infobulle via title).
+   ===================================================================== */
+
+.menu {
+  --menu-w: 264px;
+  --menu-w-reduit: 64px;
+  --menu-icone: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  inline-size: var(--menu-w);
+  flex: none;
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--sp-12) var(--sp-8);
+  box-sizing: border-box;
+  background: var(--nav);
+  border-inline-end: var(--border) solid var(--line);
+  font-family: var(--font);
+  transition: inline-size var(--dur) var(--ease);
+}
+.menu *, .menu *::before { box-sizing: border-box; }
+.menu[data-reduit="true"] { inline-size: var(--menu-w-reduit); }
+
+/* Ligne du haut : burger (changer d'espace) + réduire */
+.menu-haut { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-8); }
+.menu[data-reduit="true"] .menu-haut { flex-direction: column; }
+
+/* Boutons à icône seule : nom accessible obligatoire (aria-label) */
+.menu-icone-btn {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--target);
+  block-size: var(--target);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--soft);
+  cursor: pointer;
+}
+.menu-icone-btn:hover { background: var(--hover); color: var(--text); }
+.menu-icone-btn:active { background: var(--active); }
+
+.menu svg { inline-size: var(--menu-icone); block-size: var(--menu-icone); flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Puce du jeu */
+.menu-jeu {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-block-size: var(--target-lg);
+  padding: var(--sp-4) var(--sp-8);
+  border: var(--border) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+}
+.menu-jeu-puce {
+  flex: none;
+  padding: var(--sp-4) var(--sp-8);
+  border-radius: var(--radius-sm);
+  background: var(--hover);
+  color: var(--text);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-demi);
+  font-variant-numeric: tabular-nums;
+}
+.menu-jeu-nom { flex: 1; min-inline-size: 0; color: var(--soft); font-size: var(--fs-meta); line-height: var(--lh-titre); }
+.menu-jeu-changer {
+  flex: none;
+  min-block-size: var(--target-min);
+  padding: var(--sp-4) var(--sp-8);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--soft);
+  font: inherit;
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-moyen);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.menu-jeu-changer:hover { background: var(--hover); color: var(--text); }
+.menu[data-reduit="true"] .menu-jeu { justify-content: center; padding: var(--sp-4); }
+.menu[data-reduit="true"] .menu-jeu-nom,
+.menu[data-reduit="true"] .menu-jeu-changer { display: none; }
+
+/* Titre d'espace « HUB » : seule majuscule permise, en accent */
+.menu-espace {
+  margin: var(--sp-12) var(--sp-12) var(--sp-4);
+  color: var(--accent);
+  font-size: var(--fs-second);
+  font-weight: var(--fw-demi);
+  letter-spacing: .08em;
+}
+.menu[data-reduit="true"] .menu-espace { margin-inline: 0; text-align: center; font-size: var(--fs-meta); }
+
+/* Catégories : 12 px, 600, gris — plus petites et plus grises, mais plus grasses */
+.menu-groupe { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.menu-categorie {
+  margin: var(--sp-16) var(--sp-12) var(--sp-4);
+  color: var(--muted);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-demi);
+  line-height: var(--lh-titre);
+}
+.menu[data-reduit="true"] .menu-categorie {
+  /* Remplacée par un séparateur ; le texte reste pour les lecteurs d'écran */
+  block-size: var(--border);
+  margin: var(--sp-8) var(--sp-8);
+  overflow: hidden;
+  background: var(--line);
+  color: transparent;
+}
+
+/* Entrées : 14 px, 400 */
+.menu-entree {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+  min-block-size: var(--target);
+  padding: var(--sp-8) var(--sp-12);
+  border-radius: var(--radius-sm);
+  color: var(--soft);
+  font-size: var(--fs-second);
+  font-weight: var(--fw-normal);
+  line-height: var(--lh-titre);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.menu-entree:hover { background: var(--hover); color: var(--text); }
+.menu-entree:active { background: var(--active); }
+
+/* Entrée active : 500, texte principal, barre accent de 3 px à gauche */
+.menu-entree[aria-current="page"] {
+  background: var(--hover);
+  color: var(--text);
+  font-weight: var(--fw-moyen);
+}
+.menu-entree[aria-current="page"]::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: var(--sp-8);
+  inline-size: var(--bar);
+  border-radius: var(--bar);
+  background: var(--accent);
+}
+/* Contraste élevé de Windows : les tokens valent alors des couleurs système
+   (tokens.css) ; on garde la barre et le logo lisibles. */
+@media (forced-colors: active) {
+  .menu-entree[aria-current="page"] { outline: var(--border) solid var(--text); }
+  .menu-entree[aria-current="page"]::before,
+  .menu-logo { forced-color-adjust: none; }
+}
+
+.menu-libelle { flex: 1; min-inline-size: 0; }
+.menu[data-reduit="true"] .menu-entree { justify-content: center; padding-inline: 0; }
+.menu[data-reduit="true"] .menu-libelle {
+  /* Masqué à l'écran, conservé comme nom accessible */
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Bas du menu : Paramètres puis pied */
+.menu-bas { margin-block-start: auto; display: flex; flex-direction: column; gap: var(--sp-4); }
+.menu-separateur { block-size: var(--border); margin: var(--sp-8) var(--sp-4); border: 0; background: var(--line); }
+.menu-pied { display: flex; align-items: center; gap: var(--sp-8); padding: var(--sp-4) var(--sp-4) 0 var(--sp-8); }
+.menu-logo {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-gras);
+}
+.menu-version { flex: 1; min-inline-size: 0; color: var(--muted); font-size: var(--fs-meta); line-height: var(--lh-titre); font-variant-numeric: tabular-nums; }
+.menu-version b { display: block; color: var(--soft); font-weight: var(--fw-moyen); }
+.menu[data-reduit="true"] .menu-pied { flex-direction: column; padding-inline: 0; }
+.menu[data-reduit="true"] .menu-version { display: none; }
+
+/* Focus clavier visible partout dans le menu */
+.menu :focus-visible {
+  outline: var(--focus-w) solid var(--focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-sm);
+}
