@@ -20,6 +20,8 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 2. **S2 + S3 — le noyau ne vérifie pas qui l'appelle** : les 72 points d'entrée acceptent toute page qui a le pont, y compris la fenêtre du HUD, qui reçoit les 77 fonctions (suppression de profils comprise) alors qu'elle n'en utilise qu'une. → tâche 3.
 3. **G5 — l'historique peut disparaître sans prévenir** : si `donnees.json` est abîmé (coupure de courant), l'appli repart de zéro et écrase le fichier 10 s plus tard. Tout l'historique des trajets est perdu.
 
+**À ajouter au même niveau (second passage de la tâche 1)** : **G19 — la bêta va télécharger l'appli officielle** dès que la version officielle 0.13.36 sortira (repli automatique sur `latest.yml`). À corriger dans la tâche 7, avant toute publication de 0.13.36.
+
 ## Sécurité
 
 - [ ] **S1 — Electron 33 plus maintenu** · Urgent
@@ -117,6 +119,38 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : les options `RunAsNode`, vérification d'intégrité de l'archive `app.asar`, etc. sont aux valeurs par défaut.
   - Risque concret : un programme déjà présent sur le PC peut plus facilement détourner l'appli.
   - Correction : régler `electronFuses` dans electron-builder 26 (désactiver `RunAsNode`, activer l'intégrité asar). → tâche 2 ou 3.
+
+*Points S17 à S21 : ajoutés par un second passage de la tâche 1 (même jour), qui ne les trouvait pas plus haut.*
+
+- [ ] **S17 — Un `$` dans un nom de profil ou d'entreprise est mal écrit dans la sauvegarde** · Important
+  - Où : `src/save-editor.js:148` (`SaveEditor.set`) et `src/save-tools.js:30` (`set`).
+  - Problème : la valeur est collée dans le texte de remplacement de `replace()`, où `$&`, `$1`… ont un sens spécial. Testé : le nom `Jo$&co` devient `Jo profile_name: "Old"co`.
+  - Risque concret : nom de profil ou d'entreprise abîmé dans `profile.sii` (une copie de secours existe).
+  - Correction : remplacer avec une fonction (`(_, debut) => debut + valeur`) au lieu d'un texte. À corriger avec S10.
+
+- [ ] **S18 — La navigation accepte n'importe quel fichier `file://` du PC** · Important
+  - Où : `main.js:412-413` (`lockDown` ne bloque que ce qui ne commence pas par `file://`).
+  - Problème : contrairement à ce que laissent penser les « points solides » ci-dessous, une page `file:///…` prise n'importe où sur le disque (un `.html` téléchargé) est acceptée dans la fenêtre, et reçoit alors le pont `tel` (le preload s'y charge).
+  - Risque concret : un lien piégé (après une faille S4) vers un fichier HTML du disque prendrait le contrôle de l'appli.
+  - Correction : n'accepter que le chemin exact de `app/index.html` (et `app/hud.html` pour le HUD). → tâche 3, avec S2.
+
+- [ ] **S19 — Le plugin du jeu est un binaire que la CI ne reconstruit pas** · Important
+  - Où : `resources/plugin/telemetrie_entreprise.dll` (sources dans `plugin/`, script `build-plugin`), `.github/workflows/release.yml`.
+  - Problème : la DLL chargée **dans le jeu** est déposée telle quelle dans le dépôt ; contrairement à `decrypt_truck.exe`, la CI ne la refabrique pas depuis les sources.
+  - Risque concret : impossible de prouver que la DLL livrée correspond au code ; une DLL remplacée par erreur ou malveillance partirait chez tous les joueurs, dans le processus du jeu.
+  - Correction : construire la DLL dans le workflow, ou au minimum noter son empreinte SHA-256 dans un test.
+
+- [ ] **S20 — `integrations.json` abîmé = clé Steam impossible à effacer** · Plus tard
+  - Où : `main.js:98-122` et `:523`.
+  - Problème : le fichier est lu sans protection ; s'il est abîmé, `integrationStatus`, `steamProfile` et `clearSteamApiKey` échouent à chaque fois.
+  - Risque concret : bloqué dans Steam & Discord, sans moyen de remettre la clé depuis l'appli.
+  - Correction : lecture protégée ; fichier illisible = pas de clé, et on peut la ressaisir.
+
+- [ ] **S21 — Publication sans `npm test`** · Important
+  - Où : `.github/workflows/release.yml:25-35` (`npm ci` puis directement `npm run release`).
+  - Problème : complète S8 : même avec une PR, le workflow de publication ne relance pas les tests.
+  - Risque concret : une version qui casse les tests part quand même chez les joueurs.
+  - Correction : ajouter `- run: npm test` juste après `npm ci` (modification à faire sur `claude/beta-5`, jamais en poussant sur `beta`/`main`).
 
 **Points solides (à conserver)** : `contextIsolation`, `sandbox`, `nodeIntegration: false` sur les deux fenêtres (`main.js:155`, `:449`) ; `will-navigate`, `will-redirect`, `will-attach-webview` bloqués (`main.js:411-415`) ; toutes les permissions web refusées (`main.js:714-715`) ; id de profil limité à un dossier hexadécimal, noms de sauvegarde limités (`src/atelier.js:139-144`) ; programmes lancés avec `execFile` et une liste d'arguments (jamais de ligne de commande construite) ; `openLink` par clé, pas par adresse ; serveur de carte sur 127.0.0.1, jeton aléatoire de 48 caractères, chemins vérifiés, CSP stricte (`tch-map/server.js`) ; outil `decrypt_truck` compilé dans la CI depuis un commit précis ; sauvegardes déchiffrées en fichiers temporaires effacés ; aucune clé ni mot de passe dans le dépôt.
 
@@ -230,6 +264,26 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Risque concret : rare (ex. copie manuelle puis modification immédiate).
   - Correction : ajouter un suffixe si le dossier existe déjà.
 
+*Points G19 à G21 : ajoutés par un second passage de la tâche 1 (même jour).*
+
+- [ ] **G19 — Mise à jour : la bêta va télécharger l'appli officielle** · Urgent
+  - Où : `main.js:691` (`allowPrerelease = true`, `channel = 'beta'`) ; comportement d'electron-updater 6 (`node_modules/electron-updater/out/providers/GitHubProvider.js`, repli sur `latest.yml`).
+  - Problème : la bêta prend la Release **la plus récente** de GitHub, officielle comprise. Si elle n'a pas de `beta.yml`, electron-updater se rabat sur `latest.yml`. Aujourd'hui l'officielle `0.13.35` est plus basse que `0.13.36-beta.10`, donc rien ne se passe. Mais la prochaine officielle, `0.13.36` (« 0.12.0.6 »), sera **plus haute** que toutes les `0.13.36-beta.*`.
+  - Risque concret : dès la sortie de 0.13.36, chaque testeur reçoit « mise à jour disponible » et installe l'appli **officielle** (autre identifiant) à côté ; la bêta reste en 0.13.36-beta.x et redemande la mise à jour sans fin.
+  - Correction : dans `update-available`, la bêta ignore toute version sans `-beta` (et l'officielle toute version avec) ; ou passer la bêta à `0.13.37-beta.*` avant de publier `0.13.36`. Ajouter un test. → tâche 7, **avant toute publication de 0.13.36**.
+
+- [ ] **G20 — Analyse des mods : pas de délai maximum, pas arrêtée à la fermeture** · Plus tard
+  - Où : `main.js:343-404` (`modsAnalyse`) et `main.js:757-762` (`before-quit` arrête la carte mais pas l'analyse).
+  - Problème : si `tch-mods/analyse.js` se bloque, l'appel `mods.analyser` ne répond jamais et toute nouvelle analyse est refusée (« déjà en cours ») jusqu'au redémarrage.
+  - Risque concret : bouton d'analyse inutilisable ; processus qui reste en mémoire.
+  - Correction : délai maximum (ex. 5 min) puis arrêt ; `modsAnalyse.proc.kill()` dans `before-quit`.
+
+- [ ] **G21 — `acces.info()` ne suit pas l'enveloppe `{ ok, value }`** · Plus tard
+  - Où : `main.js:506` (le commentaire de `preload.js:21` annonce `{ ok, value }` pour toutes les fonctions `acces`).
+  - Problème : incohérence du contrat.
+  - Risque concret : faible (erreur d'interface plus tard, ou dans la version Diamond).
+  - Correction : aligner, et mettre à jour `CONTRAT-NOYAU.md`.
+
 ## Plan d'action
 
 1. **Tâche 2 (Electron)** : Electron 45 + electron-builder 26 (S1, S15, G15), réglage des fuses (S16) ; relancer `npm test` et `npm audit`.
@@ -238,7 +292,8 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 4. **Tâche 4 (découpage)** : inventaire des noms globaux (G2), découpage de `index.html` page par page sans réécriture (G1), une seule fonction d'échappement (S4), découpage de `main.js` par domaine (G3) ; mettre à jour les numéros de ligne du contrat.
 5. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests.
 6. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
-7. **Tâche 7 (version)** : tests des prochains numéros affichés avant de changer le numéro (G10), indicateur bêta écrit par la construction (G11).
+7. **Tâche 7 (version)** : tests des prochains numéros affichés avant de changer le numéro (G10), indicateur bêta écrit par la construction (G11), **canal de mise à jour de la bêta (G19)**.
+   Et en passant : S17 avec S10 (Atelier), S18 et S21 avec la tâche 3, G20 et G21 dans la tâche qui touche ces parties.
 8. **Charles, hors code** : double authentification GitHub, protection des branches `main` et `beta`, approbation avant publication (S7, S8) ; choisir la licence de l'appli (G17).
 9. **Avant les comptes en ligne** : conception du serveur selon S14 (connexion Steam, vérifications côté serveur, jetons chiffrés) et note de confidentialité (S13).
 
@@ -255,3 +310,4 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 ## Journal des tâches
 
 - Tâche 1 (audit, sécurité et contrat) : terminée le 27 novembre 2026. Branche `claude/beta-5` créée depuis `beta`, contrat du noyau terminé (77 fonctions, 51 ⚠), test « contrat du noyau » ajouté (77 tests réussis), ce tableau de bord écrit. Aucun code de l'appli modifié.
+- Tâche 1, second passage (exécution parallèle de la même tâche, terminée le 27 novembre 2026) : la branche existait déjà, rien n'a été écrasé ; ajout des points S17 à S21 et G19 à G21, vérifiés dans le code (S17 et le `NaN` de S10 testés). `npm test` : 77 réussis.
