@@ -80,6 +80,9 @@ La maquette utilise encore 28 / 14 px : ses tailles sont à aligner sur ce table
 
 ## 3. Menu latéral (Hub)
 
+Décision de Charles (27 novembre) : **toute la refonte est livrée dans la bêta 5** (future officielle 0.12.0.5). **Entreprise devient un espace dédié**, sur le modèle de Paramètres.
+
+**Menu principal (Hub)**
 ```
 [≡ Changer d'espace]              [Réduire le menu]
 [ETS2  Euro Truck Simulator 2   Changer]
@@ -88,23 +91,33 @@ En jeu
   Accueil
   Carte
   HUD
-Entreprise
-  Vue d'ensemble
-  Feuille de route
-  Flotte & chauffeurs
-  Garages
-  Finances
-  Télémétrie
-  Ma VTC            ← masquée tant que la liaison TruckersMP n'est pas testée
+Entreprise                 ›   ← une seule entrée : ouvre l'espace Entreprise
 ─────────────
 ⚙ Paramètres
 [T&C] Truck & Coach Hub · [version]  ⌂   ← retour au choix du jeu
 ```
 
-- Éléments repris de la bêta 4 : bouton d'espace (burger), menu rétractable (mode réduit), puce du jeu, titre d'espace, bandeau de mise à jour, Paramètres, pied avec logo, version et maison.
-- Un seul niveau de navigation. Pas de sous-espace qui transforme le menu.
+**Espace Entreprise** (même mécanique et même apparence que l'espace Paramètres)
+```
+[← Retour]  Entreprise
+  Vue d'ensemble          ← page d'arrivée
+  Feuille de route
+  Flotte & chauffeurs
+  Garages
+  Finances
+  Télémétrie
+─────────────
+⚙ Paramètres
+[T&C] Truck & Coach Hub · [version]  ⌂
+```
+
+- Entreprise s'ouvre toujours sur **Vue d'ensemble**. « Retour » (et Alt + ←) ramène au menu principal, sur l'entrée Entreprise.
+- Dans l'espace, la navigation de l'espace reste toujours visible (jamais cachée derrière un bouton). Le titre « Entreprise » indique où l'on est.
+- **En jeu** reste en accès direct : on s'en sert en conduisant, pas de clic en plus.
+- Ma VTC : absente de la bêta 5 (pages VTC supprimées, idées dans `IDEES.md`). Elle reviendra dans l'espace Entreprise après un essai réel de l'API TruckersMP.
+- Éléments repris de la bêta 4 : bouton d'espace (burger), menu rétractable, puce du jeu, titre d'espace, bandeau de mise à jour, Paramètres, pied avec logo, version et maison.
 - Supprimés : la catégorie « Général », la catégorie « Carrière », Ma carrière (fusionnée dans la Feuille de route), les anciennes pages VTC (voir `IDEES.md`).
-- **Mode réduit façon Apple Music** (livré dès la bêta 5, tâche 6c) : une icône par catégorie, pas par page. Un clic (ou Entrée / Espace) ouvre un volet avec les pages de la catégorie ; Échap ou clic ailleurs le referme ; flèches haut / bas dans le volet ; le focus revient sur l'icône. L'icône de la catégorie active porte la barre accent. Chaque icône a une infobulle et un nom accessible.
+- **Mode réduit** : une icône par entrée (Accueil, Carte, HUD, Entreprise, Paramètres ; dans l'espace Entreprise : une icône par page et Retour). Infobulle et nom accessible sur chaque icône, indicateur actif (barre accent). Pas de volet ni de second burger : le menu est assez court.
 - **Bord du menu** : il suit la souris en continu jusqu'à la largeur minimale, sans zone morte ; sous le seuil, le menu annonce qu'il va se replier et ne se replie qu'au relâchement ; hystérésis pour redéplier (pas de clignotement) ; double-clic = largeur par défaut ; flèches gauche / droite au clavier.
 
 ---
@@ -161,14 +174,14 @@ Champs repris de la page actuelle (`v-telemetrie`) : aucun n'est perdu, ils sont
 |---|---|---|
 | 1 | Tokens | Couleurs neutres, thème Système, contraste élevé, échelle typographique en variables CSS |
 | 2 | Police | Brancher Mona Sans (`@font-face` locale), retirer les graisses 800 / 900 |
-| 3 | Menu | Nouveau menu (§ 3), en gardant burger, mode réduit, puce du jeu, titre d'espace, pied |
+| 3 | Menu | Nouveau menu (§ 3) et espace Entreprise, en gardant burger, mode réduit, puce du jeu, titre d'espace, pied |
 | 4 | Feuille de route | Fusion Ma carrière, onglets Trajets / Rapports |
 | 5 | Calendrier | Première version (données déjà enregistrées) |
 | 6 | Télémétrie | Trois états, direct uniquement |
 | 7 | Accueil et HUD | Au nouveau style |
 | 8 | Vue d'ensemble | Sauvegarde : société, chiffres, flotte |
 | 9 | Flotte, Garages, Finances | Après vérification des champs de la sauvegarde |
-| 10 | Ma VTC | Après un essai réel de l'API TruckersMP |
+| 10 | Ma VTC | Après la bêta 5, après un essai réel de l'API TruckersMP |
 
 Chaque étape : lire ce guide, `REFERENTIEL-UI.md`, `TABLEAU-DE-BORD.md` et `CONTRAT-NOYAU.md` ; mettre le code dans le dossier de la fonctionnalité ; déclarer toute nouvelle fonction du pont dans le contrat ; ajouter les tests ; vérifier les contrastes par calcul ; comparer avec la maquette.
 
