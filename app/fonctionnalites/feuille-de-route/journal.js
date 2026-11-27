@@ -1,11 +1,11 @@
-/* Feuille de route : onglets (Trajets, Calendrier, Rapport de la semaine, Rapport du mois).
+/* Feuille de route : onglets (Trajets, Calendrier, Rapport de la semaine, Rapport du mois, Dépenses : voir depenses.js).
    Données : window.tel.journal() (lecture seule, voir CONTRAT-NOYAU.md) = kilomètres par jour + 300 derniers trajets.
    Règle : rien d'inventé. Un repère n'apparaît que s'il se calcule avec ce qui est enregistré ;
    « matières dangereuses » n'est pas affiché : le jeu ne le transmet pas à l'appli. */
 
 const frCalOuverts = new Set(); // trajets dépliés dans le calendrier
 let frDernierFin = null, frJournalCache = null, frOnglet = 'trajets', frMoisVu = null, frJourChoisi = null, frDecalSemaine = 0, frDecalMois = 0;
-const FR_ONGLETS = ['trajets', 'calendrier', 'semaine', 'mois'];
+const FR_ONGLETS = ['trajets', 'calendrier', 'semaine', 'mois', 'depenses'];
 const frJourCle = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const frEstCar = j => j.missionType === 'bus';
 const frTermine = j => j.status === 'livrée' || (!j.abandoned && j.status !== 'annulée' && j.status !== 'interrompue');
@@ -65,16 +65,19 @@ function frRendreOnglet(){
   if (frOnglet === 'calendrier') frRenderCalendrier();
   else if (frOnglet === 'semaine') frRenderRapport('semaine');
   else if (frOnglet === 'mois') frRenderRapport('mois');
+  else if (frOnglet === 'depenses') frRenderDepenses();
 }
 function frBrancherOnglets(){
   const liste = document.getElementById('frOnglets'); if (!liste) return;
   liste.addEventListener('click', e => { const b = e.target.closest('[role="tab"]'); if (b) frOuvrirOnglet(b.dataset.fr); });
   liste.addEventListener('keydown', e => {
     const i = FR_ONGLETS.indexOf(frOnglet); let n = null;
-    if (e.key === 'ArrowRight') n = FR_ONGLETS[(i + 1) % 4]; else if (e.key === 'ArrowLeft') n = FR_ONGLETS[(i + 3) % 4];
-    else if (e.key === 'Home') n = FR_ONGLETS[0]; else if (e.key === 'End') n = FR_ONGLETS[3];
+    const nb = FR_ONGLETS.length;
+    if (e.key === 'ArrowRight') n = FR_ONGLETS[(i + 1) % nb]; else if (e.key === 'ArrowLeft') n = FR_ONGLETS[(i + nb - 1) % nb];
+    else if (e.key === 'Home') n = FR_ONGLETS[0]; else if (e.key === 'End') n = FR_ONGLETS[nb - 1];
     if (n) { e.preventDefault(); frOuvrirOnglet(n, true); }
   });
+  if (typeof frBrancherDepenses === 'function') frBrancherDepenses();
   const cal = document.getElementById('frCal');
   if (cal) cal.addEventListener('toggle', e => { const d = e.target; if (d.classList && d.classList.contains('rt-item')) d.open ? frCalOuverts.add(d.dataset.key) : frCalOuverts.delete(d.dataset.key); }, true);
   for (const id of ['frCal', 'frSemaine', 'frMois']) {

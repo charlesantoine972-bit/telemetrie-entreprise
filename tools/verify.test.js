@@ -125,7 +125,7 @@ test('Feuille de route (bêta 5) : 4 onglets accessibles, Ma carrière fusionné
   const root = path.resolve(__dirname, '..');
   const html = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
   assert.doesNotMatch(html, /id="v-trajets"/, 'Ma carrière retirée (fusionnée)');
-  for (const o of ['trajets', 'calendrier', 'semaine', 'mois']) {
+  for (const o of ['trajets', 'calendrier', 'semaine', 'mois', 'depenses']) {
     assert.match(html, new RegExp(`role="tab" id="frTab-${o}"[^>]*aria-controls="frPan-${o}"`));
     assert.match(html, new RegExp(`role="tabpanel" id="frPan-${o}" aria-labelledby="frTab-${o}"`));
   }
@@ -1287,4 +1287,16 @@ test('bêta 6 : un trajet du calendrier se déroule comme dans l’historique (r
   for (const t of [/Cargaison/, /Transformateur · 48 t/, /convoi exceptionnel/, /rt-tl/, /chargé 460 km · à vide 10 km/, /150 L consommés/, /Dégâts/, /9000 €/, /8880 €/, /péage/, / open>/]) assert.match(html, t);
   const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8');
   assert.match(js, /routeItemHtml\(j, frCalOuverts\.has/, 'le calendrier réutilise le bloc de l’historique');
+});
+
+test('bêta 6 : onglet Dépenses au clavier (tablist à 5 onglets), filtres mission / période / type, carburant et réparations non inventés', () => {
+  const root = path.resolve(__dirname, '..');
+  const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8');
+  assert.match(js, /FR_ONGLETS = \['trajets', 'calendrier', 'semaine', 'mois', 'depenses'\]/);
+  assert.doesNotMatch(js, /% 4\]|FR_ONGLETS\[3\]/, 'navigation au clavier calculée sur le nombre réel d’onglets');
+  const dep = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/depenses.js'), 'utf8');
+  for (const id of ['depMission', 'depPeriode', 'depType']) assert.match(dep, new RegExp(`<label class="field">[^<]+<select id="${id}"`), id + ' avec son étiquette');
+  assert.match(dep, /'Dernière mission'/); assert.match(dep, /depMission = 'dernier'/, 'dernière mission par défaut');
+  assert.match(dep, /Le jeu ne transmet ni le prix du carburant ni le coût des réparations/);
+  assert.doesNotMatch(dep.replace(/\/\*[\s\S]*?\*\//g, ''), /window\.tel\./, 'aucun appel au pont : données du journal déjà chargé');
 });
