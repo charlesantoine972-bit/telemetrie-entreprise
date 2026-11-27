@@ -343,7 +343,7 @@ Vérifié sur electronjs.org le 27 novembre 2026 : versions maintenues **43, 44 
 ## Plan d'action
 
 1. **Tâche 2 (Electron)** : Electron 45 + electron-builder 26 (S1, S15, G15), réglage des fuses (S16) ; relancer `npm test` et `npm audit`.
-2. **Tâche 3 (re-audit sécurité)** : contrôle de l'expéditeur pour les 72 canaux (S2), `preload-hud.js` (S3), liste blanche des liens (S6), iframe sans `allow-popups` et `frame-src` restreint (S5), vérifier que les failles d'Electron 33 ont disparu.
+2. **Tâche 3 (re-audit sécurité)** — ⚠ ses consignes lui interdisent de modifier le code : elle ne fera que vérifier. Les corrections ci-après (S2, S3, S5, S6) **n'ont donc pas encore de tâche** ; Charles doit les confier à une tâche dédiée (avant la PR de la bêta 5 ou juste après). À faire : contrôle de l'expéditeur pour les 72 canaux (S2), `preload-hud.js` (S3), liste blanche des liens (S6), iframe sans `allow-popups` et `frame-src` restreint (S5), vérifier que les failles d'Electron 33 ont disparu.
 3. **Tâche 4 (découpage)** : inventaire des noms globaux (G2), découpage de `index.html` page par page sans réécriture (G1), une seule fonction d'échappement (S4), découpage de `main.js` par domaine (G3) ; mettre à jour les numéros de ligne du contrat. **En plus** : ne plus jamais écraser un `donnees.json` illisible (G5, partie historique) et écritures atomiques des fichiers du jeu (G12, partie jeu).
 4. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests. **En plus** : ne plus jamais écraser un `reglages.json` illisible (G5, partie réglages) et écriture atomique de `reglages.json` (G12, partie réglages).
 5. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
@@ -388,17 +388,17 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - [x] **Pages déjà faites dans cette bêta : on les garde telles quelles** (décidé par Charles)
   - Pages concernées : Games (choix du jeu), Map, News, Settings (Paramètres) et Support.
   - Ce que ça veut dire : leur contenu, leur disposition et leur fonctionnement ne changent pas. La refonte ne leur applique **que le nouveau style** (couleurs, police, espacements des tokens). Aucune maquette à faire pour elles.
-- [x] **Pages manquantes de l'espace Entreprise : on les met en place, on les branche, puis on les règle** (décidé par Charles)
-  - Pages concernées : celles que le guide marque « maquette à faire » (Flotte & chauffeurs, Garages, Finances).
-  - Ce que ça veut dire : **pas de maquette préalable**. Elles sont construites au même style que les autres pages Entreprise de la maquette, branchées sur les vraies données de la sauvegarde, puis ajustées ensuite avec Charles.
+- [x] **Les 3 pages manquantes de l'espace Entreprise sont à implémenter** (décidé par Charles)
+  - Pages concernées : Flotte & chauffeurs, Garages, Finances (le guide les marque « maquette à faire »).
+  - Ce que ça veut dire : elles doivent être **construites et branchées pour de vrai**, sans maquette préalable : même style que les autres pages Entreprise de la maquette, vraies données de la sauvegarde, puis réglages avec Charles.
+- [x] **Marketplace et Truck & Coach Tools : nouveau style seulement** (décidé par Charles)
+  - Pages concernées : la Marketplace, et tout l'espace Truck & Coach Tools (Truck & Road Trip Tools sur ATS) : profils et sauvegardes, éditeur, Mods, console, convoi…
+  - Ce que ça veut dire : comme Games, Map, News, Settings et Support, leur contenu et leur fonctionnement ne changent pas ; seul le style change.
 
 **Avant de brancher (toi, Charles)**
 
-- [ ] **Décider du sort des pages restantes** · Qui : Charles · Quand : avant l'étape 3 (menu)
-  - Pages concernées : Truck & Coach Tools, Atelier, Marketplace (ni dans le guide, ni dans la décision ci-dessus).
-  - Comment : choisir pour chacune « nouveau style seulement » (comme Games, Map, News, Settings, Support) ou autre chose.
 - [ ] **Lancer les tâches de branchement** · Qui : Charles · Quand : une fois la bêta 5 fusionnée dans `beta`
-  - Comment : programmer une petite tâche par étape ci-dessous, dans l'ordre, chacune sur la branche `claude/refonte-interface` (jamais sur `beta` ni `main`), avec la consigne de lire ce tableau de bord, `REFERENTIEL-UI.md`, `REFONTE-INTERFACE.md` et `REFONTE-PREPARATIF.md`, puis de cocher sa case ici. La première tâche ajoute les deux décisions ci-dessus dans `REFONTE-INTERFACE.md`.
+  - Comment : programmer une petite tâche par étape ci-dessous, dans l'ordre, chacune sur la branche `claude/refonte-interface` (jamais sur `beta` ni `main`), avec la consigne de lire ce tableau de bord, `REFERENTIEL-UI.md`, `REFONTE-INTERFACE.md` et `REFONTE-PREPARATIF.md`, puis de cocher sa case ici. La première tâche ajoute les décisions ci-dessus dans `REFONTE-INTERFACE.md`.
 
 **Après la bêta 5 : branchement (une petite tâche par case, dans l'ordre)**
 
@@ -412,9 +412,9 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
   - Comment : charger `commun/menu.css`, reprendre la structure du menu de `apercu-refonte.html` dans le dossier du menu, rebrancher burger, réduire, puce du jeu, maison et bandeau de mise à jour ; « Ma VTC » reste masquée ; appliquer les décisions sur les autres pages.
 - [ ] **4 à 10. Pages, dans l'ordre du guide** (§ 5) · Qui : une tâche par page
   - Comment : Feuille de route (fusion de Ma carrière), Calendrier, Télémétrie, Accueil et HUD, Vue d'ensemble, puis Flotte / Garages / Finances et Ma VTC (après un essai réel de l'API TruckersMP). Chaque page dans son dossier, comparée à la maquette ; toute nouvelle fonction du pont déclarée dans `CONTRAT-NOYAU.md`.
-  - Flotte / Garages / Finances : pas de maquette (décision de Charles) ; même style que la Vue d'ensemble, données réelles de la sauvegarde (vérifier d'abord quels champs existent, ex. détail des chauffeurs), puis réglages avec Charles.
+  - Flotte / Garages / Finances : **à implémenter**, pas de maquette (décision de Charles) ; même style que la Vue d'ensemble, données réelles de la sauvegarde (vérifier d'abord quels champs existent, ex. détail des chauffeurs), puis réglages avec Charles.
 - [ ] **Passage au nouveau style des pages gardées** · Qui : tâche de branchement, après l'étape 3
-  - Comment : Games, Map, News, Settings, Support : remplacer couleurs, tailles et graisses en dur par les tokens et la typographie ; **ne rien changer d'autre** (contenu, disposition, fonctionnement). Comparer avec les captures de `docs/captures/beta-5/` : seule l'apparence doit changer.
+  - Comment : Games, Map, News, Settings, Support, Marketplace, Truck & Coach Tools : remplacer couleurs, tailles et graisses en dur par les tokens et la typographie ; **ne rien changer d'autre** (contenu, disposition, fonctionnement). Comparer avec les captures de `docs/captures/beta-5/` : seule l'apparence doit changer.
 - [ ] **11. Nettoyage** · Qui : dernière tâche de branchement
   - Comment : remplacer le test « fichiers non branchés » par « aucune couleur en dur hors `tokens.css` » ; déplacer les échantillons de l'aperçu dans `app/commun/composants.css` ; supprimer `app/apercu-refonte.html`.
 - [ ] **12. Contrôle de sécurité** · Qui : une tâche de vérification (comme la tâche 8)
@@ -450,3 +450,4 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - Tâche 1 (suite, à la demande de Charles) : partie « Refonte de l'interface » transformée en liste à cocher (qui, quand, comment), le 27 novembre 2026.
 - Tâche 1 (suite) : décisions de Charles ajoutées à la refonte (pages Games, Map, News, Settings, Support : style seulement ; Flotte, Garages, Finances : mises en place sans maquette, réglées ensuite), le 27 novembre 2026.
 - Tâche 2 (Electron) : terminée le 27 novembre 2026. Electron 33.4.11 → **45.5.0**, electron-builder 25.1.8 → 26.18.0, electron-updater 6.3.9 → 6.8.11 (dans `dependencies`). Clé Steam passée à `safeStorage` asynchrone, fuses réglés (S16), contrat mis à jour (numéros de ligne). `npm test` : 77 réussis. Appli et version empaquetée démarrées sous Linux sans erreur ; installeur Windows à vérifier sous Windows. Nouveau point G22 (analyse des mods, déjà présent en Electron 33). S1 et S16 cochés.
+- Tâche 1 (suite) : décisions de Charles complétées (3 pages Entreprise à implémenter ; Marketplace et Truck & Coach Tools : style seulement) ; signalé que la tâche 3 ne corrige pas S2, S3, S5, S6 (lecture seule), le 27 novembre 2026.
