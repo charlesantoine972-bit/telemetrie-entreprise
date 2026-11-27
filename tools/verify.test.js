@@ -952,3 +952,44 @@ test('Carte du jeu : le lancement automatique reste une fonction (plus d’erreu
   assert.doesNotMatch(main, /this\.auto\s*=/, 'aucune valeur ne doit écraser la fonction auto()');
   assert.match(main, /this\.lanceAuto = !!opts\.auto/);
 });
+
+test('contrat du noyau : chaque fonction du pont a son point d’entrée et figure dans CONTRAT-NOYAU.md', () => {
+  const root = path.resolve(__dirname, '..');
+  // On charge preload.js avec un faux Electron qui note le canal utilisé par chaque fonction du pont.
+  let bridge = null, last = null;
+  const ipcRenderer = {
+    invoke: (ch) => { last = { kind: 'appel', ch }; return Promise.resolve(); },
+    on: (ch) => { last = { kind: 'événement', ch }; },
+    removeListener: () => {},
+  };
+  const electron = { contextBridge: { exposeInMainWorld: (name, api) => { if (name === 'tel') bridge = api; } }, ipcRenderer };
+  vm.runInNewContext(fs.readFileSync(path.join(root, 'preload.js'), 'utf8'), { require: (m) => { assert.equal(m, 'electron'); return electron; } });
+  assert.ok(bridge, 'preload.js doit exposer window.tel');
+  const fonctions = [];
+  const parcourir = (obj, prefixe) => {
+    for (const [k, v] of Object.entries(obj)) {
+      const nom = prefixe ? `${prefixe}.${k}` : k;
+      if (typeof v === 'function') { last = null; v(() => {}, undefined, undefined); assert.ok(last, `${nom} doit passer par ipcRenderer`); fonctions.push({ nom, ...last }); }
+      else if (v && typeof v === 'object') parcourir(v, nom);
+    }
+  };
+  parcourir(bridge, '');
+  assert.ok(fonctions.length >= 77, `au moins 77 fonctions attendues, ${fonctions.length} trouvées`);
+  const main = fs.readFileSync(path.join(root, 'main.js'), 'utf8');
+  const echap = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const f of fonctions) {
+    if (f.kind === 'appel') assert.match(main, new RegExp(`ipcMain\\.handle\\(\\s*'${echap(f.ch)}'`), `${f.nom} : aucun ipcMain.handle('${f.ch}') dans main.js`);
+    else assert.match(main, new RegExp(`\\.send\\(\\s*'${echap(f.ch)}'`), `${f.nom} : aucun envoi webContents.send('${f.ch}') dans main.js`);
+  }
+  // Chaque fonction du pont est décrite dans le contrat (une ligne de tableau qui commence par son nom)
+  const contrat = fs.readFileSync(path.join(root, 'CONTRAT-NOYAU.md'), 'utf8');
+  for (const f of fonctions) {
+    const ligne = contrat.split('\n').find(l => new RegExp('^\\| (⚠ )?`' + echap(f.nom) + '\\(').test(l));
+    assert.ok(ligne, `${f.nom} manque dans CONTRAT-NOYAU.md`);
+    assert.ok(ligne.includes('`' + f.ch + '`'), `${f.nom} : le canal « ${f.ch} » n’est pas celui indiqué dans CONTRAT-NOYAU.md`);
+    assert.ok(!/à compléter/.test(ligne), `${f.nom} : ligne encore « à compléter » dans CONTRAT-NOYAU.md`);
+  }
+  // Et aucun canal du noyau n’existe sans fonction du pont (sauf ceux du noyau vers l’interface)
+  const canaux = new Set(fonctions.map(f => f.ch));
+  for (const m of main.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)) assert.ok(canaux.has(m[1]), `canal « ${m[1]} » dans main.js sans fonction dans preload.js`);
+});
