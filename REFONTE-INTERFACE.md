@@ -104,7 +104,8 @@ Entreprise
 - Éléments repris de la bêta 4 : bouton d'espace (burger), menu rétractable (mode réduit), puce du jeu, titre d'espace, bandeau de mise à jour, Paramètres, pied avec logo, version et maison.
 - Un seul niveau de navigation. Pas de sous-espace qui transforme le menu.
 - Supprimés : la catégorie « Général », la catégorie « Carrière », Ma carrière (fusionnée dans la Feuille de route), les anciennes pages VTC (voir `IDEES.md`).
-- En mode réduit : icônes seules, avec infobulle et nom accessible.
+- **Mode réduit façon Apple Music** (livré dès la bêta 5, tâche 6c) : une icône par catégorie, pas par page. Un clic (ou Entrée / Espace) ouvre un volet avec les pages de la catégorie ; Échap ou clic ailleurs le referme ; flèches haut / bas dans le volet ; le focus revient sur l'icône. L'icône de la catégorie active porte la barre accent. Chaque icône a une infobulle et un nom accessible.
+- **Bord du menu** : il suit la souris en continu jusqu'à la largeur minimale, sans zone morte ; sous le seuil, le menu annonce qu'il va se replier et ne se replie qu'au relâchement ; hystérésis pour redéplier (pas de clignotement) ; double-clic = largeur par défaut ; flèches gauche / droite au clavier.
 
 ---
 
