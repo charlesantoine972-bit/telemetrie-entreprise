@@ -154,7 +154,7 @@ function renderPlugin(list, msg){
   document.getElementById('hPlugin').innerHTML = `<span class="d" style="background:${pc[0]}"></span>Plugin : ${pc[1]}`;
   const w = document.getElementById('waitPlugin');
   const ok = list.filter(g => g.status === 'ok').map(g => g.name);
-  w.textContent = ok.length ? 'Plugin installé pour : ' + ok.join(', ') + '.' : 'Plugin pas encore installé : va dans Options → Jeu & plugin.';
+  w.textContent = ok.length ? 'Plugin installé pour : ' + ok.join(', ') + '.' : 'Plugin pas encore installé : va dans Paramètres → Jeu & plugin.';
   if (msg !== undefined) setText('pluginMsg', msg);
 }
 async function loadSettingsUI(){

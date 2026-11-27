@@ -47,3 +47,7 @@
   .wrow.bad b{color:var(--race)}
   .big{font-size:34px;font-weight:700}
   .legend span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+/* Bêta 5 (étape D) : un titre par bloc (Conduite, Plein, Mission ou Service en cours, Voyageurs, Aujourd'hui) */
+.tel-titre{margin:0}
+#v-telemetrie[data-conn="off"] .telright .tel-titre{grid-column:1/-1}
+#v-telemetrie .speed{font-size:var(--fs-chiffre);font-weight:var(--fw-demi);font-variant-numeric:tabular-nums}

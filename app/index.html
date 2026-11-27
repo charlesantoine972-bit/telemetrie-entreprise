@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="commun/controles.css">
 <link rel="stylesheet" href="fonctionnalites/marketplace/marketplace.css">
 <link rel="stylesheet" href="fonctionnalites/entreprise/entreprise.css">
+<link rel="stylesheet" href="fonctionnalites/accueil/accueil.css">
 <link rel="stylesheet" href="commun/navigation.css">
 <link rel="stylesheet" href="fonctionnalites/parametres/parametres.css">
 <link rel="stylesheet" href="commun/barre-globale.css">
@@ -440,7 +441,7 @@
           <span class="chip" id="hGame" style="margin:0"><span class="d" style="background:var(--muted)"></span>Jeu : en attente</span>
           <span class="chip" id="hPlugin" style="margin:0"><span class="d" style="background:var(--muted)"></span>Plugin : vérification…</span>
           <span class="chip" id="hUpdate" style="margin:0"><span class="d" style="background:var(--muted)"></span>Mises à jour : vérification…</span>
-          <span class="chip" style="margin:0"><span class="d" style="background:var(--muted)"></span>Serveur entreprise : bientôt</span>
+          <span class="chip" id="hHud" style="margin:0"><span class="d" style="background:var(--muted)"></span>HUD : désactivé</span>
         </div>
         <button class="launch" id="btnLaunch">LANCER EURO TRUCK SIMULATOR 2</button>
         <div class="hint" id="launchHint">Le plugin est vérifié, puis le jeu se lance via Steam. <a href="#" id="lnkAts">Lancer American Truck Simulator</a></div>
@@ -453,15 +454,17 @@
         </div>
         <div class="statusrow" id="hToday" style="color:var(--soft);font-size:14px"></div>
         <details class="acc"><summary>Guide de démarrage rapide</summary><div class="acc-in">
-          1. Ouvre l'appli : elle installe toute seule le plugin dans le jeu (vérifie dans <b>Options</b>).<br>
+          1. Ouvre l'appli : elle installe toute seule le plugin dans le jeu (vérifie dans <b>Paramètres</b>).<br>
           2. Clique sur <b>Lancer le jeu</b>. Au premier lancement, le jeu affiche un message sur les « fonctions SDK avancées » : clique sur <b>OK</b>.<br>
-          3. Roule : la page <b>Télémétrie</b> se remplit en direct, et tes missions s'enregistrent dans <b>Ma carrière</b>.<br>
-          4. Règle tes préférences (seuil réel / course et véhicule pour l’aperçu hors jeu) dans <b>Options</b>.
-        </div></details>
-        <details class="acc"><summary>Prochains événements</summary><div class="acc-in">
-          Le calendrier des convois et événements de ton entreprise arrive avec la partie <b>Entreprise</b>.
+          3. Roule : la page <b>Télémétrie</b> (espace Entreprise) se remplit en direct, et tes missions s'enregistrent dans la <b>Feuille de route</b>.<br>
+          4. Règle tes préférences (seuil réel / course et véhicule pour l’aperçu hors jeu) dans <b>Paramètres</b>.
         </div></details>
       </div></div>
+      <div class="acc-resume" aria-label="Résumé">
+        <div class="panel" id="accEnCours" aria-live="polite"></div>
+        <div class="panel" id="accDernier"></div>
+        <div class="panel" id="accEntreprise"></div>
+      </div>
     </section>
 
     <!-- ===== Fonctionnalité : Espace Entreprise (Vue d'ensemble, Flotte & chauffeurs, Garages, Finances) — fonctionnalites/entreprise/ ===== -->
@@ -493,7 +496,7 @@
       <div id="waitPanel" class="panel" style="margin-bottom:18px">
         <h2>En attente du jeu</h2>
         <ol class="steps">
-          <li>Vérifie que le plugin est installé (✓) dans <button type="button" class="linkbtn" id="waitOpenPlugin">Options → Jeu &amp; plugin</button>.</li>
+          <li>Vérifie que le plugin est installé (✓) dans <button type="button" class="linkbtn" id="waitOpenPlugin">Paramètres → Jeu &amp; plugin</button>.</li>
           <li>Lance Euro Truck Simulator 2. Au premier lancement, le jeu affiche un message sur les « fonctions SDK avancées » : clique sur <b>OK</b>.</li>
           <li>Prends la route : les infos apparaissent ici en direct.</li>
         </ol>
@@ -501,6 +504,7 @@
       </div>
       <div class="grid2 telgrid">
         <div class="telcol tel-left">
+          <h2 class="t-sous tel-titre tel-live">Conduite</h2>
           <div class="panel tel-live" style="display:flex;align-items:center;gap:22px">
             <div><div class="speed" id="lSpeed">–</div><div class="muted" style="font-size:13px;margin-top:6px" data-u="sp">km/h</div></div>
             <div class="limit" id="lLimit" title="Limitation de vitesse">–</div>
@@ -510,7 +514,7 @@
             </div>
           </div>
           <div class="panel tel-truck tel-live" style="display:flex;flex-direction:column;gap:12px">
-            <div class="between"><span class="muted">Mission en cours</span><span class="lbl" id="jState"></span></div>
+            <div class="between"><h2 class="t-sous" style="margin:0">Mission en cours</h2><span class="lbl" id="jState"></span></div>
             <div id="jNone" class="soft">Aucune mission en cours.</div>
             <div id="jBox" class="hidden" style="display:flex;flex-direction:column;gap:12px">
               <div style="font-size:28px;font-weight:700" id="jRoute"></div>
@@ -528,7 +532,7 @@
             </div>
           </div>
           <div class="panel tel-bus tel-live" style="display:flex;flex-direction:column;gap:12px">
-            <div class="between"><span class="muted">Service en cours</span><span class="lbl" id="bState"></span></div>
+            <div class="between"><h2 class="t-sous" style="margin:0">Service en cours</h2><span class="lbl" id="bState"></span></div>
             <div id="bNone" class="soft">Aucun service car en cours.</div>
             <div id="bBox" class="hidden" style="display:flex;flex-direction:column;gap:12px">
               <div style="font-size:24px;font-weight:700" id="bLine"></div>
@@ -545,7 +549,7 @@
             </div>
           </div>
           <div class="panel tel-bus tel-live" style="display:flex;flex-direction:column;gap:14px">
-            <span class="muted">Voyageurs</span>
+            <h2 class="t-sous" style="margin:0">Voyageurs</h2>
             <div class="row" style="gap:28px;flex-wrap:wrap;align-items:flex-start">
               <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:200px">
                 <div style="display:flex;align-items:baseline;gap:8px"><span class="big" id="pCount">–</span><span class="soft" id="pCap"></span></div>
@@ -572,7 +576,7 @@
             </div>
           </div>
           <div class="panel tel-live" id="fuelPanel" style="display:flex;flex-direction:column;gap:12px">
-            <div class="between"><span class="muted">Plein</span><span class="lbl" id="fWarn"></span></div>
+            <div class="between"><h2 class="t-sous" style="margin:0">Plein</h2><span class="lbl" id="fWarn"></span></div>
             <div style="display:flex;align-items:baseline;gap:10px"><span class="big" id="fPct">–</span><span class="soft" id="fLiters"></span></div>
             <div class="tank" id="fTank" role="meter" aria-label="Niveau du réservoir" aria-valuemin="0" aria-valuemax="100"><i id="fBar" style="width:0%"></i><u id="fRes" style="display:none"></u></div>
             <div class="kv fuelkv">
@@ -585,6 +589,7 @@
           </div>
         </div>
         <div class="telcol telright">
+          <h2 class="t-sous tel-titre">Aujourd’hui</h2>
           <div class="panel" style="display:flex;flex-direction:column;gap:12px">
             <span class="muted">Depuis l'ouverture de l'appli</span>
             <div class="row" style="gap:30px">
@@ -594,7 +599,7 @@
             <div class="bar"><div class="l" id="sBar" style="width:0%"></div><div class="e"></div></div>
           </div>
           <div class="panel" style="display:flex;flex-direction:column;gap:10px">
-            <span class="muted">Aujourd'hui</span>
+            <span class="muted">Depuis minuit</span>
             <div class="between"><span>Chargé</span><b id="dLoaded">0 km</b></div>
             <div class="between"><span>À vide</span><b id="dEmpty">0 km</b></div>
           </div>

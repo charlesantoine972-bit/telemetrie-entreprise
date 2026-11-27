@@ -78,3 +78,8 @@
 
 /* Chiffres alignés : télémétrie, tableaux, rapports */
 .t-num, .tch-typo table, .t-chiffre { font-variant-numeric: tabular-nums; }
+
+/* Une classe d'échelle posée sur un titre l'emporte sur le style par défaut du titre */
+.tch-typo .t-titre { font-size: var(--fs-titre); }
+.tch-typo .t-section { font-size: var(--fs-section); }
+.tch-typo .t-sous { font-size: var(--fs-sous); }
