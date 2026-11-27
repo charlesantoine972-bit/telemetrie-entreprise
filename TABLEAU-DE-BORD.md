@@ -8,6 +8,7 @@ Mesures du 27 novembre 2026 (tâche 1) :
 - `npm ci` : OK. `npm test` : **77 tests, 77 réussis** (76 avant + le nouveau test « contrat du noyau »).
 - `npm audit` : **18 failles (1 critique, 13 hautes, 4 moyennes)**, toutes dans Electron 33 et les outils de construction (electron-builder 25). `npm audit --omit=dev` : 0 (les autres paquets livrés, `electron-updater` et `discord-rpc`, sont propres).
 - Taille : `app/index.html` 4 568 lignes, `main.js` 764 lignes (72 points d'entrée), `preload.js` 77 fonctions, `src/` 2 600 lignes.
+- **Tâche 4 (découpage)** : `app/index.html` passe à **1 038 lignes** (HTML des pages seulement) ; le reste est rangé dans `app/commun/`, `app/fonctionnalites/<nom>/` et `app/demarrage.js` (voir `app/LISEZ-MOI.md`). ⚠ Les numéros `app/index.html:…` cités dans ce tableau désignent la version **d'avant** le découpage (commit `9aab414`) : chercher le nom de la fonction pour la retrouver.
 
 ## Résumé
 
@@ -49,6 +50,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : tant que `'unsafe-inline'` est permis, un nom piégé (profil, mod, VTC TruckersMP, ville d'un mod) mal échappé devient du code exécuté avec tout le pont. Aujourd'hui l'échappement est presque partout présent, mais c'est fragile.
   - Risque concret : un profil ou un mod partagé par quelqu'un d'autre pourrait déclencher des actions dans l'appli.
   - Correction : une seule fonction d'échappement (qui traite aussi `'`) dans un fichier commun ; en découpant `index.html` (tâche 4), sortir le script dans des fichiers `.js`, puis retirer `'unsafe-inline'` de `script-src`.
+  - Tâche 4 : le script est sorti dans des fichiers (plus aucun `<script>` ni `<style>` en ligne dans `index.html`, un test le vérifie). **`'unsafe-inline'` doit pourtant rester pour l'instant** : `app/fonctionnalites/outils/outils.js` fabrique des boutons avec `onclick="…"` / `oninput="…"` dans son HTML (une dizaine) ; il faut d'abord les remplacer par des écouteurs. Échappement pas encore regroupé (`esc`, `escM` dans `app/commun/utilitaires.js`, `escMod` dans `mods`, `esc` local dans `hud`, `escH` local dans `feuille-de-route`). Case laissée ouverte.
 
 - [ ] **S5 — Iframe de la carte (`tchFrame`) peu protégée** · Important
   - Où : `app/index.html:1660` (`sandbox="allow-scripts allow-same-origin allow-popups"`), CSP `frame-src http://127.0.0.1:*` (l.5).
@@ -170,7 +172,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 
 ## Audit général
 
-- [ ] **G1 — `app/index.html` monolithique** · Important
+- [x] **G1 — `app/index.html` monolithique** · Important (découpé par la tâche 4 : 4 568 → 1 038 lignes ; voir « Découpage de l'interface (tâche 4) » pour ce qui reste)
   - Où : `app/index.html` (4 568 lignes : ~800 de CSS, ~950 de HTML, un seul `<script>` de ~2 800 lignes de 1765 à 4560).
   - Problème : tout est dans un fichier ; chaque modification risque de casser une autre page ; impossible de retirer `'unsafe-inline'` (S4).
   - Risque concret : bugs croisés entre pages, conflits de fusion entre tâches.
@@ -181,6 +183,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : une fois découpés en plusieurs fichiers, deux `const` ou `let` du même nom au niveau global font planter tout le chargement (« already been declared »).
   - Risque concret : écran blanc après le découpage.
   - Correction : avant de découper, lister les noms globaux (un petit script), renommer les doublons, regrouper l'échappement dans `commun.js`. → tâche 4.
+  - Tâche 4 : inventaire fait (300 noms globaux) : **aucun doublon au niveau global** (le second `esc` est local à une fonction du HUD, `openMap` / `openOptCat` / `setRail` / `syncMapEngine` sont volontairement « enveloppées » et ces enveloppes sont restées dans l'ordre dans `app/demarrage.js`). Le découpage n'a donc rien renommé. Reste : regrouper l'échappement (S4). Case laissée ouverte pour ce dernier point.
 
 - [ ] **G3 — `main.js` regroupe tout le noyau** · Important
   - Où : `main.js` (72 points d'entrée + carte + mods + HUD + mises à jour, 764 lignes).
@@ -396,11 +399,35 @@ Comparaison entre `beta` (avant) et `claude/beta-5` (après la tâche 2). Aucun 
 
 **Ce qui reste ouvert après la mise à jour** (pas lié à Electron) : S2, S3, S18 (contrôle de qui appelle le noyau), S5 et S6 (iframe de la carte, liens), S4 (`'unsafe-inline'`), S7, S8, S21 (publication), S15 (6 failles moyennes des outils de construction), et le nouveau S22.
 
+## Découpage de l'interface (tâche 4, 27 novembre 2026)
+
+**Règle** (écrite aussi dans `app/LISEZ-MOI.md`) : une fonctionnalité = un dossier ; tout nouveau code va dans le dossier de sa fonctionnalité, jamais dans `index.html`.
+
+**Résultat** : `app/index.html` 4 568 → **1 038 lignes** (en-tête, liste des fichiers chargés, HTML des pages rangé par commentaires). Aucun outil de compilation, CSP inchangée.
+
+- `app/commun/` : 14 feuilles de style (dont `theme-actuel.css`, les couleurs actuelles) + `utilitaires.js` et `navigation.js`.
+- `app/fonctionnalites/` : 17 dossiers : `choix-du-jeu`, `accueil`, `hub`, `telemetrie`, `feuille-de-route`, `hud`, `carte`, `parametres`, `compte`, `news`, `atelier`, `sauvegardes`, `mods`, `outils`, `marketplace`, `mises-a-jour`, `notes-version`.
+- `app/demarrage.js` (≈ 500 lignes) : tout ce qui s'exécute au chargement, **dans l'ordre d'origine**, chaque bloc étiqueté par fonctionnalité.
+
+**Comment c'est resté sans risque** : chaque morceau a été coupé tel quel par un petit programme (aucune ligne réécrite). Les styles gardent leur ordre exact. Les fichiers des fonctionnalités ne contiennent que des fonctions et des valeurs fixes (rien ne s'exécute à leur chargement) ; tout ce qui s'exécute est resté ensemble, dans l'ordre, dans `demarrage.js`. Six lignes du type `const openOptCatBase = openOptCat;` (qui photographient une fonction au moment où elles passent) sont restées dans `demarrage.js` pour cette raison.
+
+**Vérifications** : `npm test` **78 / 78** (77 + le nouveau test « interface découpée » ; les tests qui lisaient `index.html` lisent maintenant l'ensemble des fichiers de l'interface, sans rien vérifier de moins) ; 18 captures avant / après **identiques** (seules l'horloge et la carte simulée, qui bougent toutes seules, diffèrent de quelques pixels, exactement comme entre deux lancements de l'appli d'avant) ; les 300 noms globaux ont le même contenu avant / après ; le HTML affiché est le même ; aucune nouvelle erreur dans la console. Version empaquetée (`electron-builder --config electron-builder-beta.js --publish never`, Windows `dir` et Linux `dir`) : les nouveaux dossiers sont bien dans `app.asar` (`files: app/**/*`), et la version Linux empaquetée démarre normalement.
+
+**Ce qui reste à découper**
+
+- [ ] `app/demarrage.js` : répartir le démarrage dans les dossiers, fonctionnalité par fonctionnalité (une fonction `demarrer<Nom>()` par dossier, appelée dans le même ordre), en revérifiant les captures à chaque fois. Attention aux fonctions « enveloppées » (`openOptCat` trois fois, `setRail`, `openMap`, `syncMapEngine`) dont l'ordre compte.
+- [ ] HTML des pages (≈ 940 lignes dans `index.html`) : à sortir seulement le jour où il y aura une façon sûre de le charger (outil de compilation ou protocole maison).
+- [ ] Feuilles de style mélangées : deux règles des Paramètres dans `outils.css`, le bandeau d'accueil du Hub dans `commun/structure.css`, les notes de version dans `choix-du-jeu.css`.
+- [ ] Gestionnaires `onclick="…"` de `outils.js`, puis retrait de `'unsafe-inline'` (S4) ; une seule fonction d'échappement (S4, G2).
+- [ ] `main.js` par domaine (G3) : pas commencé.
+
 ## Plan d'action
 
 1. **Tâche 2 (Electron)** : Electron 45 + electron-builder 26 (S1, S15, G15), réglage des fuses (S16) ; relancer `npm test` et `npm audit`.
 2. **Tâche 3 (re-audit sécurité)** — **fait** (voir « Re-audit après mise à jour d'Electron ») : failles d'Electron 33 disparues, S1 vérifié, nouveau point S22. ⚠ Ses consignes lui interdisent de modifier le code : elle ne fera que vérifier. Les corrections ci-après (S2, S3, S5, S6) **n'ont donc pas encore de tâche** ; Charles doit les confier à une tâche dédiée (avant la PR de la bêta 5 ou juste après). À faire : contrôle de l'expéditeur pour les 72 canaux (S2), `preload-hud.js` (S3), liste blanche des liens (S6), iframe sans `allow-popups` et `frame-src` restreint (S5), vérifier que les failles d'Electron 33 ont disparu.
 3. **Tâche 4 (découpage)** : inventaire des noms globaux (G2), découpage de `index.html` page par page sans réécriture (G1), une seule fonction d'échappement (S4), découpage de `main.js` par domaine (G3) ; mettre à jour les numéros de ligne du contrat. **En plus** : ne plus jamais écraser un `donnees.json` illisible (G5, partie historique) et écritures atomiques des fichiers du jeu (G12, partie jeu).
+   - **Fait par la tâche 4** : G1 et l'inventaire de G2. Le contrat (`CONTRAT-NOYAU.md`) ne cite aucune ligne de `index.html` : rien à mettre à jour.
+   - **Pas fait** (les consignes de la tâche 4 interdisaient tout changement de comportement : « déménagement, pas rénovation ») : une seule fonction d'échappement (S4), découpage de `main.js` (G3), `donnees.json` illisible (G5, partie historique), écritures atomiques des fichiers du jeu (G12, partie jeu). **À confier à une autre tâche** (G5 est Urgent).
 4. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests. **En plus** : ne plus jamais écraser un `reglages.json` illisible (G5, partie réglages) et écriture atomique de `reglages.json` (G12, partie réglages).
 5. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
 6. **Tâche 7 (version)** : tests des prochains numéros affichés avant de changer le numéro (G10), indicateur bêta écrit par la construction (G11), **canal de mise à jour de la bêta (G19)**.
@@ -428,11 +455,11 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 
 **Pendant la bêta 5 (tâches de la chaîne)**
 
-- [ ] **Ne pas reprendre les noms de fichiers de la refonte** · Qui : tâche 4 · Quand : ce soir
+- [x] **Ne pas reprendre les noms de fichiers de la refonte** · Qui : tâche 4 · Quand : ce soir (fait par la tâche 4 : aucun de ces noms dans `app/commun/`, ils sont signalés comme réservés dans `app/LISEZ-MOI.md`)
   - Comment : ne pas créer dans `app/commun/` de fichiers nommés `tokens.css`, `typographie.css`, `menu.css` ou `composants.css`.
-- [ ] **Regrouper les couleurs actuelles à un seul endroit** · Qui : tâche 4 · Quand : ce soir
+- [x] **Regrouper les couleurs actuelles à un seul endroit** · Qui : tâche 4 · Quand : ce soir (fait par la tâche 4 : `app/commun/theme-actuel.css`, valeurs inchangées, chargé en premier ; noms `applyLook`, `applyAccent` et attributs `data-*` inchangés. Seule couleur de thème restée ailleurs : `[data-theme="clair"] .hero` dans `fonctionnalites/outils/outils.css`, qui n'est pas une variable)
   - Comment : mettre toutes les variables `:root`, `[data-theme]`, `[data-vision]`, `[data-contrast]` dans un seul fichier au nom différent (ex. `app/commun/theme-actuel.css`), sans en changer la valeur ; ne renommer ni `applyLook`, ni `applyAccent`, ni les attributs `data-theme`, `data-vision`, `data-contrast`, `data-motion`. La refonte remplacera ce fichier d'un bloc.
-- [ ] **Garder les images des pages actuelles** · Qui : tâche 4 · Quand : ce soir
+- [x] **Garder les images des pages actuelles** · Qui : tâche 4 · Quand : ce soir (fait par la tâche 4 : 18 captures dans `docs/captures/beta-5/`, signalées dans `app/LISEZ-MOI.md`)
   - Comment : enregistrer les captures de référence dans le dépôt (`docs/captures/beta-5/`, une image par page, nommée comme la page) et le signaler dans `app/LISEZ-MOI.md`, avec une ligne disant que la refonte ajoutera ses fichiers dans `app/commun/`.
 - [ ] **Limiter les conflits dans les tests** · Qui : toutes les tâches · Quand : à chaque modification de `tools/verify.test.js`
   - Comment : ajouter les nouveaux tests à leur place logique, pas à la toute fin (la refonte y a mis les siens).
@@ -561,3 +588,4 @@ Décision de Charles (27 novembre 2026). Toute tâche qui change un numéro de v
 - Tâche 1 (suite) : décisions de Charles complétées (3 pages Entreprise à implémenter ; Marketplace et Truck & Coach Tools : style seulement) ; signalé que la tâche 3 ne corrige pas S2, S3, S5, S6 (lecture seule), le 27 novembre 2026.
 - Tâche 1 (suite, à la demande de Charles) : ajout des consignes de notes de version (bêta, officielle, Diamond) et du brouillon de la note officielle 0.12.0.5, le 27 novembre 2026.
 - Tâche 3 (re-audit après Electron) : terminée le 27 novembre 2026. Comparaison `beta` / `claude/beta-5` : les 46 failles d'Electron 33 ont disparu, Electron 45.5.0 est la dernière version et elle est maintenue (jusqu'en avril 2027) ; aucune protection affaiblie par la tâche 2. `npm test` : 77 réussis ; `npm audit` : 6 moyennes (outils de construction), `--omit=dev` : 0. S1 et S16 vérifiés, note ajoutée à S5 et S15, nouveau point S22. Aucun code de l'appli modifié.
+- Tâche 4 (découpage) : terminée le 27 novembre 2026. `app/index.html` : **4 568 → 1 038 lignes**. Dossiers créés : `app/commun/` (14 CSS, `utilitaires.js`, `navigation.js`), `app/fonctionnalites/` (`choix-du-jeu`, `accueil`, `hub`, `telemetrie`, `feuille-de-route`, `hud`, `carte`, `parametres`, `compte`, `news`, `atelier`, `sauvegardes`, `mods`, `outils`, `marketplace`, `mises-a-jour`, `notes-version`), `app/demarrage.js`, `app/LISEZ-MOI.md`, `docs/captures/beta-5/` (18 captures de référence). Aucun changement de comportement ni d'apparence (captures identiques). `npm test` : 78 réussis (nouveau test « interface découpée »). G1 coché ; non faits et à confier : S4 (échappement, `'unsafe-inline'`), G3, G5 (historique), G12 (fichiers du jeu).

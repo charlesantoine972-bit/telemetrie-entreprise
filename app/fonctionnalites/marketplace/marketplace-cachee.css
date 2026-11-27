@@ -1,0 +1,4 @@
+/* Bêta : Marketplace cachée en attendant d’être prête
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  /* ---------- Bêta : Marketplace cachée en attendant d'être prête ---------- */
+  [data-side-btn="market"],#navMarket{display:none!important}

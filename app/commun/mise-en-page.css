@@ -1,0 +1,17 @@
+/* Mise en page : grilles, listes, statistiques
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  .grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
+  .list{display:flex;flex-direction:column;gap:8px}
+  .item{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;color:var(--text);text-align:left;width:100%}
+  .item:hover{border-color:var(--muted)}
+  .rank{width:28px;text-align:center;font-weight:700;font-size:18px}
+  .av{width:40px;height:40px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;position:relative;flex:none}
+  .av .dot{position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid var(--panel)}
+  .grow{flex:1;min-width:0}
+  .between{display:flex;justify-content:space-between;gap:8px}
+  .muted{color:var(--muted)} .soft{color:var(--soft)}
+  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px}
+  .stat b{font-size:19px}
+  .lbl{font-size:12px;font-weight:700;letter-spacing:.03em}

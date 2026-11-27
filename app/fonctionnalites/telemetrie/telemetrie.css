@@ -1,0 +1,49 @@
+/* Télémétrie : carburant, onglets camion / car, trajet, arrêts, réservoir, usure
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  .fuelkv{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .telright .fuelkv{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .telcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+  #v-telemetrie[data-conn="off"] .tel-live{display:none!important}
+  #v-telemetrie[data-conn="off"] .telgrid{grid-template-columns:minmax(0,1fr)}
+  #v-telemetrie[data-conn="off"] .tel-left{display:none}
+  #v-telemetrie[data-conn="off"] .telright{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .linkbtn{all:unset;cursor:pointer;color:var(--accent-strong);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+  .linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+  .teltabs{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 18px}
+  .teltabs .seg button{min-width:110px}
+  [data-tel="truck"] .tel-bus,[data-tel="bus"] .tel-truck{display:none!important}
+  .trip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px}
+  .trip .node{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .trip .node b{font-size:15px} .trip .node span{font-size:12px;color:var(--muted)}
+  .trip .node.end{text-align:right}
+  .trip .line{position:relative;height:6px;border-radius:999px;background:var(--line)}
+  .trip .line i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--loaded)}
+  .trip .line u{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--text);border:3px solid var(--panel)}
+  .stops{display:flex;flex-direction:column;gap:0;margin:2px 0}
+  .stop{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:10px;align-items:center;min-height:30px;font-size:14px;position:relative}
+  .stop::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--line)}
+  .stop:first-child::before{top:50%} .stop:last-child::before{bottom:50%}
+  .stop .dot{position:relative;width:12px;height:12px;border-radius:50%;background:var(--panel);border:2px solid var(--muted);margin-left:3px}
+  .stop.done .dot{background:var(--loaded);border-color:var(--loaded)}
+  .stop.next .dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  .stop.next b{color:var(--accent-strong)}
+  .stop.todo{color:var(--muted)} .stop span{font-size:12px;color:var(--muted);text-align:right}
+  .gplot{width:132px;height:132px;flex:none}
+  .gplot circle.r{fill:none;stroke:var(--line);stroke-width:1.5}
+  .gplot line{stroke:var(--line);stroke-width:1}
+  .gplot text{fill:var(--muted);font-size:9px}
+  .tank{position:relative;height:18px;border-radius:999px;background:var(--line);overflow:hidden}
+  .tank>i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:999px;transition:width .4s}
+  .tank>u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--text);opacity:.45}
+  .tank.low>i{background:var(--race)} .tank.mid>i{background:var(--warn)}
+  .wear{display:flex;flex-direction:column;gap:9px}
+  .wear h3{margin:8px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;display:flex;justify-content:space-between}
+  .wear h3 b{color:var(--text);letter-spacing:0;text-transform:none;font-size:13px}
+  .wrow{display:grid;grid-template-columns:110px minmax(0,1fr) 62px;align-items:center;gap:10px;font-size:13px}
+  .wrow .wb{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+  .wrow .wb i{display:block;height:100%;border-radius:999px;background:var(--ok);transition:width .4s}
+  .wrow.mid .wb i{background:var(--warn)} .wrow.bad .wb i{background:var(--race)}
+  .wrow b{text-align:right;font-variant-numeric:tabular-nums}
+  .wrow.bad b{color:var(--race)}
+  .big{font-size:34px;font-weight:700}
+  .legend span.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}

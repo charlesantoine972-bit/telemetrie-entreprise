@@ -12,10 +12,23 @@ const steam = require('../src/steam');
 const { EventEmitter } = require('node:events');
 const { DiscordPresence, buildActivity } = require('../src/discord-presence');
 
+// L'interface est découpée : app/index.html (HTML des pages) + les styles et scripts qu'il charge
+// (app/commun, app/fonctionnalites/<nom>, app/demarrage.js). Les tests lisent l'ensemble, dans l'ordre de chargement.
+function fichiersInterface() {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  return [...html.matchAll(/<(?:link rel="stylesheet" href|script src)="((?:commun|fonctionnalites)\/[^"]+|demarrage\.js)"/g)].map(m => 'app/' + m[1]);
+}
+function lireInterface() {
+  const root = path.resolve(__dirname, '..');
+  return [path.join(root, 'app', 'index.html'), ...fichiersInterface().map(f => path.join(root, f))].map(f => fs.readFileSync(f, 'utf8')).join('\n');
+}
+
 test('syntaxe de tous les scripts de production et des pages', () => {
   const vm = require('node:vm'), root = path.resolve(__dirname, '..');
   const scripts = ['main.js', 'preload.js'];
   for (const dir of ['src', 'app']) for (const f of fs.readdirSync(path.join(root, dir))) if (f.endsWith('.js')) scripts.push(dir + '/' + f);
+  // fichiers de l'interface découpée (app/commun, app/fonctionnalites/<nom>)
+  for (const f of fichiersInterface().filter(f => f.endsWith('.js'))) if (!scripts.includes(f)) scripts.push(f);
   for (const file of scripts) new vm.Script(fs.readFileSync(path.join(root, file), 'utf8'), { filename: file });
   for (const file of ['app/index.html', 'app/hud.html']) {
     const html = fs.readFileSync(path.join(root, file), 'utf8');
@@ -23,11 +36,30 @@ test('syntaxe de tous les scripts de production et des pages', () => {
   }
 });
 
+test('interface découpée : index.html charge ses styles et scripts, rien en ligne, tout est livré', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'app', 'index.html'), 'utf8');
+  assert.doesNotMatch(html, /<style[\s>]/, 'pas de bloc <style> : les styles vont dans le dossier de leur fonctionnalité');
+  for (const m of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) assert.equal(m[1].trim(), '', 'pas de script en ligne : le code va dans le dossier de sa fonctionnalité');
+  const fichiers = fichiersInterface();
+  assert.ok(fichiers.length > 30);
+  for (const f of fichiers) assert.ok(fs.existsSync(path.join(root, f)), f + ' manque');
+  // le démarrage passe en dernier, après toutes les fonctions
+  assert.equal(fichiers.filter(f => f.endsWith('.js')).at(-1), 'app/demarrage.js');
+  assert.ok(html.indexOf('<script src="demarrage.js">') < html.indexOf('<script src="game-content-ui.js">'));
+  // chaque dossier de fonctionnalité est chargé, et livré dans l'installeur (app/**/*)
+  for (const d of fs.readdirSync(path.join(root, 'app', 'fonctionnalites'))) assert.ok(fichiers.some(f => f.startsWith(`app/fonctionnalites/${d}/`)), d + ' non chargé');
+  assert.ok(require('../package.json').build.files.includes('app/**/*'));
+  assert.ok(fs.existsSync(path.join(root, 'app', 'LISEZ-MOI.md')));
+});
+
 test('la feuille de route sépare camion / car et détaille frais, revenu et solde', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  // renderRoadmap et ce qui la suit (onglets, historique détaillé, montants) : fin de feuille-de-route.js
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'fonctionnalites', 'feuille-de-route', 'feuille-de-route.js'), 'utf8');
   const start = html.indexOf('function renderRoadmap(sn){');
-  const end = html.indexOf('\nfunction renderPlugin(', start);
+  const end = html.length;
   assert.ok(start >= 0 && end > start);
+  assert.match(html.slice(start), /\nfunction moneyByGame\(/);
   const ids = ['routeConnection', 'routeMission', 'routeStats', 'routeExpenseTotal', 'routeExpenses', 'routeFuelStops', 'routeHistory', 'routeCountTruck', 'routeCountBus'];
   const nodes = new Map(ids.map(id => [id, { innerHTML: '', textContent: '' }]));
   const context = {
@@ -90,7 +122,7 @@ test('la feuille de route sépare camion / car et détaille frais, revenu et sol
 });
 
 test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const button = html.match(/<button id="profileChip"([^>]*)>/);
   assert.ok(button);
   assert.match(button[1], /\bdisabled\b/);
@@ -99,7 +131,7 @@ test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => 
 });
 
 test('Options : catégories façon réglages de jeu, chaque réglage dans la bonne catégorie', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const cat = (k) => { const m = html.match(new RegExp(`<div class="optcat" id="oc-${k}"[\\s\\S]*?(?=<div class="optcat" id="oc-|</section>)`)); assert.ok(m, k); return m[0]; };
   const nav = html.match(/<nav class="optnav" id="optNav"[\s\S]*?<\/nav>/)[0];
   for (const k of ['general', 'conduite', 'jeu', 'affichage', 'acces', 'integrations', 'maj', 'aide']) {
@@ -124,7 +156,7 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
 });
 
 test('barre globale Game / News / Map / Settings / Support et page de choix du jeu', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const rail = html.match(/<nav class="rail" id="rail"[\s\S]*?<\/nav>/)[0];
   const order = [...rail.matchAll(/data-rail="(\w+)"/g)].map(m => m[1]);
   assert.deepEqual(order, ['game', 'news', 'map', 'settings', 'support']);
@@ -166,7 +198,7 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
 });
 
 test('page HUD épurée : activateur et aperçus ; réglages dans Options → HUD', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const hud = html.slice(html.indexOf('<section id="v-hud"'), html.indexOf('</section>', html.indexOf('<section id="v-hud"')));
   for (const id of ['hudOn', 'hudTestTruck', 'hudTestBus', 'hudOpenOptions']) assert.match(hud, new RegExp(`id="${id}"`));
   assert.match(hud, /data-hud-preview="truck"/); assert.match(hud, /data-hud-preview="bus"/);
@@ -177,7 +209,7 @@ test('page HUD épurée : activateur et aperçus ; réglages dans Options → HU
 });
 
 test('le profil de carrière actif est indiqué dans les réglages HUD', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /Profil actif en jeu/);
   assert.match(html, /ne change pas à la sélection d’une mission camion/);
   assert.match(html, /id="hudVehicleDetected"[^>]*role="status"/);
@@ -643,7 +675,7 @@ test('bêta : unités US pour ATS dans le HUD', () => {
 });
 
 test('bêta : News, Marketplace cachée, paramètres généraux / du jeu, retour au menu', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /<section id="v-news"/);
   assert.match(html, /if \(t === 'news'\) go\('news', 'news'\);/);
   assert.match(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/);
@@ -665,7 +697,7 @@ test('bêta 4 : outils par jeu et carte du jeu dans son espace', () => {
   assert.equal(gs.setGameKey(st, 'ats', 'units', 'metric'), false, 'seuls certains réglages se changent à distance');
   gs.switchGame(st, 'ats'); gs.setGameKey(st, 'ats', 'atelier', true); gs.switchGame(st, 'ets2');
   assert.equal(st.atelier, false); assert.equal(st.games.ats.atelier, true);
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /function mapLocked\(\)\{ return typeof railTab === 'undefined' \|\| railTab !== 'map'; \}/);
   assert.match(html, /if \(mapLocked\(\)\) mapSetGame\(activeGame === 'ats' \? 'ats' : 'ets2'\);/);
   assert.match(html, /function toolsName\(g\)\{ return \(g \|\| activeGame\) === 'ats' \? 'Truck & Road Trip Tools' : 'Truck & Coach Tools'; \}/);
@@ -764,7 +796,7 @@ test('sécurité : fenêtres verrouillées, aucune permission web, outils et che
 });
 
 test('bêta 5 : mode Paramètres (dossiers dans la barre) et recherche', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   for (const f of ['back', 'compte', 'appli', 'jeu', 'connexions', 'donnees', 'aide']) assert.match(html, new RegExp(`data-srail="${f}"`));
   assert.match(html, /html\[data-rail="settings"\] \.rail-tabs:not\(\.rail-settings\)\{display:none\}/);
   assert.match(html, /id="optQuery" type="search"/);
@@ -829,7 +861,7 @@ test('TCH Map : séparée de l’appli (aucun code partagé) et livrée avec ell
     assert.doesNotMatch(t, /require\(['"]\.\.\/(src|app)|from ['"]\.\.\/\.\.\/(src|app)/, f + ' : pas de code de l’appli');
   }
   assert.ok(fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'LICENSE'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /frame-src http:\/\/127\.0\.0\.1:\*/);
   assert.match(html, /<iframe id="tchFrame"[^>]*sandbox="allow-scripts allow-same-origin allow-popups"/);
 });
@@ -906,7 +938,7 @@ test('Mods & sauvegarde : analyse (familles, versions, manifeste) et programme s
   assert.doesNotMatch(t, /writeFile|rmSync|unlink|rename/, 'lecture seule');
   const pkg = require('../package.json');
   assert.ok(pkg.build.files.includes('tch-mods/**/*'));
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /data-view="at-mods"/);
   assert.match(html, /Ta sauvegarde en a besoin : ne pas retirer/);
 });
@@ -923,7 +955,7 @@ test('TCH Map : préparation parallèle, économe et automatique', () => {
   const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
   assert.match(main, /carteJeu\.auto\(\)/);
   assert.match(main, /TCH_OUVRIERS/);
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /tchPrepMini/);
 });
 

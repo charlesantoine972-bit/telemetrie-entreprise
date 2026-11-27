@@ -1,5 +1,5 @@
 // Illustrations des cartes Truck & Coach Tools (dessinées pour l'appli, en SVG).
-// Elles suivent le thème : les couleurs viennent des classes .il-* définies dans index.html.
+// Elles suivent le thème : les couleurs viennent des classes .il-* définies dans fonctionnalites/outils/outils.css (autrefois dans index.html).
 (function () {
   const G = 94; // ligne du sol
   const g = (x, y, s, inner, extra = '') => `<g transform="translate(${x} ${y}) scale(${s})"${extra}>${inner}</g>`;

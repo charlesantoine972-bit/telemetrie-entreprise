@@ -1,0 +1,29 @@
+/* Repères : barre de page collante, transitions, menu redimensionnable
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  /* ---------- Repères : barre de page collante, transitions, apparition au défilement ---------- */
+  .pagebar{position:sticky;top:calc(-1 * var(--mpy));z-index:20;margin:calc(-1 * var(--mpy)) calc(-1 * var(--mpx)) 12px;padding:12px var(--mpx) 8px;display:flex;align-items:center;gap:12px;min-height:22px;border-bottom:1px solid transparent;transition:background .25s,border-color .25s,box-shadow .25s,padding .25s}
+  .pb-crumb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden}
+  .pb-crumb i{font-style:normal;opacity:.55}
+  .pb-crumb .cur{color:var(--accent-strong)}
+  .pb-title{font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+  .main.scrolled .pagebar{background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);border-bottom-color:var(--line);box-shadow:0 8px 22px rgba(0,0,0,.2);padding-top:10px;padding-bottom:10px}
+  .main.scrolled .pb-title{opacity:1;transform:none}
+  .main.scrolled .pb-crumb .cur{color:var(--muted)}
+  main > section > .lbl:first-child{display:none}
+  .optnav{top:56px}
+  @keyframes pageIn{from{opacity:0;transform:translate3d(var(--dx,0px),8px,0)}to{opacity:1;transform:none}}
+  main > section.enter{animation:pageIn .28s cubic-bezier(.2,.7,.2,1) both}
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1);transition-delay:var(--rd,0s)}
+  .rv.in{opacity:1;transform:none}
+  .side .navbtn.on::before{content:"";position:absolute;left:-6px;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--accent);animation:navMark .25s ease both}
+  [data-nav="mini"] .side .navbtn.on::before{left:-10px}
+  @keyframes navMark{from{transform:scaleY(.2);opacity:0}to{transform:none;opacity:1}}
+  [data-motion="reduit"] .rv{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){ .rv{opacity:1;transform:none} }
+  /* ---------- Menu redimensionnable ---------- */
+  .side-resize{position:absolute;top:0;right:-4px;width:8px;height:100%;cursor:col-resize;z-index:5;touch-action:none}
+  .side-resize::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:transparent;transition:background .15s}
+  .side-resize:hover::after,.side-resize:focus-visible::after,html.resizing .side-resize::after{background:var(--accent)}
+  .side-resize:focus-visible{outline:none}
+  html.resizing,html.resizing *{cursor:col-resize!important;user-select:none!important}
+  html.resizing .side{transition:none}
