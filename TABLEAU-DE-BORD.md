@@ -429,6 +429,57 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - [ ] **Mise à l'échelle 150 % et fenêtre étroite** · Quand : après l'étape 3
   - Comment : Paramètres Windows → Affichage → Échelle 150 %, puis réduire la fenêtre au minimum : rien ne doit se chevaucher.
 
+## Notes de version (changelog) : consignes
+
+Décision de Charles (27 novembre 2026). Toute tâche qui change un numéro de version, écrit une note de version ou prépare une publication **suit cette partie**, pour la version classique (bêta et officielle) comme pour Diamond.
+
+### Règles communes (bêta, officielle, Diamond)
+
+- **Une version = au moins un changement visible.** Jamais de version « technique » seule.
+- **Quatre rubriques, dans cet ordre** : `nouveau` (Nouveautés), `ameliore` (Améliorations), `change` (Changements : déplacé, renommé ou retiré), `corrige` (Corrections).
+- **Écrit pour le joueur** : français simple, tutoiement (« ton camion »), une idée par ligne, une ou deux phrases courtes. Pas de nom de fichier, de fonction ni de jargon (IPC, preload, token…). On dit ce que ça change pour lui, pas comment c'est codé.
+- **Le travail invisible tient en une ligne au plus** (ex. « Moteur de l'appli mis à jour : plus sûr et plus stable »). Découpage du code, tests, audits : pas de ligne à eux seuls.
+- **Seulement ce qui est fait et vérifié.** On écrit d'après le Journal des tâches : une tâche absente ou marquée « annulée » n'apparaît pas. Rien d'annoncé « bientôt » comme s'il existait ; une page en préparation est dite « en préparation » avec le moyen de l'afficher.
+- **Sécurité** : on dit que la sécurité est renforcée, sans décrire une faille qui n'est pas encore corrigée.
+- **Pas de doublon** : une même amélioration n'apparaît qu'une fois, dans la bonne rubrique.
+- **Un test vérifie chaque note** (numéro affiché, rubriques valides, date) dans `tools/verify.test.js`.
+
+### Bêta (version classique)
+
+- **Où** : en tête de `NOTES_BETA` dans `app/data/notes-version.js` ; `package.json` → `version` (`0.13.36-beta.N`) et `build.releaseInfo.releaseName` (numéro affiché, ex. « 0.12.0.5 bêta 5 ») ; le numéro affiché est calculé par `versionAffichee`.
+- **Qui** : seulement la tâche qui change le numéro de version (pour la bêta 5 : la tâche 7). Les autres tâches n'écrivent pas de note ; elles décrivent ce qu'elles ont fait dans le Journal des tâches.
+- **Taille** : une bêta = un gros lot = **une seule note de 5 à 8 lignes**, avec un titre court qui résume le lot.
+- **Publication** : la fusion de la PR vers `beta` publie la bêta. Jamais de push direct sur `beta`.
+
+### Version officielle (version classique)
+
+- **Où** : en tête de `NOTES_VERSION` dans `app/data/notes-version.js`, `package.json` sur `main`, titre de la Release (corrigé par `tools/release-titles.js`).
+- **Numéro** : modèle Apple. La version officielle porte le numéro de la bêta qu'elle termine (ex. bêta « 0.12.0.5 bêta 5 » → officielle « 0.12.0.5 », technique `0.13.36`).
+- **Contenu** : un **résumé de toutes les bêtas** depuis la dernière officielle, **réécrit, pas recopié** : **6 à 10 lignes**, regroupées par rubrique. On enlève ce qui a été retiré ou annulé entre deux bêtas, et les étapes intermédiaires (« nouvelle carte en aperçu » puis « vraie carte » → seulement « vraie carte »).
+- **Quand** : la tâche qui prépare la dernière bêta (tâche 7 pour la bêta 5) écrit ce résumé **en brouillon** dans la partie « Brouillon de la prochaine note officielle » ci-dessous et dans la description de la PR. Il n'entre dans `NOTES_VERSION` qu'au moment de préparer la publication officielle (PR vers `main`), pour que l'appli n'affiche pas une version qui n'existe pas encore.
+- **Publication** : seule la fusion vers `main` publie, sur décision de Charles.
+
+### Diamond (version Tauri / Rust, en préparation)
+
+- **Appli séparée** : ses notes ne vont **jamais** dans `NOTES_BETA` ni `NOTES_VERSION`, et la version classique ne parle pas de Diamond dans ses notes (sauf le jour où Diamond la remplace).
+- **Où** : un fichier à elle, `diamond/NOTES-VERSION.md` sur la branche `diamond` (plus tard, l'équivalent dans le dossier de la fonctionnalité « notes de version » de Diamond), avec les mêmes quatre rubriques.
+- **Numéro** : sa propre numérotation, choisie à l'étape 1 et notée dans `diamond/README.md` (proposé : « Diamond 0.1 » pour l'étape 1, puis 0.2, 0.3… à chaque étape hebdomadaire). Jamais le même numéro que la version classique.
+- **Contenu** : une note par étape (une étape par semaine) : quelle fonctionnalité est arrivée dans Diamond, **ce qui manque encore par rapport à la version classique**, et les gains mesurés (mémoire, démarrage) s'il y en a.
+- **Publication** : pas de Release tant que Diamond est un prototype (seulement un artefact de construction) ; quand Diamond aura un canal à lui, ces mêmes règles s'appliqueront.
+- **Première étape** : la tâche « Diamond bêta : prototype Tauri (étape 1) » (vendredi 4 décembre 2026) crée ce fichier avec sa première note.
+
+### Brouillon de la prochaine note officielle (0.12.0.5)
+
+À compléter par la tâche 7 d'après le Journal des tâches (ne garder que ce qui est fait). Base proposée :
+
+- **Nouveau** — L'appli s'ouvre sur le choix du jeu (ETS2 ou ATS), avec une barre Game, News, Map, Settings et Support.
+- **Nouveau** — Carte lue directement dans tes fichiers du jeu, DLC compris, préparée toute seule en arrière-plan.
+- **Nouveau** — Paramètres propres à chaque jeu, mode Paramètres en dossiers et recherche dans les réglages.
+- **Nouveau** — Page News (actualités Steam) et analyse des mods dans Truck & Coach Tools.
+- **Nouveau** — ATS : unités américaines et Truck & Road Trip Tools.
+- **Amélioré** — Moteur de l'appli à jour, sécurité renforcée, historique protégé.
+- **Changé** — Anciennes pages VTC retirées ; Marketplace accessible depuis la barre de gauche (en préparation).
+
 ## Règles pour les tâches suivantes
 
 1. Chaque tâche lit **ce fichier** et **`CONTRAT-NOYAU.md`** avant de commencer.
@@ -439,6 +490,7 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 6. `npm test` doit passer avant chaque commit. **Ne jamais pousser sur `beta` ni sur `main`** (publication automatique) ; travailler sur `claude/beta-5`.
 7. Chaque tâche ajoute sa ligne au journal ci-dessous.
 8. Chaque tâche lit aussi la partie « Travaux en parallèle » et respecte ses points de vigilance ; elle ne fusionne aucune de ces branches.
+9. Toute tâche qui change un numéro de version, écrit une note de version ou prépare une publication (bêta, officielle ou Diamond) suit la partie « Notes de version (changelog) : consignes ».
 
 ## Journal des tâches
 
@@ -451,3 +503,4 @@ Cocher chaque case quand c'est fait, en indiquant qui l'a fait (ex. « fait par 
 - Tâche 1 (suite) : décisions de Charles ajoutées à la refonte (pages Games, Map, News, Settings, Support : style seulement ; Flotte, Garages, Finances : mises en place sans maquette, réglées ensuite), le 27 novembre 2026.
 - Tâche 2 (Electron) : terminée le 27 novembre 2026. Electron 33.4.11 → **45.5.0**, electron-builder 25.1.8 → 26.18.0, electron-updater 6.3.9 → 6.8.11 (dans `dependencies`). Clé Steam passée à `safeStorage` asynchrone, fuses réglés (S16), contrat mis à jour (numéros de ligne). `npm test` : 77 réussis. Appli et version empaquetée démarrées sous Linux sans erreur ; installeur Windows à vérifier sous Windows. Nouveau point G22 (analyse des mods, déjà présent en Electron 33). S1 et S16 cochés.
 - Tâche 1 (suite) : décisions de Charles complétées (3 pages Entreprise à implémenter ; Marketplace et Truck & Coach Tools : style seulement) ; signalé que la tâche 3 ne corrige pas S2, S3, S5, S6 (lecture seule), le 27 novembre 2026.
+- Tâche 1 (suite, à la demande de Charles) : ajout des consignes de notes de version (bêta, officielle, Diamond) et du brouillon de la note officielle 0.12.0.5, le 27 novembre 2026.
