@@ -6,7 +6,7 @@
 .tchmini .spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:tchspin 1s linear infinite}
 @keyframes tchspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion: reduce){.tchmini .spin{animation:none}}
-.tchprep .soft{font-weight:400}
+.tchprep .soft{font-weight:var(--fw-normal)}
 .tchbar{height:6px;border-radius:4px;background:var(--line);margin-top:10px;overflow:hidden}
 .tchbar i{display:block;height:100%;width:0;background:var(--accent);transition:width .6s ease}
 html:not([data-map-engine="tch"]) .tchprep{display:none}
@@ -14,20 +14,20 @@ html:not([data-map-engine="tch"]) .tchprep{display:none}
   html[data-map-engine="tch"] #lmap,html[data-map-engine="tch"] #mapNote,html[data-map-engine="tch"] #mapTileTools{visibility:hidden}
   .lmap .ovl{position:absolute;z-index:500;display:flex;gap:6px}
   .lmap .ovl.hidden{display:none}
-  .lmap .ovl .btn{height:36px;font-size:13px;padding:0 12px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
+  .lmap .ovl .btn{height:36px;font-size:var(--fs-second);padding:0 12px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
   .lmap .ovl .btn.on{border-color:var(--accent);color:var(--accent)}
-  .lmap .note{position:absolute;z-index:500;left:12px;bottom:28px;font-size:12px;color:#E8EDF2;background:rgba(15,20,26,.88);padding:6px 10px;border-radius:8px;max-width:70%}
+  .lmap .note{position:absolute;z-index:500;left:12px;bottom:28px;font-size:var(--fs-meta);color:#E8EDF2;background:rgba(15,20,26,.88);padding:6px 10px;border-radius:8px;max-width:70%}
   .lmap .leaflet-bar a{background:var(--panel);color:var(--text);border-color:var(--line)}
-  .lmap .leaflet-control-attribution{background:rgba(15,20,26,.7);color:#AEB8C2;font-size:10px}
+  .lmap .leaflet-control-attribution{background:rgba(15,20,26,.7);color:#AEB8C2;font-size:var(--fs-meta)}
   .ltruck{width:34px;height:34px;display:flex;align-items:center;justify-content:center}
   .ltruck svg,.ldest svg{filter:drop-shadow(0 1px 3px rgba(0,0,0,.8))}
-  .lcity{position:relative;font-size:11px;color:#E8EDF2;text-shadow:0 1px 2px #000;white-space:nowrap;transform:translate(8px,-7px);width:max-content}
+  .lcity{position:relative;font-size:var(--fs-meta);color:#E8EDF2;text-shadow:0 1px 2px #000;white-space:nowrap;transform:translate(8px,-7px);width:max-content}
   .lcity::before{content:"";position:absolute;left:-8px;top:5px;width:6px;height:6px;border-radius:50%;background:#E7B655}
   .lside{display:flex;flex-direction:column;gap:14px}
   .lside .k{padding:10px 0;border-top:1px solid var(--line)} .lside .k:first-of-type{border-top:none;padding-top:0}
-  .lside .k span:last-child{font-size:18px}
-  .ltog{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;padding:6px 0;cursor:pointer}
+  .lside .k span:last-child{font-size:var(--fs-sous)}
+  .ltog{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:var(--fs-second);padding:6px 0;cursor:pointer}
   .ltog .switch{margin-right:0}
   .truck{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px;transition:left 1s linear,top 1s linear;pointer-events:none}
-  .truck .tag{font-size:12px;font-weight:700;color:var(--on-accent);padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .truck .tag{font-size:var(--fs-meta);font-weight:var(--fw-gras);color:var(--on-accent);padding:3px 8px;border-radius:999px;white-space:nowrap}
   .truck .pt{width:16px;height:16px;border-radius:50%;border:3px solid var(--bg)}

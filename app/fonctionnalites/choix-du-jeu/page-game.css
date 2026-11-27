@@ -3,8 +3,8 @@
   /* ---------- Page Game ---------- */
   .lhead{border-bottom:0;padding:22px 32px 6px}
   .appname{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-  .appname b{font-size:22px;font-weight:700}
-  .betabadge{align-self:center;background:var(--accent);color:var(--on-accent);font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:6px;padding:3px 8px}
+  .appname b{font-size:var(--fs-section);font-weight:var(--fw-gras)}
+  .betabadge{align-self:center;background:var(--accent);color:var(--on-accent);font-size:var(--fs-meta);font-weight:var(--fw-gras);letter-spacing:.06em;border-radius:6px;padding:3px 8px}
   .lmain.games{justify-content:flex-start;align-items:stretch;gap:20px;padding:14px 32px 18px}
   .gamegrid{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;min-height:min(560px,62vh)}
   .gamecard{all:unset;cursor:pointer;position:relative;overflow:hidden;border-radius:24px;border:2px solid var(--line);min-height:340px;display:flex;align-items:flex-end;color:#fff;isolation:isolate;transition:border-color .2s,transform .2s,box-shadow .2s}
@@ -17,20 +17,20 @@
   .gamecard:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
   .gamecard:active{transform:scale(.99)}
   .gc-body{display:flex;flex-direction:column;gap:10px;padding:30px 32px;max-width:640px}
-  .gc-kick{font-size:13px;font-weight:700;letter-spacing:.12em;color:#ffd7a3}
-  .gc-name{font-size:clamp(28px,2.8vw,40px);font-weight:700;line-height:1.08;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-  .gc-status{display:flex;align-items:center;gap:8px;font-size:14px;color:#e6eaf0}
+  .gc-kick{font-size:var(--fs-second);font-weight:var(--fw-gras);letter-spacing:.12em;color:#ffd7a3}
+  .gc-name{font-size:clamp(28px,2.8vw,40px);font-weight:var(--fw-gras);line-height:1.08;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+  .gc-status{display:flex;align-items:center;gap:8px;font-size:var(--fs-second);color:#e6eaf0}
   .gc-status .dot{width:9px;height:9px;border-radius:50%;background:#9aa3ad;flex:none}
   .gc-status.ok .dot{background:#4fd08a} .gc-status.warn .dot{background:#f0b24a}
-  .gc-go{align-self:flex-start;margin-top:6px;height:48px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px}
-  .gc-active{position:absolute;top:18px;left:18px;display:none;background:rgba(6,10,16,.72);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700}
+  .gc-go{align-self:flex-start;margin-top:6px;height:48px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:var(--fw-gras);font-size:var(--fs-corps);display:flex;align-items:center;gap:8px}
+  .gc-active{position:absolute;top:18px;left:18px;display:none;background:rgba(6,10,16,.72);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 12px;font-size:var(--fs-second);font-weight:var(--fw-gras)}
   .gamecard.current .gc-active{display:inline-flex}
   .gamecard.current{border-color:var(--accent)}
-  .lfoot{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:14px 32px 18px;border-top:1px solid var(--line);font-size:14px}
-  .lf-link{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;color:var(--soft);font-weight:600;min-height:32px}
+  .lfoot{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:14px 32px 18px;border-top:1px solid var(--line);font-size:var(--fs-second)}
+  .lf-link{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;color:var(--soft);font-weight:var(--fw-demi);min-height:32px}
   .lf-link:hover{color:var(--text)} .lf-link:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
   .lf-ver{display:inline-flex;align-items:center;gap:8px;color:var(--soft)}
-  .lf-badge{background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;letter-spacing:.06em;border-radius:6px;padding:3px 7px}
+  .lf-badge{background:var(--accent);color:var(--on-accent);font-size:var(--fs-meta);font-weight:var(--fw-gras);letter-spacing:.06em;border-radius:6px;padding:3px 7px}
   .lnews{max-width:none}
   @media (max-width:980px){ .gamegrid{grid-template-columns:minmax(0,1fr)} .gamecard{min-height:280px} }
   @media (max-height:640px){ .railbtn{min-height:54px} .rail{gap:8px} }
@@ -38,7 +38,7 @@
   #launcher{overflow:hidden}
   #launcher .lhead{position:absolute;top:0;left:0;right:0;z-index:3;padding:24px 36px 40px;background:linear-gradient(180deg,rgba(5,8,13,.78),rgba(5,8,13,0));color:#fff;pointer-events:none}
   #launcher .lhead>*{pointer-events:auto}
-  #launcher .appname b{color:#fff;font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+  #launcher .appname b{color:#fff;font-size:var(--fs-section);text-shadow:0 2px 10px rgba(0,0,0,.5)}
   #launcher .appname .muted{color:rgba(255,255,255,.78)}
   .lmain.games{position:absolute;inset:0;padding:0;gap:0;display:block}
   .gamegrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;min-height:0}

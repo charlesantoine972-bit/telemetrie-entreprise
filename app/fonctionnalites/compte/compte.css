@@ -1,23 +1,23 @@
 /* Compte & accès (préparation)
    (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
   /* ---------- Compte & accès (préparation) ---------- */
-  .accnote{margin:-4px 0 18px;padding:12px 16px;border:1px dashed var(--line);border-left:4px solid var(--race);border-radius:12px;background:var(--panel);font-size:14px;line-height:1.55;color:var(--soft)}
-  .rankpill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;font-weight:700;font-size:13px;border:1px solid var(--line);background:var(--bg2,var(--panel))}
+  .accnote{margin:-4px 0 18px;padding:12px 16px;border:1px dashed var(--line);border-left:4px solid var(--race);border-radius:12px;background:var(--panel);font-size:var(--fs-second);line-height:1.55;color:var(--soft)}
+  .rankpill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;font-weight:var(--fw-gras);font-size:var(--fs-second);border:1px solid var(--line);background:var(--bg2,var(--panel))}
   .rankpill::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--rc,#94a3b8)}
   .acclist{display:flex;flex-direction:column}
-  .accrow{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
-  .accrow .grow{flex:1;min-width:200px} .accrow .muted{font-size:13px}
-  .accrow code{font-family:ui-monospace,Consolas,monospace;font-size:14px;letter-spacing:.04em}
+  .accrow{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);font-size:var(--fs-second);flex-wrap:wrap}
+  .accrow .grow{flex:1;min-width:200px} .accrow .muted{font-size:var(--fs-second)}
+  .accrow code{font-family:ui-monospace,Consolas,monospace;font-size:var(--fs-second);letter-spacing:.04em}
   .accrow.off{opacity:.55}
-  .accform{border-top:1px solid var(--line);padding:12px 18px} .accform>summary{cursor:pointer;font-weight:700;color:var(--accent-strong)}
+  .accform{border-top:1px solid var(--line);padding:12px 18px} .accform>summary{cursor:pointer;font-weight:var(--fw-gras);color:var(--accent-strong)}
   .accgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:12px 18px}
   .accform .accgrid{padding:12px 0}
-  .accgrid label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--soft)}
-  .accgrid small{font-weight:500;color:var(--muted)}
-  .accgrid input:not([type=color]),.accgrid select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:14px;font-family:inherit;font-weight:500;color-scheme:dark light}
+  .accgrid label{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-second);font-weight:var(--fw-gras);color:var(--soft)}
+  .accgrid small{font-weight:var(--fw-moyen);color:var(--muted)}
+  .accgrid input:not([type=color]),.accgrid select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:var(--fs-second);font-family:inherit;font-weight:var(--fw-moyen);color-scheme:dark light}
   .accgrid input[type=color]{height:38px;width:64px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);padding:3px;cursor:pointer}
   .accperms input{accent-color:var(--accent);width:16px;height:16px;margin-top:1px}
   .accperms{border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin:0}
-  .accperms legend{font-size:13px;font-weight:700;color:var(--soft);padding:0 6px}
-  .accperms label{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.4}
-  .acc-msg{margin:0;padding:0 18px 10px;font-size:13px} .setrow .acc-msg{padding:0}
+  .accperms legend{font-size:var(--fs-second);font-weight:var(--fw-gras);color:var(--soft);padding:0 6px}
+  .accperms label{display:flex;gap:8px;align-items:flex-start;font-size:var(--fs-second);line-height:1.4}
+  .acc-msg{margin:0;padding:0 18px 10px;font-size:var(--fs-second)} .setrow .acc-msg{padding:0}

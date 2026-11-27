@@ -87,7 +87,7 @@ function setNavWidth(w, save){
 }
 // Petite fenêtre : menu réduit tout seul, puis remis comme avant quand la place revient
 function autoNav(){
-  const narrow = window.innerWidth < 900;
+  const narrow = window.innerWidth / (parseFloat(document.documentElement.style.zoom) || 1) < 900; // tient compte de la taille du texte choisie dans l'appli
   if (narrow && document.documentElement.dataset.nav !== 'mini') { navAuto = true; applyNavMini(true); }
   else if (!narrow && navAuto) { navAuto = false; applyNavMini(store.get('navMini', false)); }
 }

@@ -88,7 +88,7 @@ function entVueHtml(S, B, T, jeu){
       ${entChiffre('Flotte', B.trucks != null ? fmt(B.trucks) : null, flotte)}
     </div>
     <div class="ent-grille">
-      <div class="panel"><h2 class="t-sous">Flotte &amp; chauffeurs par garage</h2>${entParGarage(T, true)}<button class="btn" data-ent-go="flotte">Voir la flotte</button></div>
+      <div class="panel"><h2 class="t-sous">Flotte par garage</h2>${entParGarage(T, true)}<button class="btn" data-ent-go="flotte">Voir la flotte</button></div>
       <div class="panel"><h2 class="t-sous">Ce mois-ci</h2>${entMoisHtml()}</div>
     </div>`;
 }

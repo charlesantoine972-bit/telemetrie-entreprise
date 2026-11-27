@@ -1,7 +1,7 @@
 /* Feuille de route : historique détaillé des trajets
    (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
-  .rt-row{display:grid;grid-template-columns:110px minmax(180px,2.2fr) 80px 110px repeat(3,minmax(80px,1fr));gap:10px;align-items:center;font-size:13px}
-  .rt-head{padding:0 12px 8px 30px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .rt-row{display:grid;grid-template-columns:110px minmax(180px,2.2fr) 80px 110px repeat(3,minmax(80px,1fr));gap:10px;align-items:center;font-size:var(--fs-second)}
+  .rt-head{padding:0 12px 8px 30px;color:var(--muted);font-size:var(--fs-meta);font-weight:var(--fw-gras);letter-spacing:.06em;text-transform:uppercase}
   .rt-item{border-top:1px solid var(--line)}
   .rt-item>summary{list-style:none;cursor:pointer;padding:12px 12px 12px 0;display:flex;align-items:center;gap:10px;color:var(--text)}
   .rt-item>summary::-webkit-details-marker{display:none}
@@ -11,16 +11,16 @@
   .rt-item>summary:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
   .rt-num{text-align:right;font-variant-numeric:tabular-nums}
   .rt-head span:nth-child(n+5),.rt-head span:nth-child(3){text-align:right}
-  .rt-n{display:inline-block;min-width:20px;margin-left:6px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,currentColor 15%,transparent);font-size:11px}
-  .rt-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px}
+  .rt-n{display:inline-block;min-width:20px;margin-left:6px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,currentColor 15%,transparent);font-size:var(--fs-meta)}
+  .rt-badge{display:inline-flex;align-items:center;gap:6px;font-weight:var(--fw-gras);font-size:var(--fs-meta)}
   .rt-badge .d{width:8px;height:8px;border-radius:50%}
   .rt-detail{display:grid;grid-template-columns:minmax(260px,1.3fr) minmax(220px,1fr);gap:24px;padding:4px 12px 18px 30px}
   .rt-kv>div{display:flex!important;flex-direction:row!important;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--line)}
-  .rt-kv>div>*{font-size:13px!important;font-weight:500;line-height:1.4}
+  .rt-kv>div>*{font-size:var(--fs-second)!important;font-weight:var(--fw-moyen);line-height:1.4}
   .rt-kv>div>span:first-child{color:var(--muted);flex:none} .rt-kv>div>span:last-child,.rt-kv>div>b{text-align:right;color:var(--text)}
-  .rt-kv>div>b{font-weight:700}
-  .rt-kv span span,.rt-kv .muted{color:var(--muted)!important;font-size:12px!important;font-weight:500}
-  .rt-detail .between>span,.rt-detail .between>b{font-size:13px}
+  .rt-kv>div>b{font-weight:var(--fw-gras)}
+  .rt-kv span span,.rt-kv .muted{color:var(--muted)!important;font-size:var(--fs-meta)!important;font-weight:var(--fw-moyen)}
+  .rt-detail .between>span,.rt-detail .between>b{font-size:var(--fs-second)}
   .rt-tl{list-style:none;margin:0;padding:0;position:relative}
   .rt-tl li{position:relative;padding:0 0 16px 26px}
   .rt-tl li::before{content:'';position:absolute;left:6px;top:14px;bottom:-2px;width:2px;background:var(--loaded)}
@@ -31,7 +31,7 @@
   .rt-tl li.cut .pt{background:var(--race);border-color:var(--race);border-radius:3px}
   .rt-tl li.todo .pt{border-color:var(--line)}
   .rt-tl li.todo{color:var(--muted)}
-  .rt-tl .seg-km{font-size:12px;color:var(--muted);margin-top:2px}
+  .rt-tl .seg-km{font-size:var(--fs-meta);color:var(--muted);margin-top:2px}
   @media (max-width:900px){ .rt-row{grid-template-columns:1fr 1fr 1fr} .rt-head{display:none} .rt-detail{grid-template-columns:1fr} }
 /* Feuille de route : onglets, calendrier, rapports (bêta 5, étape C). Tokens uniquement. */
 .fr-intro{margin:var(--sp-8) 0 var(--sp-16);font-size:var(--fs-second);max-width:900px;line-height:var(--lh-corps)}

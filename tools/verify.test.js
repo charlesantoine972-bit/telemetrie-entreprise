@@ -252,6 +252,17 @@ test('refonte (bêta 5) : menu En jeu / Entreprise, espace Entreprise sur le mod
   assert.match(dem, /e\.altKey && e\.key === 'ArrowLeft'/, 'Alt + ← revient au menu principal');
 });
 
+test('Entreprise (bêta 5) : lecture seule de la sauvegarde, aucun « Bientôt », états vides honnêtes', () => {
+  const root = path.resolve(__dirname, '..');
+  const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/entreprise/entreprise.js'), 'utf8');
+  assert.doesNotMatch(js, /Bientôt|bientôt/);
+  const appels = [...js.matchAll(/window\.tel\.([\w.]+)\(/g)].map(m => m[1]);
+  assert.deepEqual([...new Set(appels)], ['atelier.summary'], 'seule la lecture du résumé de sauvegarde est utilisée');
+  assert.match(js, /Choisis un profil dans l’Atelier/);
+  assert.match(js, /ENT_USURE_ALERTE = 0\.30/);
+  for (const v of ['Argent', 'Prêts', 'Garages', 'Flotte', 'Ce mois-ci']) assert.ok(js.includes(v), v);
+});
+
 test('refonte (bêta 5) : bord du menu, suit la souris, repli au relâchement, hystérésis', () => {
   const { largeurMenu, finGlissement, NAV_HYST } = require('../app/commun/menu-largeur.js');
   const o = { min: 200, max: 380 };
