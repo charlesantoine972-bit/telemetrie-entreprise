@@ -18,7 +18,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 
 1. **S1 — Electron 33 n'est plus maintenu** : 49 failles connues, dont plusieurs qui touchent directement l'appli (protocole `tchmap://`, iframe de la carte, isolation). → tâche 2.
 2. **S2 + S3 — le noyau ne vérifie pas qui l'appelle** : les 72 points d'entrée acceptent toute page qui a le pont, y compris la fenêtre du HUD, qui reçoit les 77 fonctions (suppression de profils comprise) alors qu'elle n'en utilise qu'une. → tâche 3.
-3. **G5 — l'historique peut disparaître sans prévenir** : si `donnees.json` est abîmé (coupure de courant), l'appli repart de zéro et écrase le fichier 10 s plus tard. Tout l'historique des trajets est perdu.
+3. **G5 — l'historique peut disparaître sans prévenir** : si `donnees.json` est abîmé (coupure de courant), l'appli repart de zéro et écrase le fichier 10 s plus tard. Tout l'historique des trajets est perdu. → réparti entre la tâche 4 (`donnees.json`) et la tâche 5 (`reglages.json`).
 
 **À ajouter au même niveau (second passage de la tâche 1)** : **G19 — la bêta va télécharger l'appli officielle** dès que la version officielle 0.13.36 sortira (repli automatique sur `latest.yml`). À corriger dans la tâche 7, avant toute publication de 0.13.36.
 
@@ -185,6 +185,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : un `donnees.json` illisible (coupure de courant, disque plein) est remplacé par un historique vide au prochain enregistrement.
   - Risque concret : l'utilisateur perd tous ses trajets et statistiques, sans avertissement.
   - Correction : si le fichier est illisible, le renommer en `donnees.corrompu-<date>.json` avant de continuer, garder une copie `.bak` de la veille, et prévenir l'utilisateur.
+  - Répartition : **tâche 4** pour `donnees.json` (`src/telemetry.js`, historique des trajets) ; **tâche 5** pour `reglages.json` (`main.js:76-94`, chargement et écriture des réglages). Chaque tâche coche sa partie ; la case se coche quand les deux sont faites.
 
 - [ ] **G6 — Commandes qui bloquent l'appli** · Important
   - Où : `src/plugin-installer.js:20` (`execFileSync('reg')`, appelé par `findGames` à chaque statut de carte, scan, lancement), `src/atelier.js:108` (`execFileSync('tasklist')`, 2 fois par `atelier.status`), `src/save-editor.js:40` (déchiffrement synchrone, une fois par sauvegarde dans `atelier.slots`).
@@ -226,7 +227,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Où : `src/save-editor.js:389-391`, `src/atelier.js:263-295` (`config.cfg`), `main.js:91-94` (`reglages.json`).
   - Problème : le fichier est réécrit directement ; une coupure au mauvais moment le laisse à moitié écrit. (`donnees.json` et `acces-apercu.json` utilisent déjà la bonne méthode : fichier `.tmp` puis renommage.)
   - Risque concret : sauvegarde ou réglages abîmés (une copie existe pour les sauvegardes).
-  - Correction : écrire dans `.tmp` puis renommer, partout.
+  - Correction : écrire dans `.tmp` puis renommer, partout. Répartition : **tâche 4** pour les fichiers du jeu (`save-editor.js`, `atelier.js`) ; **tâche 5** pour `reglages.json`.
 
 - [ ] **G13 — Tests manquants** · Important
   - Où : `tools/verify.test.js`, `tests/`.
@@ -288,14 +289,13 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 
 1. **Tâche 2 (Electron)** : Electron 45 + electron-builder 26 (S1, S15, G15), réglage des fuses (S16) ; relancer `npm test` et `npm audit`.
 2. **Tâche 3 (re-audit sécurité)** : contrôle de l'expéditeur pour les 72 canaux (S2), `preload-hud.js` (S3), liste blanche des liens (S6), iframe sans `allow-popups` et `frame-src` restreint (S5), vérifier que les failles d'Electron 33 ont disparu.
-3. **Tout de suite, dans la tâche qui touche `src/telemetry.js` ou la plus proche** : ne plus jamais écraser un `donnees.json` illisible (G5) et écritures atomiques (G12).
-4. **Tâche 4 (découpage)** : inventaire des noms globaux (G2), découpage de `index.html` page par page sans réécriture (G1), une seule fonction d'échappement (S4), découpage de `main.js` par domaine (G3) ; mettre à jour les numéros de ligne du contrat.
-5. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests.
-6. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
-7. **Tâche 7 (version)** : tests des prochains numéros affichés avant de changer le numéro (G10), indicateur bêta écrit par la construction (G11), **canal de mise à jour de la bêta (G19)**.
+3. **Tâche 4 (découpage)** : inventaire des noms globaux (G2), découpage de `index.html` page par page sans réécriture (G1), une seule fonction d'échappement (S4), découpage de `main.js` par domaine (G3) ; mettre à jour les numéros de ligne du contrat. **En plus** : ne plus jamais écraser un `donnees.json` illisible (G5, partie historique) et écritures atomiques des fichiers du jeu (G12, partie jeu).
+4. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests. **En plus** : ne plus jamais écraser un `reglages.json` illisible (G5, partie réglages) et écriture atomique de `reglages.json` (G12, partie réglages).
+5. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
+6. **Tâche 7 (version)** : tests des prochains numéros affichés avant de changer le numéro (G10), indicateur bêta écrit par la construction (G11), **canal de mise à jour de la bêta (G19)**.
    Et en passant : S17 avec S10 (Atelier), S18 et S21 avec la tâche 3, G20 et G21 dans la tâche qui touche ces parties.
-8. **Charles, hors code** : double authentification GitHub, protection des branches `main` et `beta`, approbation avant publication (S7, S8) ; choisir la licence de l'appli (G17).
-9. **Avant les comptes en ligne** : conception du serveur selon S14 (connexion Steam, vérifications côté serveur, jetons chiffrés) et note de confidentialité (S13).
+7. **Charles, hors code** : double authentification GitHub, protection des branches `main` et `beta`, approbation avant publication (S7, S8) ; choisir la licence de l'appli (G17).
+8. **Avant les comptes en ligne** : conception du serveur selon S14 (connexion Steam, vérifications côté serveur, jetons chiffrés) et note de confidentialité (S13).
 
 ## Règles pour les tâches suivantes
 
@@ -311,3 +311,4 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 
 - Tâche 1 (audit, sécurité et contrat) : terminée le 27 novembre 2026. Branche `claude/beta-5` créée depuis `beta`, contrat du noyau terminé (77 fonctions, 51 ⚠), test « contrat du noyau » ajouté (77 tests réussis), ce tableau de bord écrit. Aucun code de l'appli modifié.
 - Tâche 1, second passage (exécution parallèle de la même tâche, terminée le 27 novembre 2026) : la branche existait déjà, rien n'a été écrasé ; ajout des points S17 à S21 et G19 à G21, vérifiés dans le code (S17 et le `NaN` de S10 testés). `npm test` : 77 réussis.
+- Tâche 1 (suite, à la demande de Charles) : G5 et G12 répartis entre la tâche 4 (historique et fichiers du jeu) et la tâche 5 (réglages), le 27 novembre 2026.
