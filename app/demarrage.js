@@ -480,13 +480,13 @@ if (HAS_APP){
     renderPlugin(r.status, r.ok ? 'Dossier ajouté.' : (r.error || ''));
   };
   window.tel.pluginStatus().then(l => renderPlugin(l));
-  const poll = async () => { try { const sn = await window.tel.snapshot(); autoOpenTelemetry(!!sn.connected); renderLive(sn); if (state.view === 'hud' || state.view === 'reglages') { const t = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; setText('hudVehicleDetected', t); setText('hudVehicleDetectedOpt', t); } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'trajets') renderHistory(sn); if (state.view === 'feuilleRoute') renderRoadmap(sn); if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
+  const poll = async () => { try { const sn = await window.tel.snapshot(); autoOpenTelemetry(!!sn.connected); renderLive(sn); if (state.view === 'hud' || state.view === 'reglages') { const t = sn.connected ? `Profil actif : ${sn.vehicleType === 'car' ? 'bus / car' : 'camion'}` : 'En attente du jeu'; setText('hudVehicleDetected', t); setText('hudVehicleDetectedOpt', t); } if (state.view === 'reglages') renderCoachDiag(); if (state.view === 'feuilleRoute') { renderRoadmap(sn); renderHistory(sn); if (sn.jobs && sn.jobs.length && sn.jobs[0].ended !== frDernierFin) { frDernierFin = sn.jobs[0].ended; if (frOnglet !== 'trajets') frChargerJournal().then(frRendreOnglet); } } if (state.view === 'cartePerso') updateMap(sn); if (state.view === 'hud' && !hudDemo) hudPreview(sn.connected ? sn : hudStatic); } catch(e) {} };
   setInterval(poll, 250); poll();
   document.getElementById('routeTabs').addEventListener('click', e => {
     const b = e.target.closest('button[data-rt]'); if (!b) return;
     routeTab = b.dataset.rt; routeSig = '';
     document.querySelectorAll('#routeTabs button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-    document.getElementById('routeTabHint').textContent = routeTab === 'bus'
+    document.getElementById('routeTabHint').textContent = routeTab === 'all' ? 'Tous les trajets, camion et car. Clique sur un trajet pour voir son détail.' : routeTab === 'bus'
       ? 'Car : un service peut avoir beaucoup d’arrêts. Clique sur un trajet pour voir chaque arrêt desservi et où le service s’est arrêté.'
       : 'Camion : une livraison d’un point A à un point B. Clique sur un trajet pour voir où il s’est terminé.';
     window.tel.snapshot().then(sn => renderRouteHistory(Array.isArray(sn.jobs) ? sn.jobs : []));
@@ -495,7 +495,7 @@ if (HAS_APP){
     const d = e.target; if (!d.classList || !d.classList.contains('rt-item')) return;
     d.open ? routeOpen.add(d.dataset.key) : routeOpen.delete(d.dataset.key);
   }, true);
-  const btnTrajets = document.querySelector('[data-view="trajets"]'); if (btnTrajets) btnTrajets.addEventListener('click', () => window.tel.snapshot().then(renderHistory));
+  frBrancherOnglets();
 } else {
   renderPlugin([]);
   document.getElementById('hUpdate').innerHTML = '<span class="d" style="background:var(--muted)"></span>Mises à jour : dans l\'appli';

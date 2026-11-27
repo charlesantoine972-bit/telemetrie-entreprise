@@ -49,6 +49,7 @@ async function renderEntreprise(view){
   const box = document.getElementById({ entreprise: 'entVue', flotte: 'entFlotte', garages: 'entGarages', finances: 'entFinances' }[view]);
   if (!box) return;
   if (!atSel.info && typeof atEnsure === 'function') { box.innerHTML = '<div class="empty">Recherche de tes profils…</div>'; await atEnsure(); if (state.view !== view) return; }
+  if (!frJournalCache && typeof frChargerJournal === 'function') await frChargerJournal();
   const vide = entEtatVide();
   if (vide) { box.innerHTML = entSelecteur() + `<div class="empty" role="status">${vide}</div>`; entBrancherSelecteur(view); return; }
   const S = atSel.summary, B = S.bilan || {}, T = S.tools || {}, jeu = entJeuProfil();

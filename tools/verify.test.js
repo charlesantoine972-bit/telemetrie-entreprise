@@ -121,6 +121,34 @@ test('la feuille de route sépare camion / car et détaille frais, revenu et sol
   assert.match(busHtml, /-300 €/);
 });
 
+test('Feuille de route (bêta 5) : 4 onglets accessibles, Ma carrière fusionnée sans perte, calendrier et rapports', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
+  assert.doesNotMatch(html, /id="v-trajets"/, 'Ma carrière retirée (fusionnée)');
+  for (const o of ['trajets', 'calendrier', 'semaine', 'mois']) {
+    assert.match(html, new RegExp(`role="tab" id="frTab-${o}"[^>]*aria-controls="frPan-${o}"`));
+    assert.match(html, new RegExp(`role="tabpanel" id="frPan-${o}" aria-labelledby="frTab-${o}"`));
+  }
+  assert.match(html, /id="totals"/, 'totaux de carrière gardés'); assert.match(html, /data-rt="all"/, 'filtre Tous');
+  const fr = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/feuille-de-route.js'), 'utf8');
+  for (const champ of ['Km chargés', 'Km à vide', 'Km réels', 'Km en course', 'Livraisons', 'Revenus', 'Dépenses', 'Carburant consommé', 'Amendes', '<span>Mode</span>']) assert.ok(fr.includes(champ), champ);
+  // Statistiques d'une période : calcul vérifié
+  const ctx = { fmt: n => String(n), km: n => n + ' km', escM: x => x, routeStatus: () => ({ label: 'Livré' }), document: {}, window: {} };
+  vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8') + ';this.frStatsPeriode=frStatsPeriode;', ctx);
+  const t = new Date(2026, 10, 10, 12).getTime();
+  const J = { days: { '2026-11-10': { loaded: 300, empty: 100 }, '2026-12-01': { loaded: 50, empty: 0 } }, jobs: [
+    { ended: t, status: 'livrée', distance: 380, fuelUsed: 100, mode: 'course', damage: 0.1, revenue: 1000, expenses: 100, game: 'ets2' },
+    { ended: t, status: 'livrée', missionType: 'bus', passengers: 30, distance: 20, fuelUsed: 8, mode: 'réel', game: 'ats', revenue: 500 },
+    { ended: new Date(2026, 11, 1).getTime(), status: 'livrée', distance: 50 }] };
+  const st = ctx.frStatsPeriode(J, new Date(2026, 10, 1).getTime(), new Date(2026, 11, 1).getTime());
+  assert.equal(st.trajets, 2); assert.equal(st.livraisons, 1); assert.equal(st.services, 1); assert.equal(st.voyageurs, 30);
+  assert.equal(st.km, 400); assert.equal(st.carburant, 108); assert.equal(st.course, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(st.revenus)), { ets2: 1000, ats: 500 }, 'euros et dollars jamais additionnés');
+  assert.equal(Math.round(st.conso), 27);
+  const vide = ctx.frStatsPeriode({ days: {}, jobs: [] }, 0, 1);
+  assert.equal(vide.conso, null); assert.equal(vide.degatsMoy, null, 'aucune valeur inventée sans données');
+});
+
 test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => {
   const html = lireInterface();
   const button = html.match(/<button id="profileChip"([^>]*)>/);

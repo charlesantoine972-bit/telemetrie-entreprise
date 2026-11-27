@@ -9,7 +9,7 @@ Ce document liste **toutes les fonctions** que l'interface peut appeler (le pont
 - Le pont ne donne jamais d'accès libre aux fichiers, aux commandes ou aux adresses : chaque fonction fait une seule chose précise.
 - Le test « contrat du noyau » (`tools/verify.test.js`) vérifie que chaque fonction de `preload.js` a son point d'entrée dans `main.js` et sa ligne ici, avec le bon canal. `npm test` échoue sinon.
 
-**Total : 77 fonctions** (72 appels, 5 abonnements à des événements), 77 branchées sur un point d'entrée du noyau. **51 marquées ⚠.**
+**Total : 78 fonctions** (73 appels, 5 abonnements à des événements), 78 branchées sur un point d'entrée du noyau. **51 marquées ⚠.**
 
 **État :** terminé le 27 novembre 2026 (tâche 1) : les 77 fonctions sont documentées (rôle vérifié dans le code, paramètres, réponse, erreurs). Numéros de ligne valables pour `main.js` de la branche `claude/beta-5` au 27 novembre ; la tâche qui déplace du code les met à jour. Tâche 2 (mise à jour d'Electron) : numéros de `main.js` décalés de +19 à partir de la ligne 118 (clé Steam passée au chiffrement asynchrone) ; comportement des fonctions inchangé.
 
@@ -28,6 +28,7 @@ Ce document liste **toutes les fonctions** que l'interface peut appeler (le pont
 | Fonction | Type | Canal | Point d'entrée | Rôle | Reçoit | Renvoie | Erreurs |
 |---|---|---|---|---|---|---|---|
 | `snapshot()` | appel | `snapshot` | `main.js:502` | État en direct de la télémétrie (jeu connecté, camion, mission, compteurs, historique récent). Appelé toutes les 250 ms par l'interface. | rien | `{connected, socketError, live, job, mission, clockSeconds, thresholds, vehicleType, coach, gforce, session, totals, today, jobs (50 max, sans tracé), lastEvent}` | aucune en pratique (lecture mémoire). Lourd à 4 appels / s → G14 |
+| `journal()` | appel | `journal` | `main.js:504` | **Ajoutée par la bêta 5 (étape C)**. Journal local pour la Feuille de route (Calendrier, Rapports de la semaine et du mois, « Ce mois-ci » de la Vue d'ensemble) : lecture seule, rien n'est écrit. | rien | `{days: {"AAAA-MM-JJ": {loaded, empty}}, jobs (300 max, sans tracé GPS)}` | aucune en pratique (lecture mémoire). Appelée à l'ouverture de la Feuille de route et à chaque fin de mission, jamais en boucle |
 | `pluginStatus()` | appel | `plugin:status` | `main.js:504` | Dernier résultat connu de l'installation du plugin dans chaque jeu trouvé (ne relance rien). | rien | liste `[{id, name, dir, bin, status: 'ok'\|'error', message}]` ; vide hors Windows | aucune |
 | ⚠ `installPlugin()` | appel | `plugin:install` | `main.js:505` | Copie la DLL du plugin dans `bin/win_x64/plugins` de chaque jeu trouvé (Steam + dossiers choisis), si elle est absente ou différente. | rien | même liste que `pluginStatus()` | pas de rejet : un échec par jeu est dans `status: 'error'` + message (jeu ouvert, droits) |
 | ⚠ `chooseGameFolder()` | appel | `plugin:choose` | `main.js:506` | Ouvre la fenêtre Windows de choix de dossier ; si c'est un dossier de jeu, l'ajoute aux réglages et installe le plugin. | rien (dossier choisi par l'utilisateur) | `{ok: true, status}` ou `{ok: false, status, error?}` (annulé, « Ce dossier ne contient pas le jeu. ») | rejet si les réglages ne peuvent pas être écrits |

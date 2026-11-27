@@ -10,19 +10,9 @@ function renderHistory(sn){
     ['Livraisons', fmt(t.deliveries), ''], ['Revenus', moneyByGame(t, 'revenue'), ''], ['Dépenses', moneyByGame(t, 'expenses'), ''],
     ['Carburant consommé', fmt(Math.round(t.fuelUsed)) + ' L', ''], ['Amendes', `${t.fines} (${fmt(t.finesAmount)} €)`, '']
   ];
-  document.getElementById('totals').style.gridTemplateColumns = 'repeat(auto-fill,minmax(170px,1fr))';
+  const box = document.getElementById('totals'); if (!box) return;
+  box.style.gridTemplateColumns = 'repeat(auto-fill,minmax(170px,1fr))';
   document.getElementById('totals').innerHTML = cards.map(([l,v,c]) => `<div class="stat"><span class="muted">${l}</span><b style="color:${c||'inherit'}">${v}</b></div>`).join('');
-  const sig = sn.jobs.length + ':' + (sn.jobs[0] ? sn.jobs[0].ended : '');
-  if (sig === lastJobsSig) return; lastJobsSig = sig;
-  document.getElementById('jobsEmpty').classList.toggle('hidden', sn.jobs.length > 0);
-  document.getElementById('jobsTable').classList.toggle('hidden', sn.jobs.length === 0);
-  const escH = x => String(x == null ? '' : x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  document.getElementById('jobsBody').innerHTML = sn.jobs.map(j => `<tr>
-    <td>${new Date(j.ended).toLocaleDateString('fr-FR')} ${new Date(j.ended).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</td>
-    <td><b>${escH(j.from)} → ${escH(j.to)}</b></td><td>${escH(j.cargo)}</td>
-    <td style="color:var(--loaded)">${km(j.loaded)}</td><td style="color:var(--empty)">${km(j.empty)}</td>
-    <td style="color:${j.mode==='course'?'var(--race)':'var(--ok)'}">${j.mode === 'course' ? 'Course' : 'Réel'}</td>
-    <td>${escH(j.status)}</td><td>${j.revenue ? fmt(j.revenue) + ' €' : '–'}</td></tr>`).join('');
 }
 function renderRoadmap(sn){
   const j = sn.job, live = sn.live || {}, totals = sn.totals;
@@ -114,11 +104,12 @@ function renderRouteHistory(all){
   const truckJobs = all.filter(e => !isBus(e)), busJobs = all.filter(isBus);
   document.getElementById('routeCountTruck').textContent = truckJobs.length;
   document.getElementById('routeCountBus').textContent = busJobs.length;
-  const list = (routeTab === 'bus' ? busJobs : truckJobs).slice(0, 20);
+  const cAll = document.getElementById('routeCountAll'); if (cAll) cAll.textContent = all.length;
+  const list = (routeTab === 'all' ? all : routeTab === 'bus' ? busJobs : truckJobs).slice(0, 20);
   const sig = routeTab + ':' + all.length + ':' + (all[0] ? all[0].ended : '');
   if (sig === routeSig) return; routeSig = sig;
   const box = document.getElementById('routeHistory');
-  if (!list.length) { box.innerHTML = `<span class="soft" style="display:block;padding:12px 0;border-top:1px solid var(--line)">${routeTab === 'bus' ? 'Aucun service en car terminé pour l’instant.' : 'Aucune livraison en camion terminée pour l’instant.'}</span>`; return; }
+  if (!list.length) { box.innerHTML = `<span class="soft" style="display:block;padding:12px 0;border-top:1px solid var(--line)">${routeTab === 'all' ? 'Aucun trajet terminé pour l’instant.' : routeTab === 'bus' ? 'Aucun service en car terminé pour l’instant.' : 'Aucune livraison en camion terminée pour l’instant.'}</span>`; return; }
   const dateTime = n => Number.isFinite(n) ? new Date(n).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}) : '—';
   const liters = n => Number.isFinite(n) ? Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' L' : '—';
   box.innerHTML = list.map(entry => {
@@ -152,6 +143,7 @@ function renderRouteHistory(all){
           <div class="lbl" style="margin-bottom:8px">BILAN</div>
           <div class="rt-kv">
             <div class="k"><span>Véhicule</span><span>${escM(entry.truck || '—')}</span></div>
+            <div class="k"><span>Mode</span><span>${entry.mode === 'course' ? 'Course' : 'Réel'}${Number.isFinite(entry.overPct) && entry.overPct > 0 ? ` <span class="muted">(${Math.round(entry.overPct)} % du trajet au-dessus du seuil)</span>` : ''}</span></div>
             <div class="k"><span>Km parcourus</span><span>${km(entry.distance)} <span class="muted">(${bus ? 'en service' : 'chargé'} ${km(entry.loaded)} · à vide ${km(entry.empty)})</span></span></div>
             ${!bus && entry.planned ? `<div class="k"><span>Distance prévue</span><span>${km(entry.planned)}</span></div>` : ''}
             <div class="k"><span>Carburant</span><span>${liters(entry.fuelUsed)} consommés · ${liters(entry.fuelAdded)} ajoutés</span></div>

@@ -501,6 +501,7 @@ function setupIpc() {
       otherConfigs: Object.keys(telemetry.configs || {}), mandatoryBreak: !!(l && 'mandatoryBreak' in l), coach: sn.coach };
   });
   ipcMain.handle('snapshot', () => telemetry.snapshot());
+  ipcMain.handle('journal', () => telemetry.journal());
   ipcMain.handle('hud:test', () => { hudTestUntil = Date.now() + 10000; syncHud(); return true; });
   ipcMain.handle('plugin:status', () => pluginStatus);
   ipcMain.handle('plugin:install', () => installPlugin());

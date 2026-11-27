@@ -121,6 +121,7 @@ function go(view, rail){
   if (view === 'mk-news') renderMkNews();
   if (view === 'news') renderNewsPage();
   if (view === 'hud') renderHudPage();
+  if (view === 'feuilleRoute') frOuvrirOnglet(frOnglet);
   if (['entreprise', 'flotte', 'garages', 'finances'].includes(view)) renderEntreprise(view);
   if (view === 'cartePerso') openMap();
   if (view === 'reglages') loadSettingsUI();

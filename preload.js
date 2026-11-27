@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('tel', {
   snapshot: () => ipcRenderer.invoke('snapshot'),
+  journal: () => ipcRenderer.invoke('journal'),
   pluginStatus: () => ipcRenderer.invoke('plugin:status'),
   installPlugin: () => ipcRenderer.invoke('plugin:install'),
   chooseGameFolder: () => ipcRenderer.invoke('plugin:choose'),
