@@ -2,7 +2,7 @@
 
 **Statut :** maquette validée par Charles le 27 novembre 2026.
 **Maquette :** https://claude.ai/artifact/Br8AW1sFEyMfEcDy1YCktp (canevas « Refonte Général et Entreprise – maquette »). Les valeurs entre crochets y sont des emplacements, pas des données.
-**Règles générales :** `REFERENTIEL-UI.md` (UI / UX / accessibilité). Ce guide fixe les décisions propres à l'appli ; en cas de conflit, ce guide l'emporte sur le référentiel, et le référentiel sur les habitudes du code actuel.
+**Règle absolue :** `REFERENTIEL-UI.md` fait foi, entièrement. Ce guide ne fait que l'appliquer à l'appli. En cas de doute ou d'écart entre ce guide, la maquette ou le code actuel et le référentiel, **c'est le référentiel qui s'applique**.
 **Prérequis :** bêta 5 fusionnée (découpage en dossiers, Electron à jour, anciennes pages VTC retirées).
 
 ---
@@ -52,23 +52,22 @@ Contrastes à vérifier par calcul (WCAG 2.2 AA : 4,5:1 texte, 3:1 grands textes
 - Aucune graisse au-dessus de **700**. Les 800 / 900 actuels disparaissent.
 - Chiffres : `font-variant-numeric: tabular-nums` dans la télémétrie, les tableaux et les rapports.
 
+Échelle du référentiel (§ 5), appliquée telle quelle :
+
 | Rôle | Taille | Graisse | Couleur |
 |---|---|---|---|
-| Titre de page | 28 px | 600 | `--text` |
-| Titre de section | 16 px | 600 | `--text` |
-| Titre de panneau | 14 px | 600 | `--soft` |
+| Titre principal (titre de page) | 32 px | 600 | `--text` |
+| Titre de section | 24 px | 600 | `--text` |
+| Sous-section (titre de panneau) | 20 px | 500–600 | `--text` |
+| Texte principal | 16 px | 400 | `--soft` |
+| Texte secondaire (entrées du menu, tableaux) | 14 px | 400 | `--soft` |
+| Métadonnées, légendes, catégories du menu | 12 px | 400 (catégories : 600) | `--muted` |
+| Entrée active du menu | 14 px | 500 | `--text` + barre accent |
 | Grand chiffre (vitesse) | 48 px | 600 | `--text` |
-| Chiffre clé | 22 px | 600 | `--text` |
-| Texte courant | 14 px | 400 | `--soft` |
-| Étiquette / légende | 12–13 px | 400 | `--muted` |
-| **Catégorie du menu** | 12 px | **600** | `--muted` |
-| Entrée du menu | 14 px | 400 | `--soft` |
-| **Entrée active** | 14 px | **500** | `--text` + barre accent |
-| Titre d'espace (« HUB ») | 12 px | 600, espacement 0,1 em | `--accent` |
 
-Règle : la hiérarchie se fait par la **taille et la couleur** ; la graisse reste sur 400 / 500 / 600 (700 au maximum). Une catégorie est plus petite et plus grise que ses pages, mais plus grasse : un seul critère compense les deux autres.
+Règle : la hiérarchie se fait par la **taille et la couleur** ; graisses 400 / 500 / 600 (700 au maximum). Une catégorie est plus petite et plus grise que ses pages, mais plus grasse. Majuscules limitées (§ 5 du référentiel) : le titre d'espace « HUB » est la seule exception.
 
-Point ouvert : le référentiel propose 16 px pour le texte principal ; l'appli reste à 14 px tant que Charles n'a pas tranché.
+La maquette utilise encore 28 / 14 px : ses tailles sont à aligner sur ce tableau à l'étape 1.
 
 ### 2.3 Espacements et formes
 
