@@ -1,5 +1,7 @@
 # Étude — Refonte des catégories « Entreprise » et « Général »
 
+> **Remplacé par `REFONTE-INTERFACE.md`** (maquette validée le 27 novembre 2026). Ce fichier garde les vérifications d’origine (sauvegarde, API TruckersMP).
+
 État : étude du 27 novembre 2026 (2 h 30). Aucune ligne de code de l'appli n'est modifiée.
 Objet : base propre pour une future étape de refonte. Rien n'est programmé.
 
