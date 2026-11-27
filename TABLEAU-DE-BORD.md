@@ -301,18 +301,24 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 
 Ces travaux tournent à côté de la chaîne de la bêta 5, sur **leur propre branche**. Les tâches de la chaîne ne les fusionnent pas et ne poussent pas sur leur branche, mais doivent en tenir compte pour ne pas créer de conflits.
 
-### Refonte de l'interface : préparatif (tâche auxiliaire, commencée le 27 novembre 2026 à 11 h 47)
+### Refonte de l'interface : préparatif (tâche auxiliaire, terminée le 27 novembre 2026, commit `1ac3b8a`)
 
-- **Branche** : `claude/refonte-interface`, créée depuis `beta`. Elle n'est pas fusionnée dans `claude/beta-5` ; elle sera branchée **après la bêta 5**.
-- **Documents qui font foi** (branche `claude/etude-entreprise`) : `REFERENTIEL-UI.md` (il prime en cas d'écart) et `REFONTE-INTERFACE.md` ; maquette validée par Charles ; police Mona Sans (branche `claude/police-mona-sans`, licence OFL).
-- **Ce qu'elle crée (seulement de nouveaux fichiers)** : `app/commun/tokens.css` (couleurs, espacements, thèmes Système et contraste élevé), `app/commun/typographie.css`, `app/commun/menu.css`, `app/polices/mona-sans/`, `app/apercu-refonte.html` (page d'aperçu, non chargée par l'appli), `tools/contrastes.mjs` + un test dans `tools/verify.test.js`, et `REFONTE-PREPARATIF.md` (marche à suivre pour brancher).
-- **Ce qu'elle ne touche pas** : `app/index.html`, `main.js`, `preload.js`, ni aucun fichier existant de l'appli. Elle ne change pas le pont `tel` (rien à mettre dans le contrat).
+- **Branche** : `claude/refonte-interface`, créée depuis `beta`. Non fusionnée dans `claude/beta-5` ; à brancher **après la bêta 5**. Compte rendu complet : `REFONTE-PREPARATIF.md` sur cette branche.
+- **Documents qui font foi** : `REFERENTIEL-UI.md` (il prime en cas d'écart), puis `REFONTE-INTERFACE.md` (copiés sur la branche) ; maquette validée par Charles (canevas « Refonte Général et Entreprise »).
+- **Ce qui est prêt (nouveaux fichiers seulement)** :
+  - `app/commun/tokens.css` : toutes les couleurs (sombre, clair, Système, contraste renforcé, contraste élevé Windows, vision des couleurs), espacements, rayons, durées d'animation. Seul fichier autorisé à contenir des couleurs.
+  - `app/commun/typographie.css` : Mona Sans en local, échelle 32 / 24 / 20 / 16 / 14 / 12 (+ 48), graisses 400 à 700, tailles en `rem`.
+  - `app/commun/menu.css` : nouveau menu latéral (mode réduit, focus visible, contraste élevé).
+  - `app/apercu-refonte.html` : aperçu **non chargé par l'appli** : le menu + un échantillon des éléments (titres, panneau, boutons, onglets, états). **Il ne contient pas les visuels des pages** : ceux-ci ne sont décrits qu'en texte dans `REFONTE-INTERFACE.md` § 4 et dans la maquette (Général et Entreprise). Pas de maquette pour Flotte, Garages, Finances, Paramètres, News, Support, Outils, Atelier, Marketplace.
+  - `app/polices/mona-sans/` (licence OFL), `tools/contrastes.mjs` et **2 tests ajoutés à la fin** de `tools/verify.test.js` (contrastes ; fichiers non branchés, sans couleur en dur, sans graisse > 700, sans réseau).
+- **Résultats** : `npm test` 78 / 78 sur sa branche ; appli lancée sans erreur ; **194 paires de couleurs vérifiées, toutes conformes** (texte ≥ 4,5:1, composants ≥ 3:1) ; 5 couleurs du guide corrigées pour respecter le référentiel, `--info` et `--accent-strong` ajoutées, `--race` devient un alias de `--danger`.
+- **Ce qu'elle n'a pas touché** : `app/index.html`, `main.js`, `preload.js`, aucun fichier existant (hors 2 tests ajoutés) ; le pont `tel` ne change pas.
 - **Points de vigilance pour la chaîne :**
-  - **Tâche 4 (découpage)** : elle crée aussi un dossier `app/commun/`. Ne pas créer de fichiers nommés `tokens.css`, `typographie.css` ou `menu.css` dans `app/commun/` (ces noms sont pris par la refonte), et ne pas y mettre de nouvelles couleurs : garder les couleurs actuelles telles quelles dans un fichier au nom différent (ex. `theme-actuel.css`). Noter dans `app/LISEZ-MOI.md` que la refonte viendra ajouter ces trois fichiers.
-  - **Toutes les tâches** qui modifient `tools/verify.test.js` : la refonte y ajoute un test à la fin ; ajouter vos tests à leur place logique plutôt qu'à la toute fin, pour limiter les conflits de fusion.
-  - **Tâche 3 et tâche 8 (sécurité)** : quand la refonte sera branchée, vérifier que `app/apercu-refonte.html` n'est pas livré dans l'installeur (ou qu'il reste inoffensif : pas de script réseau, CSP de l'appli), et que la police est bien chargée en local.
-  - **Tâche 7 (PR de la bêta 5)** : ne pas fusionner `claude/refonte-interface` ; mentionner dans la PR qu'elle existe et sera branchée ensuite.
-- **Après la bêta 5** : brancher la refonte dans l'arborescence créée par la tâche 4, en suivant `REFONTE-PREPARATIF.md` ; mettre à jour ce tableau de bord.
+  - **Tâche 4 (découpage)** : ne pas créer dans `app/commun/` de fichiers nommés `tokens.css`, `typographie.css`, `menu.css` (ni `composants.css`, prévu ensuite) ; garder les couleurs actuelles telles quelles dans un fichier au nom différent (ex. `theme-actuel.css`), en regroupant les variables `:root`, `[data-theme]`, `[data-vision]`, `[data-contrast]` **à un seul endroit** : la refonte les remplacera d'un bloc. Ne pas renommer `applyLook` ni `applyAccent`, ni les attributs `data-theme`, `data-vision`, `data-contrast`, `data-motion` : la refonte s'appuie dessus. Noter dans `app/LISEZ-MOI.md` que la refonte viendra ajouter ces fichiers. Enregistrer les captures de référence des pages dans le dépôt (ex. `docs/captures/beta-5/`) : ce sont les seuls visuels des pages actuelles.
+  - **Toutes les tâches** qui modifient `tools/verify.test.js` : la refonte y ajoute 2 tests à la fin ; mettre vos tests à leur place logique plutôt qu'à la toute fin.
+  - **Tâches 3 et 8 (sécurité)** : au branchement, vérifier que `app/apercu-refonte.html` n'est pas livré dans l'installeur (il est prévu de le supprimer une fois tout branché) et que la police reste locale.
+  - **Tâche 7 (PR de la bêta 5)** : ne pas fusionner `claude/refonte-interface` ; la mentionner dans la PR.
+- **Après la bêta 5** : rebaser la branche sur `beta` et suivre `REFONTE-PREPARATIF.md` § 4. Sa marche à suivre parle du « bloc `<style>` de `app/index.html` » : après le découpage, ces styles seront dans les fichiers de la tâche 4 (voir `app/LISEZ-MOI.md`). Restent à vérifier sur un vrai PC : Narrateur Windows, contraste élevé Windows, mise à l'échelle 150 %.
 
 ## Règles pour les tâches suivantes
 
@@ -331,3 +337,4 @@ Ces travaux tournent à côté de la chaîne de la bêta 5, sur **leur propre br
 - Tâche 1, second passage (exécution parallèle de la même tâche, terminée le 27 novembre 2026) : la branche existait déjà, rien n'a été écrasé ; ajout des points S17 à S21 et G19 à G21, vérifiés dans le code (S17 et le `NaN` de S10 testés). `npm test` : 77 réussis.
 - Tâche 1 (suite, à la demande de Charles) : G5 et G12 répartis entre la tâche 4 (historique et fichiers du jeu) et la tâche 5 (réglages), le 27 novembre 2026.
 - Tâche 1 (suite, à la demande de Charles) : ajout de la partie « Travaux en parallèle » (préparatif de la refonte de l'interface, branche `claude/refonte-interface`), le 27 novembre 2026.
+- Tâche 1 (suite) : « Travaux en parallèle » mis à jour avec les résultats réels du préparatif de la refonte (commit `1ac3b8a`), le 27 novembre 2026.
