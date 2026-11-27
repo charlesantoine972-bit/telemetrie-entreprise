@@ -14,17 +14,19 @@ Mesures du 27 novembre 2026 (tâche 1) :
 L'appli est **plutôt bien protégée pour une appli de bureau** : fenêtres isolées (`contextIsolation`, `sandbox`, pas de `nodeIntegration`), navigation bloquée, aucune permission web accordée, chemins de profils vérifiés, aucune commande construite à partir de texte, clé Steam chiffrée par Windows, serveur de carte local protégé par un jeton. Aucun secret dans le dépôt.
 Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui n'est plus mis à jour, une mise à jour automatique non signée, et un noyau qui fait confiance à tout ce qui lui parle.
 
-**Les 3 points les plus urgents :**
+**Mise à jour du 27 novembre 2026 (tâche 3, re-audit)** : S1 est **réglé** : Electron 45.5.0 (dernière version, maintenue jusqu'en avril 2027) corrige les 46 failles d'Electron 33 relevées par `npm audit`, ainsi que plus d'un an de correctifs de Chromium et de Node.js. `npm audit` : 18 failles → 6 moyennes (outils de construction seulement, rien dans l'appli livrée). Les changements de la tâche 2 n'ont affaibli aucune protection. Voir « Re-audit après mise à jour d'Electron ».
 
-1. **S1 — Electron 33 n'est plus maintenu** : 49 failles connues, dont plusieurs qui touchent directement l'appli (protocole `tchmap://`, iframe de la carte, isolation). → tâche 2.
-2. **S2 + S3 — le noyau ne vérifie pas qui l'appelle** : les 72 points d'entrée acceptent toute page qui a le pont, y compris la fenêtre du HUD, qui reçoit les 77 fonctions (suppression de profils comprise) alors qu'elle n'en utilise qu'une. → tâche 3.
+**Les 3 points les plus urgents (après la tâche 3) :**
+
+1. ~~**S1 — Electron 33 n'est plus maintenu**~~ → **réglé** par la tâche 2, vérifié par la tâche 3. Il reste donc :
+2. **S2 + S3 (+ S18) — le noyau ne vérifie pas qui l'appelle** : les 72 points d'entrée acceptent toute page qui a le pont, y compris la fenêtre du HUD, qui reçoit les 77 fonctions (suppression de profils comprise) alors qu'elle n'en utilise qu'une. La mise à jour d'Electron rend une attaque plus difficile (failles d'isolation corrigées) mais ne règle pas ce point. → **aucune tâche prévue pour l'instant** (la tâche 3 ne modifie pas le code) : à confier à une tâche dédiée.
 3. **G5 — l'historique peut disparaître sans prévenir** : si `donnees.json` est abîmé (coupure de courant), l'appli repart de zéro et écrase le fichier 10 s plus tard. Tout l'historique des trajets est perdu. → réparti entre la tâche 4 (`donnees.json`) et la tâche 5 (`reglages.json`).
 
 **À ajouter au même niveau (second passage de la tâche 1)** : **G19 — la bêta va télécharger l'appli officielle** dès que la version officielle 0.13.36 sortira (repli automatique sur `latest.yml`). À corriger dans la tâche 7, avant toute publication de 0.13.36.
 
 ## Sécurité
 
-- [x] **S1 — Electron 33 plus maintenu** · Urgent (corrigé par la tâche 2 : Electron 45.5.0, voir « Mise à jour d'Electron » ; la tâche 3 vérifie que les failles listées ont disparu)
+- [x] **S1 — Electron 33 plus maintenu** · Urgent (réglé par la mise à jour d'Electron (tâche 2) : Electron 45.5.0 ; **vérifié par la tâche 3** : les 46 failles d'Electron 33 ont disparu de `npm audit`, voir « Re-audit après mise à jour d'Electron »)
   - Où : `package.json:75` (`"electron": "^33.2.0"`, installé 33.4.11) ; dernière version 45.5.0.
   - Problème : Electron 33 ne reçoit plus de correctifs. `npm audit` liste 49 failles, dont « protocole personnalisé avec `supportFetchAPI` sans `corsEnabled` : lecture d'autres origines » (c’est exactement `tchmap://`, `src/map.js:51`), « une iframe en bac à sable peut contourner `allow-popups` » (iframe `tchFrame`) et « contournement de l'isolation par `Function.prototype.bind` ».
   - Risque concret : une page piégée (contenu distant, mod, carte) pourrait sortir de son bac à sable et atteindre le pont `tel`.
@@ -52,6 +54,7 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Où : `app/index.html:1660` (`sandbox="allow-scripts allow-same-origin allow-popups"`), CSP `frame-src http://127.0.0.1:*` (l.5).
   - Problème : `allow-scripts` + `allow-same-origin` annule presque tout le bac à sable. Ici ce n'est pas dramatique car la carte vient d'une autre origine (`http://127.0.0.1:<port>`) que l'appli (`file://`) : elle n'atteint pas `window.tel`. Mais `allow-popups` lui permet d'ouvrir des fenêtres (envoyées au navigateur, voir S6), et `frame-src` accepte n'importe quel serveur local, pas seulement celui de la carte.
   - Risque concret : avec la faille Electron 33 sur `allow-popups` (S1), une carte piégée pourrait ouvrir des pages ou des programmes externes.
+  - Tâche 3 : la faille d'Electron qui permettait de contourner `allow-popups` (et celle des fenêtres ouvertes qui perdaient le bac à sable) est **réglée par la mise à jour d'Electron (tâche 2)**. Le risque baisse, mais la correction ci-dessous reste à faire (case ouverte).
   - Correction : retirer `allow-popups` (la carte n'en a pas besoin), garder `allow-same-origin` seulement si la carte en a besoin (requêtes vers son serveur), et restreindre `frame-src` au port réel (CSP envoyée par le noyau via `session.webRequest`).
 
 - [ ] **S6 — Liens externes : toute adresse https est ouverte** · Important
@@ -114,8 +117,9 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Risque concret : faible pour les utilisateurs ; existe sur la machine de construction (GitHub Actions).
   - Correction : electron-builder 26 avec Electron 45. → tâche 2.
   - Tâche 2 : fait (electron-builder 26.18.0). `npm audit` passe de 18 failles (1 critique, 13 hautes) à **6 moyennes**, toutes dues à `minimatch` (7.0.0 à 11.0.0) dans la chaîne d'outils d'electron-builder 26 (`app-builder-lib`, `dmg-builder`, `@electron/universal`…). `npm audit fix --force` ne propose qu'un retour en arrière d'electron-builder : à laisser jusqu'à une prochaine version d'electron-builder. Case laissée ouverte pour ces 6 failles moyennes.
+  - Tâche 3 : confirmé le 27 novembre 2026 (même résultat : 6 moyennes, une seule cause, `minimatch`, « déni de service » GHSA-g3hv-75wg-m249 ; `npm audit --omit=dev` : 0). Risque faible : ces outils ne tournent que pendant la construction de l'installeur.
 
-- [x] **S16 — Protections internes d'Electron (« fuses ») non réglées** · Plus tard (corrigé par la tâche 2 : `build.electronFuses` dans `package.json`, repris par la config bêta)
+- [x] **S16 — Protections internes d'Electron (« fuses ») non réglées** · Plus tard (corrigé par la tâche 2 : `build.electronFuses` dans `package.json`, repris par la config bêta ; vérifié par la tâche 3)
   - Où : configuration electron-builder (`package.json`, `electron-builder-beta.js`).
   - Problème : les options `RunAsNode`, vérification d'intégrité de l'archive `app.asar`, etc. sont aux valeurs par défaut.
   - Risque concret : un programme déjà présent sur le PC peut plus facilement détourner l'appli.
@@ -153,6 +157,14 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : complète S8 : même avec une PR, le workflow de publication ne relance pas les tests.
   - Risque concret : une version qui casse les tests part quand même chez les joueurs.
   - Correction : ajouter `- run: npm test` juste après `npm ci` (modification à faire sur `claude/beta-5`, jamais en poussant sur `beta`/`main`).
+
+*Point S22 : ajouté par la tâche 3 (re-audit après la mise à jour d'Electron).*
+
+- [ ] **S22 — Clé Steam : le rechiffrement automatique peut la faire « revenir » ou abîmer `integrations.json`** · Plus tard
+  - Où : `main.js:121` (`readSteamApiKey` rappelle `writeSteamApiKey` quand Electron demande un rechiffrement ou après relecture d'une ancienne clé) et `main.js:124-133` (`writeSteamApiKey`) ; nouveau depuis la tâche 2.
+  - Problème : avant, la clé n'était écrite que quand Charles la saisissait. Maintenant, une simple lecture du profil Steam peut aussi réécrire le fichier, en arrière-plan. Si on clique « Effacer la clé » pendant ce court instant, la clé est réécrite juste après (elle revient). L'écriture n'est pas atomique (voir G12) et une erreur est ignorée en silence.
+  - Risque concret : faible (la fenêtre de temps est très courte et le rechiffrement n'arrive en principe qu'une fois, au premier lancement de la bêta 5). Mais une clé effacée qui réapparaît est un mauvais signal pour l'utilisateur ; et une coupure pendant l'écriture rend `integrations.json` illisible (blocage décrit en S20).
+  - Correction : écriture `.tmp` puis renommage ; ne rechiffrer que si le fichier contient toujours la même clé chiffrée qu'au moment de la lecture. À faire avec S20.
 
 **Points solides (à conserver)** : `contextIsolation`, `sandbox`, `nodeIntegration: false` sur les deux fenêtres (`main.js:155`, `:449`) ; `will-navigate`, `will-redirect`, `will-attach-webview` bloqués (`main.js:411-415`) ; toutes les permissions web refusées (`main.js:714-715`) ; id de profil limité à un dossier hexadécimal, noms de sauvegarde limités (`src/atelier.js:139-144`) ; programmes lancés avec `execFile` et une liste d'arguments (jamais de ligne de commande construite) ; `openLink` par clé, pas par adresse ; serveur de carte sur 127.0.0.1, jeton aléatoire de 48 caractères, chemins vérifiés, CSP stricte (`tch-map/server.js`) ; outil `decrypt_truck` compilé dans la CI depuis un commit précis ; sauvegardes déchiffrées en fichiers temporaires effacés ; aucune clé ni mot de passe dans le dépôt.
 
@@ -340,10 +352,54 @@ Vérifié sur electronjs.org le 27 novembre 2026 : versions maintenues **43, 44 
 6. Mise à jour automatique : vérifier que la recherche de mise à jour ne donne pas d'erreur (electron-updater 6.8).
 7. Antivirus / SmartScreen : l'exécutable est toujours non signé (S7), rien de nouveau, mais signaler si Windows Defender réagit différemment.
 
+## Re-audit après mise à jour d'Electron (tâche 3, 27 novembre 2026)
+
+Comparaison entre `beta` (avant) et `claude/beta-5` (après la tâche 2). Aucun code de l'appli modifié par cette tâche. Mesures refaites : `npm ci` OK, `npm test` **77 / 77 réussis**, `npm audit` relancé, et `npm audit` rejoué sur le `package-lock.json` de `beta` pour avoir la liste exacte des failles d'avant.
+
+**Verdict : la mise à jour d'Electron est bonne pour la sécurité : elle supprime toutes les failles connues d'Electron 33, n'affaiblit aucune protection de l'appli, et n'ajoute qu'un petit point sans gravité (S22) ; les vraies faiblesses qui restent (S2, S3, S18, S5, S6) sont dans le code de l'appli, pas dans Electron.**
+
+**Avant / après**
+
+| | Avant (`beta`) | Après (`claude/beta-5`) |
+|---|---|---|
+| Version | Electron 33.4.11 (Chromium 130, Node.js 20), **plus maintenue** | Electron **45.5.0** (Chromium 156, Node.js 24.22), sortie le 24 novembre 2026, **dernière version stable** |
+| Failles d'Electron connues (`npm audit`) | **46** (12 hautes, 25 moyennes, 9 faibles) | **0** (toutes corrigées au plus tard en 42.11.16 / 43.0.0) |
+| Failles de Chromium et Node.js | environ 2 ans de retard de correctifs | à jour au 24 novembre 2026 |
+| `npm audit` (tout) | 18 paquets touchés : 1 critique, 13 hautes, 4 moyennes | **6 moyennes**, une seule cause (`minimatch`, outils de construction) |
+| `npm audit --omit=dev` (ce qui est livré) | 0 | 0 |
+| Points du tableau cochés | — | S1 (réglé, vérifié), S16 (fuses, vérifié) ; S5 : risque réduit, case ouverte |
+| Nouveaux points | — | **S22** (Plus tard) |
+
+**Ce que la mise à jour corrige, par grandes familles** (source : avis de sécurité officiels d'Electron listés par `npm audit` / GitHub Advisories, versions corrigées entre 35.7.5 et 42.11.16)
+
+- **Isolation et bac à sable (≈ 12 failles, dont 6 hautes)** : contournement de l'isolation par `Function.prototype.bind`, `contextBridge` qui suivait des « setters » piégés, iframe en bac à sable qui pouvait contourner `allow-popups` ou lancer des programmes externes, fenêtres ouvertes qui perdaient le bac à sable, Node.js activable dans des « workers » malgré les réglages. **C'est la famille qui touchait le plus l'appli** (iframe de la carte, pont `tel`).
+- **Lecture d'autres origines et protocoles maison (5, dont 2 hautes)** : protocole avec `supportFetchAPI` sans `corsEnabled` (le cas exact de `tchmap://`, `src/map.js:51`), gestionnaires `file:` et `http:` lisibles d'une autre origine, redirection HTTP suivie jusqu'à un fichier local, injection d'en-têtes, cookies `SameSite` non appliqués.
+- **Mémoire (10, dont 3 hautes)** : « use-after-free » et lectures hors limites (plantages, voire exécution de code) dans le plein écran, la boîte d'enregistrement, PowerMonitor sous Windows, le rendu hors écran.
+- **Permissions (6)** : demandes attribuées à la mauvaise origine (iframe, USB, HID, verrouillage du pointeur, `openExternal`). Peu d'effet ici : l'appli refuse déjà toutes les permissions.
+- **Intégration au système et outils (≈ 10)** : contournement de la vérification d'intégrité `app.asar` (corrigé en 35.7.5 ; combiné aux fuses de S16, la protection fonctionne enfin), injection dans le registre Windows (`setAsDefaultProtocolClient`), chemin non protégé par des guillemets (`setLoginItemSettings`), `shell.openPath` trompé par un caractère nul, DevTools, et des failles propres à macOS (sans effet ici).
+- **Divers (3)** : extensions Chrome, certificats eMudhra compromis retirés.
+- **Chromium 130 → 156** : plus d'un an de correctifs du navigateur intégré, dont plusieurs failles **exploitées pour de vrai** en 2025 (moteur JavaScript V8, sortie du bac à sable via Mojo, carte graphique ANGLE, fuite de données entre sites). **Node.js 20 → 24** : Node 20 n'est plus maintenu depuis avril 2026 ; correctifs réseau (HTTP, TLS) et du modèle de permissions.
+
+**Changements de code de la tâche 2 : rien d'affaibli** (`git diff beta..claude/beta-5` : `main.js`, `package.json`, `package-lock.json`, test du contrat, documents)
+
+- `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true` : **inchangés** sur la fenêtre principale (`main.js:174`) et le HUD (`main.js:468`). Aucun `webSecurity: false` ajouté.
+- CSP de `app/index.html` et `app/hud.html` : **inchangées** (toujours `'unsafe-inline'`, voir S4 ; `frame-src` large, voir S5).
+- IPC : aucun canal ajouté ni retiré (le test « contrat du noyau » passe) ; seuls `steam:key:set` et `steam:profile` deviennent asynchrones. `preload.js` : **inchangé**.
+- Processus enfants (`utilityProcess.fork` pour la carte, l'extraction et l'analyse des mods) : **inchangés**.
+- Navigation, `setWindowOpenHandler`, permissions : **inchangés**.
+- **Renforcé** : fuses (S16) : `RunAsNode`, `NODE_OPTIONS`, `--inspect` coupés, intégrité de `app.asar` vérifiée. Restent volontairement actifs : privilèges supplémentaires de `file://` (lié à S18) et chiffrement des cookies non activé (l'appli ne garde pas de cookie important).
+- Clé Steam (`safeStorage` asynchrone) : toujours chiffrée par Windows, jamais écrite en clair ; le secours qui relit une ancienne clé est correct. **Seul nouveau point** : la lecture peut maintenant réécrire le fichier → S22 (Plus tard).
+- `npm start` télécharge Electron au premier lancement (`install-electron`) : la somme de contrôle est vérifiée avec la liste fournie dans le paquet `electron` (`checksums.json`). Ne concerne que la machine de développement.
+- `electron-updater` 6.8.11 : aucune faille connue ; il ne vérifie toujours que l'empreinte sha512, pas de signature (S7 inchangé).
+
+**La nouvelle version est-elle maintenue ?** Oui. D'après le calendrier officiel (releases.electronjs.org/schedule, lu le 27 novembre 2026) : versions maintenues **43, 44 et 45** ; Electron 45 est maintenu jusqu'au **27 avril 2027** (date provisoire), la 42 ne l'est plus depuis le 20 octobre 2026. 45.5.0 est la dernière version publiée (`npm`, 24 novembre 2026). Electron 46 est prévue le 5 janvier 2027 : prévoir de passer en 46 ou 47 avant fin avril 2027, et suivre les versions 45.x en attendant (une par semaine environ). À noter pour la 46 : les fonctions synchrones de `safeStorage` y disparaissent, donc le secours de relecture d'une clé de la bêta 4 ne marchera plus (une clé jamais relue sous la bêta 5 sera à ressaisir).
+
+**Ce qui reste ouvert après la mise à jour** (pas lié à Electron) : S2, S3, S18 (contrôle de qui appelle le noyau), S5 et S6 (iframe de la carte, liens), S4 (`'unsafe-inline'`), S7, S8, S21 (publication), S15 (6 failles moyennes des outils de construction), et le nouveau S22.
+
 ## Plan d'action
 
 1. **Tâche 2 (Electron)** : Electron 45 + electron-builder 26 (S1, S15, G15), réglage des fuses (S16) ; relancer `npm test` et `npm audit`.
-2. **Tâche 3 (re-audit sécurité)** — ⚠ ses consignes lui interdisent de modifier le code : elle ne fera que vérifier. Les corrections ci-après (S2, S3, S5, S6) **n'ont donc pas encore de tâche** ; Charles doit les confier à une tâche dédiée (avant la PR de la bêta 5 ou juste après). À faire : contrôle de l'expéditeur pour les 72 canaux (S2), `preload-hud.js` (S3), liste blanche des liens (S6), iframe sans `allow-popups` et `frame-src` restreint (S5), vérifier que les failles d'Electron 33 ont disparu.
+2. **Tâche 3 (re-audit sécurité)** — **fait** (voir « Re-audit après mise à jour d'Electron ») : failles d'Electron 33 disparues, S1 vérifié, nouveau point S22. ⚠ Ses consignes lui interdisent de modifier le code : elle ne fera que vérifier. Les corrections ci-après (S2, S3, S5, S6) **n'ont donc pas encore de tâche** ; Charles doit les confier à une tâche dédiée (avant la PR de la bêta 5 ou juste après). À faire : contrôle de l'expéditeur pour les 72 canaux (S2), `preload-hud.js` (S3), liste blanche des liens (S6), iframe sans `allow-popups` et `frame-src` restreint (S5), vérifier que les failles d'Electron 33 ont disparu.
 3. **Tâche 4 (découpage)** : inventaire des noms globaux (G2), découpage de `index.html` page par page sans réécriture (G1), une seule fonction d'échappement (S4), découpage de `main.js` par domaine (G3) ; mettre à jour les numéros de ligne du contrat. **En plus** : ne plus jamais écraser un `donnees.json` illisible (G5, partie historique) et écritures atomiques des fichiers du jeu (G12, partie jeu).
 4. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests. **En plus** : ne plus jamais écraser un `reglages.json` illisible (G5, partie réglages) et écriture atomique de `reglages.json` (G12, partie réglages).
 5. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
@@ -504,3 +560,4 @@ Décision de Charles (27 novembre 2026). Toute tâche qui change un numéro de v
 - Tâche 2 (Electron) : terminée le 27 novembre 2026. Electron 33.4.11 → **45.5.0**, electron-builder 25.1.8 → 26.18.0, electron-updater 6.3.9 → 6.8.11 (dans `dependencies`). Clé Steam passée à `safeStorage` asynchrone, fuses réglés (S16), contrat mis à jour (numéros de ligne). `npm test` : 77 réussis. Appli et version empaquetée démarrées sous Linux sans erreur ; installeur Windows à vérifier sous Windows. Nouveau point G22 (analyse des mods, déjà présent en Electron 33). S1 et S16 cochés.
 - Tâche 1 (suite) : décisions de Charles complétées (3 pages Entreprise à implémenter ; Marketplace et Truck & Coach Tools : style seulement) ; signalé que la tâche 3 ne corrige pas S2, S3, S5, S6 (lecture seule), le 27 novembre 2026.
 - Tâche 1 (suite, à la demande de Charles) : ajout des consignes de notes de version (bêta, officielle, Diamond) et du brouillon de la note officielle 0.12.0.5, le 27 novembre 2026.
+- Tâche 3 (re-audit après Electron) : terminée le 27 novembre 2026. Comparaison `beta` / `claude/beta-5` : les 46 failles d'Electron 33 ont disparu, Electron 45.5.0 est la dernière version et elle est maintenue (jusqu'en avril 2027) ; aucune protection affaiblie par la tâche 2. `npm test` : 77 réussis ; `npm audit` : 6 moyennes (outils de construction), `--omit=dev` : 0. S1 et S16 vérifiés, note ajoutée à S5 et S15, nouveau point S22. Aucun code de l'appli modifié.
