@@ -94,6 +94,7 @@ window.addEventListener('resize', autoNav);
 /* ===== Paramètres — voir fonctionnalites/parametres/parametres.js ===== */
 /* ---------- Options : catégories ---------- */
 let optCat = store.get('optCat', 'general');
+construirePagesBientot();   // pages « Bientôt disponible » : avant la recopie du menu ci-dessous (fonctionnalites/parametres/bientot/)
 document.getElementById('optNav').addEventListener('click', e => { const b = e.target.closest('[data-oc]'); if (b) { openOptCat(b.dataset.oc); document.querySelector('main').scrollTop = 0; } });
 document.getElementById('optNav').addEventListener('keydown', e => {
   if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;

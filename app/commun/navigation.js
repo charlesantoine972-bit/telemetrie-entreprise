@@ -206,6 +206,6 @@ function applySoon(show, save){
   if (show) delete document.documentElement.dataset.hideSoon; else document.documentElement.dataset.hideSoon = '1';
   document.getElementById('soonSwitch').checked = !!show;
   if (!show && typeof state !== 'undefined' && ['vtc', 'calendrier', 'infos', 'classement', 'carte', 'missions', 'convois', 'defis'].includes(state.view) && !(['carte', 'cartePerso'].includes(state.view) && railTab === 'map')) go('accueil');
-  if (!show && typeof optCat !== 'undefined' && optCat === 'compte') openOptCat('general');
+  if (!show && typeof optCat !== 'undefined' && typeof catVisible === 'function' && !catVisible(optCat)) openOptCat('general');   // page de paramètres en préparation
   if (save && window.tel) window.tel.setSettings({ showSoon: !!show });
 }

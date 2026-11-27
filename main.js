@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { Telemetry } = require('./src/telemetry');
-const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch } = require('./src/settings');
+const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch, lireReglages, ecrireReglages } = require('./src/settings');
 const installer = require('./src/plugin-installer');
 const { Atelier } = require('./src/atelier');
 const carte = require('./src/map');
@@ -73,13 +73,15 @@ function windowBackground(st) {
   const t = st.look && st.look.theme === 'systeme' ? (nativeTheme.shouldUseDarkColors ? 'sombre' : 'clair') : (st.look && st.look.theme) || 'base';
   return { base: '#0F1720', sombre: '#202020', clair: '#F3F3F3' }[t] || '#0F1720';
 }
+// Réglages illisibles au démarrage (G5) : le fichier abîmé est mis de côté, jamais écrasé ; l'utilisateur est prévenu.
+let reglagesRecuperes = null;
 function loadSettings() {
-  let saved = {};
-  try { saved = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); }
-  catch (error) {
-    if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error;
-    if (error instanceof SyntaxError) console.error('Réglages illisibles :', error.message);
+  const lu = lireReglages(settingsFile());
+  if (lu.etat === 'restaure' || lu.etat === 'defaut') {
+    console.error('Réglages illisibles, fichier mis de côté :', lu.fichierAbime);
+    reglagesRecuperes = lu;
   }
+  const saved = lu.saved;
   settings = mergeSavedSettings(DEFAULTS, saved);
   if (!settings.mapTilesets || typeof settings.mapTilesets !== 'object' || Array.isArray(settings.mapTilesets)) settings.mapTilesets = {};
   else settings.mapTilesets = Object.fromEntries(Object.entries(settings.mapTilesets).filter(([game, dir]) =>
@@ -88,9 +90,9 @@ function loadSettings() {
   // Bêta : réglages de jeu séparés pour ETS2 et ATS (repris des réglages actuels au premier lancement)
   gameSettings.initGameSettings(settings);
 }
+// Écriture atomique (G12) : fichier .tmp puis renommage.
 function saveSettings() {
-  fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
-  fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2));
+  ecrireReglages(settingsFile(), settings);
 }
 function integrationSecretsFile() {
   return path.join(app.getPath('userData'), 'integrations.json');
@@ -684,7 +686,7 @@ function setupIpc() {
   });
   ipcMain.handle('settings:set', async (_e, patch) => {
     const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud', 'showSoon', 'autoTelemetry', 'steamId', 'discordClientId'];
-    validateSettingsPatch(patch);
+    patch = validateSettingsPatch(patch);   // S9 : chaque clé vérifiée (type, valeurs, longueur), copie nettoyée
     if ('steamId' in patch && patch.steamId && !steam.validSteamId(patch.steamId)) throw new Error('Saisis un SteamID64 valide (17 chiffres).');
     if ('discordClientId' in patch && patch.discordClientId && !/^\d{17,20}$/.test(String(patch.discordClientId))) throw new Error('Saisis un ID d’application Discord valide (17 à 20 chiffres).');
     for (const k of allowed) if (k in patch && k !== 'hud') settings[k] = patch[k];
@@ -768,6 +770,13 @@ if (!app.requestSingleInstanceLock()) {
     installPlugin();
     setupIpc();
     createWindow();
+    if (reglagesRecuperes && win) {
+      const msg = reglagesRecuperes.etat === 'restaure'
+        ? 'Le fichier de tes réglages était abîmé (coupure de courant, disque plein…). La copie de secours la plus récente a été reprise.'
+        : 'Le fichier de tes réglages était abîmé (coupure de courant, disque plein…). L’appli repart avec les réglages par défaut.';
+      dialog.showMessageBox(win, { type: 'warning', title: 'Réglages récupérés', message: msg,
+        detail: 'Le fichier abîmé n’a pas été effacé : il est gardé à côté sous le nom ' + path.basename(reglagesRecuperes.fichierAbime) + '.' }).catch(() => {});
+    }
     if (process.platform === 'win32') systemPreferences.on('accent-color-changed', () => { if (win) win.webContents.send('system:accent', systemAccent()); });
     setupUpdates();
     syncHud();

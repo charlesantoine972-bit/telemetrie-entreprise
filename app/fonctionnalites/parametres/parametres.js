@@ -3,7 +3,7 @@
    Le branchement au démarrage (boutons, état initial, premiers affichages) est dans app/demarrage.js. */
 
 function openOptCat(cat){
-  if (!document.getElementById('oc-' + cat)) cat = 'general';
+  if (!document.getElementById('oc-' + cat) || (typeof catVisible === 'function' && !catVisible(cat))) cat = 'general';   // page absente ou en préparation masquée
   optCat = cat; store.set('optCat', cat);
   document.querySelectorAll('#optNav [data-oc]').forEach(b => { const on = b.dataset.oc === cat; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1; });
   document.querySelectorAll('#navOptions [data-oc]').forEach(b => { const on = b.dataset.oc === cat; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
@@ -69,11 +69,11 @@ function applyGameLabels(g){
 // La colonne d'à côté montre la recherche et les catégories du dossier choisi.
 const SET_FOLDERS = {
   compte: ['compte'],
-  appli: ['general', 'affichage', 'acces', 'notifs'],
+  appli: ['general', 'affichage', 'acces', 'notifs', 'raccourcis', 'langue', 'audio'],
   jeu: ['jeu', 'conduite', 'hud'],
   connexions: ['integrations'],
-  donnees: ['maj', 'donnees'],
-  aide: ['aide'],
+  donnees: ['maj', 'donnees', 'gestion'],
+  aide: ['aide', 'avance'],
 };
 const folderOf = cat => Object.keys(SET_FOLDERS).find(f => SET_FOLDERS[f].includes(cat)) || 'appli';
 const catVisible = cat => { const el = document.getElementById('oc-' + cat); return !!el && !(el.classList.contains('is-soon') && document.documentElement.dataset.hideSoon); };
@@ -99,16 +99,27 @@ function openFolder(f){
 }
 function leaveSettings(){ document.getElementById('optBack').click(); }
 const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+// Index de la recherche. Les réglages « Bientôt disponible » (pages en préparation) sont trouvables, avec la mention ;
+// si les pages en préparation sont masquées, le résultat mène à l'interrupteur qui les affiche.
 function optIndex(){
-  const out = [];
+  const out = [], soonCache = !!document.documentElement.dataset.hideSoon;
+  const soonRow = (document.getElementById('soonSwitch') || { closest: () => null }).closest('.setrow');
   document.querySelectorAll('#v-reglages .optcat').forEach(cat => {
-    const id = cat.id.replace(/^oc-/, ''); if (!catVisible(id)) return;
+    const id = cat.id.replace(/^oc-/, '');
     const cname = (cat.querySelector('.ochead h2') || {}).textContent || id;
     cat.querySelectorAll('.setrow').forEach(r => {
       const b = r.querySelector('.lab b'); if (!b) return;
-      const group = (r.closest('.optgroup') && r.closest('.optgroup').querySelector('h3') || {}).textContent || '';
+      if (r.closest('.hidden')) return;                        // réglage caché (ex. mode développeur pas débloqué)
+      const soon = !!r.closest('.is-soon, [data-bientot]');
+      if (!soon && !catVisible(id)) return;
+      const h3 = r.closest('.optgroup') && r.closest('.optgroup').querySelector('h3');
+      const group = h3 ? (h3.firstChild ? h3.firstChild.textContent : h3.textContent).trim() : '';
       const d = (r.querySelector('.lab span') || {}).textContent || '';
-      out.push({ cat: id, el: r, title: b.textContent.trim(), path: cname + (group ? ' › ' + group : ''), hay: norm(b.textContent + ' ' + d + ' ' + group + ' ' + cname) });
+      const path = cname + (group ? ' › ' + group : '') + (soon ? ' · Bientôt disponible' : '');
+      const hay = norm(b.textContent + ' ' + d + ' ' + group + ' ' + cname + (soon ? ' bientot disponible' : ''));
+      if (soon && soonCache && r.closest('.is-soon')) {
+        if (soonRow) out.push({ cat: 'affichage', el: soonRow, title: b.textContent.trim(), path: path + ' (active « Pages en préparation » pour la voir)', hay });
+      } else out.push({ cat: id, el: r, title: b.textContent.trim(), path, hay });
     });
   });
   return out;

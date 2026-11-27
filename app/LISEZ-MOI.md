@@ -34,6 +34,7 @@ app/
     ├── hud/               page HUD de l'appli (aperçus, réglages, test)
     ├── carte/             carte (TCH Map, préparation de la carte du jeu, carte Leaflet)
     ├── parametres/        Paramètres (catégories, général / jeu, dossiers, recherche, plugin, programme bêta) ; apparence.js : thème et couleurs
+    │   └── bientot/       pages de paramètres prévues « Bientôt disponible » (un fichier page-*.js par page, bientot.js les fabrique au démarrage)
     ├── compte/            Compte & accès (aperçu local)
     ├── news/              page News
     ├── atelier/           Truck & Coach Tools : nom de l'espace, interrupteurs par jeu, console du jeu

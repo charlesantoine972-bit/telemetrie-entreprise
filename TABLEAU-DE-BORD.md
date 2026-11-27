@@ -77,11 +77,12 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Risque concret : une fusion trop rapide (ou une action GitHub compromise) publie directement chez tous les utilisateurs.
   - Correction : règles de protection de branche (PR + tests obligatoires), environnement GitHub « publication » avec approbation, actions épinglées par empreinte SHA.
 
-- [ ] **S9 — `setSettings` accepte des valeurs non vérifiées** · Important
+- [x] **S9 — `setSettings` accepte des valeurs non vérifiées** · Important (corrigé par la tâche 5)
   - Où : `main.js:666-681`, `src/settings.js:33-46`.
   - Problème : seuls les seuils, le SteamID et l'ID Discord sont vérifiés. `pseudo` (longueur), `vehicleType`, `atelier`, `showSoon`, `autoTelemetry` (vrai/faux), `modules` et `hud` (n'importe quel contenu) sont enregistrés tels quels dans `reglages.json`. `patch = null` provoque une erreur technique.
   - Risque concret : réglages corrompus qui cassent l'interface au démarrage suivant ; texte libre réaffiché ailleurs (voir S4).
   - Correction : vérifier chaque clé (type, liste de valeurs, longueur) dans `validateSettingsPatch`, avec un test. → tâche 5 (paramètres).
+  - Tâche 5 : fait. `validateSettingsPatch` (`src/settings.js`) refuse tout `patch` qui n'est pas un objet, toute clé inconnue, et vérifie chaque clé : `pseudo` (texte, 32 caractères au plus, sans `<`, `>` ni caractère de contrôle, espaces retirés), `vehicleType` (`camion` / `car`), `atelier` / `showSoon` / `autoTelemetry` (vrai ou faux), `units`, `steamId` / `discordClientId` (texte), `look` (objet ; clés inconnues retirées, valeurs déjà filtrées par `sanitizeLook`), `modules` (`{hud: vrai/faux}`), `hud` (profils `truck` / `bus` : position, style, logo, opacité 20–100, taille 50–200, cases ; clés inconnues retirées). `main.js` n'enregistre que la copie vérifiée. Test « réglages : chaque clé… (S9) ». ⚠ Un ancien pseudo de plus de 32 caractères ou avec `<` / `>` reste affiché, mais il faudra le raccourcir pour enregistrer à nouveau la page Conduite (message clair).
 
 - [ ] **S10 — Éditeur de sauvegarde : nombres non vérifiés** · Important
   - Où : `src/save-editor.js:319-339`, `src/atelier.js:28-31`.
@@ -203,6 +204,8 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Risque concret : l'utilisateur perd tous ses trajets et statistiques, sans avertissement.
   - Correction : si le fichier est illisible, le renommer en `donnees.corrompu-<date>.json` avant de continuer, garder une copie `.bak` de la veille, et prévenir l'utilisateur.
   - Répartition : **tâche 4** pour `donnees.json` (`src/telemetry.js`, historique des trajets) ; **tâche 5** pour `reglages.json` (`main.js:76-94`, chargement et écriture des réglages). Chaque tâche coche sa partie ; la case se coche quand les deux sont faites.
+  - [x] Partie réglages (faite par la tâche 5) : `lireReglages` (`src/settings.js`) ne réécrit jamais un `reglages.json` illisible : il est renommé en `reglages.corrompu-<date>.json`, puis l'appli reprend la copie de secours `reglages.bak.json` (refaite au plus une fois par jour, à partir d'un fichier lisible) ou, à défaut, les réglages par défaut ; une fenêtre « Réglages récupérés » prévient l'utilisateur au démarrage. Testé sur un dossier temporaire.
+  - [ ] Partie historique (`donnees.json`) : **pas faite** (la tâche 4 ne devait rien changer au comportement) ; reste à confier. Case principale laissée ouverte.
 
 - [ ] **G6 — Commandes qui bloquent l'appli** · Important
   - Où : `src/plugin-installer.js:20` (`execFileSync('reg')`, appelé par `findGames` à chaque statut de carte, scan, lancement), `src/atelier.js:108` (`execFileSync('tasklist')`, 2 fois par `atelier.status`), `src/save-editor.js:40` (déchiffrement synchrone, une fois par sauvegarde dans `atelier.slots`).
@@ -245,6 +248,8 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
   - Problème : le fichier est réécrit directement ; une coupure au mauvais moment le laisse à moitié écrit. (`donnees.json` et `acces-apercu.json` utilisent déjà la bonne méthode : fichier `.tmp` puis renommage.)
   - Risque concret : sauvegarde ou réglages abîmés (une copie existe pour les sauvegardes).
   - Correction : écrire dans `.tmp` puis renommer, partout. Répartition : **tâche 4** pour les fichiers du jeu (`save-editor.js`, `atelier.js`) ; **tâche 5** pour `reglages.json`.
+  - [x] Partie réglages (faite par la tâche 5) : `saveSettings` passe par `ecrireReglages` (`.tmp` puis renommage), testé.
+  - [ ] Partie fichiers du jeu : **pas faite** (tâche 4 sans changement de comportement) ; reste à confier. Case principale laissée ouverte.
 
 - [ ] **G13 — Tests manquants** · Important
   - Où : `tools/verify.test.js`, `tests/`.
@@ -421,6 +426,18 @@ Comparaison entre `beta` (avant) et `claude/beta-5` (après la tâche 2). Aucun 
 - [ ] Gestionnaires `onclick="…"` de `outils.js`, puis retrait de `'unsafe-inline'` (S4) ; une seule fonction d'échappement (S4, G2).
 - [ ] `main.js` par domaine (G3) : pas commencé.
 
+## Paramètres prévus (tâche 5, 27 novembre 2026)
+
+Pages de paramètres **prévues mais pas encore actives** : on voit les vrais contrôles (interrupteurs, listes, champs, curseurs, touches), tous **désactivés**, avec la mention « Bientôt disponible » (page, groupe et résultat de recherche). Elles ne changent rien et n'appellent jamais le noyau (`window.tel`).
+
+- **Où** : `app/fonctionnalites/parametres/bientot/` : un fichier de données par page (`page-*.js`), `bientot.js` (fabrique les pages au démarrage, sans `innerHTML`), `bientot.css` (couleurs du thème actuel uniquement, aucune couleur en dur). Appelé par une ligne de `app/demarrage.js` (`construirePagesBientot()`), **avant** la recopie du menu dans la barre. `index.html` ne gagne que les balises de chargement ; les anciens blocs HTML Notifications et Données & confidentialité en sont retirés (reconstruits avec de vrais contrôles).
+- **Pages** (dossier du mode Paramètres entre parenthèses) : Notifications, Raccourcis clavier, Langue & région, Audio (Appli) ; Données & confidentialité, Gestion (Données) ; Avancé (Aide). **Groupes ajoutés** à des pages existantes : Compte & accès (Profil, Connexion, Clé d'accès et VTC) et Mises à jour (Préférences : canal, recherche / téléchargement / installation automatiques).
+- **Visibilité** : comme les autres pages en préparation, elles suivent Interface → Éléments visibles → Pages en préparation. Pages masquées : la recherche les trouve quand même, avec « Bientôt disponible (active « Pages en préparation » pour la voir) », et mène à cet interrupteur. Si on masque les pages en préparation pendant qu'on en regarde une, l'appli revient à Général (avant : seulement pour Compte).
+- **Mode développeur** (Avancé) : caché par défaut ; 7 clics rapprochés sur le numéro de version l'affichent (souvenu sur ce PC), un bouton « Masquer » le recache. Il ne contient que des réglages désactivés et **ne désactive jamais une protection de sécurité** (écrit sur la page et vérifié par un test).
+- **Recherche** : les réglages cachés (ex. mode développeur pas débloqué, groupes Rangs / Clés créées masqués) ne sortent plus dans les résultats.
+- **Vérifications** : `npm test` 81 / 81 (3 tests ajoutés : S9, G5/G12, pages prévues) ; interface ouverte dans Chromium (pages affichées, recherche, mode développeur, pages en préparation masquées) : aucune erreur nouvelle. Appli Electron pas relancée ici (le programme Electron n'est pas téléchargé par `npm ci`).
+- **À tester par Charles** : Settings → chaque dossier avec « Pages en préparation » activé ; 7 clics sur le numéro de version dans Aide → Avancé ; enregistrer la page Conduite et les réglages du HUD (la vérification des réglages est plus stricte) ; si possible, abîmer `reglages.json` de la bêta (appli fermée, effacer la fin du fichier) puis relancer : la fenêtre « Réglages récupérés » doit apparaître et le fichier abîmé rester à côté.
+
 ## Plan d'action
 
 1. **Tâche 2 (Electron)** : Electron 45 + electron-builder 26 (S1, S15, G15), réglage des fuses (S16) ; relancer `npm test` et `npm audit`.
@@ -429,6 +446,7 @@ Comparaison entre `beta` (avant) et `claude/beta-5` (après la tâche 2). Aucun 
    - **Fait par la tâche 4** : G1 et l'inventaire de G2. Le contrat (`CONTRAT-NOYAU.md`) ne cite aucune ligne de `index.html` : rien à mettre à jour.
    - **Pas fait** (les consignes de la tâche 4 interdisaient tout changement de comportement : « déménagement, pas rénovation ») : une seule fonction d'échappement (S4), découpage de `main.js` (G3), `donnees.json` illisible (G5, partie historique), écritures atomiques des fichiers du jeu (G12, partie jeu). **À confier à une autre tâche** (G5 est Urgent).
 4. **Tâche 5 (paramètres)** : validation complète de `setSettings` (S9), avec tests. **En plus** : ne plus jamais écraser un `reglages.json` illisible (G5, partie réglages) et écriture atomique de `reglages.json` (G12, partie réglages).
+   - **Fait par la tâche 5** : S9, G5 (partie réglages), G12 (partie réglages), et les pages de paramètres « Bientôt disponible » (voir « Paramètres prévus (tâche 5) »).
 5. **Atelier** (tâche qui y touche, sinon à planifier) : nombres vérifiés dans `atelier.apply` (S10), jeu vérifié (S11), tests de sauvegarde / restauration / suppression sur dossier temporaire (G13), commandes non bloquantes (G6).
 6. **Tâche 7 (version)** : tests des prochains numéros affichés avant de changer le numéro (G10), indicateur bêta écrit par la construction (G11), **canal de mise à jour de la bêta (G19)**.
    Et en passant : S17 avec S10 (Atelier), S18 et S21 avec la tâche 3, G20 et G21 dans la tâche qui touche ces parties.
@@ -590,3 +608,4 @@ Décision de Charles (27 novembre 2026). Toute tâche qui change un numéro de v
 - Tâche 3 (re-audit après Electron) : terminée le 27 novembre 2026. Comparaison `beta` / `claude/beta-5` : les 46 failles d'Electron 33 ont disparu, Electron 45.5.0 est la dernière version et elle est maintenue (jusqu'en avril 2027) ; aucune protection affaiblie par la tâche 2. `npm test` : 77 réussis ; `npm audit` : 6 moyennes (outils de construction), `--omit=dev` : 0. S1 et S16 vérifiés, note ajoutée à S5 et S15, nouveau point S22. Aucun code de l'appli modifié.
 - Tâche 4 (découpage) : terminée le 27 novembre 2026. `app/index.html` : **4 568 → 1 038 lignes**. Dossiers créés : `app/commun/` (14 CSS, `utilitaires.js`, `navigation.js`), `app/fonctionnalites/` (`choix-du-jeu`, `accueil`, `hub`, `telemetrie`, `feuille-de-route`, `hud`, `carte`, `parametres`, `compte`, `news`, `atelier`, `sauvegardes`, `mods`, `outils`, `marketplace`, `mises-a-jour`, `notes-version`), `app/demarrage.js`, `app/LISEZ-MOI.md`, `docs/captures/beta-5/` (18 captures de référence). Aucun changement de comportement ni d'apparence (captures identiques). `npm test` : 78 réussis (nouveau test « interface découpée »). G1 coché ; non faits et à confier : S4 (échappement, `'unsafe-inline'`), G3, G5 (historique), G12 (fichiers du jeu).
 - Tâche 2 (Electron), nouveau lancement le 27 novembre 2026 : déjà faite, rien refait. Contrôle : Electron 45.5.0 est toujours la dernière version stable (46 seulement en alpha), electron-builder 26.18.0 et electron-updater 6.8.11 toujours à jour ; `npm ci` + `npm test` : 78 réussis. Aucun code modifié.
+- Tâche 5 (paramètres) : terminée le 27 novembre 2026. Pages « Bientôt disponible » ajoutées (dossier `app/fonctionnalites/parametres/bientot/`) : **Notifications**, **Raccourcis clavier**, **Langue & région**, **Audio**, **Données & confidentialité**, **Gestion**, **Avancé** (avec mode développeur caché, 7 clics sur le numéro de version) ; groupes ajoutés à **Compte & accès** (Profil, Connexion, Clé d'accès et VTC) et **Mises à jour** (Préférences). Tous trouvables par la recherche avec la mention « Bientôt disponible ». S9 coché ; G5 et G12 : partie réglages faite (cases principales ouvertes pour l'historique et les fichiers du jeu). `CONTRAT-NOYAU.md` : ligne `setSettings` et numéros de ligne de `main.js` mis à jour. `npm test` : 81 réussis. Numéro de version, notes de version, pages VTC / Conducteur / Infos VTC, Marketplace et Electron : pas touchés.

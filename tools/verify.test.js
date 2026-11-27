@@ -246,6 +246,58 @@ test('les seuils kilométriques sont bornés et entiers', () => {
   assert.throws(() => validateSettingsPatch({ racePct: 2.5 }), /nombre entier entre 0 et 100/);
 });
 
+test('réglages : chaque clé envoyée par l’interface est vérifiée (S9)', () => {
+  // ce que l'interface envoie vraiment passe
+  const ok = [{ pseudo: ' James ', vehicleType: 'car', limitTruck: 100, limitCar: 110, racePct: 5 }, { units: 'imperial' }, { showSoon: true }, { autoTelemetry: false },
+    { atelier: true }, { steamId: '76561198000000000' }, { discordClientId: '' }, { look: { theme: 'clair', accent: '#4FD1A5' } }, { modules: { hud: true } },
+    { hud: { truck: { style: 'navigation', position: 'bas', logo: true, opacity: 82, scale: 120, boxes: { route: true, cargo: false } } } }, { hud: { bus: { opacity: 60 } } }];
+  for (const p of ok) assert.doesNotThrow(() => validateSettingsPatch(p), JSON.stringify(p));
+  assert.equal(validateSettingsPatch({ pseudo: ' James ' }).pseudo, 'James');
+  // profils du HUD : clés inconnues retirées
+  assert.deepEqual(validateSettingsPatch({ hud: { truck: { scale: 80, pirate: 'x' } } }).hud, { truck: { scale: 80 } });
+  assert.deepEqual(validateSettingsPatch({ look: { theme: 'clair', ancien: 1 } }).look, { theme: 'clair' });
+  const ko = [null, [], 'x', { inconnu: 1 }, { pseudo: 3 }, { pseudo: 'x'.repeat(33) }, { pseudo: '<img>' }, { vehicleType: 'avion' }, { showSoon: 'oui' },
+    { autoTelemetry: 1 }, { atelier: null }, { units: 'km' }, { steamId: 7656 }, { discordClientId: 'x'.repeat(21) }, { look: 'clair' },
+    { modules: { hud: 'oui' } }, { modules: { autre: true } }, { hud: [] }, { hud: { car: {} } }, { hud: { truck: { position: 'gauche' } } },
+    { hud: { truck: { opacity: 500 } } }, { hud: { bus: { scale: 1.5 } } }, { hud: { truck: { boxes: { route: 'oui' } } } }, { hud: { truck: { style: '<b>' } } }];
+  for (const p of ko) assert.throws(() => validateSettingsPatch(p), Error, JSON.stringify(p));
+  assert.throws(() => validateSettingsPatch(null), /Réglages invalides/);
+  // main.js utilise bien la copie vérifiée
+  assert.match(fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8'), /patch = validateSettingsPatch\(patch\);/);
+});
+
+test('réglages : un reglages.json abîmé n’est jamais écrasé, écriture atomique (G5, G12)', () => {
+  const { lireReglages, ecrireReglages } = require('../src/settings');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-reglages-'));
+  const file = path.join(dir, 'reglages.json');
+  try {
+    assert.deepEqual(lireReglages(file), { saved: {}, etat: 'absent' });
+    ecrireReglages(file, { pseudo: 'James' });
+    assert.ok(!fs.existsSync(file + '.tmp'), 'pas de fichier temporaire laissé');
+    assert.deepEqual(lireReglages(file), { saved: { pseudo: 'James' }, etat: 'ok' });
+    assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir, 'reglages.bak.json'), 'utf8')), { pseudo: 'James' }, 'copie de secours du jour');
+    // la copie de secours n'est refaite qu'une fois par jour
+    ecrireReglages(file, { pseudo: 'Jo' }); lireReglages(file);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'reglages.bak.json'), 'utf8')).pseudo, 'James');
+    // fichier abîmé : mis de côté (jamais effacé), copie de secours reprise
+    fs.writeFileSync(file, '{"pseudo": "Jo", "look": {');
+    const r = lireReglages(file, Date.UTC(2026, 10, 27, 12));
+    assert.equal(r.etat, 'restaure'); assert.equal(r.saved.pseudo, 'James');
+    assert.ok(!fs.existsSync(file));
+    assert.equal(fs.readFileSync(r.fichierAbime, 'utf8'), '{"pseudo": "Jo", "look": {');
+    assert.match(path.basename(r.fichierAbime), /^reglages\.corrompu-2026-11-27T12-00-00-000Z\.json$/);
+    // abîmé et pas de copie de secours : réglages par défaut, fichier abîmé gardé
+    fs.rmSync(path.join(dir, 'reglages.bak.json'));
+    fs.writeFileSync(file, 'null');
+    const r2 = lireReglages(file, Date.UTC(2026, 10, 27, 13));
+    assert.equal(r2.etat, 'defaut'); assert.deepEqual(r2.saved, {}); assert.ok(fs.existsSync(r2.fichierAbime));
+    // main.js : plus aucune écriture directe de reglages.json
+    const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+    assert.match(main, /function saveSettings\(\) \{\n  ecrireReglages\(settingsFile\(\), settings\);/);
+    assert.match(main, /const lu = lireReglages\(settingsFile\(\)\);/);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
 test('temps jeu, temps réel, délai dépassé et arrondi', () => {
   const t = calculate({ navTime: 7200, navDistance: 1000, localScale: 20, gameTime: 1440, job: { 'delivery.time': 1439 } }, 0);
   assert.equal(t.gameSeconds, 7200); assert.equal(t.realSeconds, 360); assert.equal(t.arrivalReal, 360000);
@@ -801,11 +853,58 @@ test('bêta 5 : mode Paramètres (dossiers dans la barre) et recherche', () => {
   assert.match(html, /html\[data-rail="settings"\] \.rail-tabs:not\(\.rail-settings\)\{display:none\}/);
   assert.match(html, /id="optQuery" type="search"/);
   assert.match(html, /function runOptSearch\(\)/);
-  for (const c of ['notifs', 'donnees']) assert.match(html, new RegExp(`<div class="optcat is-soon" id="oc-${c}"`));
+  // Notifications et Données & confidentialité : fabriquées par fonctionnalites/parametres/bientot/ (tâche 5)
+  for (const c of ['notifs', 'donnees']) assert.match(html, new RegExp(`id: '${c}', dossier:`));
   // chaque catégorie appartient à un dossier
-  const cats = [...html.matchAll(/<div class="optcat[^"]*" id="oc-([a-z]+)"/g)].map(m => m[1]);
+  const cats = [...html.matchAll(/<div class="optcat[^"]*" id="oc-([a-z]+)"/g), ...html.matchAll(/\bid: '([a-z]+)', dossier:/g)].map(m => m[1]);
   const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(html)[1];
   for (const c of cats) assert.match(folders, new RegExp(`'${c}'`), c);
+});
+
+test('bêta 5 : pages de paramètres « Bientôt disponible » (prévues, non fonctionnelles)', () => {
+  const vm = require('node:vm'), root = path.resolve(__dirname, '..');
+  const dir = path.join(root, 'app', 'fonctionnalites', 'parametres', 'bientot');
+  const html = fs.readFileSync(path.join(root, 'app', 'index.html'), 'utf8');
+  // chargées par index.html, rien dans index.html lui-même
+  for (const f of fs.readdirSync(dir)) assert.match(html, new RegExp(`fonctionnalites/parametres/bientot/${f.replace('.', '\\.')}`), f + ' non chargé');
+  assert.doesNotMatch(html, /id="oc-(notifs|donnees|gestion|raccourcis|langue|audio|avance)"/);
+  const ctx = {};
+  vm.createContext(ctx);
+  for (const f of fs.readdirSync(dir).filter(f => f.startsWith('page-'))) vm.runInContext(fs.readFileSync(path.join(dir, f), 'utf8'), ctx);
+  const src = fs.readFileSync(path.join(dir, 'bientot.js'), 'utf8');
+  vm.runInContext(src + '\nthis.pages = PB_PAGES(); this.ajouts = PB_AJOUTS();', Object.assign(ctx, { document: {}, store: {} }));
+  const pages = Object.fromEntries(ctx.pages.map(p => [p.id, p]));
+  // pages demandées, chacune dans un dossier existant des Paramètres généraux
+  const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(fs.readFileSync(path.join(root, 'app', 'fonctionnalites', 'parametres', 'parametres.js'), 'utf8'))[1];
+  for (const id of ['notifs', 'donnees', 'gestion', 'raccourcis', 'langue', 'audio', 'avance']) {
+    assert.ok(pages[id], id + ' manque');
+    assert.match(folders, new RegExp(`${pages[id].dossier}: \\[[^\\]]*'${id}'`), id + ' pas dans son dossier');
+    assert.ok(pages[id].groupes.length >= 2 && pages[id].icone.length, id);
+  }
+  assert.equal(pages.donnees.dossier, 'donnees');
+  const titres = p => p.groupes.flatMap(g => [g.titre, ...g.reglages.map(r => r.titre + ' ' + r.desc)]).join(' | ');
+  for (const mot of [/stocké/, /Exporter/, /Effacer/, /Sauvegarde/, /anonyme/]) assert.match(titres(pages.donnees), mot);
+  for (const mot of [/Profils de jeu/, /Sauvegardes/, /Stockage/, /Cache de la carte/, /Réinitialisation/]) assert.match(titres(pages.gestion), mot);
+  for (const mot of [/Journaux/, /Diagnostic/, /Mode développeur/]) assert.match(titres(pages.avance), mot);
+  // Compte et Mises à jour : groupes ajoutés aux pages existantes
+  const ajouts = Object.fromEntries(ctx.ajouts.map(a => [a.page, a]));
+  for (const mot of [/Avatar/, /Pseudo/, /Rang/, /Clé/, /VTC TruckersMP/, /Se connecter/, /Se déconnecter/]) assert.match(titres(ajouts.compte), mot);
+  for (const mot of [/Canal/, /automatiquement/]) assert.match(titres(ajouts.maj), mot);
+  // tous les contrôles sont désactivés, sauf le numéro de version et « Masquer » du mode développeur
+  const actifs = [...ctx.pages, ...ctx.ajouts].flatMap(p => p.groupes).flatMap(g => g.reglages).flatMap(r => [].concat(r.ctl)).filter(c => c.actif);
+  assert.deepEqual(actifs.map(c => c.id), ['pbDevMasquer']);
+  // mode développeur : caché par défaut, 7 clics, ne coupe aucune protection
+  const dev = pages.avance.groupes.find(g => g.id === 'pbDevGroupe');
+  assert.ok(dev && dev.cache, 'mode développeur caché par défaut');
+  assert.match(dev.note, /ne désactive jamais une protection de sécurité/);
+  assert.match(src, /const PB_DEV_CLICS = 7;/);
+  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\/|\/\/ .*$/gm, ''), /innerHTML|window\.tel/, 'pages fabriquées sans innerHTML et sans appel au noyau');
+  assert.doesNotMatch(titres({ groupes: [dev] }), /sandbox|bac à sable désactiv|contextIsolation|webSecurity|DevTools/i);
+  // mention « Bientôt disponible » et recherche
+  assert.match(src, /'Bientôt disponible'/);
+  const p = fs.readFileSync(path.join(root, 'app', 'fonctionnalites', 'parametres', 'parametres.js'), 'utf8');
+  assert.match(p, /' · Bientôt disponible'/);
+  assert.match(fs.readFileSync(path.join(root, 'app', 'demarrage.js'), 'utf8'), /construirePagesBientot\(\);[^\n]*\n[\s\S]*document\.querySelectorAll\('#optNav \[data-oc\]'\)\.forEach\(b => \{\n    const c = document\.createElement/, 'pages construites avant la recopie du menu');
 });
 
 test('TCH Map : projection du jeu vers longitude / latitude (villes réelles)', async () => {
