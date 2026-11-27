@@ -6,6 +6,9 @@
 
 const ENT_USURE_ALERTE = 0.30;   // alerte d'usure au-delà de 30 %
 let entLecture = false;
+// Lecture automatique (bêta 6) : une seule fois par ouverture de l'appli, en lecture seule, la sauvegarde
+// la plus récente du profil le plus récent du jeu choisi. Toute erreur est affichée telle quelle.
+let entAutoTentee = false, entErreur = '';
 
 function entEsc(x){ return escM(x == null ? '' : String(x)); }
 function entMonnaie(n, jeu){ return Number.isFinite(n) ? nf(Math.round(n)) + (jeu === 'ats' ? ' $' : ' €') : null; }
@@ -24,25 +27,53 @@ function entSelecteur(){
 }
 function entBrancherSelecteur(view){
   const p = document.getElementById('entProf'), s = document.getElementById('entSlot'), b = document.getElementById('entLire');
-  if (p) p.onchange = async () => { atSel.profileId = p.value; atSel.slots = []; await atLoadSlots(); renderEntreprise(view); };
-  if (s) s.onchange = () => { atSel.slot = s.value; atSel.summary = null; renderEntreprise(view); };
-  if (b) b.onclick = async () => {
-    if (!atSel.profileId || !atSel.slot) return;
-    entLecture = true; renderEntreprise(view);
-    const r = await window.tel.atelier.summary(atSel.profileId, atSel.slot);
-    atSel.summary = r.ok ? r.data : null; atSel.msg = r.ok ? '' : r.error; entLecture = false;
-    renderEntreprise(view);
-  };
+  // Changer de profil ou de sauvegarde relit tout de suite (lecture seule) ; le bouton relit la même.
+  if (p) p.onchange = async () => { atSel.profileId = p.value; atSel.slots = []; await atLoadSlots(); await entLire(view); };
+  if (s) s.onchange = async () => { atSel.slot = s.value; atSel.summary = null; await entLire(view); };
+  if (b) b.onclick = () => entLire(view);
+}
+async function entLire(view){
+  entErreur = '';
+  if (atSel.slotsError) { entErreur = 'Les sauvegardes de ce profil sont illisibles : ' + atSel.slotsError; renderEntreprise(view); return; }
+  if (!atSel.profileId || !atSel.slot) { entErreur = atSel.profileId ? 'Ce profil n’a aucune sauvegarde. Sauvegarde une fois dans le jeu, puis reviens ici.' : ''; renderEntreprise(view); return; }
+  entLecture = true; renderEntreprise(view);
+  let r;
+  try { r = await window.tel.atelier.summary(atSel.profileId, atSel.slot); } catch (e) { r = { ok: false, error: e && e.message }; }
+  atSel.summary = r && r.ok ? r.data : null; atSel.msg = r && r.ok ? '' : ((r && r.error) || 'erreur inconnue');
+  if (!atSel.summary) entErreur = 'Sauvegarde illisible : ' + atSel.msg;
+  entLecture = false;
+  renderEntreprise(entVueActive(view));
+}
+// Page de l'espace Entreprise affichée en ce moment (on a pu changer de page pendant la lecture)
+function entVueActive(v){ return typeof state !== 'undefined' && ['entreprise', 'flotte', 'garages', 'finances'].includes(state.view) ? state.view : v; }
+// Profil le plus récent du jeu choisi (les profils arrivent déjà triés du plus récent au plus ancien)
+function entProfilRecent(){
+  const jeu = typeof activeGame !== 'undefined' && activeGame === 'ats' ? 'ats' : 'ets2';
+  return atSel.profiles.find(x => x.game === jeu) || atSel.profiles[0] || null;
+}
+async function entLectureAuto(view){
+  entAutoTentee = true;
+  // Outil de déchiffrement absent : on essaie quand même (une sauvegarde en texte clair se lit sans lui) ; l'échec est expliqué.
+  if (atSel.summary || !atSel.profiles.length) { renderEntreprise(view); return; }
+  const prof = entProfilRecent();
+  if (prof && (prof.id !== atSel.profileId || !atSel.slots.length)) { atSel.profileId = prof.id; atSel.slots = []; await atLoadSlots(); }
+  if (atSel.slots.length) atSel.slot = atSel.slots[0].slot; // la plus récente
+  await entLire(view);
 }
 // État vide commun : pas d'appli, outil absent, pas de profil, sauvegarde pas encore lue
 function entEtatVide(){
   if (typeof HAS_APP !== 'undefined' && !HAS_APP) return 'Ouvre Truck &amp; Coach Hub (l’appli) pour lire ta sauvegarde.';
-  if (atSel.info && !atSel.info.available) return 'L’outil de lecture des sauvegardes est introuvable. Réinstalle l’appli ou fais la dernière mise à jour.';
+  if (atSel.summary && !entLecture) return null;
+  const sansOutil = atSel.info && !atSel.info.available;
+  if (sansOutil && (entErreur || !atSel.profiles.length)) return entAlerte('Lecture impossible : l’outil de déchiffrement des sauvegardes (decrypt_truck) est introuvable. Réinstalle l’appli ou fais la dernière mise à jour.' + (entErreur ? ' (' + entErreur + ')' : ''));
+  if (atSel.profilesError) return entAlerte('Lecture impossible : tes profils n’ont pas pu être lus. ' + atSel.profilesError);
   if (!atSel.profiles.length) return 'Aucun profil trouvé. Lance le jeu une fois et crée un profil, puis reviens ici.';
-  if (entLecture) return 'Lecture de la sauvegarde…';
-  if (!atSel.summary) return 'Choisis un profil dans l’Atelier (ou ci-dessus), puis lis sa sauvegarde. Rien n’est modifié : la lecture est seule.' + (atSel.msg ? `<br><span class="muted">${entEsc(atSel.msg)}</span>` : '');
+  if (entLecture) return 'Lecture de ta sauvegarde la plus récente (rien n’est modifié)…';
+  if (entErreur) return entAlerte(entErreur);
+  if (!atSel.summary) return 'Choisis un profil dans l’Atelier (ou ci-dessus), puis lis sa sauvegarde. Rien n’est modifié : la lecture est seule.';
   return null;
 }
+function entAlerte(t){ return `<span class="ent-erreur" role="alert"><span aria-hidden="true">⚠</span> ${entEsc(t)}</span>`; }
 function entChiffre(l, v, aide){ return v == null ? '' : `<div class="stat"><span class="muted">${l}</span><b class="t-num">${v}</b>${aide ? `<span class="muted ent-aide">${aide}</span>` : ''}</div>`; }
 
 async function renderEntreprise(view){
@@ -50,6 +81,7 @@ async function renderEntreprise(view){
   if (!box) return;
   if (!atSel.info && typeof atEnsure === 'function') { box.innerHTML = '<div class="empty">Recherche de tes profils…</div>'; await atEnsure(); if (state.view !== view) return; }
   if (!frJournalCache && typeof frChargerJournal === 'function') await frChargerJournal();
+  if (!entAutoTentee && !atSel.summary && (typeof HAS_APP === 'undefined' || HAS_APP)) { await entLectureAuto(view); return; }
   const vide = entEtatVide();
   // Finances : les missions terminées viennent du journal local, elles s'affichent même sans sauvegarde lue.
   if (vide) { box.innerHTML = entSelecteur() + `<div class="empty" role="status">${vide}</div>` + (view === 'finances' ? entMissionsHtml() : ''); entBrancherSelecteur(view); box.querySelectorAll('[data-ent-go]').forEach(b => b.onclick = () => go(b.dataset.entGo)); return; }

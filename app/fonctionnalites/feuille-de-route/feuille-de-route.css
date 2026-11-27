@@ -80,4 +80,4 @@
 .dep-mission{display:flex;flex-direction:column;gap:var(--sp-4)}
 .dep-mission p{margin:0;font-size:var(--fs-second)}
 .dep-note{font-size:var(--fs-meta);margin:0}
-.dep-num{text-align:right}
+.dep-num,.fr-table .dep-num{text-align:right}

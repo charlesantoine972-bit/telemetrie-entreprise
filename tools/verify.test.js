@@ -1300,3 +1300,32 @@ test('bêta 6 : onglet Dépenses au clavier (tablist à 5 onglets), filtres miss
   assert.match(dep, /Le jeu ne transmet ni le prix du carburant ni le coût des réparations/);
   assert.doesNotMatch(dep.replace(/\/\*[\s\S]*?\*\//g, ''), /window\.tel\./, 'aucun appel au pont : données du journal déjà chargé');
 });
+
+test('bêta 6 : Entreprise lit seule la dernière sauvegarde du profil le plus récent, et dit clairement pourquoi si elle échoue', async () => {
+  const root = path.resolve(__dirname, '..');
+  const src = fs.readFileSync(path.join(root, 'app/fonctionnalites/entreprise/entreprise.js'), 'utf8');
+  const box = { innerHTML: '', querySelectorAll: () => [] };
+  const appels = [];
+  const mk = (summary) => {
+    const ctx = { escM: x => String(x), fmt: String, km: n => n + ' km', fmtDate: () => 'date', go() {}, HAS_APP: true, activeGame: 'ats', frJournalCache: { jobs: [], days: {} },
+      state: { view: 'finances' }, document: { getElementById: () => box },
+      atSel: { profiles: [{ id: 'ets2/p/a', game: 'ets2', name: 'A' }, { id: 'ats/p/b', game: 'ats', name: 'B' }], profileId: 'ets2/p/a', slots: [], slot: null, summary: null, info: { available: true }, msg: '' },
+      atEnsure: async () => true,
+      window: { tel: { atelier: { summary: async (id, slot) => { appels.push([id, slot]); return summary; } } } } };
+    ctx.atLoadSlots = async () => { ctx.atSel.slots = [{ slot: 'autosave', label: 'Auto', modified: 2 }, { slot: '1', label: 'Vieille', modified: 1 }]; ctx.atSel.slot = 'autosave'; };
+    vm.createContext(ctx); vm.runInContext(src + ';this.renderEntreprise=renderEntreprise;', ctx);
+    return ctx;
+  };
+  const a = mk({ ok: false, error: 'decrypt_truck a échoué (fichier abîmé)' });
+  await a.renderEntreprise('finances');
+  assert.deepEqual(appels.map(x => x.join()), ['ats/p/b,autosave'], 'profil le plus récent du jeu choisi (ATS), sauvegarde la plus récente, sans clic');
+  assert.match(box.innerHTML, /role="alert"/); assert.match(box.innerHTML, /Sauvegarde illisible : decrypt_truck a échoué/);
+  // Outil de déchiffrement absent : lecture tentée, échec expliqué clairement
+  appels.length = 0;
+  const b = mk({ ok: true, data: {} }); b.atSel.info.available = false;
+  b.window.tel.atelier.summary = async (id, slot) => { appels.push([id, slot]); return { ok: false, error: 'Outil de déchiffrement introuvable.' }; };
+  await b.renderEntreprise('finances');
+  assert.equal(appels.length, 1, 'essai quand même : une sauvegarde en texte clair se lit sans l’outil');
+  assert.match(box.innerHTML, /outil de déchiffrement des sauvegardes \(decrypt_truck\) est introuvable/);
+  assert.doesNotMatch(src, /atelier\.apply|atelier\.save\b/, 'lecture seule');
+});

@@ -11,6 +11,7 @@ async function atEnsure(){
   if (!HAS_APP) return false;
   if (!atSel.info) { const r = await window.tel.atelier.editorInfo(); atSel.info = r.ok ? r.data : { available: false, truckSkills: [], coachSkills: [] }; }
   const r = await window.tel.atelier.profiles(); atSel.profiles = r.ok ? r.data : [];
+  atSel.profilesError = r.ok ? '' : (r.error || 'Lecture des profils impossible.');
   if (!atSel.profileId && atSel.profiles.length) atSel.profileId = atSel.profiles[0].id;
   if (atSel.profileId && !atSel.slots.length) await atLoadSlots();
   return true;
@@ -18,6 +19,7 @@ async function atEnsure(){
 async function atLoadSlots(){
   const r = await window.tel.atelier.slots(atSel.profileId);
   atSel.slots = r.ok ? r.data : []; atSel.slot = atSel.slots.length ? atSel.slots[0].slot : null; atSel.summary = null;
+  atSel.slotsError = r.ok ? '' : (r.error || 'Lecture des sauvegardes impossible.');
 }
 async function atLoadSummary(){
   if (!atSel.profileId || !atSel.slot) return;
