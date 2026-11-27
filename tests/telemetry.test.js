@@ -292,3 +292,48 @@ test('Télémétrie : sans livraison dans le jeu, rien n’est affiché', () => 
   assert.equal(m.from, null);
   assert.equal(m.progress, null);
 });
+
+// ---- Bêta 6 : données du jeu (docs/DONNEES-DU-JEU.md) ----
+const { gameMission, carJobMission } = require('../src/telemetry');
+const truckState = (job, extra = {}) => ({ speed: 10, paused: false, odometer: 100, x: 1, z: 1, fuel: 300, game: 'eut2', trailerConnected: true, job, ...extra });
+
+test('SDK : convoi exceptionnel lu dans « is.special.job », chargement dans « cargo.loaded »', () => {
+  const m = gameMission(truckState({ 'source.city': 'Paris', 'destination.city': 'Lyon', cargo: 'Transformateur', 'is.special.job': true, 'cargo.loaded': false }, { trailerConnected: true }));
+  assert.equal(m.special, true);
+  assert.equal(m.loaded, false, 'la valeur du jeu prime sur la remorque attelée');
+  const n = gameMission(truckState({ 'source.city': 'Paris', 'destination.city': 'Lyon', cargo: 'Pommes' }));
+  assert.equal(n.special, false, 'attribut absent : pas de convoi exceptionnel');
+});
+
+test('dépenses de la mission : type, montant, infraction et trajet du ferry gardés ; mission enregistrée avec ses détails', () => {
+  const t = createTelemetry(); t.save = () => {};
+  const job = { 'source.city': 'Calais', 'destination.city': 'Douvres', cargo: 'Acier', 'cargo.mass': 22000, income: 5000, 'is.special.job': true, 'cargo.unit.count': 4 };
+  t.onState(truckState(job));
+  t.onGameplay({ id: 'player.tollgate.paid', data: { 'pay.amount': 120 } });
+  t.onGameplay({ id: 'player.use.ferry', data: { 'pay.amount': 900, 'source.name': 'Calais', 'target.name': 'Dover' } });
+  t.onGameplay({ id: 'player.fined', data: { 'fine.amount': 450, 'fine.offence': 'speeding' } });
+  t.onGameplay({ id: 'player.use.train', data: { 'pay.amount': 0 } }); // gratuit : rien n’est noté
+  t.onGameplay({ id: 'job.delivered', data: { revenue: 5200, 'cargo.damage': 0.02 } });
+  const e = t.data.jobs[0];
+  assert.equal(e.status, 'livrée'); assert.equal(e.revenue, 5200); assert.equal(e.special, true); assert.equal(e.units, 4);
+  assert.equal(e.expenses, 1470);
+  assert.deepEqual(e.expenseItems.map(i => i.type), ['péage', 'ferry', 'amende']);
+  assert.equal(e.expenseItems[1].from, 'Calais'); assert.equal(e.expenseItems[1].to, 'Dover');
+  assert.equal(e.expenseItems[2].offence, 'speeding');
+  assert.equal(e.expenseItems[0].offence, undefined, 'aucun champ vide ajouté');
+});
+
+test('car_job (ATS) : mission lue dans la configuration transmise, revenu et pénalité des évènements car_job.*', () => {
+  assert.equal(carJobMission(null), null); assert.equal(carJobMission({}), null);
+  const t = createTelemetry(); t.save = () => {};
+  t.carJob = { 'source.city': 'Reno', 'destination.city': 'Elko', cargo: 'Pick-up', income: 3000, 'car_job.market': 'quick_job' };
+  t.onState({ speed: 10, paused: false, odometer: 10, x: 1, z: 1, fuel: 100, game: 'ats', trailerConnected: false, job: null });
+  assert.equal(t.current.missionType, 'car_job'); assert.equal(t.current.from, 'Reno');
+  t.onGameplay({ id: 'car_job.delivered', data: { revenue: 2800, 'vehicle.damage': 0.01 } });
+  assert.equal(t.data.jobs[0].revenue, 2800); assert.equal(t.data.jobs[0].game, 'ats');
+  t.onState({ speed: 10, paused: false, odometer: 11, x: 1, z: 1, fuel: 100, game: 'ats', trailerConnected: false, job: null });
+  t.carJob = { 'source.city': 'Elko', 'destination.city': 'Reno', cargo: 'Berline', income: 2000 };
+  t.onState({ speed: 10, paused: false, odometer: 12, x: 1, z: 1, fuel: 100, game: 'ats', trailerConnected: false, job: null });
+  t.onGameplay({ id: 'car_job.cancelled', data: { 'cancel.penalty': 700 } });
+  assert.equal(t.data.jobs[0].status, 'annulée'); assert.equal(t.data.jobs[0].expenses, 700);
+});
