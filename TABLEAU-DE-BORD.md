@@ -297,6 +297,23 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 7. **Charles, hors code** : double authentification GitHub, protection des branches `main` et `beta`, approbation avant publication (S7, S8) ; choisir la licence de l'appli (G17).
 8. **Avant les comptes en ligne** : conception du serveur selon S14 (connexion Steam, vérifications côté serveur, jetons chiffrés) et note de confidentialité (S13).
 
+## Travaux en parallèle (hors de la chaîne)
+
+Ces travaux tournent à côté de la chaîne de la bêta 5, sur **leur propre branche**. Les tâches de la chaîne ne les fusionnent pas et ne poussent pas sur leur branche, mais doivent en tenir compte pour ne pas créer de conflits.
+
+### Refonte de l'interface : préparatif (tâche auxiliaire, commencée le 27 novembre 2026 à 11 h 47)
+
+- **Branche** : `claude/refonte-interface`, créée depuis `beta`. Elle n'est pas fusionnée dans `claude/beta-5` ; elle sera branchée **après la bêta 5**.
+- **Documents qui font foi** (branche `claude/etude-entreprise`) : `REFERENTIEL-UI.md` (il prime en cas d'écart) et `REFONTE-INTERFACE.md` ; maquette validée par Charles ; police Mona Sans (branche `claude/police-mona-sans`, licence OFL).
+- **Ce qu'elle crée (seulement de nouveaux fichiers)** : `app/commun/tokens.css` (couleurs, espacements, thèmes Système et contraste élevé), `app/commun/typographie.css`, `app/commun/menu.css`, `app/polices/mona-sans/`, `app/apercu-refonte.html` (page d'aperçu, non chargée par l'appli), `tools/contrastes.mjs` + un test dans `tools/verify.test.js`, et `REFONTE-PREPARATIF.md` (marche à suivre pour brancher).
+- **Ce qu'elle ne touche pas** : `app/index.html`, `main.js`, `preload.js`, ni aucun fichier existant de l'appli. Elle ne change pas le pont `tel` (rien à mettre dans le contrat).
+- **Points de vigilance pour la chaîne :**
+  - **Tâche 4 (découpage)** : elle crée aussi un dossier `app/commun/`. Ne pas créer de fichiers nommés `tokens.css`, `typographie.css` ou `menu.css` dans `app/commun/` (ces noms sont pris par la refonte), et ne pas y mettre de nouvelles couleurs : garder les couleurs actuelles telles quelles dans un fichier au nom différent (ex. `theme-actuel.css`). Noter dans `app/LISEZ-MOI.md` que la refonte viendra ajouter ces trois fichiers.
+  - **Toutes les tâches** qui modifient `tools/verify.test.js` : la refonte y ajoute un test à la fin ; ajouter vos tests à leur place logique plutôt qu'à la toute fin, pour limiter les conflits de fusion.
+  - **Tâche 3 et tâche 8 (sécurité)** : quand la refonte sera branchée, vérifier que `app/apercu-refonte.html` n'est pas livré dans l'installeur (ou qu'il reste inoffensif : pas de script réseau, CSP de l'appli), et que la police est bien chargée en local.
+  - **Tâche 7 (PR de la bêta 5)** : ne pas fusionner `claude/refonte-interface` ; mentionner dans la PR qu'elle existe et sera branchée ensuite.
+- **Après la bêta 5** : brancher la refonte dans l'arborescence créée par la tâche 4, en suivant `REFONTE-PREPARATIF.md` ; mettre à jour ce tableau de bord.
+
 ## Règles pour les tâches suivantes
 
 1. Chaque tâche lit **ce fichier** et **`CONTRAT-NOYAU.md`** avant de commencer.
@@ -306,9 +323,11 @@ Les faiblesses viennent surtout de **ce qui entoure ce code** : un Electron qui 
 5. Toute fonction ajoutée ou modifiée dans le pont `tel` est mise à jour dans `CONTRAT-NOYAU.md` (une ligne par fonction, ⚠ si besoin). Le test « contrat du noyau » échoue sinon.
 6. `npm test` doit passer avant chaque commit. **Ne jamais pousser sur `beta` ni sur `main`** (publication automatique) ; travailler sur `claude/beta-5`.
 7. Chaque tâche ajoute sa ligne au journal ci-dessous.
+8. Chaque tâche lit aussi la partie « Travaux en parallèle » et respecte ses points de vigilance ; elle ne fusionne aucune de ces branches.
 
 ## Journal des tâches
 
 - Tâche 1 (audit, sécurité et contrat) : terminée le 27 novembre 2026. Branche `claude/beta-5` créée depuis `beta`, contrat du noyau terminé (77 fonctions, 51 ⚠), test « contrat du noyau » ajouté (77 tests réussis), ce tableau de bord écrit. Aucun code de l'appli modifié.
 - Tâche 1, second passage (exécution parallèle de la même tâche, terminée le 27 novembre 2026) : la branche existait déjà, rien n'a été écrasé ; ajout des points S17 à S21 et G19 à G21, vérifiés dans le code (S17 et le `NaN` de S10 testés). `npm test` : 77 réussis.
 - Tâche 1 (suite, à la demande de Charles) : G5 et G12 répartis entre la tâche 4 (historique et fichiers du jeu) et la tâche 5 (réglages), le 27 novembre 2026.
+- Tâche 1 (suite, à la demande de Charles) : ajout de la partie « Travaux en parallèle » (préparatif de la refonte de l'interface, branche `claude/refonte-interface`), le 27 novembre 2026.
