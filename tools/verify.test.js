@@ -1241,3 +1241,36 @@ test('contrat du noyau : chaque fonction du pont a son point d’entrée et figu
   const canaux = new Set(fonctions.map(f => f.ch));
   for (const m of main.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)) assert.ok(canaux.has(m[1]), `canal « ${m[1]} » dans main.js sans fonction dans preload.js`);
 });
+
+test('bêta 6 : dépenses des missions (Finances et Feuille de route), euros et dollars séparés, rien d’inventé', () => {
+  const root = path.resolve(__dirname, '..');
+  const ctx = { fmt: n => String(n), km: n => n + ' km', escM: x => String(x), routeStatus: () => ({ label: 'Livré' }), document: {}, window: {} };
+  vm.createContext(ctx);
+  vm.runInContext(['journal.js', 'depenses.js'].map(f => fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route', f), 'utf8')).join('\n')
+    + ';this.depBilanMission=depBilanMission;this.depTotaux=depTotaux;this.depLignes=depLignes;this.depBornes=depBornes;', ctx);
+  const a = { ended: 100, game: 'ets2', revenue: 5000, expenses: 1470, expenseItems: [{ type: 'péage', amount: 120, at: 10 }, { type: 'ferry', amount: 900, at: 20, from: 'Calais', to: 'Dover' }, { type: 'amende', amount: 450, at: 30, offence: 'speeding' }] };
+  const b = { ended: 200, game: 'ats', revenue: 3000, expenses: 0, expenseItems: [] };
+  const vieux = { ended: 50, game: 'ets2', revenue: 1000, expenses: 300 }; // ancienne mission sans détail
+  const sans = { ended: 60, game: 'ets2' }; // rien reçu
+  const ba = ctx.depBilanMission(a);
+  assert.equal(ba.solde, 3530); assert.equal(ba.parType['ferry'], 900);
+  assert.equal(ctx.depBilanMission(vieux).detailConnu, false);
+  assert.equal(ctx.depBilanMission(sans).solde, null, 'revenu inconnu : pas de solde inventé');
+  const t = JSON.parse(JSON.stringify(ctx.depTotaux([a, b, vieux])));
+  assert.equal(t.ets2.revenu, 6000); assert.equal(t.ets2.depenses, 1770); assert.equal(t.ats.revenu, 3000); assert.equal(t.ats.solde, 3000);
+  // Filtres de l'onglet Dépenses : dernière mission par défaut, type, période
+  assert.equal(ctx.depLignes([a, b], { mission: 'dernier', periode: 'tout', type: 'tous' }).length, 0, 'la dernière mission (ATS) n’a aucune dépense');
+  assert.equal(ctx.depLignes([a, b], { mission: 'tous', periode: 'tout', type: 'tous' }).length, 3);
+  assert.equal(ctx.depLignes([a, b], { mission: '100', periode: 'tout', type: 'amende' }).map(l => l.offence).join(), 'speeding');
+  const maintenant = new Date(2026, 10, 27, 15);
+  const [d, f] = ctx.depBornes('semaine', maintenant);
+  assert.equal(new Date(d).getDay(), 1, 'la semaine commence le lundi'); assert.equal(f - d, 7 * 864e5);
+  assert.equal(ctx.depLignes([a], { mission: 'tous', periode: 'mois', type: 'tous' }, maintenant).length, 0, 'dépenses de 1970 hors du mois');
+  // Finances : bloc « Missions terminées » branché, aucune nouvelle fonction du pont
+  const ent = fs.readFileSync(path.join(root, 'app/fonctionnalites/entreprise/entreprise.js'), 'utf8');
+  assert.match(ent, /Missions terminées/); assert.match(ent, /Cette semaine/); assert.match(ent, /Ce mois-ci/);
+  assert.match(ent, /ne transmet ni le prix du carburant ni le coût des réparations/);
+  const css = ['entreprise/entreprise.css', 'feuille-de-route/feuille-de-route.css'].map(f => fs.readFileSync(path.join(root, 'app/fonctionnalites', f), 'utf8')).join('\n');
+  const nouveau = css.slice(css.indexOf('bêta 6'));
+  assert.ok(!/#[0-9a-f]{3,8}\b|rgba?\(/i.test(nouveau), 'nouveaux styles : tokens uniquement');
+});

@@ -51,7 +51,8 @@ async function renderEntreprise(view){
   if (!atSel.info && typeof atEnsure === 'function') { box.innerHTML = '<div class="empty">Recherche de tes profils…</div>'; await atEnsure(); if (state.view !== view) return; }
   if (!frJournalCache && typeof frChargerJournal === 'function') await frChargerJournal();
   const vide = entEtatVide();
-  if (vide) { box.innerHTML = entSelecteur() + `<div class="empty" role="status">${vide}</div>`; entBrancherSelecteur(view); return; }
+  // Finances : les missions terminées viennent du journal local, elles s'affichent même sans sauvegarde lue.
+  if (vide) { box.innerHTML = entSelecteur() + `<div class="empty" role="status">${vide}</div>` + (view === 'finances' ? entMissionsHtml() : ''); entBrancherSelecteur(view); box.querySelectorAll('[data-ent-go]').forEach(b => b.onclick = () => go(b.dataset.entGo)); return; }
   const S = atSel.summary, B = S.bilan || {}, T = S.tools || {}, jeu = entJeuProfil();
   const html = { entreprise: entVueHtml, flotte: entFlotteHtml, garages: entGaragesHtml, finances: entFinancesHtml }[view](S, B, T, jeu);
   box.innerHTML = entSelecteur() + html;
@@ -125,5 +126,41 @@ function entFinancesHtml(S, B, T, jeu){
   return entEnTete(S, jeu) + `
     <div class="stats ent-stats">${entChiffre('Argent', entMonnaie(S.money, jeu))}${entChiffre('Reste des prêts', B.debt != null ? entMonnaie(B.debt, jeu) : null)}${B.overdraft ? entChiffre('Découvert', 'Oui') : ''}</div>
     <div class="panel"><h2 class="t-sous">Prêts</h2>${prets.length ? `<ul class="ent-liste">${prets.map(l => `<li><span>${entMonnaie(l.amount, jeu) || '—'} restants${l.original ? ` sur ${entMonnaie(l.original, jeu)}` : ''}</span><span class="muted">${[l.months != null ? l.months + ' mois' : '', l.rate != null ? 'taux ' + (l.rate * 100).toFixed(1).replace('.', ',') + ' %' : ''].filter(Boolean).join(' · ')}</span></li>`).join('')}</ul>` : '<p class="muted">Aucun prêt en cours.</p>'}</div>
-    <div class="panel"><h2 class="t-sous">Revenus et dépenses</h2>${entMoisHtml()}<p class="muted">L’historique de la banque du jeu n’est pas lu par l’appli : les revenus détaillés sont dans la Feuille de route (Rapport du mois).</p></div>`;
+    ${entMissionsHtml()}`;
+}
+
+/* ---------- Finances : missions terminées (journal local, window.tel.journal via la Feuille de route) ----------
+   Revenu et dépenses tels que le jeu les a envoyés (docs/DONNEES-DU-JEU.md) ; euros et dollars jamais additionnés. */
+function entTotauxPeriodeHtml(titre, jobs){
+  const t = depTotaux(jobs), jeux = Object.keys(t).sort();
+  if (!jeux.length) return `<div class="ent-periode"><h3 class="ent-g-nom">${titre}</h3><p class="muted">Aucune mission terminée.</p></div>`;
+  return `<div class="ent-periode"><h3 class="ent-g-nom">${titre}</h3>${jeux.map(g => `<div class="stats ent-stats">
+      ${entChiffre('Missions' + (jeux.length > 1 ? (g === 'ats' ? ' ATS' : ' ETS2') : ''), fmt(t[g].missions))}
+      ${entChiffre('Revenus', depMontant(t[g].revenu, g))}${entChiffre('Dépenses', depMontant(t[g].depenses, g), DEP_TYPES.filter(([k]) => t[g].parType[k]).map(([k, l]) => `${l} ${depMontant(t[g].parType[k], g)}`).join(' · '))}
+      ${entChiffre('Solde', depMontant(t[g].solde, g))}</div>`).join('')}</div>`;
+}
+function entMissionsHtml(){
+  const J = typeof frJournalCache !== 'undefined' ? frJournalCache : null;
+  const titre = '<h2 class="t-sous">Missions terminées</h2>';
+  if (!J || typeof depBilanMission !== 'function') return `<div class="panel">${titre}<p class="muted">Le journal des trajets n’est pas disponible pour l’instant.</p></div>`;
+  const jobs = (Array.isArray(J.jobs) ? J.jobs : []).filter(j => Number.isFinite(j.ended) && frTermine(j)).sort((a, b) => b.ended - a.ended);
+  if (!jobs.length) return `<div class="panel">${titre}<p class="muted">Aucune mission camion ou car terminée pour l’instant. Roule avec le plugin du jeu : chaque mission terminée apparaîtra ici avec son revenu et ses dépenses.</p></div>`;
+  const [sd, sf] = depBornes('semaine'), [md, mf] = depBornes('mois');
+  const dans = (d, f) => jobs.filter(j => j.ended >= d && j.ended < f);
+  const lignes = jobs.slice(0, 20).map(j => {
+    const b = depBilanMission(j);
+    const detail = DEP_TYPES.filter(([k]) => b.parType[k]).map(([k, l]) => `${l} ${depMontant(b.parType[k], b.jeu)}`).join(' · ');
+    const dep = b.depenses == null ? '—' : b.depenses === 0 ? 'Aucune' : depMontant(b.depenses, b.jeu) + (detail ? `<div class="muted ent-aide">${entEsc(detail)}</div>` : (b.detailConnu ? '' : '<div class="muted ent-aide">détail non enregistré</div>'));
+    const signe = b.solde == null ? '' : b.solde < 0 ? ' ent-negatif' : '';
+    return `<tr><td>${entEsc(new Date(j.ended).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }))}</td>
+      <th scope="row">${entEsc(j.from || '—')} → ${entEsc(j.to || '—')}<div class="muted ent-aide">${frEstCar(j) ? 'Car' : entEsc([j.cargo || 'Camion', Number.isFinite(j.mass) && j.mass > 0 ? (j.mass / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' t' : ''].filter(Boolean).join(' · '))}</div></th>
+      <td class="ent-num">${depMontant(b.revenu, b.jeu)}</td><td class="ent-num">${dep}</td><td class="ent-num${signe}">${b.solde == null ? '—' : (b.solde < 0 ? '<span class="sr-only">négatif : </span>' : '') + depMontant(b.solde, b.jeu)}</td></tr>`;
+  }).join('');
+  return `<div class="panel">${titre}
+    <div class="ent-grille">${entTotauxPeriodeHtml('Cette semaine', dans(sd, sf))}${entTotauxPeriodeHtml('Ce mois-ci', dans(md, mf))}</div>
+    <div class="fr-tab-wrap"><table class="fr-table ent-table"><caption class="sr-only">Missions terminées : revenu, dépenses et solde</caption>
+      <thead><tr><th scope="col">Date</th><th scope="col">Mission</th><th scope="col" class="ent-num">Revenu</th><th scope="col" class="ent-num">Dépenses</th><th scope="col" class="ent-num">Solde</th></tr></thead>
+      <tbody>${lignes}</tbody></table></div>
+    <p class="muted ent-aide">${jobs.length > 20 ? `Les 20 dernières sur ${jobs.length}. ` : ''}Dépenses = péages, ferries, trains, amendes et pénalités envoyés par le jeu. Le jeu ne transmet ni le prix du carburant ni le coût des réparations : ils ne sont pas comptés. Détail de chaque dépense : Feuille de route → Dépenses.</p>
+    <button class="btn" data-ent-go="feuilleRoute">Ouvrir la Feuille de route</button></div>`;
 }
