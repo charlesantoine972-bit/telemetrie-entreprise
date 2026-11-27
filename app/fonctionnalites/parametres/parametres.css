@@ -1,0 +1,23 @@
+/* Paramètres : catégories façon réglages de jeu
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  /* ---------- Options : catégories façon réglages de jeu ---------- */
+  .opts{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:start;max-width:1180px}
+  .optnav{position:sticky;top:0;display:flex;flex-direction:column;gap:3px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px}
+  .optnav button{display:flex;align-items:center;gap:11px;height:42px;padding:0 12px;border:none;border-radius:10px;background:transparent;color:var(--soft);font-size:var(--fs-second);font-weight:var(--fw-demi);text-align:left}
+  .optnav button:hover{background:var(--hover);color:var(--text)}
+  .optnav button.on{background:var(--accent-soft);color:var(--accent-strong)}
+  .optnav button svg{flex:none}
+  .optcat{display:none;flex-direction:column;gap:16px} .optcat.on{display:flex}
+  .ochead h2{margin:0 0 4px;font-size:var(--fs-section)} .ochead p{margin:0;color:var(--muted);font-size:var(--fs-second);line-height:1.6;max-width:760px}
+  .optgroup{background:var(--panel);border:1px solid var(--line);border-radius:16px}
+  .optgroup>h3{margin:0;padding:14px 20px 10px;font-size:var(--fs-meta);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:var(--fw-gras)}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:14px 24px;padding:14px 20px;border-top:1px solid var(--line)}
+  .setrow.col{flex-direction:column;align-items:stretch}
+  .setrow.end{justify-content:flex-end;flex-wrap:wrap}
+  .setrow .lab{display:flex;flex-direction:column;gap:3px;max-width:560px;min-width:220px;flex:1}
+  .setrow .lab b{font-size:var(--fs-corps);font-weight:var(--fw-demi)} .setrow .lab span{font-size:var(--fs-second);color:var(--muted);line-height:1.5}
+  .setrow .ctl{flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .setrow input[type=text],.setrow input[type=password],.setrow input[type=number],.setrow input:not([type]),.setrow select{height:38px;border-radius:10px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px;font-size:var(--fs-second);font-family:inherit}
+  @media (max-width:900px){ .opts{grid-template-columns:1fr} .optnav{position:static;flex-direction:row;flex-wrap:wrap} }
+
+

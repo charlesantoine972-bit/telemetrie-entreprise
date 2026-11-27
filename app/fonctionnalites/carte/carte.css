@@ -1,0 +1,9 @@
+/* Carte : cadres de la carte et de TCH Map
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  .map{position:relative;height:520px;background:var(--map);border-radius:16px;border:1px solid var(--line);overflow:hidden}
+  .lwrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+  @media (max-width:1180px){.lwrap{grid-template-columns:1fr}}
+  .lmap{position:relative;height:calc(100vh - 170px);min-height:460px;border-radius:16px;border:1px solid var(--line);overflow:hidden;background:#303030}
+  .lmap .leaflet-container{background:#303030;font-family:inherit}
+  #lmap{position:absolute;inset:0}
+  .tchframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:1;background:var(--bg)}

@@ -1,0 +1,21 @@
+/* Navigation : pages vides, « bientôt », marque, boutons du menu
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  .empty{padding:40px 20px;text-align:center;border:1px dashed var(--line);border-radius:16px;color:var(--soft);line-height:1.7}
+  .brand{font-weight:var(--fw-gras);font-size:var(--fs-sous);padding:4px 10px 2px}
+  .brand-sub{font-size:var(--fs-meta);color:var(--muted);padding:0 10px 18px}
+  .navbtn{display:flex;align-items:center;gap:11px;height:38px;padding:0 10px;border-radius:12px;
+    border:none;background:transparent;color:var(--soft);font-size:var(--fs-second);text-align:left}
+  .navbtn:hover{background:var(--hover);color:var(--text)}
+  .navbtn.on{background:var(--hover);color:var(--text);font-weight:var(--fw-moyen)}
+  .navbtn svg{flex:none}
+
+
+
+/* Refonte bêta 5 (REFONTE-INTERFACE.md § 3) : catégorie « En jeu », entrée Entreprise, espace Entreprise */
+  .navbtn:focus-visible{outline:var(--focus-w) solid var(--focus);outline-offset:calc(-1 * var(--focus-w))}
+  .navspace .navchev{margin-left:auto;color:var(--muted);font-size:var(--fs-corps)}
+  [data-nav="mini"] .navspace .navchev{display:none}
+  html[data-espace-entreprise] .spacetitle{letter-spacing:0;font-size:var(--fs-second);font-weight:var(--fw-demi);color:var(--text)}
+  /* Bord du menu : sous la largeur minimale, le menu annonce qu'il va se replier au relâchement */
+  html.nav-va-replier .side{opacity:.6}
+  html.nav-va-replier .side-resize::after{background:var(--warn)}

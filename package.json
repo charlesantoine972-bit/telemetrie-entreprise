@@ -1,6 +1,6 @@
 {
   "name": "telemetrie-entreprise",
-  "version": "0.13.36-beta.10",
+  "version": "0.13.36-beta.11",
   "description": "Truck & Coach Hub - télémétrie, carrière, entreprise et mods pour ETS2 / ATS",
   "author": "charlesantoine972-bit",
   "main": "main.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "test": "node --test tools/verify.test.js tests/telemetry.test.js tests/save-tools.test.js",
     "verify-games": "node tools/verify-game-content.js",
-    "start": "electron .",
+    "start": "install-electron && electron .",
     "dist": "electron-builder --win nsis --x64",
     "release": "electron-builder --win nsis --x64 --publish always",
     "simulateur": "node tools/simulateur.js",
@@ -60,7 +60,14 @@
       }
     ],
     "releaseInfo": {
-      "releaseName": "0.12.0.5 bêta 4"
+      "releaseName": "0.12.0.5 bêta 5"
+    },
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
     },
     "asarUnpack": [
       "tch-map/extraction/**",
@@ -69,10 +76,10 @@
   },
   "dependencies": {
     "discord-rpc": "^4.0.1",
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.8.11"
   },
   "devDependencies": {
-    "electron": "^33.2.0",
-    "electron-builder": "^25.1.8"
+    "electron": "^45.5.0",
+    "electron-builder": "^26.18.0"
   }
 }

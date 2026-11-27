@@ -1,0 +1,10 @@
+/* Marketplace : barre de recherche, cartes
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  .mkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .mkbar input{height:42px;width:280px;max-width:100%;padding:0 14px;border-radius:12px;border:1px solid var(--ctl);background:var(--panel);color:var(--text);font:14px inherit;font-family:inherit}
+  .mkfeat{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;padding:22px;border-radius:18px;background:var(--accent-soft);border:1px solid var(--accent)}
+  .mkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .mkcard{border-radius:16px;background:var(--panel);border:1px solid var(--line);overflow:hidden;display:flex;flex-direction:column}
+  .mkimg{height:110px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:var(--accent-soft)}
+  .mkbody{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  #mkItemPreview .tablet{max-width:860px;box-shadow:0 10px 40px rgba(0,0,0,.35)}

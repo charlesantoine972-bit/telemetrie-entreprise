@@ -12,10 +12,23 @@ const steam = require('../src/steam');
 const { EventEmitter } = require('node:events');
 const { DiscordPresence, buildActivity } = require('../src/discord-presence');
 
+// L'interface est découpée : app/index.html (HTML des pages) + les styles et scripts qu'il charge
+// (app/commun, app/fonctionnalites/<nom>, app/demarrage.js). Les tests lisent l'ensemble, dans l'ordre de chargement.
+function fichiersInterface() {
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  return [...html.matchAll(/<(?:link rel="stylesheet" href|script src)="((?:commun|fonctionnalites)\/[^"]+|demarrage\.js)"/g)].map(m => 'app/' + m[1]);
+}
+function lireInterface() {
+  const root = path.resolve(__dirname, '..');
+  return [path.join(root, 'app', 'index.html'), ...fichiersInterface().map(f => path.join(root, f))].map(f => fs.readFileSync(f, 'utf8')).join('\n');
+}
+
 test('syntaxe de tous les scripts de production et des pages', () => {
   const vm = require('node:vm'), root = path.resolve(__dirname, '..');
   const scripts = ['main.js', 'preload.js'];
   for (const dir of ['src', 'app']) for (const f of fs.readdirSync(path.join(root, dir))) if (f.endsWith('.js')) scripts.push(dir + '/' + f);
+  // fichiers de l'interface découpée (app/commun, app/fonctionnalites/<nom>)
+  for (const f of fichiersInterface().filter(f => f.endsWith('.js'))) if (!scripts.includes(f)) scripts.push(f);
   for (const file of scripts) new vm.Script(fs.readFileSync(path.join(root, file), 'utf8'), { filename: file });
   for (const file of ['app/index.html', 'app/hud.html']) {
     const html = fs.readFileSync(path.join(root, file), 'utf8');
@@ -23,11 +36,30 @@ test('syntaxe de tous les scripts de production et des pages', () => {
   }
 });
 
+test('interface découpée : index.html charge ses styles et scripts, rien en ligne, tout est livré', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'app', 'index.html'), 'utf8');
+  assert.doesNotMatch(html, /<style[\s>]/, 'pas de bloc <style> : les styles vont dans le dossier de leur fonctionnalité');
+  for (const m of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) assert.equal(m[1].trim(), '', 'pas de script en ligne : le code va dans le dossier de sa fonctionnalité');
+  const fichiers = fichiersInterface();
+  assert.ok(fichiers.length > 30);
+  for (const f of fichiers) assert.ok(fs.existsSync(path.join(root, f)), f + ' manque');
+  // le démarrage passe en dernier, après toutes les fonctions
+  assert.equal(fichiers.filter(f => f.endsWith('.js')).at(-1), 'app/demarrage.js');
+  assert.ok(html.indexOf('<script src="demarrage.js">') < html.indexOf('<script src="game-content-ui.js">'));
+  // chaque dossier de fonctionnalité est chargé, et livré dans l'installeur (app/**/*)
+  for (const d of fs.readdirSync(path.join(root, 'app', 'fonctionnalites'))) assert.ok(fichiers.some(f => f.startsWith(`app/fonctionnalites/${d}/`)), d + ' non chargé');
+  assert.ok(require('../package.json').build.files.includes('app/**/*'));
+  assert.ok(fs.existsSync(path.join(root, 'app', 'LISEZ-MOI.md')));
+});
+
 test('la feuille de route sépare camion / car et détaille frais, revenu et solde', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  // renderRoadmap et ce qui la suit (onglets, historique détaillé, montants) : fin de feuille-de-route.js
+  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'fonctionnalites', 'feuille-de-route', 'feuille-de-route.js'), 'utf8');
   const start = html.indexOf('function renderRoadmap(sn){');
-  const end = html.indexOf('\nfunction renderPlugin(', start);
+  const end = html.length;
   assert.ok(start >= 0 && end > start);
+  assert.match(html.slice(start), /\nfunction moneyByGame\(/);
   const ids = ['routeConnection', 'routeMission', 'routeStats', 'routeExpenseTotal', 'routeExpenses', 'routeFuelStops', 'routeHistory', 'routeCountTruck', 'routeCountBus'];
   const nodes = new Map(ids.map(id => [id, { innerHTML: '', textContent: '' }]));
   const context = {
@@ -89,8 +121,36 @@ test('la feuille de route sépare camion / car et détaille frais, revenu et sol
   assert.match(busHtml, /-300 €/);
 });
 
+test('Feuille de route (bêta 5) : 4 onglets accessibles, Ma carrière fusionnée sans perte, calendrier et rapports', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
+  assert.doesNotMatch(html, /id="v-trajets"/, 'Ma carrière retirée (fusionnée)');
+  for (const o of ['trajets', 'calendrier', 'semaine', 'mois']) {
+    assert.match(html, new RegExp(`role="tab" id="frTab-${o}"[^>]*aria-controls="frPan-${o}"`));
+    assert.match(html, new RegExp(`role="tabpanel" id="frPan-${o}" aria-labelledby="frTab-${o}"`));
+  }
+  assert.match(html, /id="totals"/, 'totaux de carrière gardés'); assert.match(html, /data-rt="all"/, 'filtre Tous');
+  const fr = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/feuille-de-route.js'), 'utf8');
+  for (const champ of ['Km chargés', 'Km à vide', 'Km réels', 'Km en course', 'Livraisons', 'Revenus', 'Dépenses', 'Carburant consommé', 'Amendes', '<span>Mode</span>']) assert.ok(fr.includes(champ), champ);
+  // Statistiques d'une période : calcul vérifié
+  const ctx = { fmt: n => String(n), km: n => n + ' km', escM: x => x, routeStatus: () => ({ label: 'Livré' }), document: {}, window: {} };
+  vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8') + ';this.frStatsPeriode=frStatsPeriode;', ctx);
+  const t = new Date(2026, 10, 10, 12).getTime();
+  const J = { days: { '2026-11-10': { loaded: 300, empty: 100 }, '2026-12-01': { loaded: 50, empty: 0 } }, jobs: [
+    { ended: t, status: 'livrée', distance: 380, fuelUsed: 100, mode: 'course', damage: 0.1, revenue: 1000, expenses: 100, game: 'ets2' },
+    { ended: t, status: 'livrée', missionType: 'bus', passengers: 30, distance: 20, fuelUsed: 8, mode: 'réel', game: 'ats', revenue: 500 },
+    { ended: new Date(2026, 11, 1).getTime(), status: 'livrée', distance: 50 }] };
+  const st = ctx.frStatsPeriode(J, new Date(2026, 10, 1).getTime(), new Date(2026, 11, 1).getTime());
+  assert.equal(st.trajets, 2); assert.equal(st.livraisons, 1); assert.equal(st.services, 1); assert.equal(st.voyageurs, 30);
+  assert.equal(st.km, 400); assert.equal(st.carburant, 108); assert.equal(st.course, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(st.revenus)), { ets2: 1000, ats: 500 }, 'euros et dollars jamais additionnés');
+  assert.equal(Math.round(st.conso), 27);
+  const vide = ctx.frStatsPeriode({ days: {}, jobs: [] }, 0, 1);
+  assert.equal(vide.conso, null); assert.equal(vide.degatsMoy, null, 'aucune valeur inventée sans données');
+});
+
 test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const button = html.match(/<button id="profileChip"([^>]*)>/);
   assert.ok(button);
   assert.match(button[1], /\bdisabled\b/);
@@ -99,7 +159,7 @@ test('le raccourci Profil reste indisponible au lieu d’ouvrir Options', () => 
 });
 
 test('Options : catégories façon réglages de jeu, chaque réglage dans la bonne catégorie', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const cat = (k) => { const m = html.match(new RegExp(`<div class="optcat" id="oc-${k}"[\\s\\S]*?(?=<div class="optcat" id="oc-|</section>)`)); assert.ok(m, k); return m[0]; };
   const nav = html.match(/<nav class="optnav" id="optNav"[\s\S]*?<\/nav>/)[0];
   for (const k of ['general', 'conduite', 'jeu', 'affichage', 'acces', 'integrations', 'maj', 'aide']) {
@@ -124,11 +184,12 @@ test('Options : catégories façon réglages de jeu, chaque réglage dans la bon
 });
 
 test('barre globale Game / News / Map / Settings / Support et page de choix du jeu', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const rail = html.match(/<nav class="rail" id="rail"[\s\S]*?<\/nav>/)[0];
   const order = [...rail.matchAll(/data-rail="(\w+)"/g)].map(m => m[1]);
-  assert.deepEqual(order, ['game', 'news', 'map', 'settings', 'support']);
-  assert.doesNotMatch(rail, /is-soon/);                     // jamais masqués avec les pages en préparation
+  assert.deepEqual(order, ['game', 'news', 'market', 'map', 'settings', 'support']);
+  // seule la Marketplace (en préparation) suit l'interrupteur ; les 5 autres ne sont jamais masquées
+  assert.deepEqual([...rail.matchAll(/class="railbtn is-soon" data-rail="(\w+)"/g)].map(m => m[1]), ['market']);
   const launcher = html.slice(html.indexOf('<div id="launcher">'), html.indexOf('<div id="modal"'));
   assert.match(launcher, /data-game="ets2"/); assert.match(launcher, /data-game="ats"/);
   assert.doesNotMatch(launcher, /data-open="(hub|market|atelier)"/); // plus de choix d'espace sur l'accueil
@@ -139,9 +200,91 @@ test('barre globale Game / News / Map / Settings / Support et page de choix du j
   assert.doesNotMatch(html, />Truck Tools</);
 });
 
+test('refonte (bêta 5) : contrastes WCAG des tokens en sombre, clair et contraste élevé (tools/contrastes.mjs)', () => {
+  const { spawnSync } = require('node:child_process');
+  const root = path.resolve(__dirname, '..');
+  const r = spawnSync(process.execPath, [path.join(root, 'tools', 'contrastes.mjs')], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+test('refonte (bêta 5) : tokens et police branchés, aucune couleur / taille / graisse en dur dans commun/, police locale', () => {
+  const root = path.resolve(__dirname, '..');
+  const lire = f => fs.readFileSync(path.join(root, f), 'utf8');
+  const html = lire('app/index.html');
+  assert.match(html, /<link rel="stylesheet" href="commun\/tokens\.css">\s*<link rel="stylesheet" href="commun\/typographie\.css">/, 'tokens et typographie chargés en premier');
+  assert.ok(html.indexOf('commun/tokens.css') < html.indexOf('commun/accessibilite.css'));
+  assert.match(html, /<body class="tch-typo">/);
+  assert.ok(!fs.existsSync(path.join(root, 'app/commun/theme-actuel.css')), 'ancien fichier de couleurs supprimé');
+  assert.doesNotMatch(html, /data-theme-btn="base"/, 'thème « De base » retiré');
+  for (const f of fs.readdirSync(path.join(root, 'app/commun')).filter(f => f.endsWith('.css') && f !== 'tokens.css')) {
+    const src = lire('app/commun/' + f).replace(/\/\*[\s\S]*?\*\//g, '');
+    assert.ok(!/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i.test(src), `${f} : couleur codée en dur`);
+    for (const m of src.matchAll(/font-weight:\s*([^;}]+)/g)) assert.ok(/^var\(--fw-|^inherit/.test(m[1].trim()) || (f === 'typographie.css' && /^\d/.test(m[1])), `${f} : graisse en dur (${m[1]})`);
+    for (const m of src.matchAll(/font-size:\s*([^;}]+)/g)) assert.ok(/^var\(--fs-|^inherit|^\d*\.?\d+(rem|em|%)$/.test(m[1].trim()) || f === 'typographie.css', `${f} : taille en dur (${m[1]})`);
+    assert.ok(!/https?:\/\//.test(src), `${f} : appel réseau`);
+  }
+  // aucune graisse au-dessus de 700 dans l'interface (le HUD en jeu, hud.html et hud-*.css, ne change pas)
+  const fichiers = [];
+  const parcourir = d => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (!['vendor', 'polices'].includes(e.name)) parcourir(p); } else if (/\.(css|js|html)$/.test(e.name) && !/^hud[-.]/.test(e.name) && e.name !== 'apercu-refonte.html') fichiers.push(p); } };
+  parcourir(path.join(root, 'app'));
+  for (const f of fichiers) for (const m of fs.readFileSync(f, 'utf8').matchAll(/font-weight:\s*(\d{3})/g)) assert.ok(Number(m[1]) <= 700, `${path.relative(root, f)} : graisse ${m[1]}`);
+  for (const m of lire('app/commun/typographie.css').matchAll(/url\('([^']+)'\)/g)) assert.ok(fs.existsSync(path.join(root, 'app/commun', m[1])), `police introuvable : ${m[1]}`);
+  assert.ok(fs.existsSync(path.join(root, 'app/polices/mona-sans/OFL.txt')), 'licence de la police livrée');
+  const pkg = require('../package.json');
+  assert.ok(pkg.build.files.includes('app/**/*'), 'la police (app/polices) est incluse dans l’installeur');
+});
+
+test('refonte (bêta 5) : menu En jeu / Entreprise, espace Entreprise sur le modèle des Paramètres', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
+  const hub = html.slice(html.indexOf('id="navHub"'), html.indexOf('id="navEntreprise"'));
+  const vues = [...hub.matchAll(/data-view="([^"]+)"/g)].map(m => m[1]);
+  assert.deepEqual(vues, ['accueil', 'cartePerso', 'hud', 'entreprise'], 'Hub : Accueil, Carte, HUD puis une seule entrée Entreprise');
+  assert.match(hub, />En jeu</);
+  const ent = html.slice(html.indexOf('id="navEntreprise"'), html.indexOf('</nav>', html.indexOf('id="navEntreprise"')));
+  assert.match(ent, /id="entBack"/);
+  assert.deepEqual([...ent.matchAll(/data-view="([^"]+)"/g)].map(m => m[1]), ['entreprise', 'feuilleRoute', 'flotte', 'garages', 'finances', 'telemetrie']);
+  for (const v of ['entreprise', 'flotte', 'garages', 'finances']) assert.match(html, new RegExp(`<section id="v-${v}"`));
+  const nav = fs.readFileSync(path.join(root, 'app/commun/navigation.js'), 'utf8');
+  assert.match(nav, /ENT_VIEWS = \['entreprise', 'feuilleRoute', 'flotte', 'garages', 'finances', 'telemetrie'\]/);
+  assert.doesNotMatch(nav, /NAV_SNAP/, 'plus de zone morte au bord du menu');
+  const dem = fs.readFileSync(path.join(root, 'app/demarrage.js'), 'utf8');
+  for (const ev of ['pointercancel', 'lostpointercapture', 'dblclick', 'ArrowLeft']) assert.ok(dem.includes(ev), ev);
+  assert.match(dem, /e\.altKey && e\.key === 'ArrowLeft'/, 'Alt + ← revient au menu principal');
+});
+
+test('Entreprise (bêta 5) : lecture seule de la sauvegarde, aucun « Bientôt », états vides honnêtes', () => {
+  const root = path.resolve(__dirname, '..');
+  const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/entreprise/entreprise.js'), 'utf8');
+  assert.doesNotMatch(js, /Bientôt|bientôt/);
+  const appels = [...js.matchAll(/window\.tel\.([\w.]+)\(/g)].map(m => m[1]);
+  assert.deepEqual([...new Set(appels)], ['atelier.summary'], 'seule la lecture du résumé de sauvegarde est utilisée');
+  assert.match(js, /Choisis un profil dans l’Atelier/);
+  assert.match(js, /ENT_USURE_ALERTE = 0\.30/);
+  for (const v of ['Argent', 'Prêts', 'Garages', 'Flotte', 'Ce mois-ci']) assert.ok(js.includes(v), v);
+});
+
+test('refonte (bêta 5) : bord du menu, suit la souris, repli au relâchement, hystérésis', () => {
+  const { largeurMenu, finGlissement, NAV_HYST } = require('../app/commun/menu-largeur.js');
+  const o = { min: 200, max: 380 };
+  assert.deepEqual(largeurMenu(260, false, o), { etat: 'large', largeur: 260 }, 'suit la souris');
+  assert.deepEqual(largeurMenu(201, false, o), { etat: 'large', largeur: 201 }, 'aucune zone morte jusqu’au minimum');
+  assert.deepEqual(largeurMenu(500, false, o), { etat: 'large', largeur: 380 }, 'borné au maximum');
+  assert.deepEqual(largeurMenu(199, false, o), { etat: 'replier', largeur: 200 }, 'sous le minimum : annonce, pas de saut');
+  assert.deepEqual(largeurMenu(40, false, o), { etat: 'replier', largeur: 200 });
+  assert.equal(finGlissement('replier'), 'reduit', 'repli seulement au relâchement');
+  assert.equal(finGlissement('large'), 'large');
+  assert.equal(NAV_HYST, 24);
+  assert.deepEqual(largeurMenu(210, true, o), { etat: 'reduit', largeur: null }, 'menu réduit : reste réduit près du seuil');
+  assert.deepEqual(largeurMenu(223, true, o), { etat: 'reduit', largeur: null });
+  assert.deepEqual(largeurMenu(224, true, o), { etat: 'large', largeur: 224 }, 'redéplie au-delà de NAV_MIN + 24');
+  // pas de clignotement : un aller-retour de quelques pixels autour du minimum ne change pas l'état
+  let reduit = true; for (const x of [215, 222, 218, 221]) { const r = largeurMenu(x, reduit, o); reduit = r.etat === 'reduit'; assert.ok(reduit); }
+});
+
 test('les profils HUD camion et bus restent indépendants et migrent les anciens réglages', () => {
   const defaults = {
-    look: { theme: 'base' },
+    look: { theme: 'systeme' },
     hud: {
       truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 },
       bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }
@@ -166,7 +309,7 @@ test('les profils HUD camion et bus restent indépendants et migrent les anciens
 });
 
 test('page HUD épurée : activateur et aperçus ; réglages dans Options → HUD', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   const hud = html.slice(html.indexOf('<section id="v-hud"'), html.indexOf('</section>', html.indexOf('<section id="v-hud"')));
   for (const id of ['hudOn', 'hudTestTruck', 'hudTestBus', 'hudOpenOptions']) assert.match(hud, new RegExp(`id="${id}"`));
   assert.match(hud, /data-hud-preview="truck"/); assert.match(hud, /data-hud-preview="bus"/);
@@ -177,7 +320,7 @@ test('page HUD épurée : activateur et aperçus ; réglages dans Options → HU
 });
 
 test('le profil de carrière actif est indiqué dans les réglages HUD', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /Profil actif en jeu/);
   assert.match(html, /ne change pas à la sélection d’une mission camion/);
   assert.match(html, /id="hudVehicleDetected"[^>]*role="status"/);
@@ -212,6 +355,58 @@ test('les seuils kilométriques sont bornés et entiers', () => {
   assert.throws(() => validateSettingsPatch({ limitTruck: 59 }), /entre 60 et 150/);
   assert.throws(() => validateSettingsPatch({ limitCar: 151 }), /entre 60 et 150/);
   assert.throws(() => validateSettingsPatch({ racePct: 2.5 }), /nombre entier entre 0 et 100/);
+});
+
+test('réglages : chaque clé envoyée par l’interface est vérifiée (S9)', () => {
+  // ce que l'interface envoie vraiment passe
+  const ok = [{ pseudo: ' James ', vehicleType: 'car', limitTruck: 100, limitCar: 110, racePct: 5 }, { units: 'imperial' }, { showSoon: true }, { autoTelemetry: false },
+    { atelier: true }, { steamId: '76561198000000000' }, { discordClientId: '' }, { look: { theme: 'clair', accent: '#4FD1A5' } }, { modules: { hud: true } },
+    { hud: { truck: { style: 'navigation', position: 'bas', logo: true, opacity: 82, scale: 120, boxes: { route: true, cargo: false } } } }, { hud: { bus: { opacity: 60 } } }];
+  for (const p of ok) assert.doesNotThrow(() => validateSettingsPatch(p), JSON.stringify(p));
+  assert.equal(validateSettingsPatch({ pseudo: ' James ' }).pseudo, 'James');
+  // profils du HUD : clés inconnues retirées
+  assert.deepEqual(validateSettingsPatch({ hud: { truck: { scale: 80, pirate: 'x' } } }).hud, { truck: { scale: 80 } });
+  assert.deepEqual(validateSettingsPatch({ look: { theme: 'clair', ancien: 1 } }).look, { theme: 'clair' });
+  const ko = [null, [], 'x', { inconnu: 1 }, { pseudo: 3 }, { pseudo: 'x'.repeat(33) }, { pseudo: '<img>' }, { vehicleType: 'avion' }, { showSoon: 'oui' },
+    { autoTelemetry: 1 }, { atelier: null }, { units: 'km' }, { steamId: 7656 }, { discordClientId: 'x'.repeat(21) }, { look: 'clair' },
+    { modules: { hud: 'oui' } }, { modules: { autre: true } }, { hud: [] }, { hud: { car: {} } }, { hud: { truck: { position: 'gauche' } } },
+    { hud: { truck: { opacity: 500 } } }, { hud: { bus: { scale: 1.5 } } }, { hud: { truck: { boxes: { route: 'oui' } } } }, { hud: { truck: { style: '<b>' } } }];
+  for (const p of ko) assert.throws(() => validateSettingsPatch(p), Error, JSON.stringify(p));
+  assert.throws(() => validateSettingsPatch(null), /Réglages invalides/);
+  // main.js utilise bien la copie vérifiée
+  assert.match(fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8'), /patch = validateSettingsPatch\(patch\);/);
+});
+
+test('réglages : un reglages.json abîmé n’est jamais écrasé, écriture atomique (G5, G12)', () => {
+  const { lireReglages, ecrireReglages } = require('../src/settings');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tch-reglages-'));
+  const file = path.join(dir, 'reglages.json');
+  try {
+    assert.deepEqual(lireReglages(file), { saved: {}, etat: 'absent' });
+    ecrireReglages(file, { pseudo: 'James' });
+    assert.ok(!fs.existsSync(file + '.tmp'), 'pas de fichier temporaire laissé');
+    assert.deepEqual(lireReglages(file), { saved: { pseudo: 'James' }, etat: 'ok' });
+    assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir, 'reglages.bak.json'), 'utf8')), { pseudo: 'James' }, 'copie de secours du jour');
+    // la copie de secours n'est refaite qu'une fois par jour
+    ecrireReglages(file, { pseudo: 'Jo' }); lireReglages(file);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'reglages.bak.json'), 'utf8')).pseudo, 'James');
+    // fichier abîmé : mis de côté (jamais effacé), copie de secours reprise
+    fs.writeFileSync(file, '{"pseudo": "Jo", "look": {');
+    const r = lireReglages(file, Date.UTC(2026, 10, 27, 12));
+    assert.equal(r.etat, 'restaure'); assert.equal(r.saved.pseudo, 'James');
+    assert.ok(!fs.existsSync(file));
+    assert.equal(fs.readFileSync(r.fichierAbime, 'utf8'), '{"pseudo": "Jo", "look": {');
+    assert.match(path.basename(r.fichierAbime), /^reglages\.corrompu-2026-11-27T12-00-00-000Z\.json$/);
+    // abîmé et pas de copie de secours : réglages par défaut, fichier abîmé gardé
+    fs.rmSync(path.join(dir, 'reglages.bak.json'));
+    fs.writeFileSync(file, 'null');
+    const r2 = lireReglages(file, Date.UTC(2026, 10, 27, 13));
+    assert.equal(r2.etat, 'defaut'); assert.deepEqual(r2.saved, {}); assert.ok(fs.existsSync(r2.fichierAbime));
+    // main.js : plus aucune écriture directe de reglages.json
+    const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
+    assert.match(main, /function saveSettings\(\) \{\n  ecrireReglages\(settingsFile\(\), settings\);/);
+    assert.match(main, /const lu = lireReglages\(settingsFile\(\)\);/);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
 test('temps jeu, temps réel, délai dépassé et arrondi', () => {
@@ -574,7 +769,9 @@ test('notes de version : numéros affichés, rubriques et bêta', () => {
   assert.equal(va('0.13.27'), '0.12.0.3');
   assert.equal(va('0.13.28'), '0.12.0.4');
   assert.equal(va('0.13.34'), '0.12.0.4');
-  assert.equal(va('0.13.35'), '0.12.0.5');
+  assert.equal(va('0.13.35'), '0.12.0.4', 'renumérotation officielle : 0.13.35 rejoint la 0.12.0.4');
+  assert.equal(va('0.13.36'), '0.12.0.5');
+  assert.equal(va('0.13.37'), '0.12.0.6');
   // bêtas de la nouvelle interface regroupées en 4
   assert.equal(va('0.13.35-beta.1'), '0.12.0.5 bêta 1');
   assert.equal(va('0.13.35-beta.2'), '0.12.0.5 bêta 1');
@@ -589,7 +786,7 @@ test('notes de version : numéros affichés, rubriques et bêta', () => {
   const pkg = require('../package.json');
   // la série 0.12 est continue, sans trou
   const serie = w.NOTES_VERSION.map(n => n.version).filter(x => x.startsWith('0.12'));
-  assert.deepEqual([...serie], ['0.12.0.5', '0.12.0.4', '0.12.0.3', '0.12.0.2', '0.12.0.1', '0.12.0']);
+  assert.deepEqual([...serie], ['0.12.0.4', '0.12.0.3', '0.12.0.2', '0.12.0.1', '0.12.0'], 'la note 0.12.0.5 officielle n’entre qu’à la publication officielle');
   const types = new Set(w.NOTES_RUBRIQUES.map(([k]) => k));
   for (const n of [...w.NOTES_VERSION, ...w.NOTES_BETA]) for (const [t] of n.notes) assert.ok(types.has(t), n.version + ' : ' + t);
   // la version installée a toujours sa note
@@ -642,11 +839,15 @@ test('bêta : unités US pour ATS dans le HUD', () => {
   assert.match(hud, /UNITS\.set\(d\.units\)/);
 });
 
-test('bêta : News, Marketplace cachée, paramètres généraux / du jeu, retour au menu', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+test('bêta : News, Marketplace en préparation (barre de gauche), paramètres généraux / du jeu, retour au menu', () => {
+  const html = lireInterface();
   assert.match(html, /<section id="v-news"/);
   assert.match(html, /if \(t === 'news'\) go\('news', 'news'\);/);
-  assert.match(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/);
+  assert.doesNotMatch(html, /\[data-side-btn="market"\],#navMarket\{display:none!important\}/, 'plus de blocage CSS forcé');
+  assert.match(html, /<button class="railbtn is-soon" data-rail="market"/, 'entrée Marketplace globale, suit « Pages en préparation »');
+  assert.match(html, /<button class="spacetile is-soon" data-side-btn="market"/, 'raccourci depuis les espaces de jeu');
+  assert.match(html, /else if \(t === 'market'\) openMarketplace\(\);/);
+  assert.match(html, /mkGame = activeGame === 'ats' \? 'ATS' : 'ETS2';/);
   assert.match(html, /const OPT_GAME = \['jeu', 'conduite', 'hud'\];/);
   assert.match(html, /if \(on\) resetSpaces\(\);/);
   assert.match(html, /Quitter sans appliquer/);
@@ -665,7 +866,7 @@ test('bêta 4 : outils par jeu et carte du jeu dans son espace', () => {
   assert.equal(gs.setGameKey(st, 'ats', 'units', 'metric'), false, 'seuls certains réglages se changent à distance');
   gs.switchGame(st, 'ats'); gs.setGameKey(st, 'ats', 'atelier', true); gs.switchGame(st, 'ets2');
   assert.equal(st.atelier, false); assert.equal(st.games.ats.atelier, true);
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /function mapLocked\(\)\{ return typeof railTab === 'undefined' \|\| railTab !== 'map'; \}/);
   assert.match(html, /if \(mapLocked\(\)\) mapSetGame\(activeGame === 'ats' \? 'ats' : 'ets2'\);/);
   assert.match(html, /function toolsName\(g\)\{ return \(g \|\| activeGame\) === 'ats' \? 'Truck & Road Trip Tools' : 'Truck & Coach Tools'; \}/);
@@ -764,16 +965,63 @@ test('sécurité : fenêtres verrouillées, aucune permission web, outils et che
 });
 
 test('bêta 5 : mode Paramètres (dossiers dans la barre) et recherche', () => {
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   for (const f of ['back', 'compte', 'appli', 'jeu', 'connexions', 'donnees', 'aide']) assert.match(html, new RegExp(`data-srail="${f}"`));
   assert.match(html, /html\[data-rail="settings"\] \.rail-tabs:not\(\.rail-settings\)\{display:none\}/);
   assert.match(html, /id="optQuery" type="search"/);
   assert.match(html, /function runOptSearch\(\)/);
-  for (const c of ['notifs', 'donnees']) assert.match(html, new RegExp(`<div class="optcat is-soon" id="oc-${c}"`));
+  // Notifications et Données & confidentialité : fabriquées par fonctionnalites/parametres/bientot/ (tâche 5)
+  for (const c of ['notifs', 'donnees']) assert.match(html, new RegExp(`id: '${c}', dossier:`));
   // chaque catégorie appartient à un dossier
-  const cats = [...html.matchAll(/<div class="optcat[^"]*" id="oc-([a-z]+)"/g)].map(m => m[1]);
+  const cats = [...html.matchAll(/<div class="optcat[^"]*" id="oc-([a-z]+)"/g), ...html.matchAll(/\bid: '([a-z]+)', dossier:/g)].map(m => m[1]);
   const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(html)[1];
   for (const c of cats) assert.match(folders, new RegExp(`'${c}'`), c);
+});
+
+test('bêta 5 : pages de paramètres « Bientôt disponible » (prévues, non fonctionnelles)', () => {
+  const vm = require('node:vm'), root = path.resolve(__dirname, '..');
+  const dir = path.join(root, 'app', 'fonctionnalites', 'parametres', 'bientot');
+  const html = fs.readFileSync(path.join(root, 'app', 'index.html'), 'utf8');
+  // chargées par index.html, rien dans index.html lui-même
+  for (const f of fs.readdirSync(dir)) assert.match(html, new RegExp(`fonctionnalites/parametres/bientot/${f.replace('.', '\\.')}`), f + ' non chargé');
+  assert.doesNotMatch(html, /id="oc-(notifs|donnees|gestion|raccourcis|langue|audio|avance)"/);
+  const ctx = {};
+  vm.createContext(ctx);
+  for (const f of fs.readdirSync(dir).filter(f => f.startsWith('page-'))) vm.runInContext(fs.readFileSync(path.join(dir, f), 'utf8'), ctx);
+  const src = fs.readFileSync(path.join(dir, 'bientot.js'), 'utf8');
+  vm.runInContext(src + '\nthis.pages = PB_PAGES(); this.ajouts = PB_AJOUTS();', Object.assign(ctx, { document: {}, store: {} }));
+  const pages = Object.fromEntries(ctx.pages.map(p => [p.id, p]));
+  // pages demandées, chacune dans un dossier existant des Paramètres généraux
+  const folders = /const SET_FOLDERS = \{([\s\S]*?)\};/.exec(fs.readFileSync(path.join(root, 'app', 'fonctionnalites', 'parametres', 'parametres.js'), 'utf8'))[1];
+  for (const id of ['notifs', 'donnees', 'gestion', 'raccourcis', 'langue', 'audio', 'avance']) {
+    assert.ok(pages[id], id + ' manque');
+    assert.match(folders, new RegExp(`${pages[id].dossier}: \\[[^\\]]*'${id}'`), id + ' pas dans son dossier');
+    assert.ok(pages[id].groupes.length >= 2 && pages[id].icone.length, id);
+  }
+  assert.equal(pages.donnees.dossier, 'donnees');
+  const titres = p => p.groupes.flatMap(g => [g.titre, ...g.reglages.map(r => r.titre + ' ' + r.desc)]).join(' | ');
+  for (const mot of [/stocké/, /Exporter/, /Effacer/, /Sauvegarde/, /anonyme/]) assert.match(titres(pages.donnees), mot);
+  for (const mot of [/Profils de jeu/, /Sauvegardes/, /Stockage/, /Cache de la carte/, /Réinitialisation/]) assert.match(titres(pages.gestion), mot);
+  for (const mot of [/Journaux/, /Diagnostic/, /Mode développeur/]) assert.match(titres(pages.avance), mot);
+  // Compte et Mises à jour : groupes ajoutés aux pages existantes
+  const ajouts = Object.fromEntries(ctx.ajouts.map(a => [a.page, a]));
+  for (const mot of [/Avatar/, /Pseudo/, /Rang/, /Clé/, /VTC TruckersMP/, /Se connecter/, /Se déconnecter/]) assert.match(titres(ajouts.compte), mot);
+  for (const mot of [/Canal/, /automatiquement/]) assert.match(titres(ajouts.maj), mot);
+  // tous les contrôles sont désactivés, sauf le numéro de version et « Masquer » du mode développeur
+  const actifs = [...ctx.pages, ...ctx.ajouts].flatMap(p => p.groupes).flatMap(g => g.reglages).flatMap(r => [].concat(r.ctl)).filter(c => c.actif);
+  assert.deepEqual(actifs.map(c => c.id), ['pbDevMasquer']);
+  // mode développeur : caché par défaut, 7 clics, ne coupe aucune protection
+  const dev = pages.avance.groupes.find(g => g.id === 'pbDevGroupe');
+  assert.ok(dev && dev.cache, 'mode développeur caché par défaut');
+  assert.match(dev.note, /ne désactive jamais une protection de sécurité/);
+  assert.match(src, /const PB_DEV_CLICS = 7;/);
+  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\/|\/\/ .*$/gm, ''), /innerHTML|window\.tel/, 'pages fabriquées sans innerHTML et sans appel au noyau');
+  assert.doesNotMatch(titres({ groupes: [dev] }), /sandbox|bac à sable désactiv|contextIsolation|webSecurity|DevTools/i);
+  // mention « Bientôt disponible » et recherche
+  assert.match(src, /'Bientôt disponible'/);
+  const p = fs.readFileSync(path.join(root, 'app', 'fonctionnalites', 'parametres', 'parametres.js'), 'utf8');
+  assert.match(p, /' · Bientôt disponible'/);
+  assert.match(fs.readFileSync(path.join(root, 'app', 'demarrage.js'), 'utf8'), /construirePagesBientot\(\);[^\n]*\n[\s\S]*document\.querySelectorAll\('#optNav \[data-oc\]'\)\.forEach\(b => \{\n    const c = document\.createElement/, 'pages construites avant la recopie du menu');
 });
 
 test('TCH Map : projection du jeu vers longitude / latitude (villes réelles)', async () => {
@@ -829,7 +1077,7 @@ test('TCH Map : séparée de l’appli (aucun code partagé) et livrée avec ell
     assert.doesNotMatch(t, /require\(['"]\.\.\/(src|app)|from ['"]\.\.\/\.\.\/(src|app)/, f + ' : pas de code de l’appli');
   }
   assert.ok(fs.readFileSync(path.resolve(__dirname, '..', 'tch-map', 'LICENSE'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /frame-src http:\/\/127\.0\.0\.1:\*/);
   assert.match(html, /<iframe id="tchFrame"[^>]*sandbox="allow-scripts allow-same-origin allow-popups"/);
 });
@@ -906,7 +1154,7 @@ test('Mods & sauvegarde : analyse (familles, versions, manifeste) et programme s
   assert.doesNotMatch(t, /writeFile|rmSync|unlink|rename/, 'lecture seule');
   const pkg = require('../package.json');
   assert.ok(pkg.build.files.includes('tch-mods/**/*'));
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /data-view="at-mods"/);
   assert.match(html, /Ta sauvegarde en a besoin : ne pas retirer/);
 });
@@ -923,7 +1171,7 @@ test('TCH Map : préparation parallèle, économe et automatique', () => {
   const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
   assert.match(main, /carteJeu\.auto\(\)/);
   assert.match(main, /TCH_OUVRIERS/);
-  const html = fs.readFileSync(path.resolve(__dirname, '..', 'app', 'index.html'), 'utf8');
+  const html = lireInterface();
   assert.match(html, /tchPrepMini/);
 });
 
@@ -951,4 +1199,45 @@ test('Carte du jeu : le lancement automatique reste une fonction (plus d’erreu
   const main = fs.readFileSync(path.resolve(__dirname, '..', 'main.js'), 'utf8');
   assert.doesNotMatch(main, /this\.auto\s*=/, 'aucune valeur ne doit écraser la fonction auto()');
   assert.match(main, /this\.lanceAuto = !!opts\.auto/);
+});
+
+test('contrat du noyau : chaque fonction du pont a son point d’entrée et figure dans CONTRAT-NOYAU.md', () => {
+  const root = path.resolve(__dirname, '..');
+  // On charge preload.js avec un faux Electron qui note le canal utilisé par chaque fonction du pont.
+  let bridge = null, last = null;
+  const ipcRenderer = {
+    invoke: (ch) => { last = { kind: 'appel', ch }; return Promise.resolve(); },
+    on: (ch) => { last = { kind: 'événement', ch }; },
+    removeListener: () => {},
+  };
+  const electron = { contextBridge: { exposeInMainWorld: (name, api) => { if (name === 'tel') bridge = api; } }, ipcRenderer };
+  vm.runInNewContext(fs.readFileSync(path.join(root, 'preload.js'), 'utf8'), { require: (m) => { assert.equal(m, 'electron'); return electron; } });
+  assert.ok(bridge, 'preload.js doit exposer window.tel');
+  const fonctions = [];
+  const parcourir = (obj, prefixe) => {
+    for (const [k, v] of Object.entries(obj)) {
+      const nom = prefixe ? `${prefixe}.${k}` : k;
+      if (typeof v === 'function') { last = null; v(() => {}, undefined, undefined); assert.ok(last, `${nom} doit passer par ipcRenderer`); fonctions.push({ nom, ...last }); }
+      else if (v && typeof v === 'object') parcourir(v, nom);
+    }
+  };
+  parcourir(bridge, '');
+  assert.ok(fonctions.length >= 77, `au moins 77 fonctions attendues, ${fonctions.length} trouvées`);
+  const main = fs.readFileSync(path.join(root, 'main.js'), 'utf8');
+  const echap = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const f of fonctions) {
+    if (f.kind === 'appel') assert.match(main, new RegExp(`ipcMain\\.handle\\(\\s*'${echap(f.ch)}'`), `${f.nom} : aucun ipcMain.handle('${f.ch}') dans main.js`);
+    else assert.match(main, new RegExp(`\\.send\\(\\s*'${echap(f.ch)}'`), `${f.nom} : aucun envoi webContents.send('${f.ch}') dans main.js`);
+  }
+  // Chaque fonction du pont est décrite dans le contrat (une ligne de tableau qui commence par son nom)
+  const contrat = fs.readFileSync(path.join(root, 'CONTRAT-NOYAU.md'), 'utf8');
+  for (const f of fonctions) {
+    const ligne = contrat.split('\n').find(l => new RegExp('^\\| (⚠ )?`' + echap(f.nom) + '\\(').test(l));
+    assert.ok(ligne, `${f.nom} manque dans CONTRAT-NOYAU.md`);
+    assert.ok(ligne.includes('`' + f.ch + '`'), `${f.nom} : le canal « ${f.ch} » n’est pas celui indiqué dans CONTRAT-NOYAU.md`);
+    assert.ok(!/à compléter/.test(ligne), `${f.nom} : ligne encore « à compléter » dans CONTRAT-NOYAU.md`);
+  }
+  // Et aucun canal du noyau n’existe sans fonction du pont (sauf ceux du noyau vers l’interface)
+  const canaux = new Set(fonctions.map(f => f.ch));
+  for (const m of main.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)) assert.ok(canaux.has(m[1]), `canal « ${m[1]} » dans main.js sans fonction dans preload.js`);
 });

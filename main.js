@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { Telemetry } = require('./src/telemetry');
-const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch } = require('./src/settings');
+const { mergeSavedSettings, mergeHudSettings, validateSettingsPatch, lireReglages, ecrireReglages } = require('./src/settings');
 const installer = require('./src/plugin-installer');
 const { Atelier } = require('./src/atelier');
 const carte = require('./src/map');
@@ -60,26 +60,29 @@ const LINKS = {
 };
 
 /* ---------- Réglages ---------- */
-const DEFAULTS = { atelier: false, showSoon: false, autoTelemetry: true, look: { theme: 'base', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, coachVehicles: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
+const DEFAULTS = { atelier: false, showSoon: false, autoTelemetry: true, look: { theme: 'systeme', accent: 'defaut', vision: 'normale', zoom: '100', contrast: false, motion: false }, vehicleType: 'camion', limitTruck: 100, limitCar: 110, racePct: 5, customGamePaths: [], mapTilesets: {}, coachVehicles: [], pseudo: '', steamId: '', discordClientId: '', modules: { hud: false }, hud: { truck: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 }, bus: { style: 'navigation', position: 'haut', logo: true, opacity: 82, scale: 100 } }, addons: { tablette: false, gps: false } };
 const settingsFile = () => path.join(app.getPath('userData'), 'reglages.json');
 let settings = { ...DEFAULTS };
 function sanitizeLook(l) {
   const pick = (v, list, d) => list.includes(String(v)) ? String(v) : d;
   const accent = /^#[0-9a-f]{6}$/i.test(String(l.accent)) ? String(l.accent).toUpperCase() : pick(l.accent, ['defaut', 'windows'], 'defaut');
-  return { theme: pick(l.theme, ['base', 'sombre', 'clair', 'systeme'], 'base'), accent, vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
+  return { theme: pick(l.theme, ['sombre', 'clair', 'systeme'], 'systeme'), accent, vision: pick(l.vision, ['normale', 'rg', 'by'], 'normale'),
     zoom: pick(l.zoom, ['100', '115', '130'], '100'), contrast: !!l.contrast, motion: !!l.motion };
 }
 function windowBackground(st) {
-  const t = st.look && st.look.theme === 'systeme' ? (nativeTheme.shouldUseDarkColors ? 'sombre' : 'clair') : (st.look && st.look.theme) || 'base';
-  return { base: '#0F1720', sombre: '#202020', clair: '#F3F3F3' }[t] || '#0F1720';
+  const th = st.look && ['sombre', 'clair'].includes(st.look.theme) ? st.look.theme : 'systeme';
+  const t = th === 'systeme' ? (nativeTheme.shouldUseDarkColors ? 'sombre' : 'clair') : th;
+  return { sombre: '#202020', clair: '#F3F3F3' }[t];
 }
+// Réglages illisibles au démarrage (G5) : le fichier abîmé est mis de côté, jamais écrasé ; l'utilisateur est prévenu.
+let reglagesRecuperes = null;
 function loadSettings() {
-  let saved = {};
-  try { saved = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); }
-  catch (error) {
-    if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error;
-    if (error instanceof SyntaxError) console.error('Réglages illisibles :', error.message);
+  const lu = lireReglages(settingsFile());
+  if (lu.etat === 'restaure' || lu.etat === 'defaut') {
+    console.error('Réglages illisibles, fichier mis de côté :', lu.fichierAbime);
+    reglagesRecuperes = lu;
   }
+  const saved = lu.saved;
   settings = mergeSavedSettings(DEFAULTS, saved);
   if (!settings.mapTilesets || typeof settings.mapTilesets !== 'object' || Array.isArray(settings.mapTilesets)) settings.mapTilesets = {};
   else settings.mapTilesets = Object.fromEntries(Object.entries(settings.mapTilesets).filter(([game, dir]) =>
@@ -88,27 +91,46 @@ function loadSettings() {
   // Bêta : réglages de jeu séparés pour ETS2 et ATS (repris des réglages actuels au premier lancement)
   gameSettings.initGameSettings(settings);
 }
+// Écriture atomique (G12) : fichier .tmp puis renommage.
 function saveSettings() {
-  fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
-  fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2));
+  ecrireReglages(settingsFile(), settings);
 }
 function integrationSecretsFile() {
   return path.join(app.getPath('userData'), 'integrations.json');
 }
-function readSteamApiKey() {
+// Clé Steam chiffrée par le système (DPAPI sous Windows) avec les fonctions ASYNCHRONES de safeStorage
+// (Electron 45+). Les fonctions synchrones sont dépréciées en Electron 45 et supprimées en 46 : elles ne
+// servent plus qu'en secours, pour relire une clé enregistrée par une ancienne version de l'appli
+// (elle est alors rechiffrée avec la nouvelle méthode).
+async function chiffrementDisponible() {
+  try { return await safeStorage.isAsyncEncryptionAvailable(); } catch { return false; }
+}
+async function readSteamApiKey() {
   const file = integrationSecretsFile();
   if (!fs.existsSync(file)) return '';
-  if (!safeStorage.isEncryptionAvailable()) throw new Error('Le stockage chiffré du système est indisponible.');
+  if (!(await chiffrementDisponible())) throw new Error('Le stockage chiffré du système est indisponible.');
   const stored = JSON.parse(fs.readFileSync(file, 'utf8'));
   if (!stored.steamApiKey) return '';
-  return safeStorage.decryptString(Buffer.from(stored.steamApiKey, 'base64'));
+  const encrypted = Buffer.from(stored.steamApiKey, 'base64');
+  let key, rechiffrer = false;
+  try {
+    const r = await safeStorage.decryptStringAsync(encrypted);
+    key = r.result; rechiffrer = !!r.shouldReEncrypt;
+  } catch (e) {
+    // Secours : clé écrite par une version précédente (méthode synchrone), tant qu'Electron la fournit encore.
+    if (typeof safeStorage.decryptString !== 'function') throw e;
+    key = safeStorage.decryptString(encrypted); rechiffrer = true;
+  }
+  if (rechiffrer && key) { try { await writeSteamApiKey(key); } catch {} }
+  return key;
 }
-function writeSteamApiKey(apiKey) {
-  if (!safeStorage.isEncryptionAvailable()) throw new Error('Le stockage chiffré du système est indisponible.');
+async function writeSteamApiKey(apiKey) {
+  if (!(await chiffrementDisponible())) throw new Error('Le stockage chiffré du système est indisponible.');
   const file = integrationSecretsFile();
+  const encrypted = (await safeStorage.encryptStringAsync(apiKey)).toString('base64');
   let stored = {};
   if (fs.existsSync(file)) stored = JSON.parse(fs.readFileSync(file, 'utf8'));
-  stored.steamApiKey = safeStorage.encryptString(apiKey).toString('base64');
+  stored.steamApiKey = encrypted;
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(stored, null, 2));
 }
@@ -479,6 +501,7 @@ function setupIpc() {
       otherConfigs: Object.keys(telemetry.configs || {}), mandatoryBreak: !!(l && 'mandatoryBreak' in l), coach: sn.coach };
   });
   ipcMain.handle('snapshot', () => telemetry.snapshot());
+  ipcMain.handle('journal', () => telemetry.journal());
   ipcMain.handle('hud:test', () => { hudTestUntil = Date.now() + 10000; syncHud(); return true; });
   ipcMain.handle('plugin:status', () => pluginStatus);
   ipcMain.handle('plugin:install', () => installPlugin());
@@ -523,14 +546,14 @@ function setupIpc() {
     steamKeyConfigured: fs.existsSync(integrationSecretsFile()) && !!JSON.parse(fs.readFileSync(integrationSecretsFile(), 'utf8')).steamApiKey,
     discordClientId: settings.discordClientId || ''
   }));
-  ipcMain.handle('steam:key:set', (_e, key) => {
+  ipcMain.handle('steam:key:set', async (_e, key) => {
     if (!steam.validApiKey(key)) throw new Error('La clé Steam Web API doit contenir 32 caractères hexadécimaux.');
-    writeSteamApiKey(key);
+    await writeSteamApiKey(key);
     return { configured: true };
   });
   ipcMain.handle('steam:key:clear', () => { clearSteamApiKey(); return { configured: false }; });
   ipcMain.handle('steam:profile', async () => {
-    const key = readSteamApiKey();
+    const key = await readSteamApiKey();
     if (!key) throw new Error('Enregistre une clé Steam Web API dans les options.');
     return steam.getProfile(key, settings.steamId);
   });
@@ -665,7 +688,7 @@ function setupIpc() {
   });
   ipcMain.handle('settings:set', async (_e, patch) => {
     const allowed = ['vehicleType', 'limitTruck', 'limitCar', 'racePct', 'pseudo', 'look', 'atelier', 'hud', 'showSoon', 'autoTelemetry', 'steamId', 'discordClientId'];
-    validateSettingsPatch(patch);
+    patch = validateSettingsPatch(patch);   // S9 : chaque clé vérifiée (type, valeurs, longueur), copie nettoyée
     if ('steamId' in patch && patch.steamId && !steam.validSteamId(patch.steamId)) throw new Error('Saisis un SteamID64 valide (17 chiffres).');
     if ('discordClientId' in patch && patch.discordClientId && !/^\d{17,20}$/.test(String(patch.discordClientId))) throw new Error('Saisis un ID d’application Discord valide (17 à 20 chiffres).');
     for (const k of allowed) if (k in patch && k !== 'hud') settings[k] = patch[k];
@@ -749,6 +772,13 @@ if (!app.requestSingleInstanceLock()) {
     installPlugin();
     setupIpc();
     createWindow();
+    if (reglagesRecuperes && win) {
+      const msg = reglagesRecuperes.etat === 'restaure'
+        ? 'Le fichier de tes réglages était abîmé (coupure de courant, disque plein…). La copie de secours la plus récente a été reprise.'
+        : 'Le fichier de tes réglages était abîmé (coupure de courant, disque plein…). L’appli repart avec les réglages par défaut.';
+      dialog.showMessageBox(win, { type: 'warning', title: 'Réglages récupérés', message: msg,
+        detail: 'Le fichier abîmé n’a pas été effacé : il est gardé à côté sous le nom ' + path.basename(reglagesRecuperes.fichierAbime) + '.' }).catch(() => {});
+    }
     if (process.platform === 'win32') systemPreferences.on('accent-color-changed', () => { if (win) win.webContents.send('system:accent', systemAccent()); });
     setupUpdates();
     syncHud();

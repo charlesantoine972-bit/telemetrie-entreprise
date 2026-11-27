@@ -1,0 +1,225 @@
+/* =====================================================================
+   Truck & Coach Hub — Design tokens (refonte de l'interface)
+   ---------------------------------------------------------------------
+   Seul fichier de l'appli où une couleur est écrite en dur.
+   Branché dans la bêta 5 (étape B) à la place de l'ancien theme-actuel.css :
+   le thème « De base » (bleu nuit) disparaît, « Système » devient le thème par défaut.
+   Fait foi : REFERENTIEL-UI.md (puis REFONTE-INTERFACE.md § 2).
+   Contrastes vérifiés par calcul : `node tools/contrastes.mjs`.
+
+   Thèmes :
+   - par défaut (aucun attribut) : « Système », suit le mode de Windows
+     via prefers-color-scheme ;
+   - data-theme="sombre" / data-theme="clair" : choix forcé (l'appli
+     pose déjà cet attribut, y compris pour « Système ») ;
+   - data-contrast="fort" ou prefers-contrast: more : contraste renforcé ;
+   - forced-colors: active : contraste élevé de Windows (couleurs système) ;
+   - data-vision="rg" / "by" : couleurs adaptées au daltonisme (conservées).
+   ===================================================================== */
+
+/* ---------- Valeurs communes + thème sombre (base) ---------- */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #202020;          /* fond de page */
+  --nav: #1C1C1C;         /* menu latéral */
+  --panel: #2B2B2B;       /* cartes, panneaux */
+  --hover: #2D2D2D;       /* survol, entrée active */
+  --active: #343434;      /* pression */
+  --line: #3D3D3D;        /* bordures, séparateurs (décoratifs) */
+  --map: #191919;
+
+  /* Textes */
+  --text: #FFFFFF;        /* texte principal, titres */
+  --soft: #E0E0E0;        /* texte courant, entrées du menu */
+  --muted: #ABABAB;       /* étiquettes, légendes, catégories */
+
+  /* Action (accent orange : actions uniquement, jamais du texte courant) */
+  --accent: #FF8A3D;
+  --accent-strong: #FFA466; /* survol du bouton principal */
+  --on-accent: #000000;
+  --ctl: #8A8A8A;           /* contour des contrôles (interrupteur éteint, case) */
+  --focus: var(--accent);   /* anneau de focus clavier */
+
+  /* États (petits : pastille, mot — toujours avec texte ou icône) */
+  --ok: #6FD8C4;
+  --warn: #E8D27A;
+  --danger: #E07878;
+  --info: #7FB2E5;
+
+  /* Données (carte et graphiques uniquement) */
+  --loaded: #E7B655;
+  --empty: #6A9CD0;
+  --race: var(--danger);
+
+  /* Contraste renforcé : valeurs de remplacement de ce thème */
+  --soft-fort: #FFFFFF;
+  --muted-fort: #D6D6D6;
+  --line-fort: #8F8F8F;
+
+  /* Repris de l'interface d'avant la refonte (bêta 5) : un seul accent partout */
+  --c-hub: var(--accent);
+  --c-market: var(--accent);
+  --c-atelier: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+
+  /* Décor (seules exceptions de couleur hors thème) */
+  --limit-red: #D64545;     /* panneau de limitation : seul rouge décoratif autorisé */
+  --limit-bg: #FFFFFF;
+  --limit-text: #111111;
+  --scrim: rgba(0, 0, 0, .45);       /* voile derrière un panneau ouvert */
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, .45);
+  --shadow-sm: 0 8px 22px rgba(0, 0, 0, .2);
+  --tablet-bg: #05080B;     /* cadre de l'aperçu de la tablette */
+  --wheel: conic-gradient(#FF4D4D, #FFB13D, #F5E663, #57D98A, #3CC8D8, #5B8CFF, #B07CFF, #F472B6, #FF4D4D); /* roue de couleurs (choix d'accent) */
+
+  /* Espacements (grille 4 / 8 px) */
+  --sp-4: 4px;
+  --sp-8: 8px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-48: 48px;
+  --sp-64: 64px;
+  --page-pad: var(--sp-32);      /* marges de page */
+  --gap-bloc: var(--sp-16);      /* écart entre blocs (16–24) */
+  --panel-pad-y: var(--sp-16);   /* intérieur des panneaux 16 × 20 */
+  --panel-pad-x: var(--sp-20);
+  --icon-gap: var(--sp-8);       /* icône ↔ texte */
+
+  /* Formes */
+  --radius-sm: 4px;   /* boutons, entrées */
+  --radius-md: 8px;   /* panneaux */
+  --radius-pill: 999px;
+  --border: 1px;
+  --bar: 3px;         /* barre accent : entrée active, onglet actif */
+  --focus-w: 2px;
+  --focus-offset: 2px;
+
+  /* Cibles cliquables */
+  --target-min: 24px; /* minimum WCAG 2.2 AA */
+  --target: 36px;     /* hauteur courante */
+  --target-lg: 44px;  /* confortable */
+
+  /* Mouvement */
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --ease: cubic-bezier(.2, 0, 0, 1);
+}
+
+/* ---------- Thème clair (choisi) ---------- */
+:root[data-theme="clair"] {
+  color-scheme: light;
+  --bg: #F3F3F3;
+  --nav: #EBEBEB;
+  --panel: #FFFFFF;
+  --hover: #E5E5E5;
+  --active: #DDDDDD;
+  --line: #DCDCDC;
+  --map: #E8E8E8;
+  --text: #000000;
+  --soft: #1F1F1F;
+  --muted: #5C5C5C;
+  --accent: #B34700;
+  --accent-strong: #8A3600;
+  --on-accent: #FFFFFF;
+  --ctl: #767676;
+  --ok: #2B766A;
+  --warn: #6E5A00;
+  --danger: #8A2E2E;
+  --info: #1F5F99;
+  --loaded: #9B6B3B;
+  --empty: #2A5A8A;
+  --soft-fort: #000000;
+  --muted-fort: #333333;
+  --line-fort: #6B6B6B;
+}
+
+/* ---------- Thème « Système » : pages sans data-theme ----------
+   Copie exacte du bloc clair ci-dessus (vérifiée par tools/contrastes.mjs). */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --bg: #F3F3F3;
+    --nav: #EBEBEB;
+    --panel: #FFFFFF;
+    --hover: #E5E5E5;
+    --active: #DDDDDD;
+    --line: #DCDCDC;
+    --map: #E8E8E8;
+    --text: #000000;
+    --soft: #1F1F1F;
+    --muted: #5C5C5C;
+    --accent: #B34700;
+    --accent-strong: #8A3600;
+    --on-accent: #FFFFFF;
+    --ctl: #767676;
+    --ok: #2B766A;
+    --warn: #6E5A00;
+    --danger: #8A2E2E;
+    --info: #1F5F99;
+    --loaded: #9B6B3B;
+    --empty: #2A5A8A;
+    --soft-fort: #000000;
+    --muted-fort: #333333;
+    --line-fort: #6B6B6B;
+  }
+}
+
+/* ---------- Vision des couleurs (reprise de l'appli actuelle) ---------- */
+:root[data-vision="rg"] { --loaded: #CA9E72; --empty: #79C6EC; --ok: #6B97EC; --danger: #E070A8; --warn: #F0F0F0; }
+:root[data-theme="clair"][data-vision="rg"] { --loaded: #815931; --empty: #1B6BBB; --ok: #2A2AA8; --danger: #7A2D5E; --warn: #000000; }
+:root[data-vision="by"] { --loaded: #D5909C; --empty: #4FCFCF; --ok: #B8CF8E; --danger: #EF7255; --warn: #F0F0F0; }
+:root[data-theme="clair"][data-vision="by"] { --loaded: #7A2E52; --empty: #2E7A7A; --ok: #526827; --danger: #9A2626; --warn: #000000; }
+
+/* ---------- Contraste renforcé (réglage de l'appli ou de Windows) ---------- */
+:root[data-contrast="fort"] {
+  --soft: var(--soft-fort);
+  --muted: var(--muted-fort);
+  --line: var(--line-fort);
+}
+@media (prefers-contrast: more) {
+  :root:not([data-contrast]) {
+    --soft: var(--soft-fort);
+    --muted: var(--muted-fort);
+    --line: var(--line-fort);
+  }
+}
+
+/* ---------- Contraste élevé de Windows : couleurs système imposées ---------- */
+@media (forced-colors: active) {
+  :root {
+    --bg: Canvas;
+    --nav: Canvas;
+    --panel: Canvas;
+    --hover: Canvas;
+    --active: Canvas;
+    --line: CanvasText;
+    --map: Canvas;
+    --text: CanvasText;
+    --soft: CanvasText;
+    --muted: CanvasText;
+    --accent: Highlight;
+    --accent-strong: Highlight;
+    --on-accent: HighlightText;
+    --ctl: ButtonText;
+    --focus: Highlight;
+    --ok: CanvasText;
+    --warn: CanvasText;
+    --danger: CanvasText;
+    --info: CanvasText;
+    --loaded: CanvasText;
+    --empty: GrayText;
+  }
+}
+
+/* ---------- Animations réduites ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur: 0ms; }
+}
+:root[data-motion="reduit"] { --dur-fast: 0ms; --dur: 0ms; }
+[data-motion="reduit"] * { transition: none !important; animation-duration: 0s !important; }
+[data-motion="reduit"] .spinner { animation: spin 1.5s linear infinite !important; }

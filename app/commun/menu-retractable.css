@@ -1,0 +1,35 @@
+/* Menu latéral rétractable (icônes seules)
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  /* ---------- Menu latéral rétractable ---------- */
+  .sidetop{display:flex;align-items:flex-start;gap:6px}
+  .sidetop #brandBtn{flex:1;min-width:0}
+  .navtoggle{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center}
+  .navtoggle:hover{background:var(--hover);color:var(--text)}
+  .sideswitch{flex-wrap:wrap}
+  .sideswitch button{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
+  .sideswitch button svg{display:none}
+  .sideswitch button.wide{flex-basis:100%}
+  .navbtn{position:relative}
+  .navdot{display:none;position:absolute;top:7px;left:24px;width:9px;height:9px;border-radius:50%;background:var(--muted);border:2px solid var(--nav)}
+  .navdot.on{background:var(--ok)}
+  .side{transition:width .18s ease}
+  [data-motion="reduit"] .side{transition:none}
+  [data-nav="mini"] .side{width:72px;padding:18px 10px 12px}
+  [data-nav="mini"] .sidetop{flex-direction:column;align-items:center;gap:8px}
+  [data-nav="mini"] .navtoggle .chev{transform:scaleX(-1);transform-origin:14.25px 12px}
+  [data-nav="mini"] .sideswitch{flex-direction:column;margin:4px 0 8px}
+  [data-nav="mini"] .sideswitch button{flex:none;height:38px;padding:0}
+  [data-nav="mini"] .sideswitch button svg{display:block}
+  [data-nav="mini"] .sideswitch button span{display:none}
+  [data-nav="mini"] .navcat{display:none}
+  [data-nav="mini"] .navgroup,[data-nav="mini"] .navgroup.closed{display:flex;padding-left:0}
+  [data-nav="mini"] .navgroup+.navcat+.navgroup{border-top:1px solid var(--line);margin-top:6px;padding-top:6px}
+  [data-nav="mini"] .navsec{display:none}
+  [data-nav="mini"] .navbtn{justify-content:center;padding:0;gap:0}
+  [data-nav="mini"] .navbtn>span,[data-nav="mini"] .navbtn .soon{display:none}
+  [data-nav="mini"] .navrow .switch{display:none}
+  [data-nav="mini"] .navdot{display:block}
+  [data-nav="mini"] .updbanner{display:none}
+  [data-nav="mini"] [data-view="reglages"].hasupd::after{content:"";position:absolute;top:7px;left:30px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--nav)}
+  .side-foot{margin-top:auto;font-size:var(--fs-meta);color:var(--muted);padding:10px;line-height:1.5;
+    border:1px dashed var(--line);border-radius:12px}

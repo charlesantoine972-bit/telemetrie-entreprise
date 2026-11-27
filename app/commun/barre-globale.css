@@ -1,0 +1,25 @@
+/* Barre globale (Game, News, Map, Settings, Support)
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  /* ---------- Barre globale (Game, News, Map, Settings, Support) ---------- */
+  :root{--railw:84px}
+  .rail{position:fixed;left:0;top:0;bottom:0;width:var(--railw);z-index:60;background:var(--nav);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:14px;overflow-y:auto}
+  .rail-logo{all:unset;cursor:pointer;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex:none}
+  .rail-logo .logo{width:44px;height:44px;border-radius:12px;font-size:var(--fs-second)}
+  .rail-logo:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .rail-tabs{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;width:100%;padding:0 8px;box-sizing:border-box}
+  .railbtn{all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:64px;border-radius:14px;color:var(--soft);font-size:var(--fs-meta);font-weight:var(--fw-demi);text-align:center;box-sizing:border-box;padding:6px 2px}
+  .railbtn:hover{background:var(--hover);color:var(--text)}
+  .railbtn:focus-visible{outline:3px solid var(--accent);outline-offset:-1px}
+  .railbtn.on{background:var(--accent-soft);color:var(--accent-strong);font-weight:var(--fw-gras)}
+  .railbtn.on::before{content:"";position:absolute;left:-8px;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--accent)}
+  body{padding-left:var(--railw)}
+  #launcher{left:var(--railw)}
+  #spacePanel{inset:0 0 0 calc(var(--railw) + var(--navw,264px))}
+  html[data-rail="news"] .side,html[data-rail="map"] .side,html[data-rail="support"] .side{display:none}
+  /* Dans les espaces (Hub, Marketplace, Truck & Coach Tools) : mise en page 0.12.0.7, sans barre globale */
+  html.in-space{--railw:0px}
+  html.in-space .rail{display:none}
+  .gamechip{display:none!important}
+  /* Settings ouvert depuis la barre : uniquement le menu des paramètres (pas de ☰, pas de pied de menu) */
+  html[data-rail="settings"] .sidetop,html[data-rail="settings"] .brandfoot,html[data-rail="settings"] .updbanner,html[data-rail="settings"] .side-resize{display:none!important}
+  html[data-rail="settings"] .spacetitle{padding-top:8px}

@@ -1,0 +1,16 @@
+/* Mods & sauvegarde : résumé et liste des mods
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+.modsresume{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:16px}
+.modsresume .panel{padding:14px 16px}
+.modsresume .big{font-size:var(--fs-section);font-weight:var(--fw-gras);line-height:1.1}
+.modsliste{display:grid;gap:10px}
+.modrow{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.modrow .pt{width:12px;height:12px;border-radius:50%;margin-top:4px}
+.modrow .pt.rouge{background:#e5534b}.modrow .pt.orange{background:#e0a030}.modrow .pt.vert{background:#3fb27f}
+.modrow .nm{font-weight:var(--fw-gras)}
+.modrow .mt{font-size:var(--fs-meta);color:var(--muted);margin-top:2px}
+.modrow ul{margin:6px 0 0;padding-left:18px;font-size:var(--fs-second);line-height:1.55}
+.modrow .tag{display:inline-block;font-size:var(--fs-meta);font-weight:var(--fw-gras);padding:2px 7px;border-radius:999px;border:1px solid var(--line);margin-left:6px;vertical-align:1px}
+.modrow .tag.keep{border-color:#3fb27f;color:#3fb27f}
+.modrow details{font-size:var(--fs-meta);color:var(--muted);margin-top:4px}
+.modrow details code{display:block;white-space:pre-wrap;word-break:break-all}

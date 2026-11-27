@@ -1,0 +1,6 @@
+/* Accueil : résumé (En cours, Dernier trajet, Mon entreprise). Tokens uniquement. */
+.acc-resume{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--gap-bloc);margin-top:var(--gap-bloc)}
+.acc-resume .panel{display:flex;flex-direction:column;gap:var(--sp-8);min-height:160px}
+.acc-resume h2{margin:0}
+.acc-route{font-size:var(--fs-corps);font-weight:var(--fw-demi);color:var(--text)}
+.acc-liens{display:flex;gap:var(--sp-8);flex-wrap:wrap;margin-top:auto}

@@ -404,6 +404,12 @@ class Telemetry extends EventEmitter {
   }
 
   // ---------------------------------------------------------------- pour l'interface
+  // Journal complet pour la Feuille de route (calendrier et rapports) : lecture seule, copie sans les tracés GPS.
+  journal() {
+    const jobs = this.data.jobs.slice(0, 300).map(j => { const c = { ...j }; delete c.path; return c; });
+    return { days: { ...this.data.days }, jobs };
+  }
+
   snapshot() {
     const connected = Date.now() - this.lastPacket < 3000;
     const s = connected ? this.live : null;

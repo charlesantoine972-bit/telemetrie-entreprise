@@ -1,0 +1,10 @@
+/* Page HUD : barre, aperçus, choix des cases
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  .hudbar{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .hudbar-l{display:flex;flex-direction:column;gap:3px;flex:1;min-width:220px} .hudbar-l b{font-size:16px} .hudbar-l span{font-size:13px}
+  .hudprev{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+  .hudcard{display:flex;flex-direction:column;gap:12px}
+  .hudcard>.panel{margin:0!important}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;max-width:520px}
+  .chip-tg{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--soft);font-size:13px;font-weight:600}
+  .chip-tg.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-strong)}

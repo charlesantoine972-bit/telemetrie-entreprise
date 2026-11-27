@@ -1,0 +1,28 @@
+/* Paramètres d’un jeu et mode Paramètres (dossiers dans la barre, recherche)
+   (déplacé tel quel depuis app/index.html ; l'ordre de chargement des feuilles compte : voir app/LISEZ-MOI.md) */
+  /* ---------- Paramètres d'un jeu ---------- */
+  .optgamebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:-4px 0 18px;padding:14px 18px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;background:var(--panel);font-size:var(--fs-second);line-height:1.55}
+  .optgamebar .gtag{background:var(--accent);color:var(--on-accent);font-weight:var(--fw-gras);font-size:var(--fs-second);border-radius:6px;padding:3px 8px;flex:none}
+  .optgamebar span.t{flex:1;min-width:240px;color:var(--soft)}
+  .optgamebar.hidden{display:none}
+  .navbtn.optmode{margin-top:auto;border-top:1px solid var(--line);border-radius:0;padding-top:12px}
+
+  /* ---------- Mode Paramètres : la barre devient les dossiers de réglages ---------- */
+  .rail-settings{display:none}
+  html[data-rail="settings"] .rail-tabs:not(.rail-settings){display:none}
+  html[data-rail="settings"] .rail-settings{display:flex;animation:railIn .22s ease-out}
+  html[data-rail="settings"] .rail-settings [data-srail="back"]{margin-bottom:10px;min-height:52px;border:1px solid var(--line)}
+  @keyframes railIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){html[data-rail="settings"] .rail-settings{animation:none}}
+  html[data-rail="settings"] #optBack{display:none}
+  .optsearch{position:relative;margin:4px 0 10px}
+  .optsearch input{width:100%;box-sizing:border-box;height:40px;border-radius:12px;border:1px solid var(--ctl);background:var(--bg);color:var(--text);padding:0 12px 0 36px;font-size:var(--fs-second);font-family:inherit}
+  .optsearch svg{position:absolute;left:11px;top:11px;color:var(--muted);pointer-events:none}
+  .optresults{display:flex;flex-direction:column;gap:2px}
+  .optresults button{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px}
+  .optresults button:hover,.optresults button:focus-visible{background:var(--hover)} .optresults button:focus-visible{outline:2px solid var(--accent)}
+  .optresults b{font-size:var(--fs-second);color:var(--text)} .optresults span{font-size:var(--fs-meta);color:var(--muted)}
+  .optresults .none{padding:9px 12px;font-size:var(--fs-second);color:var(--muted)}
+  .setrow.flash,.optgroup.flash{animation:optFlash 2.2s ease-out}
+  @keyframes optFlash{0%,35%{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}100%{background:transparent;box-shadow:none}}
+  .optfolder{font-size:var(--fs-meta);font-weight:var(--fw-gras);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 12px 4px}

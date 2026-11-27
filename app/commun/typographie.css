@@ -1,0 +1,85 @@
+/* =====================================================================
+   Truck & Coach Hub — Typographie (refonte de l'interface)
+   Échelle du référentiel (REFERENTIEL-UI.md § 5) : 32 / 24 / 20 / 16 / 14 / 12.
+   Tailles en rem (1rem = 16 px par défaut) pour suivre l'agrandissement
+   du texte. Graisses 400 / 500 / 600, 700 au maximum. Aucune couleur ici :
+   uniquement les tokens de tokens.css.
+   ===================================================================== */
+
+/* Mona Sans (OFL 1.1), fichiers locaux : aucun appel réseau.
+   Le chemin est relatif à ce fichier (app/commun/ → app/polices/). */
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('../polices/mona-sans/MonaSansVF.woff2') format('woff2');
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('../polices/mona-sans/MonaSansVF-Italic.woff2') format('woff2');
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --font: 'Mona Sans', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+
+  /* Tailles */
+  --fs-chiffre: 3rem;      /* 48 px : grand chiffre (vitesse) */
+  --fs-titre: 2rem;        /* 32 px : titre de page */
+  --fs-section: 1.5rem;    /* 24 px : titre de section */
+  --fs-sous: 1.25rem;      /* 20 px : sous-section, titre de panneau */
+  --fs-corps: 1rem;        /* 16 px : texte principal */
+  --fs-second: .875rem;    /* 14 px : texte secondaire, menu, tableaux */
+  --fs-meta: .75rem;       /* 12 px : métadonnées, légendes, catégories */
+  --fs-logo-mini: .5625rem; /* 9 px : « T&C » dans le petit logo carré du pied du menu (seule exception) */
+
+  /* Graisses (jamais au-dessus de 700) */
+  --fw-normal: 400;
+  --fw-moyen: 500;
+  --fw-demi: 600;
+  --fw-gras: 700;
+
+  /* Interlignes */
+  --lh-titre: 1.25;
+  --lh-corps: 1.5;
+  --lh-serre: 1.1;
+}
+
+/* Base : à poser sur <body> */
+.tch-typo {
+  font-family: var(--font);
+  font-size: var(--fs-corps);
+  font-weight: var(--fw-normal);
+  line-height: var(--lh-corps);
+  color: var(--soft);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Échelle (classes utilitaires) */
+.t-titre   { font-size: var(--fs-titre);   font-weight: var(--fw-demi);   line-height: var(--lh-titre); color: var(--text); }
+.t-section { font-size: var(--fs-section); font-weight: var(--fw-demi);   line-height: var(--lh-titre); color: var(--text); }
+.t-sous    { font-size: var(--fs-sous);    font-weight: var(--fw-demi);   line-height: var(--lh-titre); color: var(--text); }
+.t-corps   { font-size: var(--fs-corps);   font-weight: var(--fw-normal); line-height: var(--lh-corps); color: var(--soft); }
+.t-second  { font-size: var(--fs-second);  font-weight: var(--fw-normal); line-height: var(--lh-corps); color: var(--soft); }
+.t-meta    { font-size: var(--fs-meta);    font-weight: var(--fw-normal); line-height: var(--lh-corps); color: var(--muted); }
+.t-chiffre { font-size: var(--fs-chiffre); font-weight: var(--fw-demi);   line-height: var(--lh-serre); color: var(--text); }
+
+/* Les titres reprennent l'échelle sans classe */
+.tch-typo h1 { font-size: var(--fs-titre);   font-weight: var(--fw-demi); line-height: var(--lh-titre); color: var(--text); margin: 0; }
+.tch-typo h2 { font-size: var(--fs-section); font-weight: var(--fw-demi); line-height: var(--lh-titre); color: var(--text); margin: 0; }
+.tch-typo h3 { font-size: var(--fs-sous);    font-weight: var(--fw-demi); line-height: var(--lh-titre); color: var(--text); margin: 0; }
+.tch-typo strong, .tch-typo b { font-weight: var(--fw-demi); }
+
+/* Chiffres alignés : télémétrie, tableaux, rapports */
+.t-num, .tch-typo table, .t-chiffre { font-variant-numeric: tabular-nums; }
+
+/* Une classe d'échelle posée sur un titre l'emporte sur le style par défaut du titre */
+.tch-typo .t-titre { font-size: var(--fs-titre); }
+.tch-typo .t-section { font-size: var(--fs-section); }
+.tch-typo .t-sous { font-size: var(--fs-sous); }
