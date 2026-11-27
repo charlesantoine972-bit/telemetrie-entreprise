@@ -1274,3 +1274,17 @@ test('bêta 6 : dépenses des missions (Finances et Feuille de route), euros et 
   const nouveau = css.slice(css.indexOf('bêta 6'));
   assert.ok(!/#[0-9a-f]{3,8}\b|rgba?\(/i.test(nouveau), 'nouveaux styles : tokens uniquement');
 });
+
+test('bêta 6 : un trajet du calendrier se déroule comme dans l’historique (routeTimeline + même bilan)', () => {
+  const root = path.resolve(__dirname, '..');
+  const fr = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/feuille-de-route.js'), 'utf8');
+  const ctx = { fmt: n => String(n), km: n => n + ' km', dur: m => m + ' min', escM: x => String(x == null ? '' : x), document: {} };
+  vm.createContext(ctx); vm.runInContext(fr + ';this.routeItemHtml=routeItemHtml;', ctx);
+  const html = ctx.routeItemHtml({ from: 'Paris', to: 'Lyon', cargo: 'Transformateur', mass: 48000, special: true, ended: 5, status: 'livrée', game: 'ets2',
+    distance: 470, loaded: 460, empty: 10, fuelUsed: 150, fuelAdded: 80, damage: 0.02, revenue: 9000, expenses: 120,
+    expenseItems: [{ type: 'péage', amount: 120, at: 3 }],
+    stops: [{ kind: 'départ', name: 'Paris', at: 0, km: 0 }, { kind: 'arrivée', name: 'Lyon', at: 5, km: 470 }] }, true);
+  for (const t of [/Cargaison/, /Transformateur · 48 t/, /convoi exceptionnel/, /rt-tl/, /chargé 460 km · à vide 10 km/, /150 L consommés/, /Dégâts/, /9000 €/, /8880 €/, /péage/, / open>/]) assert.match(html, t);
+  const js = fs.readFileSync(path.join(root, 'app/fonctionnalites/feuille-de-route/journal.js'), 'utf8');
+  assert.match(js, /routeItemHtml\(j, frCalOuverts\.has/, 'le calendrier réutilise le bloc de l’historique');
+});

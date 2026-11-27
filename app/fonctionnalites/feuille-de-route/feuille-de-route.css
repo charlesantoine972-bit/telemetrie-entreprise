@@ -70,3 +70,7 @@
 .fr-table thead th{color:var(--muted);font-weight:var(--fw-demi);font-size:var(--fs-meta);border-top:0}
 .fr-table tbody th{font-weight:var(--fw-normal);color:var(--soft)}
 @media (max-width:700px){ .fr-case{min-height:64px;padding:var(--sp-4)} }
+/* Calendrier : trajets du jour dépliables (bêta 6). Tokens uniquement. */
+.fr-jour-trajets{display:flex;flex-direction:column;border-bottom:var(--border) solid var(--line)}
+.fr-jour .rt-head{margin-top:var(--sp-4)}
+.rt-item>summary:focus-visible{outline:var(--focus-w) solid var(--focus);outline-offset:calc(-1 * var(--focus-w))}

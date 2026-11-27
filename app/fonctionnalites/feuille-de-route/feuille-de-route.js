@@ -110,9 +110,14 @@ function renderRouteHistory(all){
   if (sig === routeSig) return; routeSig = sig;
   const box = document.getElementById('routeHistory');
   if (!list.length) { box.innerHTML = `<span class="soft" style="display:block;padding:12px 0;border-top:1px solid var(--line)">${routeTab === 'all' ? 'Aucun trajet terminé pour l’instant.' : routeTab === 'bus' ? 'Aucun service en car terminé pour l’instant.' : 'Aucune livraison en camion terminée pour l’instant.'}</span>`; return; }
-  const dateTime = n => Number.isFinite(n) ? new Date(n).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}) : '—';
-  const liters = n => Number.isFinite(n) ? Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' L' : '—';
-  box.innerHTML = list.map(entry => {
+  box.innerHTML = list.map(entry => routeItemHtml(entry, routeOpen.has(String(entry.ended)))).join('');
+}
+// Un trajet terminé, repliable : en-tête (date, parcours, km, état, dépenses, revenu, solde) puis le déroulé
+// (routeTimeline) et le bilan. Utilisé par l'historique (onglet Trajets) et par le Calendrier.
+function routeItemHtml(entry, open){
+    const isBus = e => e.missionType === 'bus';
+    const dateTime = n => Number.isFinite(n) ? new Date(n).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}) : '—';
+    const liters = n => Number.isFinite(n) ? Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' L' : '—';
     const unit = entry.game === 'ats' ? '$' : '€';
     const money = v => Number.isFinite(v) ? fmt(Math.round(v)) + ' ' + unit : '—';
     const stat = routeStatus(entry);
@@ -127,7 +132,9 @@ function renderRouteHistory(all){
       ? items.slice().reverse().map(it => `<div class="between" style="gap:12px;padding:6px 0;border-top:1px solid var(--line)"><span>${escM(it.type || 'Frais')} · ${dateTime(it.at)}</span><b>${money(it.amount)}</b></div>`).join('')
       : `<div class="soft" style="padding:6px 0;border-top:1px solid var(--line)">${expenses ? 'Détail non disponible pour cette ancienne mission.' : 'Aucun frais reçu.'}</div>`;
     const key = String(entry.ended);
-    return `<details class="rt-item" data-key="${key}"${routeOpen.has(key) ? ' open' : ''}>
+    const tonnes = Number.isFinite(entry.mass) && entry.mass > 0 ? (entry.mass/1000).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' t' : '';
+    const cargoRow = bus ? '' : `<div class="k"><span>Cargaison</span><span>${escM(entry.cargo || '—')}${tonnes ? ' · ' + tonnes : ''}${entry.special === true ? ' <span class="muted">(⚑ convoi exceptionnel)</span>' : ''}</span></div>`;
+    return `<details class="rt-item" data-key="${key}"${open ? ' open' : ''}>
       <summary><span class="rt-arrow" aria-hidden="true">▸</span><div class="rt-row">
         <span class="muted">${dateTime(entry.ended)}</span>
         <span style="min-width:0"><b>${title}${escM(entry.from || '—')} → ${escM(entry.to || '—')}</b><div class="muted" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escM(sub)}</div></span>
@@ -142,6 +149,7 @@ function renderRouteHistory(all){
         <div>
           <div class="lbl" style="margin-bottom:8px">BILAN</div>
           <div class="rt-kv">
+            ${cargoRow}
             <div class="k"><span>Véhicule</span><span>${escM(entry.truck || '—')}</span></div>
             <div class="k"><span>Mode</span><span>${entry.mode === 'course' ? 'Course' : 'Réel'}${Number.isFinite(entry.overPct) && entry.overPct > 0 ? ` <span class="muted">(${Math.round(entry.overPct)} % du trajet au-dessus du seuil)</span>` : ''}</span></div>
             <div class="k"><span>Km parcourus</span><span>${km(entry.distance)} <span class="muted">(${bus ? 'en service' : 'chargé'} ${km(entry.loaded)} · à vide ${km(entry.empty)})</span></span></div>
@@ -157,7 +165,6 @@ function renderRouteHistory(all){
         </div>
       </div>
     </details>`;
-  }).join('');
 }
 // Montants par jeu : € pour ETS2, $ pour ATS (jamais additionnés). Anciennes données : total en €.
 function moneyByGame(t, key){
